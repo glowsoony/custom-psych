@@ -3,7 +3,7 @@ package backend;
 import openfl.utils.Assets;
 import haxe.Json;
 import backend.Song;
-import psychlua.ModchartSprite;
+import objects.FunkinSprite;
 
 typedef StageFile = {
 	var directory:String;
@@ -149,7 +149,7 @@ class StageData {
 				case 'square', 'sprite', 'animatedSprite':
 					if(!ignoreFilters && !validateVisibility(data.filters)) continue;
 
-					var spr:ModchartSprite = new ModchartSprite(data.x, data.y);
+					var spr:FunkinSprite = new FunkinSprite(data.x, data.y);
 					spr.ID = num;
 					if(data.type != 'square')
 					{
@@ -169,7 +169,7 @@ class StageData {
 									spr.animation.addByIndices(anim.anim, anim.name, anim.indices, '', anim.fps, anim.loop);
 	
 								if(anim.offsets != null)
-									spr.addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+									spr.setOffset(anim.anim, anim.offsets);
 	
 								if(spr.animation.curAnim == null || data.firstAnimation == anim.anim)
 									spr.playAnim(anim.anim, true);
