@@ -388,7 +388,7 @@ class LoadingState extends MusicBeatState
 				song.stage = StageData.vanillaSongStage(folder);
 
 			var stageData:StageFile = StageData.getStageFile(song.stage);
-			
+
 			songsToPrepare.push('$folder/Inst');
 
 			var player1:String = song.player1;
@@ -475,10 +475,9 @@ class LoadingState extends MusicBeatState
 
 			//trace('attempting on $prefix: $myKey');
 			var doTrace:Bool = false;
-			if(member.endsWith('/') || (!Paths.fileExists(myKey, type, false, parentFolder) && (doTrace = true)))
-			{
+			if (member.endsWith('/') || (!Paths.fileExists(myKey, type, false, parentFolder) && (doTrace = true))) {
 				arr.remove(member);
-				if(doTrace) trace('Removed invalid $prefix: $member');
+				if (doTrace) trace('Removed invalid $prefix: $member');
 			}
 			else i++;
 		}
