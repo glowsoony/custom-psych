@@ -366,7 +366,7 @@ class LoadingState extends MusicBeatState
 						var filters:Int = Reflect.field(json, asset);
 						var asset:String = asset.trim();
 
-						if(filters < 0 || StageData.validateVisibility(filters))
+						if(filters < 0)
 						{
 							if(asset.startsWith('images/'))
 								imgs.push(asset.substr('images/'.length));
@@ -388,42 +388,7 @@ class LoadingState extends MusicBeatState
 				song.stage = StageData.vanillaSongStage(folder);
 
 			var stageData:StageFile = StageData.getStageFile(song.stage);
-			if (stageData != null)
-			{
-				var imgs:Array<String> = [];
-				var snds:Array<String> = [];
-				var mscs:Array<String> = [];
-				if(stageData.preload != null)
-				{
-					for (asset in Reflect.fields(stageData.preload))
-					{
-						var filters:Int = Reflect.field(stageData.preload, asset);
-						var asset:String = asset.trim();
-
-						if(filters < 0 || StageData.validateVisibility(filters))
-						{
-							if(asset.startsWith('images/'))
-								imgs.push(asset.substr('images/'.length));
-							else if(asset.startsWith('sounds/'))
-								snds.push(asset.substr('sounds/'.length));
-							else if(asset.startsWith('music/'))
-								mscs.push(asset.substr('music/'.length));
-						}
-					}
-				}
-				
-				if (stageData.objects != null)
-				{
-					for (sprite in stageData.objects)
-					{
-						if(sprite.type == 'sprite' || sprite.type == 'animatedSprite')
-							if((sprite.filters < 0 || StageData.validateVisibility(sprite.filters)) && !imgs.contains(sprite.image))
-								imgs.push(sprite.image);
-					}
-				}
-				prepare(imgs, snds, mscs);
-			}
-
+			
 			songsToPrepare.push('$folder/Inst');
 
 			var player1:String = song.player1;
