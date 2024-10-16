@@ -19,6 +19,7 @@ class Conductor extends flixel.FlxBasic {
 	public static var safeZoneOffset:Float = 0.0;
 
 	public static var rate(default, set):Float = 1.0;
+	public static var volume(default, set):Float = 1.0;
 
 	public static var time:Float = 0.0;
 	public static var lastTime:Float = 0.0;
@@ -174,6 +175,13 @@ class Conductor extends flixel.FlxBasic {
 		vocals.pitch = value;
 
 		return rate = value;
+	}
+
+	static function set_volume(value:Float):Float {
+		inst.volume = value;
+		vocals.volume = value;
+
+		return volume = value;
 	}
 
 	// helper functions that im just gonna
