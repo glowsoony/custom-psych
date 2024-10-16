@@ -74,10 +74,10 @@ class BaseStage extends FlxBasic
 	public var curDecBeat:Float = 0;
 	public var curStep:Int = 0;
 	public var curDecStep:Float = 0;
-	public var curSection:Int = 0;
-	public function beatHit() {}
-	public function stepHit() {}
-	public function sectionHit() {}
+	public var curMeasure:Int = 0;
+	public function beatHit(beat:Int) {}
+	public function stepHit(step:Int) {}
+	public function measureHit(measure:Int) {}
 
 	// Substate close/open, for pausing Tweens/Timers
 	public function closeSubState() {}

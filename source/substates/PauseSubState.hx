@@ -23,7 +23,7 @@ class PauseSubState extends MusicBeatSubstate
 	var practiceText:FlxText;
 	var skipTimeText:FlxText;
 	var skipTimeTracker:Alphabet;
-	var curTime:Float = Math.max(0, Conductor.songPosition);
+	var curTime:Float = Math.max(0, Conductor.time);
 
 	var missingTextBG:FlxSprite;
 	var missingText:FlxText;
@@ -280,14 +280,14 @@ class PauseSubState extends MusicBeatSubstate
 					restartSong();
 					PlayState.chartingMode = false;
 				case 'Skip Time':
-					if(curTime < Conductor.songPosition)
+					if(curTime < Conductor.time)
 					{
 						PlayState.startOnTime = curTime;
 						restartSong(true);
 					}
 					else
 					{
-						if (curTime != Conductor.songPosition)
+						if (curTime != Conductor.time)
 						{
 							PlayState.instance.clearNotesBefore(curTime);
 							PlayState.instance.setSongTime(curTime);
@@ -307,7 +307,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.instance.botplaySine = 0;
 				case 'Options':
 					PlayState.instance.paused = true; // For lua
-					PlayState.instance.vocals.volume = 0;
+					Conductor.vocals.volume = 0;
 					PlayState.instance.canResync = false;
 					MusicBeatState.switchState(new OptionsState());
 					if(ClientPrefs.data.pauseMusic != 'None')
@@ -353,7 +353,7 @@ class PauseSubState extends MusicBeatSubstate
 	{
 		PlayState.instance.paused = true; // For lua
 		FlxG.sound.music.volume = 0;
-		PlayState.instance.vocals.volume = 0;
+		Conductor.vocals.volume = 0;
 
 		if(noTrans)
 		{
@@ -381,7 +381,7 @@ class PauseSubState extends MusicBeatSubstate
 				item.alpha = 1;
 				if(item == skipTimeTracker)
 				{
-					curTime = Math.max(0, Conductor.songPosition);
+					curTime = Math.max(0, Conductor.time);
 					updateSkipTimeText();
 				}
 			}

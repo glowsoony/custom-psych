@@ -275,7 +275,7 @@ class Character extends FlxSprite
 		switch(curCharacter)
 		{
 			case 'pico-speaker':
-				if(animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
+				if(animationNotes.length > 0 && Conductor.time > animationNotes[0][0])
 				{
 					var noteData:Int = 1;
 					if(animationNotes[0][1] > 2) noteData = 3;
@@ -290,7 +290,7 @@ class Character extends FlxSprite
 		if (getAnimationName().startsWith('sing')) holdTimer += elapsed;
 		else if(isPlayer) holdTimer = 0;
 
-		if (!isPlayer && holdTimer >= Conductor.stepCrochet * (0.0011 #if FLX_PITCH / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1) #end) * singDuration)
+		if (!isPlayer && holdTimer >= Conductor.stepCrotchet * (0.0011 #if FLX_PITCH / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1) #end) * singDuration)
 		{
 			dance();
 			holdTimer = 0;

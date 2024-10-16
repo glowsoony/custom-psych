@@ -17,7 +17,7 @@ class LatencyState extends FlxState
 
 		for (i in 0...32)
 		{
-			var note:Note = new Note(Conductor.crochet * i, 1);
+			var note:Note = new Note(Conductor.crotchet * i, 1);
 			noteGrp.add(note);
 		}
 
@@ -37,7 +37,7 @@ class LatencyState extends FlxState
 	{
 		offsetText.text = "Offset: " + Conductor.offset + "ms";
 
-		Conductor.songPosition = FlxG.sound.music.time - Conductor.offset;
+		Conductor.time = FlxG.sound.music.time - Conductor.offset;
 
 		var multiply:Float = 1;
 
@@ -58,7 +58,7 @@ class LatencyState extends FlxState
 
 		noteGrp.forEach(function(daNote:Note)
 		{
-			daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * 0.45);
+			daNote.y = (strumLine.y - (Conductor.time - daNote.strumTime) * 0.45);
 			daNote.x = strumLine.x + 30;
 
 			if (daNote.y < strumLine.y)

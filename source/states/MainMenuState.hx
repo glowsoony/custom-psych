@@ -135,10 +135,7 @@ class MainMenuState extends MusicBeatState
 	var selectedSomethin:Bool = false;
 
 	var timeNotMoving:Float = 0;
-	override function update(elapsed:Float)
-	{
-		if (FlxG.sound.music.volume < 0.8)
-			FlxG.sound.music.volume = Math.min(FlxG.sound.music.volume + 0.5 * elapsed, 0.8);
+	override function update(elapsed:Float) {
 
 		if (!selectedSomethin)
 		{

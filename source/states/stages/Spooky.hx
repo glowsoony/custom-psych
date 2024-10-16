@@ -38,9 +38,9 @@ class Spooky extends BaseStage
 
 	var lightningStrikeBeat:Int = 0;
 	var lightningOffset:Int = 8;
-	override function beatHit()
+	override function beatHit(beat:Int)
 	{
-		if (FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset)
+		if (FlxG.random.bool(10) && beat > lightningStrikeBeat + lightningOffset)
 		{
 			lightningStrikeShit();
 		}

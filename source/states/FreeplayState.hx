@@ -220,9 +220,6 @@ class FreeplayState extends MusicBeatState
 		if(WeekData.weeksList.length < 1)
 			return;
 
-		if (FlxG.sound.music.volume < 0.7)
-			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
-
 		lerpScore = Math.floor(FlxMath.lerp(intendedScore, lerpScore, Math.exp(-elapsed * 24)));
 		lerpRating = FlxMath.lerp(intendedRating, lerpRating, Math.exp(-elapsed * 12));
 
@@ -596,8 +593,10 @@ class FreeplayState extends MusicBeatState
 		super.destroy();
 
 		FlxG.autoPause = ClientPrefs.data.autoPause;
-		if (!FlxG.sound.music.playing && !stopMusicPlay)
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		if (!Conductor.inst.playing && !stopMusicPlay) {
+			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'));
+			Conductor.inst.play();
+		}
 	}	
 }
 

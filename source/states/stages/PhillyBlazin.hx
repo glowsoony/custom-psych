@@ -144,11 +144,6 @@ class PhillyBlazin extends BaseStage
 		remove(dadGroup, true);
 		addBehindBF(dadGroup);
 	}
-
-	override function beatHit()
-	{
-		//if(curBeat % 2 == 0) abot.beatHit();
-	}
 	
 	override function startSong()
 	{

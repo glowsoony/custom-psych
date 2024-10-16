@@ -370,7 +370,7 @@ class PixelSplashShaderRef
 
 		if(!PlayState.isPixelStage) pixelAmount = 1;
 		else pixelAmount = PlayState.daPixelZoom;
-		//trace('Created shader ' + Conductor.songPosition);
+		//trace('Created shader ' + Conductor.time);
 	}
 }
 

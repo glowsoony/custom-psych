@@ -59,7 +59,7 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		instance = this;
 
-		Conductor.songPosition = 0;
+		Conductor.time = 0;
 
 		if(boyfriend == null)
 		{
@@ -191,7 +191,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			
 			if (FlxG.sound.music.playing)
 			{
-				Conductor.songPosition = FlxG.sound.music.time;
+				Conductor.time = FlxG.sound.music.time;
 			}
 		}
 	}

@@ -50,16 +50,16 @@ class Template extends BaseStage
 	// Steps, Beats and Sections:
 	//    curStep, curDecStep
 	//    curBeat, curDecBeat
-	//    curSection
-	override function stepHit()
+	//    curMeasure
+	override function stepHit(step:Int)
 	{
 		// Code here
 	}
-	override function beatHit()
+	override function beatHit(beat:Int)
 	{
 		// Code here
 	}
-	override function sectionHit()
+	override function measureHit(measure:Int)
 	{
 		// Code here
 	}

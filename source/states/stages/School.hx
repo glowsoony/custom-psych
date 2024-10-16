@@ -89,7 +89,7 @@ class School extends BaseStage
 		}
 	}
 
-	override function beatHit()
+	override function beatHit(_)
 	{
 		if(bgGirls != null) bgGirls.dance();
 	}

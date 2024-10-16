@@ -46,7 +46,7 @@ class Mall extends BaseStage
 	}
 
 	override function countdownTick(count:Countdown, num:Int) everyoneDance();
-	override function beatHit() everyoneDance();
+	override function beatHit(beat:Int) everyoneDance();
 
 	override function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, strumTime:Float)
 	{

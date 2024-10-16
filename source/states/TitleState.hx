@@ -75,12 +75,6 @@ class TitleState extends MusicBeatState
 		super.create();
 		Paths.clearUnusedMemory();
 
-		if(!initialized)
-		{
-			ClientPrefs.loadPrefs();
-			Language.reloadPhrases();
-		}
-
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		#if CHECK_FOR_UPDATES
@@ -151,8 +145,7 @@ class TitleState extends MusicBeatState
 	function startIntro()
 	{
 		persistentUpdate = true;
-		if (!initialized && FlxG.sound.music == null)
-			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+		Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7);
 
 		loadJsonData();
 		#if TITLE_SCREEN_EASTER_EGG easterEggData(); #end
@@ -238,10 +231,11 @@ class TitleState extends MusicBeatState
 		add(credGroup);
 		add(ngSpr);
 
-		if (initialized)
-			skipIntro();
-		else
+		if (initialized) skipIntro();
+		else {
 			initialized = true;
+			Conductor.play();
+		}
 
 		// credGroup.add(credTextShit);
 	}
@@ -286,12 +280,10 @@ class TitleState extends MusicBeatState
 						add(bg);
 					}
 				}
-				catch(e:haxe.Exception)
-				{
+				catch(e:haxe.Exception) {
 					trace('[WARN] Title JSON might broken, ignoring issue...\n${e.details()}');
 				}
-			}
-			else trace('[WARN] No Title JSON detected, using default values.');
+			} else trace('[WARN] No Title JSON detected, using default values.');
 		}
 		//else trace('[WARN] No Title JSON detected, using default values.');
 	}
@@ -357,8 +349,6 @@ class TitleState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.sound.music != null)
-			Conductor.songPosition = FlxG.sound.music.time;
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER || controls.ACCEPT;
@@ -536,9 +526,9 @@ class TitleState extends MusicBeatState
 
 	private var sickBeats:Int = 0; //Basically curBeat but won't be skipped if you hold the tab or resize the screen
 	public static var closedState:Bool = false;
-	override function beatHit()
+	override function beatHit(beat:Int)
 	{
-		super.beatHit();
+		super.beatHit(beat);
 
 		if(logoBl != null)
 			logoBl.animation.play('bump', true);
@@ -563,8 +553,6 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					//FlxG.sound.music.stop();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
-					FlxG.sound.music.fadeIn(4, 0, 0.7);
 				case 2:
 					createCoolText(['Psych Engine by'], 40);
 				case 4:

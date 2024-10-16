@@ -169,7 +169,7 @@ class Limo extends BaseStage
 		}
 	}
 
-	override function beatHit()
+	override function beatHit(beat:Int)
 	{
 		if(!ClientPrefs.data.lowQuality) {
 			grpLimoDancers.forEach(function(dancer:BackgroundDancer)

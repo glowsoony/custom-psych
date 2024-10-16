@@ -220,16 +220,16 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		if(Difficulty.list.length < 1) Difficulty.resetList();
 		_keysPressedBuffer.resize(keysArray.length);
 
-		if(_shouldReset) Conductor.songPosition = 0;
+		if(_shouldReset) Conductor.time = 0;
 		persistentUpdate = false;
 		FlxG.mouse.visible = true;
 		FlxG.sound.list.add(vocals);
 		FlxG.sound.list.add(opponentVocals);
 
-		vocals.autoDestroy = false;
-		vocals.looped = true;
-		opponentVocals.autoDestroy = false;
-		opponentVocals.looped = true;
+		Conductor.mainVocals.autoDestroy = false;
+		Conductor.mainVocals.looped = true;
+		Conductor.opponentVocals.autoDestroy = false;
+		Conductor.opponentVocals.looped = true;
 
 		initPsychCamera();
 		camUI = new FlxCamera();
@@ -438,11 +438,11 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		reloadNotesDropdowns();
 		if(!_shouldReset)
 		{
-			vocals.time = opponentVocals.time = FlxG.sound.music.time = Conductor.songPosition - Conductor.offset;
-			if(FlxG.sound.music.time >= vocals.length)
-				vocals.pause();
-			if(FlxG.sound.music.time >= opponentVocals.length)
-				opponentVocals.pause();
+			Conductor.mainVocals.time = Conductor.opponentVocals.time = Conductor.inst.time = Conductor.time - Conductor.offset;
+			if(Conductor.inst.time >= Conductor.mainVocals.length)
+				Conductor.mainVocals.pause();
+			if(Conductor.inst.time >= Conductor.opponentVocals.length)
+				Conductor.opponentVocals.pause();
 		}
 
 		reloadNotes();
@@ -606,8 +606,8 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		updateHeads(true);
 		
 		autoSaveTime = 0;
-		Conductor.songPosition = 0;
-		if(FlxG.sound.music != null) FlxG.sound.music.time = 0;
+		Conductor.time = 0;
+		if(Conductor.inst != null) Conductor.inst.time = 0;
 		curSec = 0;
 		loadSection();
 		forceDataUpdate = true;
@@ -648,7 +648,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	var autoSaveCap:Int = 2; //in minutes
 	var backupLimit:Int = 10;
 
-	var lastBeatHit:Int = 0;
 	override function update(elapsed:Float)
 	{
 		if(!fileDialog.completed)
@@ -739,10 +738,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 		ClientPrefs.toggleVolumeKeys(PsychUIInputText.focusOn == null);
 
-		var lastTime:Float = Conductor.songPosition;
+		var lastTime:Float = Conductor.time;
 		outputAlpha = Math.max(0, outputAlpha - elapsed);
 		var holdingAlt:Bool = FlxG.keys.pressed.ALT;
-		if(FlxG.sound.music != null)
+		if(Conductor.inst != null)
 		{
 			if(PsychUIInputText.focusOn == null) //If not typing anything
 			{
@@ -788,8 +787,8 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					}
 
 					var sectionStart:Float = cachedSectionTimes[curSec];
-					var strumTime:Float = Conductor.songPosition - sectionStart;
-					strumTime -= strumTime % (Conductor.stepCrochet * 16 / curQuant);
+					var strumTime:Float = Conductor.time - sectionStart;
+					strumTime -= strumTime % (Conductor.stepCrotchet * 16 / curQuant);
 					strumTime += sectionStart;
 
 					trace('Vortex editor press at time: $strumTime');
@@ -857,7 +856,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				}
 				else if(FlxG.keys.justPressed.A != FlxG.keys.justPressed.D && !holdingAlt)
 				{
-					if(FlxG.sound.music.playing)
+					if(Conductor.inst.playing)
 						setSongPlaying(false);
 
 					var shiftAdd:Int = FlxG.keys.pressed.SHIFT ? 4 : 1;
@@ -869,7 +868,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 						if(shiftAdd > 0)
 						{
 							loadSection(curSec - shiftAdd);
-							Conductor.songPosition = FlxG.sound.music.time = cachedSectionTimes[curSec] - Conductor.offset + 0.000001;
+							Conductor.time = Conductor.inst.time = cachedSectionTimes[curSec] - Conductor.offset + 0.000001;
 						}
 					}
 					else if(FlxG.keys.justPressed.D)
@@ -879,46 +878,46 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 						if(shiftAdd > 0)
 						{
 							loadSection(curSec + shiftAdd);
-							Conductor.songPosition = FlxG.sound.music.time = cachedSectionTimes[curSec] - Conductor.offset + 0.000001;
+							Conductor.time = Conductor.inst.time = cachedSectionTimes[curSec] - Conductor.offset + 0.000001;
 						}
 					}
 				}
 				else if(FlxG.keys.justPressed.R)
 				{
-					Conductor.songPosition = FlxG.sound.music.time = cachedSectionTimes[curSec] + (curSec > 0 ? 0.000001 : 0);
+					Conductor.time = Conductor.inst.time = cachedSectionTimes[curSec] + (curSec > 0 ? 0.000001 : 0);
 				}
 				else if(FlxG.keys.pressed.W != FlxG.keys.pressed.S || FlxG.mouse.wheel != 0)
 				{
-					if(FlxG.sound.music.playing)
+					if(Conductor.inst.playing)
 						setSongPlaying(false);
 
 					if(mouseSnapCheckBox.checked && FlxG.mouse.wheel != 0)
 					{
-						var snap:Float = Conductor.stepCrochet / (curQuant/16) / curZoom;
+						var snap:Float = Conductor.stepCrotchet / (curQuant/16) / curZoom;
 						var timeAdd:Float = (FlxG.keys.pressed.SHIFT ? 4 : 1) / (holdingAlt ? 4 : 1) * -FlxG.mouse.wheel * snap;
-						var time:Float = Math.round((FlxG.sound.music.time + timeAdd) / snap) * snap;
+						var time:Float = Math.round((Conductor.inst.time + timeAdd) / snap) * snap;
 						if(time > 0) time += 0.000001; //goes at the start of a section more properly
-						FlxG.sound.music.time = time;
+						Conductor.inst.time = time;
 					}
 					else
 					{
 						var speedMult:Float = (FlxG.keys.pressed.SHIFT ? 4 : 1) * (FlxG.mouse.wheel != 0 ? 4 : 1) / (holdingAlt ? 4 : 1);
 						if(FlxG.keys.pressed.W || FlxG.mouse.wheel > 0)
-							FlxG.sound.music.time -= Conductor.crochet * speedMult * elapsed / curZoom;
+							Conductor.inst.time -= Conductor.crotchet * speedMult * elapsed / curZoom;
 						else if(FlxG.keys.pressed.S || FlxG.mouse.wheel < 0)
-							FlxG.sound.music.time += Conductor.crochet * speedMult * elapsed / curZoom;
+							Conductor.inst.time += Conductor.crotchet * speedMult * elapsed / curZoom;
 					}
 
-					FlxG.sound.music.time = FlxMath.bound(FlxG.sound.music.time, 0, FlxG.sound.music.length - 1);
-					if(FlxG.sound.music.playing) setSongPlaying(!FlxG.sound.music.playing);
+					Conductor.inst.time = FlxMath.bound(Conductor.inst.time, 0, Conductor.inst.length - 1);
+					if(Conductor.inst.playing) setSongPlaying(!Conductor.inst.playing);
 				}
 				else if(FlxG.keys.justPressed.SPACE)
 				{
-					setSongPlaying(!FlxG.sound.music.playing);
+					setSongPlaying(!Conductor.inst.playing);
 				}
 			}
 
-			if(!songFinished) Conductor.songPosition = FlxMath.bound(FlxG.sound.music.time + Conductor.offset, 0, FlxG.sound.music.length - 1);
+			if(!songFinished) Conductor.time = FlxMath.bound(Conductor.inst.time + Conductor.offset, 0, Conductor.inst.length - 1);
 			updateScrollY();
 		}
 
@@ -927,19 +926,19 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		if(songFinished)
 		{
 			onSongComplete();
-			lastTime = FlxG.sound.music.time;
+			lastTime = Conductor.inst.time;
 			songFinished = false;
 		}
-		else if(FlxG.sound.music != null)
+		else if(Conductor.inst != null)
 		{
-			if(FlxG.sound.music.time >= vocals.length)
-				vocals.pause();
-			if(FlxG.sound.music.time >= opponentVocals.length)
-				opponentVocals.pause();
+			if(Conductor.inst.time >= Conductor.mainVocals.length)
+				Conductor.mainVocals.pause();
+			if(Conductor.inst.time >= Conductor.opponentVocals.length)
+				Conductor.opponentVocals.pause();
 
-			if(curSec > 0 && Conductor.songPosition < cachedSectionTimes[curSec])
+			if(curSec > 0 && Conductor.time < cachedSectionTimes[curSec])
 				loadSection(curSec - 1);
-			else if(curSec < cachedSectionTimes.length - 1 && Conductor.songPosition >= cachedSectionTimes[curSec + 1])
+			else if(curSec < cachedSectionTimes.length - 1 && Conductor.time >= cachedSectionTimes[curSec + 1])
 				loadSection(curSec + 1);
 		}
 
@@ -1088,7 +1087,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					notes.sort(PlayState.sortByTime);
 					var noteSec:Int = 0;
 					var nextSectionTime:Float = cachedSectionTimes[noteSec + 1];
-					var curSectionTime:Float = cachedSectionTimes[noteSec];
+					var curMeasureTime:Float = cachedSectionTimes[noteSec];
 					for (num => note in notes)
 					{
 						if(note == null) continue;
@@ -1097,10 +1096,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 						{
 							noteSec++;
 							nextSectionTime = cachedSectionTimes[noteSec + 1];
-							curSectionTime = cachedSectionTimes[noteSec];
+							curMeasureTime = cachedSectionTimes[noteSec];
 						}
 						positionNoteYOnTime(note, noteSec);
-						note.updateSustainToZoom(cachedSectionCrochets[noteSec] / 4, curZoom);
+						note.updateSustainToZoom(cachedSectioncrotchets[noteSec] / 4, curZoom);
 					}
 	
 					for (event in events)
@@ -1258,7 +1257,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 							curSecRow++;
 						}
 
-						note.setStrumTime(Math.max(-5000, note.strumTime + (diff * cachedSectionCrochets[curSecRow] / 4) / GRID_SIZE * curZoom));
+						note.setStrumTime(Math.max(-5000, note.strumTime + (diff * cachedSectioncrotchets[curSecRow] / 4) / GRID_SIZE * curZoom));
 						positionNoteYOnTime(note, curSecRow);
 						if(note.isEvent) cast (note, EventMetaNote).updateEventText();
 					}
@@ -1320,7 +1319,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					}
 					else if(!holdingAlt && FlxG.mouse.y >= gridBg.y && FlxG.mouse.y < gridBg.y + gridBg.height) // Add note
 					{
-						var strumTime:Float = (diffY / GRID_SIZE * Conductor.stepCrochet / curZoom) + cachedSectionTimes[curSec];
+						var strumTime:Float = (diffY / GRID_SIZE * Conductor.stepCrotchet / curZoom) + cachedSectionTimes[curSec];
 						if(noteData >= 0)
 						{
 							trace('Added note at time: $strumTime');
@@ -1389,15 +1388,15 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		}
 		ignoreClickForThisFrame = false;
 
-		if(Conductor.songPosition != lastTime || forceDataUpdate)
+		if(Conductor.time != lastTime || forceDataUpdate)
 		{
-			var curTime:String = FlxStringUtil.formatTime(Conductor.songPosition / 1000, true);
-			var songLength:String = (FlxG.sound.music != null) ? FlxStringUtil.formatTime(FlxG.sound.music.length / 1000, true) : '???';
+			var curTime:String = FlxStringUtil.formatTime(Conductor.time / 1000, true);
+			var songLength:String = (Conductor.inst != null) ? FlxStringUtil.formatTime(Conductor.inst.length / 1000, true) : '???';
 			var str:String =  '$curTime / $songLength' +
 							  '\n\nSection: $curSec' +
-							  '\nBeat: $curBeat' +
-							  '\nStep: $curStep' +
-							  '\n\nBeat Snap: ${curQuant} / 16' +
+							  '\nBeat: ${Conductor.beat}' +
+							  '\nStep: ${Conductor.step}' +
+							  '\n\nBeat Snap: $curQuant / 16' +
 							  '\nSelected: ${selectedNotes.length}';
 
 			if(str != infoText.text)
@@ -1406,16 +1405,16 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				if(infoText.autoSize) infoText.autoSize = false;
 			}
 
-			var vortexPlaying:Bool = (vortexEnabled && FlxG.sound.music != null && FlxG.sound.music.playing);
-			var canPlayHitSound:Bool = (FlxG.sound.music != null && FlxG.sound.music.playing && lastTime < Conductor.songPosition);
+			var vortexPlaying:Bool = (vortexEnabled && Conductor.inst != null && Conductor.inst.playing);
+			var canPlayHitSound:Bool = (Conductor.inst != null && Conductor.inst.playing && lastTime < Conductor.time);
 			var hitSoundPlayer:Bool = (hitsoundPlayerStepper.value > 0);
 			var hitSoundOpp:Bool = (hitsoundOpponentStepper.value > 0);
 			for (note in curRenderedNotes)
 			{
 				if(note == null || note.isEvent) continue;
 
-				note.alpha = (note.strumTime >= Conductor.songPosition) ? 1 : 0.6;
-				if(Conductor.songPosition > note.strumTime && lastTime <= note.strumTime)
+				note.alpha = (note.strumTime >= Conductor.time) ? 1 : 0.6;
+				if(Conductor.time > note.strumTime && lastTime <= note.strumTime)
 				{
 					if(canPlayHitSound)
 					{
@@ -1437,18 +1436,12 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 						if(strumNote != null)
 						{
 							strumNote.playAnim('confirm', true);
-							strumNote.resetAnim = Math.max(Conductor.stepCrochet * 1.25, note.sustainLength) / 1000 / playbackRate;
+							strumNote.resetAnim = Math.max(Conductor.stepCrotchet * 1.25, note.sustainLength) / 1000 / playbackRate;
 						}
 					}
 				}
 			}
 			forceDataUpdate = false;
-			
-			// moved from beatHit()
-			if(metronomeStepper.value > 0 && lastBeatHit != curBeat)
-				FlxG.sound.play(Paths.sound('Metronome_Tick'), metronomeStepper.value);
-
-			lastBeatHit = curBeat;
 		}
 
 		if(selectedNotes.length > 0)
@@ -1459,7 +1452,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 			var qPress = FlxG.keys.justPressed.Q;
 			var ePress = FlxG.keys.justPressed.E;
-			var addSus = (FlxG.keys.pressed.SHIFT ? 4 : 1) * (Conductor.stepCrochet / 2);
+			var addSus = (FlxG.keys.pressed.SHIFT ? 4 : 1) * (Conductor.stepCrotchet / 2);
 			if(qPress) addSus *= -1;
 
 			if(qPress != ePress && selectedNotes.length != 1)
@@ -1477,7 +1470,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 						while(cachedSectionTimes.length > noteSec + 1 && cachedSectionTimes[noteSec + 1] <= note.strumTime)
 							noteSec++;
 
-						note.setSustainLength(note.sustainLength + addSus, cachedSectionCrochets[noteSec] / 4, curZoom);
+						note.setSustainLength(note.sustainLength + addSus, cachedSectioncrotchets[noteSec] / 4, curZoom);
 						if(selectedNotes.length == 1)
 							susLengthStepper.value = note.sustainLength;
 					}
@@ -1577,11 +1570,11 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	function updateScrollY()
 	{
 		var secStartTime:Null<Float> = cast cachedSectionTimes[curSec];
-		var secCrochet:Null<Float> = cast cachedSectionCrochets[curSec];
+		var seccrotchet:Null<Float> = cast cachedSectioncrotchets[curSec];
 		var secRows:Null<Float> = cast cachedSectionRow[curSec];
-		if(secStartTime == null || secCrochet == null || secRows == null) return;
+		if(secStartTime == null || seccrotchet == null || secRows == null) return;
 
-		scrollY = (((Conductor.songPosition - secStartTime) / secCrochet * GRID_SIZE * 4) + (secRows * GRID_SIZE)) * curZoom - FlxG.height/2;
+		scrollY = (((Conductor.time - secStartTime) / seccrotchet * GRID_SIZE * 4) + (secRows * GRID_SIZE)) * curZoom - FlxG.height/2;
 	}
 
 	function updateSelectionBox()
@@ -1744,7 +1737,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 	var cachedSectionRow:Array<Int>;
 	var cachedSectionTimes:Array<Float>;
-	var cachedSectionCrochets:Array<Float>;
+	var cachedSectioncrotchets:Array<Float>;
 	var cachedSectionBPMs:Array<Float>;
 	function loadChart(song:SwagSong)
 	{
@@ -1756,7 +1749,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	function loadMusic(?killAudio:Bool = false)
 	{
 		setSongPlaying(false);
-		var time:Float = Conductor.songPosition;
+		var time:Float = Conductor.time;
 
 		if(killAudio)
 		{
@@ -1782,9 +1775,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		try
 		{
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0);
-			FlxG.sound.music.pause();
-			FlxG.sound.music.time = time;
-			FlxG.sound.music.onComplete = (function() songFinished = true);
+			Conductor.inst.pause();
+			Conductor.inst.time = time;
+			Conductor.inst.onComplete = (function() songFinished = true);
 		}
 		catch(e:Exception)
 		{
@@ -1792,27 +1785,27 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			return;
 		}
 
-		@:privateAccess vocals.cleanup(true);
-		@:privateAccess opponentVocals.cleanup(true);
+		@:privateAccess Conductor.mainVocals.cleanup(true);
+		@:privateAccess Conductor.opponentVocals.cleanup(true);
 		if (PlayState.SONG.needsVoices)
 		{
 			try
 			{
 				var playerVocals:Sound = Paths.voices(PlayState.SONG.song, (characterData.vocalsP1 == null || characterData.vocalsP1.length < 1) ? 'Player' : characterData.vocalsP1);
-				vocals.loadEmbedded(playerVocals != null ? playerVocals : Paths.voices(PlayState.SONG.song));
-				vocals.volume = 0;
-				vocals.play();
-				vocals.pause();
-				vocals.time = time;
+				Conductor.mainVocals.loadEmbedded(playerVocals != null ? playerVocals : Paths.voices(PlayState.SONG.song));
+				Conductor.mainVocals.volume = 0;
+				Conductor.mainVocals.play();
+				Conductor.mainVocals.pause();
+				Conductor.mainVocals.time = time;
 				
 				var oppVocals:Sound = Paths.voices(PlayState.SONG.song, (characterData.vocalsP2 == null || characterData.vocalsP2.length < 1) ? 'Opponent' : characterData.vocalsP2);
 				if(oppVocals != null && oppVocals.length > 0)
 				{
-					opponentVocals.loadEmbedded(oppVocals);
-					opponentVocals.volume = 0;
-					opponentVocals.play();
-					opponentVocals.pause();
-					opponentVocals.time = time;
+					Conductor.opponentVocals.loadEmbedded(oppVocals);
+					Conductor.opponentVocals.volume = 0;
+					Conductor.opponentVocals.play();
+					Conductor.opponentVocals.pause();
+					Conductor.opponentVocals.time = time;
 				}
 			}
 			catch (e:Dynamic) {}
@@ -1831,19 +1824,19 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	{
 		trace('song completed');
 		setSongPlaying(false);
-		Conductor.songPosition = FlxG.sound.music.time = vocals.time = opponentVocals.time = FlxG.sound.music.length - 1;
+		Conductor.time = Conductor.inst.time = Conductor.mainVocals.time = Conductor.opponentVocals.time = Conductor.inst.length - 1;
 		curSec = PlayState.SONG.notes.length - 1;
 		forceDataUpdate = true;
 	}
 
 	function updateAudioVolume()
 	{
-		FlxG.sound.music.volume = instVolumeStepper.value;
-		vocals.volume = playerVolumeStepper.value;
-		opponentVocals.volume = opponentVolumeStepper.value;
-		if(instMuteCheckBox.checked) FlxG.sound.music.volume = 0;
-		if(playerMuteCheckBox.checked) vocals.volume = 0;
-		if(opponentMuteCheckBox.checked) opponentVocals.volume = 0;
+		Conductor.inst.volume = instVolumeStepper.value;
+		Conductor.mainVocals.volume = playerVolumeStepper.value;
+		Conductor.opponentVocals.volume = opponentVolumeStepper.value;
+		if(instMuteCheckBox.checked) Conductor.inst.volume = 0;
+		if(playerMuteCheckBox.checked) Conductor.mainVocals.volume = 0;
+		if(opponentMuteCheckBox.checked) Conductor.opponentVocals.volume = 0;
 	}
 
 	var playbackRate:Float = 1;
@@ -1851,34 +1844,30 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	{
 		#if FLX_PITCH
 		if(value == null) value = playbackRate;
-		FlxG.sound.music.pitch = value;
-		vocals.pitch = value;
-		opponentVocals.pitch = value;
+		Conductor.inst.pitch = value;
+		Conductor.mainVocals.pitch = value;
+		Conductor.opponentVocals.pitch = value;
 		#end
 	}
 
 	function setSongPlaying(doPlay:Bool)
 	{
-		if(FlxG.sound.music == null) return;
+		if(Conductor.inst == null) return;
 
-		vocals.time = FlxG.sound.music.time;
-		opponentVocals.time = FlxG.sound.music.time;
+		Conductor.mainVocals.time = Conductor.inst.time;
+		Conductor.opponentVocals.time = Conductor.inst.time;
 
-		if(doPlay)
-		{
-			FlxG.sound.music.play();
-			vocals.play();
-			opponentVocals.play();
-		}
-		else
-		{
-			FlxG.sound.music.pause();
-			vocals.pause();
-			opponentVocals.pause();
+		if (doPlay) {
+			Conductor.inst.play();
+			Conductor.mainVocals.play();
+			Conductor.opponentVocals.play();
+		} else {
+			Conductor.inst.pause();
+			Conductor.mainVocals.pause();
+			Conductor.opponentVocals.pause();
 		}
 
-		for (note in strumLineNotes)
-		{
+		for (note in strumLineNotes) {
 			note.alpha = doPlay ? 1 : 0.4;
 			if(!doPlay)
 			{
@@ -1925,7 +1914,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 		var swagNote:MetaNote = new MetaNote(daStrumTime, daNoteData, note);
 		swagNote.mustPress = gottaHitNote;
-		swagNote.setSustainLength(note[2], cachedSectionCrochets[secNum] / 4, curZoom);
+		swagNote.setSustainLength(note[2], cachedSectioncrotchets[secNum] / 4, curZoom);
 		swagNote.gfNote = (section.gfSection && gottaHitNote == section.mustHitSection);
 		swagNote.noteType = note[3];
 		swagNote.scrollFactor.x = 0;
@@ -1964,20 +1953,26 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		return swagEvent;
 	}
 
+	override function beatHit(beat:Int) {
+		if (metronomeStepper.value <= 0) return;
+
+		FlxG.sound.play(Paths.sound('Metronome_Tick'), metronomeStepper.value);
+	}
+
 	function _cacheSections()
 	{
 		var time:Float = 0;
 		var row:Int = 0;
 		cachedSectionRow = [];
 		cachedSectionTimes = [];
-		cachedSectionCrochets = [];
+		cachedSectioncrotchets = [];
 		cachedSectionBPMs = [];
 
 		if(PlayState.SONG == null)
 		{
 			cachedSectionRow.push(0);
 			cachedSectionTimes.push(0);
-			cachedSectionCrochets.push(0);
+			cachedSectioncrotchets.push(0);
 			cachedSectionBPMs.push(0);
 			return;
 		}
@@ -1990,12 +1985,12 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			if(secs == null || Math.isNaN(secs) || secs <= 0) section.sectionBeats = 4;
 	
 			if(section.changeBPM) bpm = section.bpm;
-			var beat:Float = Conductor.calculateCrochet(bpm);
+			var beat:Float = Conductor.calculateCrotchet(bpm);
 			//trace(secBPM, beat);
 			
 			cachedSectionRow.push(row);
 			cachedSectionTimes.push(time);
-			cachedSectionCrochets.push(beat);
+			cachedSectioncrotchets.push(beat);
 			cachedSectionBPMs.push(bpm);
 
 			var lastTime:Float = time;
@@ -2009,7 +2004,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				else if(secNum < PlayState.SONG.notes.length && note[0] >= time - 0.000001) note[0] = time - 0.000001;
 			}
 
-			if(FlxG.sound.music != null && time >= FlxG.sound.music.length)
+			if(Conductor.inst != null && time >= Conductor.inst.length)
 			{
 				var lastSectionNum:Int = PlayState.SONG.notes.length - 1;
 				if(secNum < lastSectionNum) //Delete extra sections
@@ -2031,11 +2026,11 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			}
 		}
 
-		if(FlxG.sound.music != null && !reachedLimit) //Created sections to fill blank space
+		if(Conductor.inst != null && !reachedLimit) //Created sections to fill blank space
 		{
 			var lastSection = PlayState.SONG.notes[PlayState.SONG.notes.length-1];
-			var beat:Float = Conductor.calculateCrochet(bpm);
-			var sectionBeats:Float = lastSection != null ? lastSection.sectionBeats : 4;
+			var beat:Float = Conductor.calculateCrotchet(bpm);
+			var sectionBeats:Int = lastSection != null ? lastSection.sectionBeats : 4;
 			var rowRound:Int = Math.round(4 * sectionBeats);
 			var timeAdd:Float = beat * (rowRound / 4);
 			var mustHitSec:Bool = lastSection != null ? lastSection.mustHitSection : true;
@@ -2057,13 +2052,13 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 				cachedSectionRow.push(row);
 				cachedSectionTimes.push(time);
-				cachedSectionCrochets.push(beat);
+				cachedSectioncrotchets.push(beat);
 				cachedSectionBPMs.push(bpm);
 
 				row += rowRound;
 				time += timeAdd;
 
-				if(time >= FlxG.sound.music.length)
+				if(time >= Conductor.inst.length)
 				{
 					trace('created sections until ${PlayState.SONG.notes.length-1}');
 					reachedLimit = true;
@@ -2123,10 +2118,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			altAnimSectionCheckBox.checked = sec.altAnim;
 			changeBpmCheckBox.checked = sec.changeBPM;
 			changeBpmStepper.value = Conductor.bpm;
-			beatsPerSecStepper.value = sec.sectionBeats;
+			beatsPerSecStepper.value = Math.floor(sec.sectionBeats);
 
-			strumTimeStepper.step = Conductor.stepCrochet;
-			susLengthStepper.step = cachedSectionCrochets[curSec] / 4 / 2;
+			strumTimeStepper.step = Conductor.stepCrotchet;
+			susLengthStepper.step = cachedSectioncrotchets[curSec] / 4 / 2;
 			susLengthStepper.max = susLengthStepper.step * 128;
 			if(selectedNotes.length > 1) susLengthStepper.min = -susLengthStepper.max;
 			else susLengthStepper.min = 0;
@@ -2158,8 +2153,8 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			{
 				if(!firstNote) sectionFirstNoteID = num;
 				curRenderedNotes.add(note);
-				note.alpha = (note.strumTime >= Conductor.songPosition) ? 1 : 0.6;
-				if(note.hasSustain) note.updateSustainToZoom(cachedSectionCrochets[curSec] / 4, curZoom);
+				note.alpha = (note.strumTime >= Conductor.time) ? 1 : 0.6;
+				if(note.hasSustain) note.updateSustainToZoom(cachedSectioncrotchets[curSec] / 4, curZoom);
 			}
 		}
 
@@ -2171,7 +2166,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				{
 					if(!firstEvent) sectionFirstEventID = num;
 					curRenderedNotes.add(event);
-					event.alpha = (event.strumTime >= Conductor.songPosition) ? 1 : 0.6;
+					event.alpha = (event.strumTime >= Conductor.time) ? 1 : 0.6;
 					event.eventText.visible = true;
 				}
 			}
@@ -2195,7 +2190,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				{
 					behindRenderedNotes.add(note);
 					note.alpha = 0.4;
-					if(note.hasSustain) note.updateSustainToZoom(cachedSectionCrochets[curSec] / 4, curZoom);
+					if(note.hasSustain) note.updateSustainToZoom(cachedSectioncrotchets[curSec] / 4, curZoom);
 				}
 
 				if(SHOW_EVENT_COLUMN)
@@ -2242,7 +2237,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	function positionNoteYOnTime(note:MetaNote, section:Int)
 	{
 		var time:Float = note.strumTime - cachedSectionTimes[section];
-		var noteY:Float = (time / cachedSectionCrochets[section]) * GRID_SIZE * 4 * curZoom;
+		var noteY:Float = (time / cachedSectioncrotchets[section]) * GRID_SIZE * 4 * curZoom;
 		noteY += cachedSectionRow[section] * GRID_SIZE * curZoom;
 		noteY = Math.max(noteY, -150);
 		note.y = noteY + (GRID_SIZE/2 - note.height/2);
@@ -2639,10 +2634,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		var objX = 10;
 		var objY = 25;
 
-		susLengthStepper = new PsychUINumericStepper(objX, objY, Conductor.stepCrochet / 2, 0, 0, Conductor.stepCrochet * 128, 1, 80);
+		susLengthStepper = new PsychUINumericStepper(objX, objY, Conductor.stepCrotchet / 2, 0, 0, Conductor.stepCrotchet * 128, 1, 80);
 		susLengthStepper.onValueChange = function()
 		{
-			var halfStep:Float = (Conductor.stepCrochet / 2);
+			var halfStep:Float = (Conductor.stepCrotchet / 2);
 			trace(halfStep, susLengthStepper.value);
 			var val:Float = Math.round(susLengthStepper.value / halfStep) * halfStep;
 			susLengthStepper.value = val;
@@ -2653,16 +2648,16 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					for (note in selectedNotes)
 					{
 						if(note == null && !note.isEvent) continue;
-						note.setSustainLength(note.sustainLength + (susLengthStepper.value - susLengthLastVal), Conductor.stepCrochet, curZoom);
+						note.setSustainLength(note.sustainLength + (susLengthStepper.value - susLengthLastVal), Conductor.stepCrotchet, curZoom);
 					}
 				}
-				else if(selectedNotes.length == 1) selectedNotes[0].setSustainLength(susLengthStepper.value, Conductor.stepCrochet, curZoom);
+				else if(selectedNotes.length == 1) selectedNotes[0].setSustainLength(susLengthStepper.value, Conductor.stepCrotchet, curZoom);
 				susLengthLastVal = susLengthStepper.value;
 			}
 		};
 
 		objY += 40;
-		strumTimeStepper = new PsychUINumericStepper(objX, objY, Conductor.stepCrochet, 0, -5000, Math.POSITIVE_INFINITY, 3, 120);
+		strumTimeStepper = new PsychUINumericStepper(objX, objY, Conductor.stepCrotchet, 0, -5000, Math.POSITIVE_INFINITY, 3, 120);
 		strumTimeStepper.onValueChange = function()
 		{
 			if(selectedNotes.length < 1) return;
@@ -2736,8 +2731,8 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		var objY = 10;
 		function copyNotesOnSection(?secOff:Int = 0, ?showMessage:Bool = true) //Used on "Copy Section" and "Copy Last Section" buttons
 		{
-			var curSectionTime:Null<Float> = cachedSectionTimes[curSec - secOff];
-			if(curSectionTime == null)
+			var curMeasureTime:Null<Float> = cachedSectionTimes[curSec - secOff];
+			if(curMeasureTime == null)
 			{
 				//showOutput('ERROR: Unknown section??', true);
 				return;
@@ -2752,10 +2747,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				copiedNotes = [];
 				for (note in notes)
 				{
-					if(note.strumTime >= curSectionTime && note.strumTime < nextSectionTime)
+					if(note.strumTime >= curMeasureTime && note.strumTime < nextSectionTime)
 					{
 						var dataCopy:Array<Dynamic> = makeNoteDataCopy(note.songData, false);
-						dataCopy[0] = note.strumTime - curSectionTime;
+						dataCopy[0] = note.strumTime - curMeasureTime;
 						copiedNotes.push(dataCopy);
 						notesCopyNum++;
 					}
@@ -2768,10 +2763,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				copiedEvents = [];
 				for (event in events)
 				{
-					if(event.strumTime >= curSectionTime && event.strumTime < nextSectionTime)
+					if(event.strumTime >= curMeasureTime && event.strumTime < nextSectionTime)
 					{
 						var dataCopy:Array<Dynamic> = makeNoteDataCopy(event.songData, true);
-						dataCopy[0] = event.strumTime - curSectionTime;
+						dataCopy[0] = event.strumTime - curMeasureTime;
 						copiedEvents.push(dataCopy);
 						eventsCopyNum++;
 					}
@@ -2851,7 +2846,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			if(sec != null)
 			{
 				var oldTimes:Array<Float> = cachedSectionTimes.copy();
-				sec.sectionBeats = beatsPerSecStepper.value;
+				sec.sectionBeats = Math.floor(beatsPerSecStepper.value);
 				adaptNotesToNewTimes(oldTimes);
 			}
 		};
@@ -3064,8 +3059,8 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 	function pasteCopiedNotesToSection(?canCopyNotes:Bool = true, ?canCopyEvents:Bool = true, ?showMessage:Bool = true) //Used on "Paste Section" and "Copy Last Section" buttons
 	{
-		var curSectionTime:Null<Float> = cachedSectionTimes[curSec];
-		if(curSectionTime == null)
+		var curMeasureTime:Null<Float> = cachedSectionTimes[curSec];
+		if(curMeasureTime == null)
 		{
 			showOutput('ERROR: Unknown section??', true);
 			return [];
@@ -3080,7 +3075,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			{
 				if(note == null) continue;
 				var dataCopy:Array<Dynamic> = makeNoteDataCopy(note, false);
-				dataCopy[0] += curSectionTime;
+				dataCopy[0] += curMeasureTime;
 
 				var createdNote = createNote(dataCopy, curSec);
 				notes.push(createdNote);
@@ -3096,7 +3091,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			{
 				if(event == null) continue;
 				var dataCopy:Array<Dynamic> = makeNoteDataCopy(event, true);
-				dataCopy[0] += curSectionTime;
+				dataCopy[0] += curMeasureTime;
 
 				var createdEvent = createEvent(dataCopy);
 				events.push(createdEvent);
@@ -4253,10 +4248,10 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			openSubState(new BasePrompt(420, 200, 'Go to Time/Section:',
 				function(state:BasePrompt)
 				{
-					var curTime:Float = Conductor.songPosition;
+					var curTime:Float = Conductor.time;
 					var currentSec:Int = curSec;
 
-					var timeStepper:PsychUINumericStepper = new PsychUINumericStepper(state.bg.x + 100, state.bg.y + 90, 1, Math.floor(curTime)/1000, 0, FlxG.sound.music.length/1000 - 0.01, 2, 80);
+					var timeStepper:PsychUINumericStepper = new PsychUINumericStepper(state.bg.x + 100, state.bg.y + 90, 1, Math.floor(curTime)/1000, 0, Conductor.inst.length/1000 - 0.01, 2, 80);
 					timeStepper.cameras = state.cameras;
 					var sectionStepper:PsychUINumericStepper = new PsychUINumericStepper(timeStepper.x + 160, timeStepper.y, 1, currentSec, 0, PlayState.SONG.notes.length - 1, 0);
 					sectionStepper.cameras = state.cameras;
@@ -4278,7 +4273,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					function updateTime()
 					{
 						var tm:String = FlxStringUtil.formatTime(curTime / 1000, true);
-						var ln:String = FlxStringUtil.formatTime(FlxG.sound.music.length / 1000, true);
+						var ln:String = FlxStringUtil.formatTime(Conductor.inst.length / 1000, true);
 						timeTxt.text = '$tm / $ln';
 					}
 					updateTime();
@@ -4304,7 +4299,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					var btn:PsychUIButton = new PsychUIButton(0, timeTxt.y + 30, 'Go To', function()
 					{
 						curSec = currentSec;
-						FlxG.sound.music.time = FlxMath.bound(curTime, 0, FlxG.sound.music.length - 1);
+						Conductor.inst.time = FlxMath.bound(curTime, 0, Conductor.inst.length - 1);
 						loadSection();
 						state.close();
 					});
@@ -4388,7 +4383,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		notes.sort(PlayState.sortByTime);
 		var noteSec:Int = 0;
 		var nextSectionTime:Float = cachedSectionTimes[noteSec + 1];
-		var curSectionTime:Float = cachedSectionTimes[noteSec];
+		var curMeasureTime:Float = cachedSectionTimes[noteSec];
 
 		for (num => note in notes)
 		{
@@ -4398,7 +4393,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			{
 				noteSec++;
 				nextSectionTime = cachedSectionTimes[noteSec + 1];
-				curSectionTime = cachedSectionTimes[noteSec];
+				curMeasureTime = cachedSectionTimes[noteSec];
 			}
 
 			var arr:Array<Dynamic> = PlayState.SONG.notes[noteSec].sectionNotes;
@@ -4493,9 +4488,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 		var noteSec:Int = 0;
 		var oldNextSectionTime:Float = oldTimes[noteSec + 1];
-		var oldCurSectionTime:Float = oldTimes[noteSec];
+		var oldcurMeasureTime:Float = oldTimes[noteSec];
 		var nextSectionTime:Float = cachedSectionTimes[noteSec + 1];
-		var curSectionTime:Float = cachedSectionTimes[noteSec];
+		var curMeasureTime:Float = cachedSectionTimes[noteSec];
 
 		for (num => note in notes)
 		{
@@ -4505,9 +4500,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			{
 				noteSec++;
 				oldNextSectionTime = oldTimes[noteSec + 1];
-				oldCurSectionTime = oldTimes[noteSec];
+				oldcurMeasureTime = oldTimes[noteSec];
 				nextSectionTime = cachedSectionTimes[noteSec + 1];
-				curSectionTime = cachedSectionTimes[noteSec];
+				curMeasureTime = cachedSectionTimes[noteSec];
 
 				if(noteSec + 1 >= cachedSectionTimes.length)
 				{
@@ -4531,20 +4526,20 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					loadSection();
 					return;
 				}
-				//trace('changed section: $noteSec, $oldNextSectionTime, $oldCurSectionTime, $nextSectionTime, $curSectionTime');
+				//trace('changed section: $noteSec, $oldNextSectionTime, $oldcurMeasureTime, $nextSectionTime, $curMeasureTime');
 			}
 
-			var shouldBound:Bool = (note.strumTime >= oldCurSectionTime && note.strumTime < oldNextSectionTime);
+			var shouldBound:Bool = (note.strumTime >= oldcurMeasureTime && note.strumTime < oldNextSectionTime);
 			var strumTime:Float = note.strumTime;
 
-			var ratio:Float = (nextSectionTime - curSectionTime) / (oldNextSectionTime - oldCurSectionTime);
-			var adaptedStrumTime:Float = ((note.strumTime - oldCurSectionTime) * ratio) + curSectionTime;
+			var ratio:Float = (nextSectionTime - curMeasureTime) / (oldNextSectionTime - oldcurMeasureTime);
+			var adaptedStrumTime:Float = ((note.strumTime - oldcurMeasureTime) * ratio) + curMeasureTime;
 			note.setStrumTime(adaptedStrumTime);
 			if(shouldBound)
-				note.setStrumTime(FlxMath.bound(note.strumTime, curSectionTime, nextSectionTime));
+				note.setStrumTime(FlxMath.bound(note.strumTime, curMeasureTime, nextSectionTime));
 
 			positionNoteYOnTime(note, noteSec);
-			note.updateSustainToStepCrochet(cachedSectionCrochets[noteSec] / 4);
+			note.updateSustainTostepCrotchet(cachedSectioncrotchets[noteSec] / 4);
 		}
 		
 		for (event in events)
@@ -4565,13 +4560,13 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			curSec = 0;
 		}
 		
-		if(FlxG.sound.music != null && time >= FlxG.sound.music.length)
+		if(Conductor.inst != null && time >= Conductor.inst.length)
 		{
-			time = FlxG.sound.music.length - 1;
+			time = Conductor.inst.length - 1;
 			curSec = PlayState.SONG.notes.length - 1;
 		}
-		FlxG.sound.music.time = time;
-		Conductor.songPosition = time;
+		Conductor.inst.time = time;
+		Conductor.time = time;
 		forceDataUpdate = true;
 		loadSection();
 	}
@@ -4963,7 +4958,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		var sound:FlxSound = switch(waveformTarget)
 		{
 			case INST:
-				FlxG.sound.music;
+				Conductor.inst;
 			case PLAYER:
 				vocals;
 			case OPPONENT:

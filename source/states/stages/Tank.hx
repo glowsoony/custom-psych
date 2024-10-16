@@ -120,7 +120,7 @@ class Tank extends BaseStage
 	}
 
 	override function countdownTick(count:Countdown, num:Int) if(num % 2 == 0) everyoneDance();
-	override function beatHit() everyoneDance();
+	override function beatHit(beat:Int) everyoneDance();
 	function everyoneDance()
 	{
 		if(!ClientPrefs.data.lowQuality) tankWatchtower.dance();
@@ -153,7 +153,7 @@ class Tank extends BaseStage
 
 		cutsceneHandler.finishCallback = function()
 		{
-			var timeForStuff:Float = Conductor.crochet / 1000 * 4.5;
+			var timeForStuff:Float = Conductor.crotchet / 1000 * 4.5;
 			FlxG.sound.music.fadeOut(timeForStuff);
 			FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, timeForStuff, {ease: FlxEase.quadInOut});
 			startCountdown();

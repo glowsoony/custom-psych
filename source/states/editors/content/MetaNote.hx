@@ -53,11 +53,11 @@ class MetaNote extends Note
 	}
 
 	var _lastZoom:Float = -1;
-	public function setSustainLength(v:Float, stepCrochet:Float, zoom:Float = 1)
+	public function setSustainLength(v:Float, stepCrotchet:Float, zoom:Float = 1)
 	{
 		_lastZoom = zoom;
-		v = Math.round(v / (stepCrochet / 2)) * (stepCrochet / 2);
-		songData[2] = sustainLength = Math.max(Math.min(v, stepCrochet * 128), 0);
+		v = Math.round(v / (stepCrotchet / 2)) * (stepCrotchet / 2);
+		songData[2] = sustainLength = Math.max(Math.min(v, stepCrotchet * 128), 0);
 
 		if(sustainLength > 0)
 		{
@@ -66,7 +66,7 @@ class MetaNote extends Note
 				sustainSprite = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
 				sustainSprite.scrollFactor.x = 0;
 			}
-			sustainSprite.setGraphicSize(8, Math.max(ChartingState.GRID_SIZE/4, (Math.round((v * ChartingState.GRID_SIZE + ChartingState.GRID_SIZE) / stepCrochet) * zoom) - ChartingState.GRID_SIZE/2));
+			sustainSprite.setGraphicSize(8, Math.max(ChartingState.GRID_SIZE/4, (Math.round((v * ChartingState.GRID_SIZE + ChartingState.GRID_SIZE) / stepCrotchet) * zoom) - ChartingState.GRID_SIZE/2));
 			sustainSprite.updateHitbox();
 		}
 	}
@@ -74,16 +74,16 @@ class MetaNote extends Note
 	public var hasSustain(get, never):Bool;
 	function get_hasSustain() return (!isEvent && sustainLength > 0);
 
-	public function updateSustainToZoom(stepCrochet:Float, zoom:Float = 1)
+	public function updateSustainToZoom(stepCrotchet:Float, zoom:Float = 1)
 	{
 		if(_lastZoom == zoom) return;
-		setSustainLength(sustainLength, stepCrochet, zoom);
+		setSustainLength(sustainLength, stepCrotchet, zoom);
 	}
 
-	public function updateSustainToStepCrochet(stepCrochet:Float)
+	public function updateSustainTostepCrotchet(stepCrotchet:Float)
 	{
 		if(_lastZoom < 0) return;
-		setSustainLength(sustainLength, stepCrochet, _lastZoom);
+		setSustainLength(sustainLength, stepCrotchet, _lastZoom);
 	}
 	
 	var _noteTypeText:FlxText;
@@ -166,7 +166,7 @@ class EventMetaNote extends MetaNote
 		super.draw();
 	}
 
-	override function setSustainLength(v:Float, stepCrochet:Float, zoom:Float = 1) {}
+	override function setSustainLength(v:Float, stepCrotchet:Float, zoom:Float = 1) {}
 
 	public var events:Array<Array<String>>;
 	public function updateEventText()

@@ -390,7 +390,7 @@ class PhillyStreets extends BaseStage
 
 	function updateABotEye(finishInstantly:Bool = false)
 	{
-		if(PlayState.SONG.notes[Std.int(FlxMath.bound(curSection, 0, PlayState.SONG.notes.length - 1))].mustHitSection == true)
+		if(PlayState.SONG.notes[Std.int(FlxMath.bound(curMeasure, 0, PlayState.SONG.notes.length - 1))].mustHitSection == true)
 			abot.lookRight();
 		else
 			abot.lookLeft();
@@ -526,7 +526,7 @@ class PhillyStreets extends BaseStage
 
 		if(rainShader != null)
 		{
-			var remappedIntensityValue:Float = FlxMath.remapToRange(Conductor.songPosition, 0, (FlxG.sound.music != null ? FlxG.sound.music.length : 0), rainShaderStartIntensity, rainShaderEndIntensity);
+			var remappedIntensityValue:Float = FlxMath.remapToRange(Conductor.time, 0, (FlxG.sound.music != null ? FlxG.sound.music.length : 0), rainShaderStartIntensity, rainShaderEndIntensity);
 			rainShader.intensity = remappedIntensityValue;
 			rainShader.updateViewInfo(FlxG.width, FlxG.height, FlxG.camera);
 			rainShader.update(elapsed);
@@ -588,7 +588,7 @@ class PhillyStreets extends BaseStage
 		}
 	}
 
-	override function sectionHit()
+	override function measureHit(measure:Int)
 	{
 		updateABotEye();
 	}
@@ -601,36 +601,30 @@ class PhillyStreets extends BaseStage
 	var carInterruptable:Bool = true;
 	var car2Interruptable:Bool = true;
 
-	override function beatHit()
-	{
-		//if(curBeat % 2 == 0) abot.beatHit();
-		switch(currentNeneState) {
+	override function beatHit(beat:Int) {
+		switch (currentNeneState) {
 			case STATE_READY:
-				if (blinkCountdown == 0)
-				{
+				if (blinkCountdown == 0) {
 					gf.playAnim('idleKnife', false);
 					blinkCountdown = FlxG.random.int(MIN_BLINK_DELAY, MAX_BLINK_DELAY);
-				}
-				else blinkCountdown--;
+				} else blinkCountdown--;
 
 			default:
 				// In other states, don't interrupt the existing animation.
 		}
 
-		if(ClientPrefs.data.lowQuality) return;
+		if (ClientPrefs.data.lowQuality) return;
 
-		if (FlxG.random.bool(10) && curBeat != (lastChange + changeInterval) && carInterruptable == true)
+		if (FlxG.random.bool(10) && beat != (lastChange + changeInterval) && carInterruptable == true)
 		{
-			if(lightsStop == false)
-				driveCar(phillyCars);
-			else
-				driveCarLights(phillyCars);
+			if (lightsStop == false) driveCar(phillyCars);
+			else driveCarLights(phillyCars);
 		}
 
-		if(FlxG.random.bool(10) && curBeat != (lastChange + changeInterval) && car2Interruptable == true && lightsStop == false)
+		if(FlxG.random.bool(10) && beat != (lastChange + changeInterval) && car2Interruptable == true && lightsStop == false)
 			driveCarBack(phillyCars2);
 
-		if (curBeat == (lastChange + changeInterval)) changeLights(curBeat);
+		if (beat == (lastChange + changeInterval)) changeLights(beat);
 	}
 	
 	function changeLights(beat:Int):Void
@@ -648,7 +642,7 @@ class PhillyStreets extends BaseStage
 			phillyTraffic.animation.play('redtogreen');
 			changeInterval = 30;
 
-			if(carWaiting == true) finishCarLights(phillyCars);
+			if (carWaiting) finishCarLights(phillyCars);
 		}
 	}
 
@@ -887,7 +881,7 @@ class PhillyStreets extends BaseStage
 
 	override function opponentNoteHit(note:Note)
 	{
-		var sndTime:Float = note.strumTime - Conductor.songPosition;
+		var sndTime:Float = note.strumTime - Conductor.time;
 		switch(note.noteType)
 		{
 			case 'weekend-1-lightcan':

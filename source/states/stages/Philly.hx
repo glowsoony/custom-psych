@@ -77,7 +77,7 @@ class Philly extends BaseStage
 
 	override function update(elapsed:Float)
 	{
-		phillyWindow.alpha -= (Conductor.crochet / 1000) * FlxG.elapsed * 1.5;
+		phillyWindow.alpha -= (Conductor.crotchet / 1000) * FlxG.elapsed * 1.5;
 		if(phillyGlowParticles != null)
 		{
 			phillyGlowParticles.forEachAlive(function(particle:PhillyGlowParticle)
@@ -88,10 +88,10 @@ class Philly extends BaseStage
 		}
 	}
 
-	override function beatHit()
+	override function beatHit(beat:Int)
 	{
-		phillyTrain.beatHit(curBeat);
-		if (curBeat % 4 == 0)
+		phillyTrain.beatHit(beat);
+		if (beat % 4 == 0)
 		{
 			curLight = FlxG.random.int(0, phillyLightsColors.length - 1, [curLight]);
 			phillyWindow.color = phillyLightsColors[curLight];

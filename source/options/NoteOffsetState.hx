@@ -417,15 +417,15 @@ class NoteOffsetState extends MusicBeatState
 			FlxG.mouse.visible = false;
 		}
 
-		Conductor.songPosition = FlxG.sound.music.time;
+		Conductor.time = FlxG.sound.music.time;
 		super.update(elapsed);
 	}
 
 	var zoomTween:FlxTween;
 	var lastBeatHit:Int = -1;
-	override public function beatHit()
+	override public function beatHit(beat:Int)
 	{
-		super.beatHit();
+		super.beatHit(beat);
 
 		if(lastBeatHit == curBeat)
 		{
