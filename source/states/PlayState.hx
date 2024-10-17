@@ -252,7 +252,6 @@ class PlayState extends MusicBeatState {
 	private var totalColumns:Int = 4;
 
 	private function generateSong():Void {
-		// FlxG.log.add(ChartParser.parse());
 		songSpeed = PlayState.SONG.speed;
 		songSpeedType = ClientPrefs.getGameplaySetting('scrolltype');
 		switch (songSpeedType) {
@@ -301,13 +300,11 @@ class PlayState extends MusicBeatState {
 		var ghostNotesCaught:Int = 0;
 		var daBpm:Float = Conductor.bpm;
 	
-		for (section in sectionsData)
-		{
+		for (section in sectionsData) {
 			if (section.changeBPM != null && section.changeBPM && section.bpm != null && daBpm != section.bpm)
 				daBpm = section.bpm;
 
-			for (i in 0...section.sectionNotes.length)
-			{
+			for (i in 0...section.sectionNotes.length) {
 				final songNotes:Array<Dynamic> = section.sectionNotes[i];
 				var spawnTime:Float = songNotes[0];
 				var noteColumn:Int = Std.int(songNotes[1] % totalColumns);
@@ -326,7 +323,6 @@ class PlayState extends MusicBeatState {
 							evilNote.destroy();
 							unspawnNotes.remove(evilNote);
 							ghostNotesCaught++;
-							//continue;
 						}
 					}
 				}
@@ -344,10 +340,8 @@ class PlayState extends MusicBeatState {
 
 				var curstepCrotchet:Float = 60 / daBpm * 1000 / 4.0;
 				final roundSus:Int = Math.round(swagNote.sustainLength / curstepCrotchet);
-				if(roundSus > 0)
-				{
-					for (susNote in 0...roundSus)
-					{
+				if (roundSus > 0) {
+					for (susNote in 0...roundSus) {
 						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
 						var sustainNote:Note = new Note(spawnTime + (curstepCrotchet * susNote), noteColumn, oldNote, true);
@@ -361,49 +355,36 @@ class PlayState extends MusicBeatState {
 						swagNote.tail.push(sustainNote);
 
 						sustainNote.correctionOffset = swagNote.height / 2;
-						if(!PlayState.isPixelStage)
-						{
-							if(oldNote.isSustainNote)
-							{
+						if (!isPixelStage) {
+							if (oldNote.isSustainNote) {
 								oldNote.scale.y *= Note.SUSTAIN_SIZE / oldNote.frameHeight;
 								oldNote.scale.y /= playbackRate;
 								oldNote.resizeByRatio(curstepCrotchet / Conductor.stepCrotchet);
 							}
 
-							if(ClientPrefs.data.downScroll)
-								sustainNote.correctionOffset = 0;
-						}
-						else if(oldNote.isSustainNote)
-						{
+							if (ClientPrefs.data.downScroll) sustainNote.correctionOffset = 0;
+						} else if (oldNote.isSustainNote) {
 							oldNote.scale.y /= playbackRate;
 							oldNote.resizeByRatio(curstepCrotchet / Conductor.stepCrotchet);
 						}
 
 						if (sustainNote.mustPress) sustainNote.x += FlxG.width / 2; // general offset
-						else if(ClientPrefs.data.middleScroll)
-						{
+						else if (ClientPrefs.data.middleScroll) {
 							sustainNote.x += 310;
-							if(noteColumn > 1) //Up and Right
-								sustainNote.x += FlxG.width / 2 + 25;
+							if (noteColumn > 1) sustainNote.x += FlxG.width / 2 + 25; //Up and Right	
 						}
 					}
 				}
 
-				if (swagNote.mustPress)
-				{
-					swagNote.x += FlxG.width / 2; // general offset
-				}
-				else if(ClientPrefs.data.middleScroll)
-				{
+				if (swagNote.mustPress) swagNote.x += FlxG.width / 2; // general offset
+				else if (ClientPrefs.data.middleScroll) {
 					swagNote.x += 310;
-					if(noteColumn > 1) //Up and Right
-					{
+					if (noteColumn > 1) { //Up and Right
 						swagNote.x += FlxG.width / 2 + 25;
 					}
 				}
-				if(!noteTypes.contains(swagNote.noteType))
-					noteTypes.push(swagNote.noteType);
 
+				if (!noteTypes.contains(swagNote.noteType)) noteTypes.push(swagNote.noteType);
 				oldNote = swagNote;
 			}
 		}
@@ -477,42 +458,36 @@ class PlayState extends MusicBeatState {
 			}
 		}
 
-		if (generatedMusic) {
-			if (!inCutscene) {
-				if (!cpuControlled) keysCheck();
+		if (!inCutscene) {
+			if (!cpuControlled) keysCheck();
 
-				if (notes.length > 0) {
-					var fakeCrotchet:Float = (60 / SONG.bpm) * 1000;
-					notes.forEachAlive(function(daNote:Note) {
-						var strumGroup:FlxTypedGroup<StrumNote> = playerStrums;
-						if (!daNote.mustPress) strumGroup = opponentStrums;
+			if (notes.length > 0) {
+				var fakeCrotchet:Float = (60 / SONG.bpm) * 1000;
+				notes.forEachAlive(function(daNote:Note) {
+					var strumGroup:FlxTypedGroup<StrumNote> = playerStrums;
+					if (!daNote.mustPress) strumGroup = opponentStrums;
 
-						var strum:StrumNote = strumGroup.members[daNote.noteData];
-						daNote.followStrumNote(strum, fakeCrotchet, songSpeed / playbackRate);
+					var strum:StrumNote = strumGroup.members[daNote.noteData];
+					daNote.followStrumNote(strum, fakeCrotchet, songSpeed / playbackRate);
 
-						if (daNote.mustPress) {
-							if (cpuControlled && !daNote.blockHit && daNote.canBeHit && (daNote.isSustainNote || daNote.strumTime <= Conductor.time))
-								goodNoteHit(daNote);
-						} else if (daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
-							opponentNoteHit(daNote);
+					if (!daNote.mustPress && (daNote.strumTime <= Conductor.time)) opponentNoteHit(daNote);
 
-						if (daNote.isSustainNote && strum.sustainReduce) daNote.clipToStrumNote(strum);
+					if (daNote.isSustainNote && strum.sustainReduce) daNote.clipToStrumNote(strum);
 
-						// Kill extremely late notes and cause misses
-						if (Conductor.time - daNote.strumTime > noteKillOffset) {
-							if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit))
-								noteMiss(daNote);
+					// Kill extremely late notes and cause misses
+					if (Conductor.time - daNote.strumTime > noteKillOffset) {
+						if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit))
+							noteMiss(daNote);
 
-							daNote.active = daNote.visible = false;
-							invalidateNote(daNote);
-						}
-					});
-				} else {
-					notes.forEachAlive(function(daNote:Note) {
-						daNote.canBeHit = false;
-						daNote.wasGoodHit = false;
-					});
-				}
+						daNote.active = daNote.visible = false;
+						invalidateNote(daNote);
+					}
+				});
+			} else {
+				notes.forEachAlive(function(daNote:Note) {
+					daNote.canBeHit = false;
+					daNote.wasGoodHit = false;
+				});
 			}
 		}
 
@@ -623,17 +598,18 @@ class PlayState extends MusicBeatState {
 		var key:Int = getKeyFromEvent(keysArray, eventKey);
 
 		if (!controls.controllerMode) {
+			if (key == -1) return;
 			#if debug
 			//Prevents crash specifically on debug without needing to try catch shit
 			@:privateAccess if (!FlxG.keys._keyListMap.exists(eventKey)) return;
 			#end
 
-			if(FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) keyPressed(key);
+			keyPressed(key);
 		}
 	}
 
 	private function keyPressed(key:Int) {
-		if (cpuControlled || key < 0 || key >= playerStrums.length || endingSong) return;
+/*		if (cpuControlled || key >= playerStrums.length || endingSong) return;
 
 		// more accurate hit time for the ratings?
 		var lastTime:Float = Conductor.time;
@@ -672,7 +648,7 @@ class PlayState extends MusicBeatState {
 		if (strumsBlocked[key] != true && spr != null && spr.animation.curAnim.name != 'confirm') {
 			spr.playAnim('pressed');
 			spr.resetAnim = 0;
-		}
+		}*/
 	}
 
 	public static function sortHitNotes(a:Note, b:Note):Int {

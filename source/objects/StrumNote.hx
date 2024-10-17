@@ -149,9 +149,9 @@ class StrumNote extends FlxSprite
 	}
 
 	override function update(elapsed:Float) {
-		if(resetAnim > 0) {
+		if (resetAnim > 0) {
 			resetAnim -= elapsed;
-			if(resetAnim <= 0) {
+			if (resetAnim <= 0) {
 				playAnim('static');
 				resetAnim = 0;
 			}
@@ -161,11 +161,10 @@ class StrumNote extends FlxSprite
 
 	public function playAnim(anim:String, ?force:Bool = false) {
 		animation.play(anim, force);
-		if(animation.curAnim != null)
-		{
+		if (animation.curAnim != null) {
 			centerOffsets();
 			centerOrigin();
 		}
-		if(useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
+		if (useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
 	}
 }
