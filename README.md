@@ -16,13 +16,13 @@ To get started, either grab a build from [the releases page](https://github.com/
 
 ## Contributors
 * [crowplexus](https://github.com/crowplexus) - Lead Contributor
-- Worked on inputs, sustains as one note, [hscript-iris](https://github.com/crowplexus/hscript-iris), among many other things
+	- Worked on inputs, sustains as one note, [hscript-iris](https://github.com/crowplexus/hscript-iris), among many other things
 * Keoiki - Note Splashes and Latin Alphabet.
 * Kamizeta - Creator of Pessy, Psych Engine's mascot.
 * [EliteMasterEric](https://github.com/EliteMasterEric) - Runtime Shaders support and Other PRs.
 * [sqirradotdev](https://bsky.app/profile/sqirra.dev) - Crash Handler
 * [superpowers04](https://github.com/superpowers04) - [LuaJIT fork](https://github.com/superpowers04/linc_luajit) of [Nebula the Zorua's LuaJIT fork](https://github.com/nebulazorua/linc_luajit)
-- that fixes a multitude of bugs like memory leaks and crashes
+	- that fixes a multitude of bugs like memory leaks and crashes
 * iFlicky - Composer of Psync, Tea Time and some sound effects.
 * Tahir Toprak Karabekiroglu - Note Splash Editor and Other PRs.
 * [MAJigsaw77](https://github.com/MAJigsaw77) - [hxvlc](https://github.com/MAJigsaw77/hxvlc) Library
