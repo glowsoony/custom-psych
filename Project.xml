@@ -2,7 +2,6 @@
 <project>
 	<!-- Application Related Variables -->
 	<app title="Friday Night Funkin': Psych Engine" file="PsychEngine" packageName="com.rudyrue.psychengine" package="com.rudyrue.psychengine" main="Main" version="0.3.0" company="Rudyrue" />
-
 	<window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" orientation="landscape" fullscreen="false" resizable="true"/>
 
 	<!-- Project Defines -->
