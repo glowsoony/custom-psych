@@ -9,7 +9,7 @@ Other platforms like Android/iOS and HTML5/Web are completely unsupported, as I 
 To get started, either grab a build from [the releases page](https://github.com/Rudyrue/custom-psych/releases) or compile the engine yourself (refer to [BUILDING.md](https://github.com/Rudyrue/custom-psych/blob/main/BUILDING.md)).
 
 # Credits
-# (Ex-)Developers
+## (Ex-)Developers
 * [ShadowMario](https://github.com/ShadowMario) - Lead Developer on Psych Engine
 * Riveren - Lead Artist on Psych Engine
 * [bbpanzu](https://bsky.app/profile/bbpnz213.bsky.social) - Ex-Programmer on Psych Engine
