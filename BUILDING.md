@@ -1,9 +1,9 @@
 
 # Dependencies
-* [git](https://git-scm.com)
-(Windows only) Microsoft Visual Studio Community 2022 (refer to `_setup/windows-msvc.bat`)
-(Linux only) VLC (refer to [Linux-specific Dependencies]())
-[Haxe (4.3 or newer)](https://haxe.org)
+* [git](https://git-scm.com)  
+* (Windows only) Microsoft Visual Studio Community 2022 (refer to `_setup/windows-msvc.bat`)  
+* (Linux only) VLC (refer to [Linux-specific Dependencies]())  
+* [Haxe (4.3 or newer)](https://haxe.org)  
 
 * Libraries:
 	- Flixel 5.5.0 `haxelib install flixel 5.5.0`
