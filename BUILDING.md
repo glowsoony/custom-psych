@@ -1,8 +1,7 @@
-
 # Dependencies
 * [git](https://git-scm.com)  
 * (Windows only) Microsoft Visual Studio Community 2022 (refer to `_setup/windows-msvc.bat`)  
-* (Linux only) VLC (refer to [Linux-specific Dependencies]())  
+* (Linux only) VLC (refer to [Linux-specific Dependencies](#linux-specific-dependencies))  
 * [Haxe (4.3 or newer)](https://haxe.org)  
 
 * Libraries:
@@ -50,7 +49,7 @@ There's a couple of ways you can do this.
 
 * Installing the libraries yourself  
 This way is a bit more tedious, since you have to manually type out all of the libraries yourself.  
-But, if you're willing to, refer to [Dependencies]().
+But, if you're willing to, refer to [Dependencies](#dependencies).
 
 ## 2. Compiling
 ### Windows
