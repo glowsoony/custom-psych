@@ -332,7 +332,7 @@ class LoadingState extends MusicBeatState
 			var noteSkin:String = Note.defaultNoteSkin;
 			if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) noteSkin = PlayState.SONG.arrowSkin;
 	
-			var customSkin:String = noteSkin + Note.getNoteSkinPostfix();
+			var customSkin:String = noteSkin + Note.getNoteSkinSuffix();
 			if(Paths.fileExists('images/$customSkin.png', IMAGE)) noteSkin = customSkin;
 			imagesToPrepare.push(noteSkin);
 			//
@@ -340,7 +340,7 @@ class LoadingState extends MusicBeatState
 			// LOAD NOTE SPLASH IMAGE
 			var noteSplash:String = NoteSplash.DEFAULT_SKIN;
 			if(PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0) noteSplash = PlayState.SONG.splashSkin;
-			else noteSplash += NoteSplash.getSplashSkinPostfix();
+			else noteSplash += NoteSplash.getSplashSkinSuffix();
 			imagesToPrepare.push(noteSplash);
 
 			try

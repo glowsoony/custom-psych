@@ -28,12 +28,11 @@ class NoteSplashEditorState extends MusicBeatState
 
     var UI:PsychUIBox;
     var properUI:PsychUIBox;
-    var shaderUI:PsychUIBox;
 
     override function create()
     {
         if (imageSkin == null)
-            imageSkin =  NoteSplash.DEFAULT_SKIN + NoteSplash.getSplashSkinPostfix();
+            imageSkin =  NoteSplash.DEFAULT_SKIN + NoteSplash.getSplashSkinSuffix();
 
         FlxG.mouse.visible = true;
 
@@ -64,13 +63,6 @@ class NoteSplashEditorState extends MusicBeatState
         add(properUI);
         add(UI);
 
-        shaderUI = new PsychUIBox(0, 0, 0, 0, ["Shader"]);
-        shaderUI.canMove = shaderUI.canMinimize = false;
-        shaderUI.resize(160, 180);
-        shaderUI.x = FlxG.width - shaderUI.width - 10;
-        shaderUI.y = UI.y + UI.height + 10;
-        add(shaderUI);
-
         var tipText:FlxText = new FlxText();
         tipText.setFormat(null, 32);
         tipText.text = "Press F1 for Help";
@@ -96,11 +88,8 @@ class NoteSplashEditorState extends MusicBeatState
         if (splash.config != null)
             config = splash.config;
 
-        parseRGB();
-
         addProperitiesTab();
         addAnimTab();
-        addShadersTab();
 
         errorText = new FlxText();
         errorText.setFormat(null, 16, FlxColor.RED);
@@ -198,8 +187,7 @@ class NoteSplashEditorState extends MusicBeatState
 
         setAnimDropDown();
 
-        templateButton.onClick = function()
-        {
+        templateButton.onClick = function() {
             NoteSplash.configs.clear();
             config = NoteSplash.createConfig();
 
@@ -211,9 +199,6 @@ class NoteSplashEditorState extends MusicBeatState
             minFps.value = 22;
             maxFps.value = 26;
             setAnimDropDown();
-            parseRGB();
-            changeShader.selectedLabel = "Red";
-            changeShader.onSelect(0, "Red");
         }
 
         addButton = new PsychUIButton(20, 185, "Add/Update", function()
@@ -318,9 +303,6 @@ class NoteSplashEditorState extends MusicBeatState
             minFps.value = 22;
             maxFps.value = 26;
             setAnimDropDown();
-            parseRGB();
-            changeShader.selectedLabel = "Red";
-            changeShader.onSelect(0, "Red");
         }
     }
 
@@ -357,23 +339,7 @@ class NoteSplashEditorState extends MusicBeatState
         var loadButton:PsychUIButton = new PsychUIButton(180, 155, "Convert TXT", loadTxt);
         ui.add(loadButton);
 
-        var allowRGBCheck:PsychUICheckBox = new PsychUICheckBox(20, 105, "", 1);
-        function check()
-        {
-            if (config != null)
-                config.allowRGB = allowRGBCheck.checked;
-        }
-        allowRGBCheck.onClick = check;
-        allowRGBCheck.checked = config != null && cast(config.allowRGB, Null<Bool>) != null ? config.allowRGB : false;
-
-        var rgbText = new FlxText(allowRGBCheck.x + 20, 0);
-        rgbText.text = "Allow RGB?";
-		rgbText.y = allowRGBCheck.y + 2.5;
-		ui.add(rgbText);
-
-        ui.add(allowRGBCheck);
-
-        var allowPixelCheck:PsychUICheckBox = new PsychUICheckBox(allowRGBCheck.x + 110, allowRGBCheck.y, "", 1);
+        var allowPixelCheck:PsychUICheckBox = new PsychUICheckBox(130, 105, "", 1);
         function check()
         {
             if (config != null)
@@ -388,109 +354,6 @@ class NoteSplashEditorState extends MusicBeatState
 		ui.add(pixelText);
 
         ui.add(allowPixelCheck);
-    }
-
-    var redEnabled:Bool = true;
-    var blueEnabled:Bool = true;
-    var greenEnabled:Bool = true;
-    var redShader:Array<Int> = [0, 0, 0];
-    var greenShader:Array<Int> = [0, 0, 0];
-    var blueShader:Array<Int> = [0, 0, 0];
-    var changeShader:PsychUIDropDownMenu;
-    var defaultButton:PsychUICheckBox;
-    function addShadersTab()
-    {
-        var tab = shaderUI.getTab("Shader").menu;
-
-        tab.add(new FlxText(40, 10, "Replacing Color:"));
-        tab.add(new FlxText(25, 30, "Red:"));
-        tab.add(new FlxText(25, 50, "Green:"));
-        tab.add(new FlxText(25, 70, "Blue:"));
-
-        var red = new PsychUINumericStepper(60, 30, 1, redShader[0], 0, 255, 0);
-        red.onValueChange = () -> {
-            var shader = switch changeShader.selectedLabel
-            {
-                case "Red": redShader[0] = Std.int(red.value);
-                case "Green": greenShader[0] = Std.int(red.value);
-                case _: blueShader[0] = Std.int(red.value);
-            }
-            setConfigRGB();
-        };
-        tab.add(red);
-
-        var green = new PsychUINumericStepper(60, 50, 1, redShader[2], 0, 255, 0);
-        green.onValueChange = () -> {
-            var shader = switch changeShader.selectedLabel
-            {
-                case "Red": redShader[1] = Std.int(green.value);
-                case "Green": greenShader[1] = Std.int(green.value);
-                case _: blueShader[1] = Std.int(green.value);
-            }
-            setConfigRGB();
-        };
-        tab.add(green);
-
-        var blue = new PsychUINumericStepper(60, 70, 1, redShader[1], 0, 255, 0);
-        blue.onValueChange = () -> {
-            var shader = switch changeShader.selectedLabel
-            {
-                case "Red": redShader[2] = Std.int(blue.value);
-                case "Green": greenShader[2] = Std.int(blue.value);
-                case _: blueShader[2] = Std.int(blue.value);
-            }
-            setConfigRGB();
-        };
-        tab.add(blue);
-
-        function onCheck(change:Bool = true)
-        {
-            if (!defaultButton.checked)
-                shaderUI.alpha = 1;
-            else 
-                shaderUI.alpha = 0.6;
-
-            if (change)
-                switch changeShader.selectedLabel
-                {
-                    case "Red": redEnabled = !defaultButton.checked;
-                    case "Green": greenEnabled = !defaultButton.checked;
-                    case "Blue": blueEnabled = !defaultButton.checked;
-                }
-
-            setConfigRGB();
-        }
-
-        add(new FlxText(shaderUI.x + 20, shaderUI.y + 135, 0, "Color to Replace:"));
-        changeShader = new PsychUIDropDownMenu(shaderUI.x + 20, shaderUI.y + 150, ["Red", "Green", "Blue"], function(id:Int, name:String)
-        {
-            var shader = switch name
-            {
-                case "Red": redShader;
-                case "Green": greenShader;
-                case _: blueShader;
-            }
-
-            red.value = shader[0];
-            green.value = shader[1];
-            blue.value = shader[2];
-
-            // changing checked doesn't initiate onCheck!!
-            defaultButton.checked = !(switch name {
-                case "Red": redEnabled;
-                case "Green": greenEnabled;
-                case _: blueEnabled;
-            });
-            onCheck(false);
-        });
-        add(changeShader);
-        
-        defaultButton = new PsychUICheckBox(shaderUI.x + 30, shaderUI.y + 115, "Do not replace", 100, () -> onCheck());
-        defaultButton.text.y += 2.5;
-        add(defaultButton);
-
-        changeShader.selectedLabel = "Red";
-        changeShader.onSelect(0, "Red");
     }
 
     dynamic function reloadImage() // Dynamic because needs to be changed later
@@ -693,87 +556,6 @@ class NoteSplashEditorState extends MusicBeatState
             FlxTween.cancelTweensOf(errorText);
             FlxTween.tween(errorText, {alpha: 0}, {startDelay: 1});
         }
-    }
-
-    function resetRGB()
-    {
-        redShader = [0, 0, 0];
-        greenShader = [0, 0, 0];
-        blueShader = [0, 0, 0];
-    }
-
-    function parseRGB()
-    {
-        resetRGB();
-        if (config.rgb != null)
-            for (i in 0...config.rgb.length)
-            {
-                if (i > 2) break;
-
-                var rgb = config.rgb[i];
-                if (rgb == null)
-                { 
-                    if (i == 0)
-                        redEnabled = false;
-                    else if (i == 1)
-                        greenEnabled = false;
-                    else if (i == 2)
-                        blueEnabled = false;
-
-                    continue;
-                }
-                else
-                {
-                    if (i == 0)
-                        redEnabled = true;
-                    else if (i == 1)
-                        greenEnabled = true;
-                    else if (i == 2)
-                        blueEnabled = true;
-                }
-                
-                var colors = [rgb.r, rgb.g, rgb.b];
-                if (i == 0)
-                    redShader = colors;
-                else if (i == 1)
-                    greenShader = colors;
-                else if (i == 2)
-                    blueShader = colors;
-            }
-        else
-        {
-            resetRGB(); 
-            redEnabled = blueEnabled = greenEnabled = false;
-        }
-    }
-
-    function setConfigRGB()
-    {
-        if (config == null)
-            config = NoteSplash.createConfig();
-        
-        if (!redEnabled && !greenEnabled && !blueEnabled)
-        {
-            config.rgb = null;
-            return;
-        }
-
-        config.rgb = [];
-
-        if (redEnabled)
-            config.rgb.push({r: redShader[0], g: redShader[1], b: redShader[2]});
-        else
-            config.rgb.push(null);
-
-        if (greenEnabled)
-            config.rgb.push({r: greenShader[0], g: greenShader[1], b: greenShader[2]});
-        else
-            config.rgb.push(null);
-
-        if (blueEnabled)
-            config.rgb.push({r: blueShader[0], g: blueShader[1], b: blueShader[2]});
-        else
-            config.rgb.push(null);
     }
 
     var _file:FileReference;

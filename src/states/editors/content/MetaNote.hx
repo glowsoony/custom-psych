@@ -1,7 +1,6 @@
 package states.editors.content;
 
 import objects.Note;
-import shaders.RGBPalette;
 import flixel.util.FlxDestroyUtil;
 
 class MetaNote extends Note
@@ -33,9 +32,6 @@ class MetaNote extends Note
 		else
 			loadPixelNoteAnims();
 
-		if(Note.globalRgbShaders.contains(rgbShader.parent)) //Is using a default shader
-			rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(noteData));
-
 		animation.play(Note.colArray[this.noteData % Note.colArray.length] + 'Scroll');
 		updateHitbox();
 		if(width > height)
@@ -46,8 +42,7 @@ class MetaNote extends Note
 		updateHitbox();
 	}
 
-	public function setStrumTime(v:Float)
-	{
+	public function setStrumTime(v:Float) {
 		this.songData[0] = v;
 		this.strumTime = v;
 	}

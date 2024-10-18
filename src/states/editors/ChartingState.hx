@@ -40,33 +40,28 @@ typedef UndoStruct = {
 	var data:Dynamic;
 }
 
-enum abstract UndoAction(String)
-{
+enum abstract UndoAction(String) {
 	var ADD_NOTE = 'Add Note';
 	var DELETE_NOTE = 'Delete Note';
 	var MOVE_NOTE = 'Move Note';
 	var SELECT_NOTE = 'Select Note';
 }
 
-enum abstract ChartingTheme(String)
-{
+enum abstract ChartingTheme(String) {
 	var LIGHT = 'light';
 	var DARK = 'dark';
 	var DEFAULT = 'default';
 	var VSLICE = 'vslice';
 }
 
-enum abstract WaveformTarget(String)
-{
+enum abstract WaveformTarget(String) {
 	var INST = 'inst';
 	var PLAYER = 'voc';
 	var OPPONENT = 'opp';
 }
 
-class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
-{
-	public static final defaultEvents:Array<Array<String>> =
-	[
+class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent {
+	public static final defaultEvents:Array<Array<String>> = [
 		['', "Nothing. Yep, that's right."], //Always leave this one empty pls
 		['Dadbattle Spotlight', "Used in Dad Battle,\nValue 1: 0/1 = ON/OFF,\n2 = Target Dad\n3 = Target BF"],
 		['Hey!', "Plays the \"Hey!\" animation from Bopeebo,\nValue 1: BF = Only Boyfriend, GF = Only Girlfriend,\nSomething else = Both.\nValue 2: Custom animation duration,\nleave it blank for 0.6s"],
@@ -106,6 +101,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		96,
 		192
 	];
+
 	public var quantColors:Array<FlxColor> = [
 		0xFFDF0000,
 		0xFF4040CF,
@@ -120,12 +116,12 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		0xFF3F3F3F,
 	];
 	var curQuant(default, set):Int = 16;
-	function set_curQuant(v:Int)
-	{
+	function set_curQuant(v:Int) {
 		curQuant = v;
 		updateVortexColor();
 		return curQuant;
 	}
+
 	function updateVortexColor()
 		vortexIndicator.color = quantColors[Std.int(FlxMath.bound(quantizations.indexOf(curQuant), 0, quantColors.length - 1))];
 
@@ -194,8 +190,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	var selectionBox:FlxSprite;
 
 	var _shouldReset:Bool = true;
-	public function new(?shouldReset:Bool = true)
-	{
+	public function new(?shouldReset:Bool = true) {
 		this._shouldReset = shouldReset;
 		super();
 	}
@@ -215,12 +210,11 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	var waveformEnabled:Bool = false;
 	var waveformTarget:WaveformTarget = INST;
 
-	override function create()
-	{
-		if(Difficulty.list.length < 1) Difficulty.resetList();
+	override function create() {
+		if (Difficulty.list.length < 1) Difficulty.resetList();
 		_keysPressedBuffer.resize(keysArray.length);
 
-		if(_shouldReset) Conductor.time = 0;
+		if (_shouldReset) Conductor.time = 0;
 		persistentUpdate = false;
 		FlxG.mouse.visible = true;
 		FlxG.sound.list.add(vocals);
@@ -296,8 +290,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		vortexIndicator.visible = strumLineNotes.visible = strumLineNotes.active = vortexEnabled;
 		if(SHOW_EVENT_COLUMN) startX += GRID_SIZE;
 
-		for (i in 0...Std.int(GRID_PLAYERS * GRID_COLUMNS_PER_PLAYER))
-		{
+		for (i in 0...Std.int(GRID_PLAYERS * GRID_COLUMNS_PER_PLAYER)) {
 			var note:StrumNote = new StrumNote(startX + (GRID_SIZE * i), startY, i % GRID_COLUMNS_PER_PLAYER, 0);
 			note.scrollFactor.set();
 			note.playAnim('static');
@@ -317,8 +310,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		var columns:Int = 0;
 		var iconX:Float = gridBg.x;
 		var iconY:Float = 50;
-		if(SHOW_EVENT_COLUMN)
-		{
+		if (SHOW_EVENT_COLUMN) {
 			eventIcon = new FlxSprite(0, iconY).loadGraphic(Paths.image('editors/eventIcon'));
 			eventIcon.antialiasing = ClientPrefs.data.antialiasing;
 			eventIcon.alpha = 0.6;
@@ -2374,7 +2366,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	var gameOverSndInputText:PsychUIInputText;
 	var gameOverLoopInputText:PsychUIInputText;
 	var gameOverRetryInputText:PsychUIInputText;
-	var noRGBCheckBox:PsychUICheckBox;
 	var noteTextureInputText:PsychUIInputText;
 	var noteSplashesInputText:PsychUIInputText;
 	function addDataTab()
@@ -2412,7 +2403,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		}
 
 		objY += 35;
-		noRGBCheckBox = new PsychUICheckBox(objX, objY, 'Disable Note RGB', 100, updateNotesRGB);
 		
 		objY += 40;
 		noteTextureInputText = new PsychUIInputText(objX, objY, 120, '');
@@ -2462,7 +2452,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		tab_group.add(gameOverSndInputText);
 		tab_group.add(gameOverLoopInputText);
 		tab_group.add(gameOverRetryInputText);
-		tab_group.add(noRGBCheckBox);
 
 		tab_group.add(new FlxText(noteTextureInputText.x, noteTextureInputText.y - 15, 100, 'Note Texture:'));
 		tab_group.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 120, 'Note Splashes Texture:'));
@@ -4437,33 +4426,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		return PlayState.SONG.notes != null ? PlayState.SONG.notes[curSec] : null;
 	}
 
-	function updateNotesRGB()
-	{
-		PlayState.SONG.disableNoteRGB = noRGBCheckBox.checked;
-
-		for (note in notes)
-		{
-			if(note == null) continue;
-
-			note.rgbShader.enabled = !noRGBCheckBox.checked;
-			if(note.rgbShader.enabled)
-			{
-				var data = backend.NoteTypesConfig.loadNoteTypeData(note.noteType);
-				if(data == null || data.length < 1) continue;
-
-				for (line in data)
-				{
-					var prop:String = line.property.join('.');
-					if(prop == 'rgbShader.enabled')
-						note.rgbShader.enabled = line.value;
-				}
-			}
-		}
-
-		for (note in strumLineNotes)
-			note.rgbShader.enabled = !noRGBCheckBox.checked;
-	}
-
 	function updateGridVisibility()
 	{
 		showLastGridButton.text.text = showPreviousSection	? '  Hide Last Section' :  '  Show Last Section';
@@ -4648,7 +4610,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 	override function destroy()
 	{
-		Note.globalRgbShaders = [];
 		backend.NoteTypesConfig.clearNoteTypesData();
 
 		for (num => text in MetaNote.noteTypeTexts)

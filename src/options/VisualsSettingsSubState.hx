@@ -35,9 +35,6 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			splash.alpha = ClientPrefs.data.splashAlpha;
 			splash.animation.finishCallback = function(name:String) splash.visible = false;
 			splashes.add(splash);
-			
-			Note.initializeGlobalRGBShader(i % Note.colArray.length);
-			splash.rgbShader.copyValues(Note.globalRgbShaders[i % Note.colArray.length]);
 		}
 
 		// options
@@ -227,7 +224,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 	function changeNoteSkin(note:StrumNote)
 	{
 		var skin:String = Note.defaultNoteSkin;
-		var customSkin:String = skin + Note.getNoteSkinPostfix();
+		var customSkin:String = skin + Note.getNoteSkinSuffix();
 		if(Paths.fileExists('images/$customSkin.png', IMAGE)) skin = customSkin;
 
 		note.texture = skin; //Load texture and anims

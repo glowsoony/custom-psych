@@ -6,7 +6,6 @@ import backend.StageData;
 class OptionsState extends MusicBeatState
 {
 	var options:Array<String> = [
-		'Note Colors',
 		'Controls',
 		'Adjust Delay and Combo',
 		'Graphics',
@@ -20,10 +19,7 @@ class OptionsState extends MusicBeatState
 	public static var onPlayState:Bool = false;
 
 	function openSelectedSubstate(label:String) {
-		switch(label)
-		{
-			case 'Note Colors':
-				openSubState(new options.NotesColorSubState());
+		switch (label) {
 			case 'Controls':
 				openSubState(new options.ControlsSubState());
 			case 'Graphics':
@@ -42,8 +38,7 @@ class OptionsState extends MusicBeatState
 	var selectorLeft:Alphabet;
 	var selectorRight:Alphabet;
 
-	override function create()
-	{
+	override function create() {
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Options Menu", null);
 		#end
