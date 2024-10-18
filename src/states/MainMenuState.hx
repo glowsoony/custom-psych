@@ -39,10 +39,9 @@ class MainMenuState extends MusicBeatState {
 
 		add(camFollow = new FlxObject(FlxG.width * 0.5, 0, 1, 1));
 
-		var yScroll:Float = Math.max(0.25 - (0.05 * (options.length - 4)), 0.1);
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
-		bg.scrollFactor.set(0, yScroll);
+		bg.scrollFactor.set(0, Math.max(0.25 - (0.05 * (options.length - 4)), 0.1));
 		bg.setGraphicSize(Std.int(bg.width * 1.175));
 		bg.updateHitbox();
 		bg.screenCenter();
