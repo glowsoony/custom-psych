@@ -50,12 +50,12 @@ class Main extends Sprite
 		startFullscreen: false // if the game should start at fullscreen mode
 	};
 
-	public static var fpsVar:FPSCounter;
+	public static var fpsCounter:FPSCounter;
 
-	// You can pretty much ignore everything from here on - your code should go in your states.
+	public static var psychEngineVersion:String = '1.0';
+	public static var baseGameVersion:String = '0.3.0';
 
-	public static function main():Void
-	{
+	public static function main():Void {
 		Lib.current.addChild(new Main());
 	}
 
@@ -75,18 +75,15 @@ class Main extends Sprite
 		#end
 	}
 
-	private function init(?E:Event):Void
-	{
-		if (hasEventListener(Event.ADDED_TO_STAGE))
-		{
+	private function init(?E:Event):Void {
+		if (hasEventListener(Event.ADDED_TO_STAGE)) {
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 		}
 
 		setupGame();
 	}
 
-	private function setupGame():Void
-	{
+	private function setupGame():Void {
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -101,17 +98,16 @@ class Main extends Sprite
 
 		addChild(new FlxGame(game.width, game.height, InitState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
-		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
-		addChild(fpsVar);
+		fpsCounter = new FPSCounter(10, 3, 0xFFFFFF);
+		addChild(fpsCounter);
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
-		if(fpsVar != null) {
-			fpsVar.visible = ClientPrefs.data.showFPS;
+		if (fpsCounter != null) {
+			fpsCounter.visible = ClientPrefs.data.showFPS;
 		}
 
 		#if linux
-		var icon = Image.fromFile("icon.png");
-		Lib.current.stage.window.setIcon(icon);
+		Lib.current.stage.window.setIcon(Image.fromFile("icon.png"));
 		#end
 		
 		#if CRASH_HANDLER
@@ -119,7 +115,7 @@ class Main extends Sprite
 		#end
 
 		// shader coords fix
-		FlxG.signals.gameResized.add(function (w, h) {
+		FlxG.signals.gameResized.add(function (_, _) {
 		     if (FlxG.cameras != null) {
 			   for (cam in FlxG.cameras.list) {
 				if (cam != null && cam.filters != null)
@@ -134,59 +130,35 @@ class Main extends Sprite
 
 	static function resetSpriteCache(sprite:Sprite):Void {
 		@:privateAccess {
-		        sprite.__cacheBitmap = null;
+		    sprite.__cacheBitmap = null;
 			sprite.__cacheBitmapData = null;
 		}
 	}
 
-	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
-	// very cool person for real they don't get enough credit for their work
 	#if CRASH_HANDLER
-	function onCrash(e:UncaughtErrorEvent):Void
-	{
-		var errMsg:String = "";
-		var path:String;
-		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
-		var dateNow:String = Date.now().toString();
+	function onCrash(e:UncaughtErrorEvent):Void {
+		var errMsg:String = '${e.error}\n\n';
+		var date:String = '${Date.now()}'.replace(":", "'");
 
-		dateNow = dateNow.replace(" ", "_");
-		dateNow = dateNow.replace(":", "'");
-
-		path = "./crash/" + "PsychEngine_" + dateNow + ".txt";
-
-		for (stackItem in callStack)
-		{
-			switch (stackItem)
-			{
-				case FilePos(s, file, line, column):
-					errMsg += file + " (line " + line + ")\n";
-				default:
-					Sys.println(stackItem);
+		for (stackItem in CallStack.exceptionStack(true)) {
+			switch (stackItem) {
+				case FilePos(_, file, line, _): errMsg += 'Called from $file:$line\n';
+				default: Sys.println(stackItem);
 			}
 		}
 
-		errMsg += "\nUncaught Error: " + e.error;
-		/*
-		 * remove if you're modding and want the crash log message to contain the link
-		 * please remember to actually modify the link for the github page to report the issues to.
-		*/
-		// 
-		#if officialBuild
-		errMsg += "\nPlease report this error to the GitHub page: https://github.com/ShadowMario/FNF-PsychEngine\n\n> Crash Handler written by: sqirra-rng";
-		#end
+		// if you're modding source
+		// please either remove this line, or replace the link to your mod's github repo
+		// so that the original repo doesn't get false issues
+		errMsg += "\nPlease report this error to the GitHub page: https://github.com/Rudyrue/custom-psych";
 
-		if (!FileSystem.exists("./crash/"))
-			FileSystem.createDirectory("./crash/");
+		if (!FileSystem.exists("./crash/")) FileSystem.createDirectory("./crash/");
 
-		File.saveContent(path, errMsg + "\n");
-
-		Sys.println(errMsg);
-		Sys.println("Crash dump saved in " + Path.normalize(path));
+		File.saveContent('./crash/$date.txt', 'errMsg\n');
+		Sys.println('\n$errMsg');
 
 		Application.current.window.alert(errMsg, "Error!");
-		#if DISCORD_ALLOWED
 		DiscordClient.shutdown();
-		#end
 		Sys.exit(1);
 	}
 	#end

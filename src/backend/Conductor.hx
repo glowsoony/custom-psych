@@ -171,10 +171,14 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	static function set_rate(value:Float):Float {
+		#if FLX_PITCH
 		inst.pitch = value;
 		vocals.pitch = value;
 
 		return rate = value;
+		#else
+		return 1.0;
+		#end
 	}
 
 	static function set_volume(value:Float):Float {

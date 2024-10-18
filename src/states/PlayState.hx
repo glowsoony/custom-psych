@@ -515,7 +515,7 @@ class PlayState extends MusicBeatState {
 			vocal.time = time - Conductor.offset;
 		}
 
-		#if FLX_PITCH Conductor.rate = playbackRate; #end
+		Conductor.rate = playbackRate;
 		Conductor.time = time;
 		Conductor.resume();
 	}
@@ -857,7 +857,7 @@ class PlayState extends MusicBeatState {
 
 		FlxG.camera.setFilters([]);
 
-		#if FLX_PITCH Conductor.rate = 1; #end
+		Conductor.rate = 1;
 		FlxG.animationTimeScale = 1;
 
 		backend.NoteTypesConfig.clearNoteTypesData();

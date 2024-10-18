@@ -378,9 +378,7 @@ class FreeplayState extends MusicBeatState
 							//trace('yaaay!!');
 						}
 						else opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
-					}
-					catch(e:Dynamic)
-					{
+					} catch(e:Dynamic) {
 						//trace('FUUUCK');
 						opponentVocals = FlxDestroyUtil.destroy(opponentVocals);
 					}
@@ -394,32 +392,25 @@ class FreeplayState extends MusicBeatState
 				player.curTime = 0;
 				player.switchPlayMusic();
 				player.pauseOrResume(true);
-			}
-			else if (instPlaying == curSelected && player.playingMusic)
-			{
+			} else if (instPlaying == curSelected && player.playingMusic) {
 				player.pauseOrResume(!player.playing);
 			}
-		}
-		else if (controls.ACCEPT && !player.playingMusic)
-		{
+		} else if (controls.ACCEPT && !player.playingMusic) {
 			persistentUpdate = false;
 			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 
-			try
-			{
+			try {
 				Song.loadFromJson(poop, songLowercase);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 
 				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-			}
-			catch(e:haxe.Exception)
-			{
+			} catch(e:haxe.Exception) {
 				trace('ERROR! ${e.message}');
 
 				var errorStr:String = e.message;
-				if(errorStr.contains('There is no TEXT asset with an ID of')) errorStr = 'Missing file: ' + errorStr.substring(errorStr.indexOf(songLowercase), errorStr.length-1); //Missing chart
+				if (errorStr.contains('There is no TEXT asset with an ID of')) errorStr = 'Missing file: ${errorStr.substring(errorStr.indexOf(songLowercase), errorStr.length-1)}'; //Missing chart
 				else errorStr += '\n\n' + e.stack;
 
 				missingText.text = 'ERROR WHILE LOADING CHART:\n$errorStr';
@@ -435,16 +426,14 @@ class FreeplayState extends MusicBeatState
 
 			LoadingState.prepareToSong();
 			LoadingState.loadAndSwitchState(new PlayState());
-			#if !SHOW_LOADING_SCREEN FlxG.sound.music.stop(); #end
+			#if !SHOW_LOADING_SCREEN Conductor.inst.stop(); #end
 			stopMusicPlay = true;
 
 			destroyFreeplayVocals();
 			#if (MODS_ALLOWED && DISCORD_ALLOWED)
 			DiscordClient.loadModRPC();
 			#end
-		}
-		else if(controls.RESET && !player.playingMusic)
-		{
+		} else if (controls.RESET && !player.playingMusic) {
 			persistentUpdate = false;
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));

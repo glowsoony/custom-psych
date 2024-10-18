@@ -17,10 +17,8 @@ class CreditsState extends MusicBeatState
 
 	var offsetThing:Float = -75;
 
-	override function create()
-	{
+	override function create() {
 		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
@@ -133,12 +131,7 @@ class CreditsState extends MusicBeatState
 
 	var quitting:Bool = false;
 	var holdTime:Float = 0;
-	override function update(elapsed:Float)
-	{
-		if (FlxG.sound.music.volume < 0.7)
-		{
-			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
-		}
+	override function update(elapsed:Float) {
 
 		if(!quitting)
 		{

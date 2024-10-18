@@ -271,21 +271,15 @@ class LoadingState extends MusicBeatState
 		trace('Setting asset folder to ' + directory);
 	}
 
-	static function getNextState(target:FlxState, stopMusic = false, intrusive:Bool = true):FlxState
-	{
+	static function getNextState(target:FlxState, stopMusic = false, intrusive:Bool = true):FlxState {
 		loadNextDirectory();
-		if(intrusive)
-			return new LoadingState(target, stopMusic);
+		if (intrusive) return new LoadingState(target, stopMusic);
 
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 		
-		while(true)
-		{
-			if(!checkLoaded())
-			{
-				Sys.sleep(0.001);
-			}
+		while (true) {
+			if (!checkLoaded()) Sys.sleep(0.001);
 			else break;
 		}
 		return target;
