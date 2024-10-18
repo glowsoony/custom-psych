@@ -50,13 +50,13 @@ class MainMenuState extends MusicBeatState {
 		add(optionGrp = new FlxTypedSpriteGroup<FunkinSprite>());
 
 		// meth :broken_heart:
-		var scr:Float = options.length < 6 ? 0 : (options.length - 4) * 0.135;
+		var itemScrollY:Float = options.length < 6 ? 0 : (options.length - 4) * 0.135;
 		var offset:Float = 108 - (Math.max(options.length, 4) - 4) * 80;
 		for (i => option in options) {
 			var item:FunkinSprite = createItem(option, 0, (i * 140) + offset);
 			optionGrp.add(item);
 
-			item.scrollFactor.set(0, scr);
+			item.scrollFactor.set(0, itemScrollY);
 			item.updateHitbox();
 			item.screenCenter(X);
 		}
