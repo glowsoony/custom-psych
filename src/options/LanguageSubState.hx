@@ -77,7 +77,7 @@ class LanguageSubState extends MusicBeatSubstate
 			var name:String = displayLanguages.get(lang);
 			if(name == null) name = lang;
 
-			var text:Alphabet = new Alphabet(0, 300, name, true);
+			var text:Alphabet = new Alphabet(0, 300, name, BOLD);
 			text.isMenuItem = true;
 			text.targetY = num;
 			text.changeX = false;

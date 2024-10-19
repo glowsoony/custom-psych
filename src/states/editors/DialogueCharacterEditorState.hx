@@ -128,7 +128,7 @@ class DialogueCharacterEditorState extends MusicBeatState implements PsychUIEven
 		reloadCharacter();
 		updateTextBox();
 
-		daText = new TypedAlphabet(DialogueBoxPsych.DEFAULT_TEXT_X, DialogueBoxPsych.DEFAULT_TEXT_Y, '', 0.05, false);
+		daText = new TypedAlphabet(DialogueBoxPsych.DEFAULT_TEXT_X, DialogueBoxPsych.DEFAULT_TEXT_Y, '', 0.05, NORMAL);
 		daText.setScale(0.7);
 		daText.text = DEFAULT_TEXT;
 		hudGroup.add(daText);

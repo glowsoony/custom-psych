@@ -7,8 +7,7 @@ import objects.Character;
 import states.MainMenuState;
 import states.FreeplayState;
 
-class MasterEditorMenu extends MusicBeatState
-{
+class MasterEditorMenu extends MusicBeatState {
 	var options:Array<String> = [
 		'Chart Editor',
 		'Character Editor',
@@ -25,11 +24,9 @@ class MasterEditorMenu extends MusicBeatState
 	private var curDirectory = 0;
 	private var directoryTxt:FlxText;
 
-	override function create()
-	{
+	override function create() {
 		FlxG.camera.bgColor = FlxColor.BLACK;
 		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Editors Main Menu", null);
 		#end
 
@@ -41,9 +38,8 @@ class MasterEditorMenu extends MusicBeatState
 		grpTexts = new FlxTypedGroup<Alphabet>();
 		add(grpTexts);
 
-		for (i in 0...options.length)
-		{
-			var leText:Alphabet = new Alphabet(90, 320, options[i], true);
+		for (i in 0...options.length) {
+			var leText:Alphabet = new Alphabet(90, 320, options[i]);
 			leText.isMenuItem = true;
 			leText.targetY = i;
 			grpTexts.add(leText);

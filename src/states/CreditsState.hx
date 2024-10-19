@@ -73,7 +73,7 @@ class CreditsState extends MusicBeatState
 		for (i => credit in creditsStuff)
 		{
 			var isSelectable:Bool = !unselectableCheck(i);
-			var optionText:Alphabet = new Alphabet(FlxG.width / 2, 300, credit[0], !isSelectable);
+			var optionText:Alphabet = new Alphabet(FlxG.width / 2, 300, credit[0], isSelectable ? NORMAL : BOLD);
 			optionText.isMenuItem = true;
 			optionText.targetY = i;
 			optionText.changeX = false;
@@ -105,7 +105,7 @@ class CreditsState extends MusicBeatState
 
 				if(curSelected == -1) curSelected = i;
 			}
-			else optionText.alignment = CENTERED;
+			else optionText.alignment = CENTER;
 		}
 		
 		descBox = new AttachedSprite();
@@ -178,35 +178,24 @@ class CreditsState extends MusicBeatState
 			}
 		}
 		
-		for (item in grpOptions.members)
-		{
-			if(!item.bold)
-			{
-				var lerpVal:Float = Math.exp(-elapsed * 12);
-				if(item.targetY == 0)
-				{
-					var lastX:Float = item.x;
-					item.screenCenter(X);
-					item.x = FlxMath.lerp(item.x - 70, lastX, lerpVal);
-				}
-				else
-				{
-					item.x = FlxMath.lerp(200 + -40 * Math.abs(item.targetY), item.x, lerpVal);
-				}
-			}
+		for (item in grpOptions.members) {
+			if (item.type == BOLD) continue;
+			var lerpVal:Float = Math.exp(-elapsed * 12);
+			if (item.targetY == 0) {
+				var lastX:Float = item.x;
+				item.screenCenter(X);
+				item.x = FlxMath.lerp(item.x - 70, lastX, lerpVal);
+			} else item.x = FlxMath.lerp(200 + -40 * Math.abs(item.targetY), item.x, lerpVal);
 		}
 		super.update(elapsed);
 	}
 
 	var moveTween:FlxTween = null;
-	function changeSelection(change:Int = 0)
-	{
+	function changeSelection(change:Int = 0) {
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-		do
-		{
+		do {
 			curSelected = FlxMath.wrap(curSelected + change, 0, creditsStuff.length - 1);
-		}
-		while(unselectableCheck(curSelected));
+		} while (unselectableCheck(curSelected));
 
 		var newColor:FlxColor = CoolUtil.colorFromString(creditsStuff[curSelected][4]);
 		//trace('The BG color is: $newColor');

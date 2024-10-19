@@ -16,11 +16,10 @@ enum OptionType {
 	KEYBIND;
 }
 
-class Option
-{
+class Option {
 	public var child:Alphabet;
 	public var text(get, set):String;
-	public var onChange:Void->Void = null; //Pressed enter (on Bool type options) or pressed/held left/right (on other types)
+	public dynamic function onChange() {} //Pressed enter (on Bool type options) or pressed/held left/right (on other types)
 	public var type:OptionType = BOOL;
 
 	public var scrollSpeed:Float = 50; //Only works on int/float, defines how fast it scrolls per second while holding left/right
@@ -41,8 +40,7 @@ class Option
 	public var defaultKeys:Keybind = null; //Only used in keybind type
 	public var keys:Keybind = null; //Only used in keybind type
 
-	public function new(name:String, description:String = '', variable:String, type:OptionType = BOOL, ?options:Array<String> = null, ?translation:String = null)
-	{
+	public function new(name:String, description:String = '', variable:String, type:OptionType = BOOL, ?options:Array<String> = null, ?translation:String = null) {
 		_name = name;
 		_translationKey = translation != null ? translation : _name;
 		this.name = Language.getPhrase('setting_$_translationKey', name);
@@ -51,15 +49,14 @@ class Option
 		this.type = type;
 		this.options = options;
 
-		if(this.type != KEYBIND) this.defaultValue = Reflect.getProperty(ClientPrefs.defaultData, variable);
-		switch(type)
-		{
+		if (this.type != KEYBIND) this.defaultValue = Reflect.getProperty(ClientPrefs.defaultData, variable);
+		switch(type) {
 			case BOOL:
-				if(defaultValue == null) defaultValue = false;
+				if (defaultValue == null) defaultValue = false;
 			case INT, FLOAT:
-				if(defaultValue == null) defaultValue = 0;
+				if (defaultValue == null) defaultValue = 0;
 			case PERCENT:
-				if(defaultValue == null) defaultValue = 1;
+				if (defaultValue == null) defaultValue = 1;
 				displayFormat = '%v%';
 				changeValue = 0.01;
 				minValue = 0;
@@ -67,9 +64,9 @@ class Option
 				scrollSpeed = 0.5;
 				decimals = 2;
 			case STRING:
-				if(options.length > 0)
+				if (options.length > 0)
 					defaultValue = options[0];
-				if(defaultValue == null)
+				if (defaultValue == null)
 					defaultValue = '';
 
 			case KEYBIND:
@@ -78,47 +75,40 @@ class Option
 				keys = {gamepad: 'NONE', keyboard: 'NONE'};
 		}
 
-		try
-		{
-			if(getValue() == null)
+		try {
+			if (getValue() == null)
 				setValue(defaultValue);
 	
-			switch(type)
-			{
+			switch(type) {
 				case STRING:
 					var num:Int = options.indexOf(getValue());
 					if(num > -1) curOption = num;
 
 				default:
 			}
-		}
-		catch(e) {}
+		} catch(e) {}
 	}
 
-	public function change()
-	{
+	public function change() {
 		//nothing lol
-		if(onChange != null)
-			onChange();
+		onChange();
 	}
 
-	dynamic public function getValue():Dynamic
-	{
+	dynamic public function getValue():Dynamic {
 		var value = Reflect.getProperty(ClientPrefs.data, variable);
-		if(type == KEYBIND) return !Controls.instance.controllerMode ? value.keyboard : value.gamepad;
+		if (type == KEYBIND) return !Controls.instance.controllerMode ? value.keyboard : value.gamepad;
 		return value;
 	}
 
-	dynamic public function setValue(value:Dynamic)
-	{
-		if(type == KEYBIND)
-		{
+	dynamic public function setValue(value:Dynamic) {
+		if (type == KEYBIND) {
 			var keys = Reflect.getProperty(ClientPrefs.data, variable);
-			if(!Controls.instance.controllerMode) keys.keyboard = value;
+			if (!Controls.instance.controllerMode) keys.keyboard = value;
 			else keys.gamepad = value;
-			return value;
+			return;
 		}
-		return Reflect.setProperty(ClientPrefs.data, variable, value);
+
+		Reflect.setProperty(ClientPrefs.data, variable, value);
 	}
 
 	var _name:String = null;
@@ -127,10 +117,8 @@ class Option
 	private function get_text()
 		return _text;
 
-	private function set_text(newValue:String = '')
-	{
-		if(child != null)
-		{
+	private function set_text(newValue:String = '') {
+		if (child != null) {
 			_text = newValue;
 			child.text = Language.getPhrase('setting_$_translationKey-${getValue()}', _text);
 			return _text;
