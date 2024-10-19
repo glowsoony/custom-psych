@@ -4,8 +4,7 @@ import backend.animation.PsychAnimationController;
 
 class StrumNote extends FlxSprite {
 	public var resetAnim:Float = 0;
-	private var noteData:Int = 0;
-	public var direction:Float = 90;
+	private var lane:Int = 0;
 	public var downScroll:Bool = false;
 	public var sustainReduce:Bool = true;
 	private var player:Int;
@@ -19,13 +18,11 @@ class StrumNote extends FlxSprite {
 		return value;
 	}
 
-	public function new(x:Float, y:Float, leData:Int, player:Int) {
+	public function new(x:Float, y:Float, lane:Int, player:Int) {
 		animation = new PsychAnimationController(this);
 
-		noteData = leData;
 		this.player = player;
-		this.noteData = leData;
-		this.ID = noteData;
+		this.lane = lane;
 		super(x, y);
 
 		var skin:String = null;
@@ -44,11 +41,9 @@ class StrumNote extends FlxSprite {
 		var lastAnim:String = null;
 		if (animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-		if (PlayState.isPixelStage) {
-			loadGraphic(Paths.image('pixelUI/$texture'));
-			width = width / 4;
-			height = height / 5;
-			loadGraphic(Paths.image('pixelUI/$texture'), true, Math.floor(width), Math.floor(height));
+		if (PlayState.isPixelStage) {	
+			final image = Paths.image('pixelUI/$texture');
+			loadGraphic(image, true, Math.floor(image.width * 0.25), Math.floor(image.height / 5));
 
 			antialiasing = false;
 			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
@@ -57,7 +52,7 @@ class StrumNote extends FlxSprite {
 			animation.add('red', [7]);
 			animation.add('blue', [5]);
 			animation.add('purple', [4]);
-			switch (Math.abs(noteData) % 4) {
+			switch (Math.abs(lane) % 4) {
 				case 0:
 					animation.add('static', [0]);
 					animation.add('pressed', [4, 8], 12, false);
@@ -85,7 +80,7 @@ class StrumNote extends FlxSprite {
 			antialiasing = ClientPrefs.data.antialiasing;
 			setGraphicSize(Std.int(width * 0.7));
 
-			switch (Math.abs(noteData) % 4) {
+			switch (Math.abs(lane) % 4) {
 				case 0:
 					animation.addByPrefix('static', 'arrowLEFT');
 					animation.addByPrefix('pressed', 'left press', 24, false);
@@ -110,7 +105,7 @@ class StrumNote extends FlxSprite {
 	}
 
 	public function playerPosition() {
-		x += Note.swagWidth * noteData;
+		x += Note.swagWidth * lane;
 		x += 50;
 		x += ((FlxG.width / 2) * player);
 	}

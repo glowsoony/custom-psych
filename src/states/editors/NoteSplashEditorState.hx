@@ -154,14 +154,14 @@ class NoteSplashEditorState extends MusicBeatState
                     name_input.text = name;
                     prefix_input.text = i.prefix; 
                     numericStepperData.min = 0;     
-                    numericStepperData.value = i.noteData;
+                    numericStepperData.value = i.lane;
                     curAnim = name;
                     minFps.value = i.fps[0];
                     maxFps.value = i.fps[1];
                     if (i.indices != null && i.indices.length > 0)
                         indices_input.text = i.indices.toString().substring(1, i.indices.toString().length - 2);
 
-                    playStrumAnim(curAnim, i.noteData);
+                    playStrumAnim(curAnim, i.lane);
                 }
             }
         });
@@ -397,7 +397,7 @@ class NoteSplashEditorState extends MusicBeatState
             {
                 if (config.animations.get(curAnim) != null)
                 {
-                    playStrumAnim(curAnim, config.animations.get(curAnim).noteData);
+                    playStrumAnim(curAnim, config.animations.get(curAnim).lane);
                     FlxTween.cancelTweensOf(errorText);
                     errorText.alpha = 0;
                 }

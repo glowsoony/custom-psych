@@ -44,7 +44,7 @@ class Note extends FlxSprite
 	public var extraData:Map<String, Dynamic> = new Map<String, Dynamic>();
 
 	public var strumTime:Float = 0;
-	public var noteData:Int = 0;
+	public var lane:Int = 0;
 
 	public var mustPress:Bool = false;
 	public var canBeHit:Bool = false;
@@ -156,7 +156,7 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String {
 		noteSplashData.texture = PlayState.SONG != null ? PlayState.SONG.splashSkin : 'noteSplashes';
 
-		if(noteData > -1 && noteType != value) {
+		if (lane > -1 && noteType != value) {
 			switch(value) {
 				case 'Hurt Note':
 					ignoreNote = mustPress;
@@ -184,7 +184,7 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?createdFrom:Dynamic = null) {
+	public function new(strumTime:Float, lane:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?createdFrom:Dynamic = null) {
 		super();
 
 		animation = new PsychAnimationController(this);
@@ -206,15 +206,15 @@ class Note extends FlxSprite
 		this.strumTime = strumTime;
 		if (!inEditor) this.strumTime += ClientPrefs.data.noteOffset;
 
-		this.noteData = noteData;
+		this.lane = lane;
 
-		if (noteData > -1) {
+		if (lane > -1) {
 			texture = '';
 
-			x += swagWidth * (noteData);
-			if (!isSustainNote && noteData < colArray.length) { //Doing this 'if' check to fix the warnings on Senpai songs
+			x += swagWidth * lane;
+			if (!isSustainNote && lane < colArray.length) { //Doing this 'if' check to fix the warnings on Senpai songs
 				var animToPlay:String = '';
-				animToPlay = colArray[noteData % colArray.length];
+				animToPlay = colArray[lane % colArray.length];
 				animation.play(animToPlay + 'Scroll');
 			}
 		}
@@ -228,12 +228,12 @@ class Note extends FlxSprite
 			alpha = 0.6;
 			multAlpha = 0.6;
 			hitsoundDisabled = true;
-			if(ClientPrefs.data.downScroll) flipY = true;
+			if (ClientPrefs.data.downScroll) flipY = true;
 
 			offsetX += width / 2;
 			copyAngle = false;
 
-			animation.play(colArray[noteData % colArray.length] + 'holdend');
+			animation.play(colArray[lane % colArray.length] + 'holdend');
 
 			updateHitbox();
 
@@ -243,7 +243,7 @@ class Note extends FlxSprite
 				offsetX += 30;
 
 			if (prevNote.isSustainNote) {
-				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
+				prevNote.animation.play(colArray[prevNote.lane % colArray.length] + 'hold');
 
 				prevNote.scale.y *= Conductor.stepCrotchet / 100 * 1.05;
 				if(createdFrom != null && createdFrom.songSpeed != null) prevNote.scale.y *= createdFrom.songSpeed;
@@ -338,26 +338,27 @@ class Note extends FlxSprite
 	}
 
 	function loadNoteAnims() {
-		if (colArray[noteData] == null)
-			return;
+		final colour:String = colArray[lane];
+		if (colour == null) return;
 
 		if (isSustainNote) {
 			attemptToAddAnimationByPrefix('purpleholdend', 'pruple end hold', 24, true); // this fixes some retarded typo from the original note .FLA
-			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end', 24, true);
-			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece', 24, true);
-		} else animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0');
+			animation.addByPrefix('${colour}holdend',  '${colour} hold end', 24, true);
+			animation.addByPrefix('${colour}hold', '${colour} hold piece', 24, true);
+		} else animation.addByPrefix('${colour}Scroll', '${colour}0');
 
 		setGraphicSize(Std.int(width * 0.7));
 		updateHitbox();
 	}
 
 	function loadPixelNoteAnims() {
-		if (colArray[noteData] == null) return;
+		final colour:String = colArray[lane];
+		if (colour == null) return;
 
 		if (isSustainNote) {
-			animation.add(colArray[noteData] + 'holdend', [noteData + 4], 24, true);
-			animation.add(colArray[noteData] + 'hold', [noteData], 24, true);
-		} else animation.add(colArray[noteData] + 'Scroll', [noteData + 4], 24, true);
+			animation.add('${colour}holdend', [lane + 4], 24, true);
+			animation.add('${colour}hold', [lane], 24, true);
+		} else animation.add('${colour}Scroll', [lane + 4], 24, true);
 	}
 
 	function attemptToAddAnimationByPrefix(name:String, prefix:String, framerate:Float = 24, doLoop:Bool = true) {
@@ -372,8 +373,7 @@ class Note extends FlxSprite
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (mustPress)
-		{
+		if (mustPress) {
 			canBeHit = (strumTime > Conductor.time - (Conductor.safeZoneOffset * lateHitMult) &&
 						strumTime < Conductor.time + (Conductor.safeZoneOffset * earlyHitMult));
 
@@ -399,20 +399,16 @@ class Note extends FlxSprite
 		var strumY:Float = myStrum.y;
 		var strumAngle:Float = myStrum.angle;
 		var strumAlpha:Float = myStrum.alpha;
-		var strumDirection:Float = myStrum.direction;
 
 		distance = (0.45 * (Conductor.time - strumTime) * songSpeed * multSpeed);
 		if (!myStrum.downScroll) distance *= -1;
 
-		var angleDir = strumDirection * Math.PI / 180;
-		if (copyAngle)
-			angle = strumDirection - 90 + strumAngle + offsetAngle;
+		var angleDir = 90 * Math.PI / 180;
+		if (copyAngle) angle = 90 - 90 + strumAngle + offsetAngle;
 
-		if(copyAlpha)
-			alpha = strumAlpha * multAlpha;
+		if (copyAlpha) alpha = strumAlpha * multAlpha;
 
-		if(copyX)
-			x = strumX + offsetX + Math.cos(angleDir) * distance;
+		if (copyX) x = strumX + offsetX + Math.cos(angleDir) * distance;
 
 		if (copyY) {
 			y = strumY + offsetY + correctionOffset + Math.sin(angleDir) * distance;
@@ -426,7 +422,8 @@ class Note extends FlxSprite
 	}
 
 	public function clipToStrumNote(myStrum:StrumNote) {
-		var center:Float = myStrum.y + offsetY + Note.swagWidth / 2;
+		var center:Float = myStrum.y + offsetY + Note.swagWidth * 0.5;
+		
 		if ((mustPress || !ignoreNote) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit))) {
 			var swagRect:FlxRect = clipRect;
 			if (swagRect == null) swagRect = new FlxRect(0, 0, frameWidth, frameHeight);

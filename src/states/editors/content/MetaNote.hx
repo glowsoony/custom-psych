@@ -10,21 +10,21 @@ class MetaNote extends Note
 	public var songData:Array<Dynamic>;
 	public var sustainSprite:FlxSprite;
 	public var chartY:Float = 0;
-	public var chartNoteData:Int = 0;
+	public var chartLane:Int = 0;
 
-	public function new(time:Float, data:Int, songData:Array<Dynamic>)
+	public function new(time:Float, lane:Int, songData:Array<Dynamic>)
 	{
-		super(time, data, null, false, true);
+		super(time, lane, null, false, true);
 		this.songData = songData;
 		this.strumTime = time;
-		this.chartNoteData = data;
+		this.chartLane = lane;
 	}
 
-	public function changeNoteData(v:Int)
+	public function changeLane(v:Int)
 	{
-		this.chartNoteData = v; //despite being so arbitrary its sadly needed to fix a bug on moving notes
+		this.chartLane = v; //despite being so arbitrary its sadly needed to fix a bug on moving notes
 		this.songData[1] = v;
-		this.noteData = v % ChartingState.GRID_COLUMNS_PER_PLAYER;
+		this.lane = v % ChartingState.GRID_COLUMNS_PER_PLAYER;
 		this.mustPress = (v < ChartingState.GRID_COLUMNS_PER_PLAYER);
 		
 		if(!PlayState.isPixelStage)
@@ -32,12 +32,10 @@ class MetaNote extends Note
 		else
 			loadPixelNoteAnims();
 
-		animation.play(Note.colArray[this.noteData % Note.colArray.length] + 'Scroll');
+		animation.play(Note.colArray[this.lane % Note.colArray.length] + 'Scroll');
 		updateHitbox();
-		if(width > height)
-			setGraphicSize(ChartingState.GRID_SIZE);
-		else
-			setGraphicSize(0, ChartingState.GRID_SIZE);
+		if (width > height) setGraphicSize(ChartingState.GRID_SIZE);
+		else setGraphicSize(0, ChartingState.GRID_SIZE);
 
 		updateHitbox();
 	}

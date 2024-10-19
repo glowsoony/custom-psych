@@ -20,7 +20,7 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 
 	public function regenerate() {
 		// just in case there's anything stored
-		while(members.length != 0)
+		while (members.length != 0)
 			members.pop().destroy();
 		var strum:StrumNote = null;
 		for (i in 0...keyCount) {
@@ -77,12 +77,12 @@ class StrumNote extends FunkinSprite {
 
 		animation.finishCallback = _ -> {
 			active = false;
-			if ((!parent.player || (parent.player && Settings.data.botplay)) && animation.curAnim.name == 'notePressed') {
+			if ((!parent.player || (parent.player && ClientPrefs.getGameplaySetting('botplay'))) && animation.curAnim.name == 'notePressed') {
 				playAnim('default');
 			}
 		}
 
-		frames = Paths.sparrowAtlas('noteskins/${Settings.data.noteskin}');
+		frames = Paths.sparrowAtlas(texture);
 		animation.addByPrefix('default', 'arrow${anim.toUpperCase()}', 24);
 		animation.addByPrefix('pressed', '$anim press', 24, false);
 		animation.addByPrefix('notePressed', '$anim confirm', 24, false);

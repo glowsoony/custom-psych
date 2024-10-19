@@ -5,7 +5,7 @@ import flixel.system.FlxAssets.FlxShader;
 
 private typedef NoteSplashAnim = {
 	name:String,
-	noteData:Int,
+	lane:Int,
 	prefix:String,
 	indices:Array<Int>,
 	offsets:Array<Float>,
@@ -79,7 +79,7 @@ class NoteSplash extends FlxSprite
 		}
 	}
 
-	public function spawnSplashNote(note:Note, ?noteData:Null<Int>, ?randomize:Bool = true) {	
+	public function spawnSplashNote(note:Note, ?lane:Null<Int>, ?randomize:Bool = true) {	
 		if (note != null && note.noteSplashData.texture != null)
 			loadSplash(note.noteSplashData.texture);
 
@@ -89,8 +89,7 @@ class NoteSplash extends FlxSprite
 		if (babyArrow != null)
 			setPosition(babyArrow.x, babyArrow.y); // To prevent it from being misplaced for one game tick
 
-		if (noteData == null)
-			noteData = note != null ? note.noteData : 0;
+		if (lane == null) lane = note.lane ?? 0;
 
 		if (randomize) {
 			var anims:Int = 0;
@@ -98,7 +97,7 @@ class NoteSplash extends FlxSprite
 			var animArray:Array<Int> = [];
 
 			while (true) {
-				var data:Int = noteData % Note.colArray.length + (datas * Note.colArray.length); 
+				var data:Int = lane % Note.colArray.length + (datas * Note.colArray.length); 
 				if (!noteDataMap.exists(data) || !animation.exists(noteDataMap[data])) break;
 
 				datas++;
@@ -107,16 +106,16 @@ class NoteSplash extends FlxSprite
 
 			if (anims > 1) {
 				for (i in 0...anims) {
-					var data = noteData % Note.colArray.length + (i * Note.colArray.length);
+					var data:Int = lane % Note.colArray.length + (i * Note.colArray.length);
 					if (!animArray.contains(data))
 						animArray.push(data);
 				}
 			}
 
-			if (animArray.length > 1) noteData = animArray[FlxG.random.bool() ? 0 : 1];
+			if (animArray.length > 1) lane = animArray[FlxG.random.bool() ? 0 : 1];
 		}
 
-		this.noteData = noteData;
+		this.lane = lane;
 		var anim:String = playDefaultAnim();
 
 		var conf = config.animations.get(anim);
@@ -152,9 +151,9 @@ class NoteSplash extends FlxSprite
 		}
 	}
 	
-	public var noteData:Int = 0;
+	public var lane:Int = 0;
 	public function playDefaultAnim() {
-		var animation:String = noteDataMap.get(noteData);
+		var animation:String = noteDataMap.get(lane);
 		if (animation != null && this.animation.exists(animation)) this.animation.play(animation, true);
 		else visible = false;
 		return animation;
@@ -184,10 +183,10 @@ class NoteSplash extends FlxSprite
 		}
 	}
 
-	public static function addAnimationToConfig(config:NoteSplashConfig, scale:Float, name:String, prefix:String, fps:Array<Int>, offsets:Array<Float>, indices:Array<Int>, noteData:Int):NoteSplashConfig {
+	public static function addAnimationToConfig(config:NoteSplashConfig, scale:Float, name:String, prefix:String, fps:Array<Int>, offsets:Array<Float>, indices:Array<Int>, lane:Int):NoteSplashConfig {
 		if (config == null) config = createConfig();
 
-		config.animations.set(name, {name: name, noteData: noteData, prefix: prefix, indices: indices, offsets: offsets, fps: fps});
+		config.animations.set(name, {name: name, lane: lane, prefix: prefix, indices: indices, offsets: offsets, fps: fps});
 		config.scale = scale;
 		return config;
 	}
@@ -205,7 +204,7 @@ class NoteSplash extends FlxSprite
 				else
 					animation.addByPrefix(key, i.prefix, i.fps[1], false);
 
-				noteDataMap.set(i.noteData, key);
+				noteDataMap.set(i.lane, key);
 			}
 		}
 
