@@ -6,8 +6,8 @@
 
 * Libraries:
 	- Flixel 5.5.0 `haxelib install flixel 5.5.0`
-	- Lime 8.1.2 `haxelib install lime 8.1.2`
-	- OpenFL 9.3.3 `haxelib install openfl 9.3.3`
+	- Lime 8.2.0 `haxelib install lime 8.2.0`
+	- OpenFL 9.4.0 `haxelib install openfl 9.4.0`
 	- Flixel Addons 3.2.2 `haxelib install flixel-addons 3.2.2`
 	- Flixel Tools 1.5.1 `haxelib install flixel-tools 1.5.1`
 	- HScript (Iris) 1.1.0 `haxelib install hscript-iris 1.1.0`
