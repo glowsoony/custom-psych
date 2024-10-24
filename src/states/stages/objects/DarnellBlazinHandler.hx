@@ -26,7 +26,7 @@ class DarnellBlazinHandler
 		}
 
 		// Override the hit note animation.
-		switch (note.noteType)
+		switch (note.type)
 		{
 			case "weekend-1-punchlow":
 				playHitLowAnim();
@@ -120,7 +120,7 @@ class DarnellBlazinHandler
 		}
 
 		// Override the hit note animation.
-		switch (note.noteType)
+		switch (note.type)
 		{
 			// Pico tried and failed to punch, punch back!
 			case "weekend-1-punchlow":

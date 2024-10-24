@@ -70,22 +70,22 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		{
 			var sprite:FlxSprite = cast sprite;
 			if(sprite != null && (sprite is FlxSprite) && !(sprite is FlxText)) {
-				sprite.antialiasing = ClientPrefs.data.antialiasing;
+				sprite.antialiasing = Settings.data.antialiasing;
 			}
 		}
 	}
 
 	function onChangeFramerate()
 	{
-		if(ClientPrefs.data.framerate > FlxG.drawFramerate)
+		if(Settings.data.framerate > FlxG.drawFramerate)
 		{
-			FlxG.updateFramerate = ClientPrefs.data.framerate;
-			FlxG.drawFramerate = ClientPrefs.data.framerate;
+			FlxG.updateFramerate = Settings.data.framerate;
+			FlxG.drawFramerate = Settings.data.framerate;
 		}
 		else
 		{
-			FlxG.drawFramerate = ClientPrefs.data.framerate;
-			FlxG.updateFramerate = ClientPrefs.data.framerate;
+			FlxG.drawFramerate = Settings.data.framerate;
+			FlxG.updateFramerate = Settings.data.framerate;
 		}
 	}
 

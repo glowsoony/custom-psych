@@ -9,7 +9,7 @@ class FunkinSprite extends flixel.FlxSprite {
 		super(x, y, graphic);
 		this.moves = false;
 		this.active = false;
-		this.antialiasing = ClientPrefs.data.antialiasing;
+		this.antialiasing = Settings.data.antialiasing;
 
 		this.animation.finishCallback = _ -> {
 			this.active = false;

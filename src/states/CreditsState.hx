@@ -24,7 +24,7 @@ class CreditsState extends MusicBeatState
 
 		persistentUpdate = true;
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.antialiasing = ClientPrefs.data.antialiasing;
+		bg.antialiasing = Settings.data.antialiasing;
 		add(bg);
 		bg.screenCenter();
 		
@@ -132,46 +132,36 @@ class CreditsState extends MusicBeatState
 	var quitting:Bool = false;
 	var holdTime:Float = 0;
 	override function update(elapsed:Float) {
-
-		if(!quitting)
-		{
-			if(creditsStuff.length > 1)
-			{
+		if (!quitting) {
+			if (creditsStuff.length > 1) {
 				var shiftMult:Int = 1;
 				if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
 
-				var upP = controls.UI_UP_P;
-				var downP = controls.UI_DOWN_P;
+				var upPressed:Bool = Controls.pressed('ui_up');
+				var downPressed:Bool = Controls.pressed('ui_down');
+				var upJustPressed:Bool = Controls.justPressed('ui_up');
 
-				if (upP)
-				{
-					changeSelection(-shiftMult);
-					holdTime = 0;
-				}
-				if (downP)
-				{
-					changeSelection(shiftMult);
+				if (upPressed || downPressed) {
+					changeSelection(upPressed ? -shiftMult : shiftMult);
 					holdTime = 0;
 				}
 
-				if(controls.UI_DOWN || controls.UI_UP)
-				{
+				if (Controls.justPressed('ui_down') || upJustPressed) {
 					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
 					holdTime += elapsed;
 					var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
 
-					if(holdTime > 0.5 && checkNewHold - checkLastHold > 0)
-					{
-						changeSelection((checkNewHold - checkLastHold) * (controls.UI_UP ? -shiftMult : shiftMult));
+					if (holdTime > 0.5 && checkNewHold - checkLastHold > 0) {
+						changeSelection((checkNewHold - checkLastHold) * (upJustPressed ? -shiftMult : shiftMult));
 					}
 				}
 			}
 
-			if(controls.ACCEPT && (creditsStuff[curSelected][3] == null || creditsStuff[curSelected][3].length > 4)) {
+			if (Controls.justPressed('accept') && (creditsStuff[curSelected][3] == null || creditsStuff[curSelected][3].length > 4)) {
 				CoolUtil.browserLoad(creditsStuff[curSelected][3]);
 			}
-			if (controls.BACK)
-			{
+
+			if (Controls.justPressed('back')) {
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				MusicBeatState.switchState(new MainMenuState());
 				quitting = true;
@@ -238,8 +228,8 @@ class CreditsState extends MusicBeatState
 		var creditsFile:String = Paths.mods(folder + '/data/credits.txt');
 		
 		#if TRANSLATIONS_ALLOWED
-		//trace('/data/credits-${ClientPrefs.data.language}.txt');
-		var translatedCredits:String = Paths.mods(folder + '/data/credits-${ClientPrefs.data.language}.txt');
+		//trace('/data/credits-${Settings.data.language}.txt');
+		var translatedCredits:String = Paths.mods(folder + '/data/credits-${Settings.data.language}.txt');
 		#end
 
 		if (#if TRANSLATIONS_ALLOWED (FileSystem.exists(translatedCredits) && (creditsFile = translatedCredits) == translatedCredits) || #end FileSystem.exists(creditsFile))

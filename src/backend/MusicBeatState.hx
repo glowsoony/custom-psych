@@ -8,30 +8,20 @@ class MusicBeatState extends FlxState {
 	var curBeat:Int = 0;
 	var curMeasure:Int = 0;
 
-	public var controls(get, never):Controls;
-	private function get_controls() {
-		return Controls.instance;
-	}
-
 	var _psychCameraInitialized:Bool = false;
 
-	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
-	public static function getVariables()
-		return getState().variables;
+	public static var skipNextTransIn:Bool = false;
+	public static var skipNextTransOut:Bool = false;
 
 	override function create() {
 		Conductor.reset();
-		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		#if MODS_ALLOWED Mods.updatedOnState = false; #end
+		Paths.clearUnusedMemory();
 
-		if(!_psychCameraInitialized) initPsychCamera();
+		if (!_psychCameraInitialized) initPsychCamera();
 
-		super.create();
-
-		if (!skip) {
-			openSubState(new CustomFadeTransition(0.5, true));
-		}
-		FlxTransitionableState.skipNextTransOut = false;
+		if (!skipNextTransOut) openSubState(new CustomFadeTransition(0.5, true));
+		skipNextTransOut = false;
 
 		Conductor.onStep = stepHit;
 		Conductor.onBeat = beatHit;
@@ -40,17 +30,14 @@ class MusicBeatState extends FlxState {
 	}
 
 	public function initPsychCamera():PsychCamera {
-		var camera = new PsychCamera();
+		var camera:PsychCamera = new PsychCamera();
 		FlxG.cameras.reset(camera);
 		FlxG.cameras.setDefaultDrawTarget(camera, true);
 		_psychCameraInitialized = true;
-		//trace('initialized psych camera ' + Sys.cpuTime());
 		return camera;
 	}
 
 	override function update(elapsed:Float) {
-		if (FlxG.save.data != null) FlxG.save.data.fullscreen = FlxG.fullscreen;
-		
 		stagesFunc(function(stage:BaseStage) {
 			stage.update(elapsed);
 		});
@@ -65,28 +52,26 @@ class MusicBeatState extends FlxState {
 			return;
 		}
 
-		if (FlxTransitionableState.skipNextTransIn) FlxG.switchState(nextState);
+		if (skipNextTransIn) FlxG.switchState(nextState);
 		else startTransition(nextState);
-		FlxTransitionableState.skipNextTransIn = false;
+		skipNextTransIn = false;
 	}
 
 	public static function resetState() {
-		if (FlxTransitionableState.skipNextTransIn) FlxG.resetState();
+		if (skipNextTransIn) FlxG.resetState();
 		else startTransition();
-		FlxTransitionableState.skipNextTransIn = false;
+		skipNextTransIn = false;
 	}
 
 	// Custom made Trans in
-	public static function startTransition(nextState:FlxState = null)
-	{
-		if(nextState == null)
-			nextState = FlxG.state;
+	public static function startTransition(?nextState:FlxState) {
+		if (nextState == null) nextState = FlxG.state;
 
 		FlxG.state.openSubState(new CustomFadeTransition(0.5, false));
-		if(nextState == FlxG.state)
-			CustomFadeTransition.finishCallback = function() FlxG.resetState();
-		else
-			CustomFadeTransition.finishCallback = function() FlxG.switchState(nextState);
+		CustomFadeTransition.finishCallback = function() {
+			if (nextState == FlxG.state) FlxG.resetState();
+			else FlxG.switchState(nextState);
+		}
 	}
 
 	public static function getState():MusicBeatState {
@@ -118,10 +103,10 @@ class MusicBeatState extends FlxState {
 		});
 	}
 
-	function stagesFunc(func:BaseStage -> Void)
-	{
-		for (stage in stages)
-			if(stage != null && stage.exists && stage.active)
-				func(stage);
+	function stagesFunc(func:BaseStage -> Void) {
+		for (stage in stages) {
+			if (stage == null || !stage.exists || !stage.active) continue;
+			func(stage);
+		}
 	}
 }

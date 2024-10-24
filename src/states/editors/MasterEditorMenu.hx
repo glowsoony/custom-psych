@@ -73,31 +73,24 @@ class MasterEditorMenu extends MusicBeatState {
 
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_UP_P)
-		{
-			changeSelection(-1);
+		final upPressed:Bool = Controls.pressed('ui_up');
+		if (upPressed || Controls.pressed('ui_down')) {
+			changeSelection(upPressed ? -1 : 1);
 		}
-		if (controls.UI_DOWN_P)
-		{
-			changeSelection(1);
-		}
+
 		#if MODS_ALLOWED
-		if(controls.UI_LEFT_P)
-		{
-			changeDirectory(-1);
-		}
-		if(controls.UI_RIGHT_P)
-		{
-			changeDirectory(1);
+		final leftPressed:Bool = Controls.pressed('ui_left');
+		if (leftPressed || Controls.pressed('ui_right')) {
+			changeDirectory(leftPressed ? -1 : 1);
 		}
 		#end
 
-		if (controls.BACK)
+		if (Controls.justPressed('back'))
 		{
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
-		if (controls.ACCEPT)
+		if (Controls.justPressed('accept'))
 		{
 			switch(options[curSelected]) {
 				case 'Chart Editor'://felt it would be cool maybe

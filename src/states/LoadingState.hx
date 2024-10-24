@@ -100,7 +100,7 @@ class LoadingState extends MusicBeatState
 		logo = new FlxSprite(0, 0).loadGraphic(Paths.image('loading_screen/icon'));
 		logo.scale.set(0.75, 0.75);
 		logo.updateHitbox();
-		logo.antialiasing = ClientPrefs.data.antialiasing;
+		logo.antialiasing = Settings.data.antialiasing;
 		logo.screenCenter();
 		logo.x -= 50;
 		logo.y -= 40;
@@ -114,7 +114,7 @@ class LoadingState extends MusicBeatState
 		add(bg);
 
 		funkay = new FlxSprite(0, 0).loadGraphic(Paths.image('funkay'));
-		funkay.antialiasing = ClientPrefs.data.antialiasing;
+		funkay.antialiasing = Settings.data.antialiasing;
 		funkay.setGraphicSize(0, FlxG.height);
 		funkay.updateHitbox();
 		add(funkay);
@@ -179,7 +179,7 @@ class LoadingState extends MusicBeatState
 
 		if(!spawnedPessy)
 		{
-			if(!transitioning && controls.ACCEPT)
+			if(!transitioning && Controls.justPressed('accept'))
 			{
 				shakeMult = 1;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -200,7 +200,7 @@ class LoadingState extends MusicBeatState
 				pessy.frames = Paths.getSparrowAtlas('loading_screen/pessy');
 				pessy.animation.addByPrefix('run', 'run', 24, true);
 				pessy.animation.addByPrefix('spin', 'spin', 24, true);
-				pessy.antialiasing = ClientPrefs.data.antialiasing;
+				pessy.antialiasing = Settings.data.antialiasing;
 				pessy.flipX = (logo.offset.x > 0);
 				pessy.x = FlxG.width + 200;
 				pessy.velocity.x = -1100;
@@ -240,7 +240,7 @@ class LoadingState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 		FlxG.camera.visible = false;
-		FlxTransitionableState.skipNextTransIn = true;
+		MusicBeatState.skipNextTransIn = true;
 		MusicBeatState.switchState(target);
 		transitioning = true;
 		finishedLoading = true;

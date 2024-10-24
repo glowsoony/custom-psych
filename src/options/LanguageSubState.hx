@@ -2,7 +2,7 @@ package options;
 
 import openfl.utils.Assets;
 
-class LanguageSubState extends MusicBeatSubstate
+class LanguageSubState extends FlxSubState
 {
 	#if TRANSLATIONS_ALLOWED
 	var grpLanguages:FlxTypedGroup<Alphabet> = new FlxTypedGroup<Alphabet>();
@@ -15,13 +15,13 @@ class LanguageSubState extends MusicBeatSubstate
 
 		var bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
-		bg.antialiasing = ClientPrefs.data.antialiasing;
+		bg.antialiasing = Settings.data.antialiasing;
 		bg.screenCenter();
 		add(bg);
 		add(grpLanguages);
 
-		languages.push(ClientPrefs.defaultData.language); //English (US)
-		displayLanguages.set(ClientPrefs.defaultData.language, Language.defaultLangName);
+		languages.push(Settings.default_data.language); //English (US)
+		displayLanguages.set(Settings.default_data.language, Language.defaultLangName);
 		var directories:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'data/');
 		for (directory in directories)
 		{
@@ -63,13 +63,12 @@ class LanguageSubState extends MusicBeatSubstate
 			return 0;
 		});
 
-		//trace(ClientPrefs.data.language);
-		curSelected = languages.indexOf(ClientPrefs.data.language);
-		if(curSelected < 0)
-		{
-			//trace('Language not found: ' + ClientPrefs.data.language);
-			ClientPrefs.data.language = ClientPrefs.defaultData.language;
-			curSelected = Std.int(Math.max(0, languages.indexOf(ClientPrefs.data.language)));
+		//trace(Settings.data.language);
+		curSelected = languages.indexOf(Settings.data.language);
+		if (curSelected < 0) {
+			//trace('Language not found: ' + Settings.data.language);
+			Settings.data.language = Settings.default_data.language;
+			curSelected = Std.int(Math.max(0, languages.indexOf(Settings.data.language)));
 		}
 
 		for (num => lang in languages)
@@ -100,31 +99,24 @@ class LanguageSubState extends MusicBeatSubstate
 		super.update(elapsed);
 
 		var mult:Int = (FlxG.keys.pressed.SHIFT) ? 4 : 1;
-		if(controls.UI_UP_P)
-			changeSelected(-1 * mult);
-		if(controls.UI_DOWN_P)
-			changeSelected(1 * mult);
-		if(FlxG.mouse.wheel != 0)
-			changeSelected(FlxG.mouse.wheel * mult);
+		final upJustPressed:Bool = Controls.justPressed('ui_up');
+		if (upJustPressed || Controls.justPressed('ui_down')) changeSelected((upJustPressed ? -1 : 1) * mult);
+		else if (FlxG.mouse.wheel != 0) changeSelected(FlxG.mouse.wheel * mult);
 
-		if(controls.BACK)
-		{
-			if(changedLanguage)
-			{
-				FlxTransitionableState.skipNextTransIn = true;
-				FlxTransitionableState.skipNextTransOut = true;
+		if (Controls.justPressed('back')) {
+			if (changedLanguage) {
+				MusicBeatState.skipNextTransIn = true;
+				MusicBeatState.skipNextTransOut = true;
 				MusicBeatState.resetState();
-			}
-			else close();
+			} else close();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
 
-		if(controls.ACCEPT)
-		{
+		if (Controls.justPressed('accept')) {
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
-			ClientPrefs.data.language = languages[curSelected];
-			//trace(ClientPrefs.data.language);
-			ClientPrefs.saveSettings();
+			Settings.data.language = languages[curSelected];
+			//trace(Settings.data.language);
+			Settings.save();
 			Language.reloadPhrases();
 			changedLanguage = true;
 		}

@@ -129,7 +129,7 @@ class Achievements {
 			}
 			variables.set(name, val);
 
-			Achievements.save();
+			save();
 			if(saveIfNotUnlocked || val >= achievement.maxScore) FlxG.save.flush();
 			return val;
 		}

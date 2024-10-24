@@ -13,7 +13,6 @@ import states.FreeplayState;
 class MusicPlayer extends FlxGroup 
 {
 	public var instance:FreeplayState;
-	public var controls:Controls;
 
 	public var playing(get, never):Bool;
 
@@ -38,7 +37,6 @@ class MusicPlayer extends FlxGroup
 		super();
 
 		this.instance = instance;
-		this.controls = instance.controls;
 
 		var xPos:Float = FlxG.width * 0.7;
 
@@ -98,7 +96,7 @@ class MusicPlayer extends FlxGroup
 
 		//if(FlxG.keys.justPressed.K) trace('Time: ${FreeplayState.vocals.time}, Playing: ${FreeplayState.vocals.playing}');
 
-		if (controls.UI_LEFT_P)
+		if (Controls.pressed('ui_left'))
 		{
 			if (playing)
 				wasPlaying = true;
@@ -114,7 +112,7 @@ class MusicPlayer extends FlxGroup
 			FlxG.sound.music.time = curTime;
 			setVocalsTime(curTime);
 		}
-		if (controls.UI_RIGHT_P)
+		if (Controls.pressed('ui_right'))
 		{
 			if (playing)
 				wasPlaying = true;
@@ -131,12 +129,13 @@ class MusicPlayer extends FlxGroup
 			setVocalsTime(curTime);
 		}
 
-		if(controls.UI_LEFT || controls.UI_RIGHT)
+		final leftJustPressed:Bool = Controls.justPressed('ui_left');
+		if(leftJustPressed || Controls.justPressed('ui_right'))
 		{
 			instance.holdTime += elapsed;
 			if(instance.holdTime > 0.5)
 			{
-				curTime += 40000 * elapsed * (controls.UI_LEFT ? -1 : 1);
+				curTime += 40000 * elapsed * (leftJustPressed ? -1 : 1);
 			}
 
 			var difference:Float = Math.abs(curTime - FlxG.sound.music.time);
@@ -147,7 +146,7 @@ class MusicPlayer extends FlxGroup
 			setVocalsTime(curTime);
 		}
 
-		if(controls.UI_LEFT_R || controls.UI_RIGHT_R)
+		if(Controls.released('ui_left') || Controls.released('ui_right'))
 		{
 			FlxG.sound.music.time = curTime;
 			setVocalsTime(curTime);
@@ -158,29 +157,27 @@ class MusicPlayer extends FlxGroup
 				wasPlaying = false;
 			}
 		}
-		if (controls.UI_UP_P)
-		{
+
+		final upPressed:Bool = Controls.pressed('ui_up');
+		final upJustPressed:Bool = Controls.justPressed('ui_up');
+		if (upPressed || Controls.pressed('ui_down')) {
 			holdPitchTime = 0;
-			playbackRate += 0.05;
+			upPressed ? playbackRate += 0.05 : playbackRate -= 0.05;
 			setPlaybackRate();
 		}
-		else if (controls.UI_DOWN_P)
-		{
-			holdPitchTime = 0;
-			playbackRate -= 0.05;
-			setPlaybackRate();
-		}
-		if (controls.UI_DOWN || controls.UI_UP)
+
+
+		if (Controls.justPressed('ui_down') || upJustPressed)
 		{
 			holdPitchTime += elapsed;
 			if (holdPitchTime > 0.6)
 			{
-				playbackRate += 0.05 * (controls.UI_UP ? 1 : -1);
+				playbackRate += 0.05 * (upJustPressed ? 1 : -1);
 				setPlaybackRate();
 			}
 		}
 	
-		if (controls.RESET)
+		if (Controls.justPressed('reset'))
 		{
 			playbackRate = 1;
 			setPlaybackRate();
@@ -243,7 +240,7 @@ class MusicPlayer extends FlxGroup
 
 	public function switchPlayMusic()
 	{
-		FlxG.autoPause = (!playingMusic && ClientPrefs.data.autoPause);
+		FlxG.autoPause = (!playingMusic && Settings.data.autoPause);
 		active = visible = playingMusic;
 
 		instance.scoreBG.visible = instance.diffText.visible = instance.scoreText.visible = !playingMusic; //Hide Freeplay texts and boxes if playingMusic is true

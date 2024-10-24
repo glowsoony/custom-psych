@@ -84,7 +84,7 @@ class BaseStage extends FlxBasic
 	public function openSubState(SubState:FlxSubState) {}
 
 	// Events
-	public function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, strumTime:Float) {}
+	public function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, time:Float) {}
 	public function eventPushed(event:EventNote) {}
 	public function eventPushedUnique(event:EventNote) {}
 

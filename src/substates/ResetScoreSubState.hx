@@ -6,7 +6,7 @@ import backend.Highscore;
 import flixel.FlxSubState;
 import objects.HealthIcon;
 
-class ResetScoreSubState extends MusicBeatSubstate {
+class ResetScoreSubState extends FlxSubState {
 	var bg:FlxSprite;
 	var alphabetArray:Array<Alphabet> = [];
 	var icon:HealthIcon;
@@ -86,16 +86,16 @@ class ResetScoreSubState extends MusicBeatSubstate {
 
 		if (week == -1) icon.alpha += elapsed * 2.5;
 
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P) {
+		if (Controls.pressed('ui_left') || Controls.pressed('ui_right')) {
 			FlxG.sound.play(Paths.sound('scrollMenu'), 1);
 			onYes = !onYes;
 			updateOptions();
 		}
 		
-		if (controls.BACK) {
+		if (Controls.justPressed('back')) {
 			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
 			close();
-		} else if (controls.ACCEPT) {
+		} else if (Controls.justPressed('accept')) {
 			if (onYes) {
 				if (week == -1) Highscore.resetSong(song, difficulty);
 				else Highscore.resetWeek(WeekData.weeksList[week], difficulty);

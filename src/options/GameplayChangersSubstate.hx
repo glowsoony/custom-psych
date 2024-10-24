@@ -5,7 +5,7 @@ import objects.CheckboxThingie;
 
 import options.Option.OptionType;
 
-class GameplayChangersSubstate extends MusicBeatSubstate {
+class GameplayChangersSubstate extends FlxSubState {
 	private var curSelected:Int = 0;
 	private var optionsArray:Array<Dynamic> = [];
 
@@ -106,7 +106,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate {
 
 			if (option.type == BOOL) {
 				optionText.x += 60;
-				optionText.startPosition.x += 60;
+				optionText.spawnPos.x += 60;
 				optionText.snapToPosition();
 				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
 				checkbox.sprTracker = optionText;
@@ -135,31 +135,33 @@ class GameplayChangersSubstate extends MusicBeatSubstate {
 	var holdValue:Float = 0;
 	override function update(elapsed:Float)
 	{
-		final justPressedDown:Bool = controls.UI_DOWN_P;
-		if (justPressedDown || controls.UI_UP_P) changeSelection(justPressedDown ? 1 : -1);
+		final justPressedDown:Bool = Controls.justPressed('ui_down');
+		if (justPressedDown || Controls.justPressed('ui_up')) changeSelection(justPressedDown ? 1 : -1);
 
-		if (controls.BACK) {
+		if (Controls.justPressed('back')) {
 			close();
-			ClientPrefs.saveSettings();
+			Settings.save();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
 
 		if (nextAccept <= 0) {
 			var usesCheckbox:Bool = curOption.type == BOOL;
 			if (usesCheckbox) {
-				if (controls.ACCEPT) {
+				if (Controls.justPressed('accept')) {
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 					curOption.setValue((curOption.getValue() == true) ? false : true);
 					curOption.change();
 					reloadCheckboxes();
 				}
 			} else {
-				if (controls.UI_LEFT || controls.UI_RIGHT) {
-					var pressed:Bool = controls.UI_LEFT_P || controls.UI_RIGHT_P;
+				final leftJustPressed:Bool = Controls.justPressed('ui_left');
+				if (leftJustPressed || Controls.justPressed('ui_right')) {
+					final leftPressed:Bool = Controls.pressed('ui_left');
+					var pressed:Bool = leftPressed || Controls.pressed('ui_right');
 					if (holdTime > 0.5 || pressed) {
 						if (pressed) {
 							var add:Dynamic = null;
-							if (curOption.type != STRING) add = controls.UI_LEFT ? -curOption.changeValue : curOption.changeValue;
+							if (curOption.type != STRING) add = leftJustPressed ? -curOption.changeValue : curOption.changeValue;
 
 							switch(curOption.type) {
 								case INT, FLOAT, PERCENT:
@@ -181,7 +183,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate {
 
 								case STRING:
 									var num:Int = curOption.curOption; //lol
-									if (controls.UI_LEFT_P) num--;
+									if (leftPressed) num--;
 									else num++;
 
 									if (num < 0) num = curOption.options.length - 1;
@@ -212,7 +214,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate {
 							curOption.change();
 							FlxG.sound.play(Paths.sound('scrollMenu'));
 						} else if (curOption.type != STRING) {
-							holdValue = Math.max(curOption.minValue, Math.min(curOption.maxValue, holdValue + curOption.scrollSpeed * elapsed * (controls.UI_LEFT ? -1 : 1)));
+							holdValue = Math.max(curOption.minValue, Math.min(curOption.maxValue, holdValue + curOption.scrollSpeed * elapsed * (leftJustPressed ? -1 : 1)));
 
 							switch (curOption.type) {
 								case INT:
@@ -230,10 +232,10 @@ class GameplayChangersSubstate extends MusicBeatSubstate {
 					}
 
 					if (curOption.type != STRING) holdTime += elapsed;
-				} else if (controls.UI_LEFT_R || controls.UI_RIGHT_R) clearHold();
+				} else if (Controls.released('ui_left') || Controls.released('ui_right')) clearHold();
 			}
 
-			if (controls.RESET) {
+			if (Controls.justPressed('reset')) {
 				for (i in 0...optionsArray.length) {
 					var leOption:GameplayOption = optionsArray[i];
 					leOption.setValue(leOption.defaultValue);
@@ -319,7 +321,7 @@ class GameplayOption
 	public var showBoyfriend:Bool = false;
 	public var scrollSpeed:Float = 50; //Only works on int/float, defines how fast it scrolls per second while holding left/right
 
-	private var variable:String = null; //Variable from ClientPrefs.hx's gameplaySettings
+	private var variable:String = null; //Variable from Settings.hx's gameplaySettings
 	public var defaultValue:Dynamic = null;
 
 	public var curOption:Int = 0; //Don't change this
@@ -390,10 +392,10 @@ class GameplayOption
 	}
 
 	public function getValue():Dynamic
-		return ClientPrefs.data.gameplaySettings.get(variable);
+		return Settings.data.gameplaySettings.get(variable);
 
 	public function setValue(value:Dynamic)
-		ClientPrefs.data.gameplaySettings.set(variable, value);
+		Settings.data.gameplaySettings.set(variable, value);
 
 	public function setChild(child:Alphabet)
 		this.child = child;

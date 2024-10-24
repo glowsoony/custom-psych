@@ -1,20 +1,16 @@
 package states;
 
-import flixel.FlxSubState;
-
 import flixel.effects.FlxFlicker;
-import lime.app.Application;
 
-class FlashingState extends MusicBeatState
-{
-	public static var leftState:Bool = false;
-
+class FlashingState extends flixel.FlxState {
 	var warnText:FlxText;
-	override function create()
-	{
+	var pressedKey:Bool = false;
+	override function create() {
 		super.create();
 
-		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		var bg:FlxSprite = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
+		bg.scale.set(FlxG.width, FlxG.height);
+		bg.updateHitbox();
 		add(bg);
 
 		warnText = new FlxText(0, 0, FlxG.width,
@@ -29,33 +25,30 @@ class FlashingState extends MusicBeatState
 		add(warnText);
 	}
 
-	override function update(elapsed:Float)
-	{
-		if(!leftState) {
-			var back:Bool = controls.BACK;
-			if (controls.ACCEPT || back) {
-				leftState = true;
-				FlxTransitionableState.skipNextTransIn = true;
-				FlxTransitionableState.skipNextTransOut = true;
-				if(!back) {
-					ClientPrefs.data.flashing = false;
-					ClientPrefs.saveSettings();
-					FlxG.sound.play(Paths.sound('confirmMenu'));
-					FlxFlicker.flicker(warnText, 1, 0.1, false, true, function(flk:FlxFlicker) {
-						new FlxTimer().start(0.5, function (tmr:FlxTimer) {
-							MusicBeatState.switchState(new TitleState());
-						});
-					});
-				} else {
-					FlxG.sound.play(Paths.sound('cancelMenu'));
-					FlxTween.tween(warnText, {alpha: 0}, 1, {
-						onComplete: function (twn:FlxTween) {
-							MusicBeatState.switchState(new TitleState());
-						}
-					});
-				}
-			}
-		}
+	override function update(elapsed:Float) {
 		super.update(elapsed);
+		if (pressedKey) return;
+
+		var backJustPressed:Bool = Controls.justPressed('back');
+		if (backJustPressed || Controls.justPressed('accept')) {
+			pressedKey = true;
+			if (backJustPressed) {
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxTween.tween(warnText, {alpha: 0}, 1, {
+					onComplete: function (_) {
+						MusicBeatState.switchState(new TitleState());
+					}
+				});
+
+				return;
+			}
+
+			Settings.data.flashingLights = false;
+			Settings.save();
+			FlxG.sound.play(Paths.sound('confirmMenu'));
+			FlxFlicker.flicker(warnText, 1, 0.1, false, true, function(_) {
+				MusicBeatState.switchState(new TitleState());
+			});	
+		}
 	}
 }

@@ -47,11 +47,11 @@ class PhillyStreets extends BaseStage
 	var abot:ABotSpeaker;
 	override function create()
 	{
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 		{
 			var skyImage = Paths.image('phillyStreets/phillySkybox');
 			scrollingSky = new FlxTiledSprite(skyImage, skyImage.width + 400, skyImage.height, true, false);
-			scrollingSky.antialiasing = ClientPrefs.data.antialiasing;
+			scrollingSky.antialiasing = Settings.data.antialiasing;
 			scrollingSky.setPosition(-650, -375);
 			scrollingSky.scrollFactor.set(0.1, 0.1);
 			scrollingSky.scale.set(0.65, 0.65);
@@ -75,7 +75,7 @@ class PhillyStreets extends BaseStage
 		add(phillyHighwayLights);
 		darkenable.push(phillyHighwayLights);
 
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 		{
 			var phillyHighwayLightsLightmap:BGSprite = new BGSprite('phillyStreets/phillyHighwayLights_lightmap', 284, 305, 1, 1);
 			phillyHighwayLightsLightmap.blend = ADD;
@@ -88,7 +88,7 @@ class PhillyStreets extends BaseStage
 		add(phillyHighway);
 		darkenable.push(phillyHighway);
 
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 		{
 			var phillySmog:BGSprite = new BGSprite('phillyStreets/phillySmog', -6, 245, 0.8, 1);
 			add(phillySmog);
@@ -122,10 +122,10 @@ class PhillyStreets extends BaseStage
 		add(phillyForeground);
 		darkenable.push(phillyForeground);
 		
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 		{
 			picoFade = new FlxSprite();
-			picoFade.antialiasing = ClientPrefs.data.antialiasing;
+			picoFade.antialiasing = Settings.data.antialiasing;
 			picoFade.alpha = 0;
 			add(picoFade);
 			darkenable.push(picoFade);
@@ -135,7 +135,7 @@ class PhillyStreets extends BaseStage
 		updateABotEye(true);
 		add(abot);
 		
-		if(ClientPrefs.data.shaders)
+		if(Settings.data.shaders)
 			setupRainShader();
 
 		var _song = PlayState.SONG;
@@ -175,12 +175,12 @@ class PhillyStreets extends BaseStage
 			if(note == null) continue;
 
 			//override animations for note types
-			switch(note.noteType)
+			switch(note.type)
 			{
 				case 'weekend-1-firegun':
 					note.blockHit = true;
 			}
-			if(!noteTypes.contains(note.noteType)) noteTypes.push(note.noteType);
+			if(!noteTypes.contains(note.type)) noteTypes.push(note.type);
 		}
 
 		spraycanPile = new BGSprite('SpraycanPile', 920, 1045, 1, 1);
@@ -456,7 +456,7 @@ class PhillyStreets extends BaseStage
 		function precacheCasing()
 		{
 			if(didCreateCasing) return;
-			if(!ClientPrefs.data.lowQuality)
+			if(!Settings.data.lowQuality)
 			{
 				casingFrames = Paths.getSparrowAtlas('PicoBullet'); //precache
 				casingGroup = new FlxSpriteGroup();
@@ -613,7 +613,7 @@ class PhillyStreets extends BaseStage
 				// In other states, don't interrupt the existing animation.
 		}
 
-		if (ClientPrefs.data.lowQuality) return;
+		if (Settings.data.lowQuality) return;
 
 		if (FlxG.random.bool(10) && beat != (lastChange + changeInterval) && carInterruptable == true)
 		{
@@ -798,7 +798,7 @@ class PhillyStreets extends BaseStage
 			}
 		}
 
-		switch(note.noteType)
+		switch(note.type)
 		{
 			case 'weekend-1-cockgun': // HE'S PULLING HIS COCK OUT
 				boyfriend.holdTimer = 0;
@@ -822,7 +822,7 @@ class PhillyStreets extends BaseStage
 
 				game.notes.forEachAlive(function(note:Note)
 				{
-					if(note.noteType == 'weekend-1-firegun')
+					if(note.type == 'weekend-1-firegun')
 						note.blockHit = false;
 				});
 				showPicoFade();
@@ -843,7 +843,7 @@ class PhillyStreets extends BaseStage
 
 	function createCasing()
 	{
-		if(ClientPrefs.data.lowQuality) return;
+		if(Settings.data.lowQuality) return;
 
 		var casing:FlxSprite = new FlxSprite(boyfriend.x + 250, boyfriend.y + 100);
 		casing.frames = casingFrames;
@@ -881,8 +881,8 @@ class PhillyStreets extends BaseStage
 
 	override function opponentNoteHit(note:Note)
 	{
-		var sndTime:Float = note.strumTime - Conductor.time;
-		switch(note.noteType)
+		var sndTime:Float = note.time - Conductor.time;
+		switch(note.type)
 		{
 			case 'weekend-1-lightcan':
 				dad.holdTimer = 0;
@@ -921,7 +921,7 @@ class PhillyStreets extends BaseStage
 	var picoFlicker:FlxTimer = null;
 	override function noteMiss(note:Note)
 	{
-		switch(note.noteType)
+		switch(note.type)
 		{
 			case 'weekend-1-firegun':
 				boyfriend.playAnim('shootMISS', true);
@@ -974,7 +974,7 @@ class PhillyStreets extends BaseStage
 
 	function showPicoFade()
 	{
-		if(ClientPrefs.data.lowQuality) return;
+		if(Settings.data.lowQuality) return;
 
 		picoFade.setPosition(boyfriend.x, boyfriend.y);
 		picoFade.frames = boyfriend.frames;

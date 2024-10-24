@@ -8,13 +8,13 @@ class TankmenBG extends FlxSprite
 	private var tankSpeed:Float;
 	private var endingOffset:Float;
 	private var goingRight:Bool;
-	public var strumTime:Float;
+	public var time:Float;
 
 	public function new(x:Float, y:Float, facingRight:Bool)
 	{
 		tankSpeed = 0.7;
 		goingRight = false;
-		strumTime = 0;
+		time = 0;
 		goingRight = facingRight;
 		super(x, y);
 
@@ -23,7 +23,7 @@ class TankmenBG extends FlxSprite
 		animation.addByPrefix('shot', 'John Shot ' + FlxG.random.int(1, 2), 24, false);
 		animation.play('run');
 		animation.curAnim.curFrame = FlxG.random.int(0, animation.curAnim.frames.length - 1);
-		antialiasing = ClientPrefs.data.antialiasing;
+		antialiasing = Settings.data.antialiasing;
 
 		scale.set(0.8, 0.8);
 		updateHitbox();
@@ -47,7 +47,7 @@ class TankmenBG extends FlxSprite
 
 		if(animation.curAnim.name == "run")
 		{
-			var speed:Float = (Conductor.time - strumTime) * tankSpeed;
+			var speed:Float = (Conductor.time - time) * tankSpeed;
 			if(goingRight)
 				x = (0.02 * FlxG.width - endingOffset) + speed;
 			else
@@ -58,7 +58,7 @@ class TankmenBG extends FlxSprite
 			kill();
 		}
 
-		if(Conductor.time > strumTime)
+		if(Conductor.time > time)
 		{
 			animation.play('shot');
 			if(goingRight)

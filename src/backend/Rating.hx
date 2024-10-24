@@ -1,6 +1,6 @@
 package backend;
 
-import backend.ClientPrefs;
+import backend.Settings;
 
 class Rating
 {
@@ -21,7 +21,7 @@ class Rating
 		var window:String = name + 'Window';
 		try
 		{
-			this.hitWindow = Reflect.field(ClientPrefs.data, window);
+			this.hitWindow = Reflect.field(Settings.data, window);
 		}
 		catch(e) FlxG.log.error(e);
 	}

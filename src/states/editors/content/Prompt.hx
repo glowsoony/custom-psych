@@ -61,8 +61,7 @@ class Prompt extends BasePrompt
 	}
 }
 
-class BasePrompt extends MusicBeatSubstate
-{
+class BasePrompt extends FlxSubState {
 	var _sizeX:Float = 0;
 	var _sizeY:Float = 0;
 	var _title:String;

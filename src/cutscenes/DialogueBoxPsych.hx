@@ -71,7 +71,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		spawnCharacters();
 
 		box = new FlxSprite(70, 370);
-		box.antialiasing = ClientPrefs.data.antialiasing;
+		box.antialiasing = Settings.data.antialiasing;
 		box.frames = Paths.getSparrowAtlas('speech_bubble');
 		box.scrollFactor.set();
 		box.animation.addByPrefix('normal', 'speech bubble normal', 24);
@@ -166,8 +166,8 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			bgFade.alpha += 0.5 * elapsed;
 			if(bgFade.alpha > 0.5) bgFade.alpha = 0.5;
 
-			var back:Bool = Controls.instance.BACK;
-			if(Controls.instance.ACCEPT || back) {
+			var back:Bool = Controls.justPressed('back');
+			if(Controls.justPressed('accept') || back) {
 				if(!daText.finishedText && !back)
 				{
 					daText.finishText();
@@ -364,7 +364,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		if(daText.sound == null || daText.sound.trim() == '') daText.sound = 'dialogue';
 		
 		daText.y = DEFAULT_TEXT_Y;
-		if(daText.rows > 2) daText.y -= LONG_TEXT_ADD;
+		if (daText.length > 2) daText.y -= LONG_TEXT_ADD;
 
 		var char:DialogueCharacter = arrayCharacters[character];
 		if(char != null) {

@@ -10,7 +10,7 @@ import objects.AttachedText;
 import options.Option;
 import backend.InputFormatter;
 
-class BaseOptionsMenu extends MusicBeatSubstate
+class BaseOptionsMenu extends FlxSubState
 {
 	private var curOption:Option = null;
 	private var curSelected:Int = 0;
@@ -41,7 +41,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFFea71fd;
 		bg.screenCenter();
-		bg.antialiasing = ClientPrefs.data.antialiasing;
+		bg.antialiasing = Settings.data.antialiasing;
 		add(bg);
 
 		// avoids lagspikes while scrolling through menus!
@@ -69,27 +69,20 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.4;
 		add(descText);
 
-		for (i in 0...optionsArray.length)
-		{
+		for (i in 0...optionsArray.length) {
 			var optionText:Alphabet = new Alphabet(220, 260, optionsArray[i].name, NORMAL);
 			optionText.isMenuItem = true;
-			/*optionText.forceX = 300;
-			optionText.yMult = 90;*/
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
-			if(optionsArray[i].type == BOOL)
-			{
+			if (optionsArray[i].type == BOOL) {
 				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, Std.string(optionsArray[i].getValue()) == 'true');
 				checkbox.sprTracker = optionText;
 				checkbox.ID = i;
 				checkboxGroup.add(checkbox);
-			}
-			else
-			{
+			} else {
 				optionText.x -= 80;
-				optionText.startPosition.x -= 80;
-				//optionText.xAdd -= 80;
+				optionText.spawnPos.x -= 80;
 				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 60);
 				valueText.sprTracker = optionText;
 				valueText.copyAlpha = true;
@@ -120,37 +113,28 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	var bindingBlack:FlxSprite;
 	var bindingText:Alphabet;
 	var bindingText2:Alphabet;
-	override function update(elapsed:Float)
-	{
+	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if(bindingKey)
-		{
+		if (bindingKey) {
 			bindingKeyUpdate(elapsed);
 			return;
 		}
 
-		if (controls.UI_UP_P)
-		{
-			changeSelection(-1);
-		}
-		if (controls.UI_DOWN_P)
-		{
-			changeSelection(1);
+		final upJustPressed:Bool = Controls.justPressed('ui_up');
+		if (upJustPressed || Controls.justPressed('ui_down')) {
+			changeSelection(upJustPressed ? -1 : 1);
 		}
 
-		if (controls.BACK) {
+		if (Controls.justPressed('back')) {
 			close();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
 
-		if(nextAccept <= 0)
-		{
-			switch(curOption.type)
-			{
+		if (nextAccept <= 0) {
+			switch(curOption.type) {
 				case BOOL:
-					if(controls.ACCEPT)
-					{
+					if (Controls.justPressed('accept')) {
 						FlxG.sound.play(Paths.sound('scrollMenu'));
 						curOption.setValue((curOption.getValue() == true) ? false : true);
 						curOption.change();
@@ -158,8 +142,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 					}
 
 				case KEYBIND:
-					if(controls.ACCEPT)
-					{
+					if (Controls.justPressed('accept')) {
 						bindingBlack = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
 						bindingBlack.scale.set(FlxG.width, FlxG.height);
 						bindingBlack.updateHitbox();
@@ -177,24 +160,24 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	
 						bindingKey = true;
 						holdingEsc = 0;
-						ClientPrefs.toggleVolumeKeys(false);
+						Controls.toggleVolumeKeys(false);
 						FlxG.sound.play(Paths.sound('scrollMenu'));
 					}
 
 				default:
-					if(controls.UI_LEFT || controls.UI_RIGHT)
-					{
-						var pressed = (controls.UI_LEFT_P || controls.UI_RIGHT_P);
+					final leftJustPressed:Bool = Controls.justPressed('ui_left');
+					final leftPressed:Bool = Controls.pressed('ui_left');
+					if (leftJustPressed || Controls.justPressed('ui_right')) {
+						var pressed:Bool = (leftPressed || Controls.pressed('ui_right'));
 						if(holdTime > 0.5 || pressed)
 						{
 							if(pressed)
 							{
 								var add:Dynamic = null;
 								if(curOption.type != STRING)
-									add = controls.UI_LEFT ? -curOption.changeValue : curOption.changeValue;
+									add = leftJustPressed ? -curOption.changeValue : curOption.changeValue;
 		
-								switch(curOption.type)
-								{
+								switch(curOption.type) {
 									case INT, FLOAT, PERCENT:
 										holdValue = curOption.getValue() + add;
 										if(holdValue < curOption.minValue) holdValue = curOption.minValue;
@@ -213,7 +196,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		
 									case STRING:
 										var num:Int = curOption.curOption; //lol
-										if(controls.UI_LEFT_P) --num;
+										if (leftPressed) --num;
 										else num++;
 		
 										if(num < 0)
@@ -233,7 +216,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 							}
 							else if(curOption.type != STRING)
 							{
-								holdValue += curOption.scrollSpeed * elapsed * (controls.UI_LEFT ? -1 : 1);
+								holdValue += curOption.scrollSpeed * elapsed * (leftJustPressed ? -1 : 1);
 								if(holdValue < curOption.minValue) holdValue = curOption.minValue;
 								else if (holdValue > curOption.maxValue) holdValue = curOption.maxValue;
 		
@@ -255,15 +238,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 						if(curOption.type != STRING)
 							holdTime += elapsed;
 					}
-					else if(controls.UI_LEFT_R || controls.UI_RIGHT_R)
+					else if (Controls.released('ui_left') || Controls.released('ui_right'))
 					{
-						if(holdTime > 0.5) FlxG.sound.play(Paths.sound('scrollMenu'));
+						if (holdTime > 0.5) FlxG.sound.play(Paths.sound('scrollMenu'));
 						holdTime = 0;
 					}
 			}
 
-			if(controls.RESET)
-			{
+			if (Controls.released('reset')) {
 				var leOption:Option = optionsArray[curSelected];
 				if(leOption.type != KEYBIND)
 				{
@@ -276,7 +258,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 				else
 				{
-					leOption.setValue(!Controls.instance.controllerMode ? leOption.defaultKeys.keyboard : leOption.defaultKeys.gamepad);
+					leOption.setValue(!Controls.controllerMode ? leOption.defaultKeys.keyboard : leOption.defaultKeys.gamepad);
 					updateBind(leOption);
 				}
 				leOption.change();
@@ -306,9 +288,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			holdingEsc += elapsed;
 			if(holdingEsc > 0.5)
 			{
-				if (!controls.controllerMode) curOption.keys.keyboard = NONE;
+				if (!Controls.controllerMode) curOption.keys.keyboard = NONE;
 				else curOption.keys.gamepad = NONE;
-				updateBind(!controls.controllerMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
+				updateBind(!Controls.controllerMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				closeBinding();
 			}
@@ -317,7 +299,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		{
 			holdingEsc = 0;
 			var changed:Bool = false;
-			if(!controls.controllerMode)
+			if(!Controls.controllerMode)
 			{
 				if(FlxG.keys.justPressed.ANY || FlxG.keys.justReleased.ANY)
 				{
@@ -373,7 +355,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			if(changed)
 			{
 				var key:String = null;
-				if(!controls.controllerMode)
+				if(!Controls.controllerMode)
 				{
 					if(curOption.keys.keyboard == null) curOption.keys.keyboard = 'NONE';
 					curOption.setValue(curOption.keys.keyboard);
@@ -401,7 +383,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			text = option.getValue();
 			if(text == null) text = 'NONE';
 
-			if(!controls.controllerMode)
+			if(!Controls.controllerMode)
 				text = InputFormatter.getKeyName(FlxKey.fromString(text));
 			else
 				text = InputFormatter.getGamepadName(FlxGamepadInputID.fromString(text));
@@ -423,17 +405,14 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		bind.destroy();
 	}
 
-	function playstationCheck(alpha:Alphabet)
-	{
-		if(!controls.controllerMode) return;
+	function playstationCheck(alpha:Alphabet) {
+		if (!Controls.controllerMode) return;
 
 		var gamepad:FlxGamepad = FlxG.gamepads.firstActive;
 		var model:FlxGamepadModel = gamepad != null ? gamepad.detectedModel : UNKNOWN;
-		var letter = alpha.members[0];
-		if(model == PS4)
-		{
-			switch(alpha.text)
-			{
+		var letter = alpha.letters[0];
+		if (model == PS4) {
+			switch (alpha.text) {
 				case '[', ']': //Square and Triangle respectively
 					letter.image = 'alphabet_playstation';
 					letter.updateHitbox();
@@ -444,8 +423,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 	}
 
-	function closeBinding()
-	{
+	function closeBinding() {
 		bindingKey = false;
 		bindingBlack.destroy();
 		remove(bindingBlack);
@@ -455,7 +433,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 		bindingText2.destroy();
 		remove(bindingText2);
-		ClientPrefs.toggleVolumeKeys(true);
+		Controls.toggleVolumeKeys(true);
 	}
 
 	function updateTextFrom(option:Option) {

@@ -134,7 +134,7 @@ class NoteSplash extends FlxSprite
 			kill();
 		};
 		
-        alpha = ClientPrefs.data.splashAlpha;
+        alpha = Settings.data.splashAlpha;
 		if(note != null) alpha = note.noteSplashData.a;
 
 		if (note != null) antialiasing = note.noteSplashData.antialiasing;
@@ -170,8 +170,8 @@ class NoteSplash extends FlxSprite
 
     public static function getSplashSkinSuffix() {
 		var skin:String = '';
-		if (ClientPrefs.data.splashSkin != ClientPrefs.defaultData.splashSkin)
-			skin = '-' + ClientPrefs.data.splashSkin.trim().toLowerCase().replace(' ', '-');
+		if (Settings.data.splashSkin != Settings.default_data.splashSkin)
+			skin = '-' + Settings.data.splashSkin.trim().toLowerCase().replace(' ', '-');
 		return skin;
 	}
 

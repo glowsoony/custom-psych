@@ -25,9 +25,8 @@ import backend.Paths;
 import backend.Controls;
 import backend.CoolUtil;
 import backend.MusicBeatState;
-import backend.MusicBeatSubstate;
 import backend.CustomFadeTransition;
-import backend.ClientPrefs;
+import backend.Settings;
 import backend.Conductor;
 import backend.BaseStage;
 import backend.Difficulty;
@@ -52,6 +51,7 @@ import flxanimate.PsychFlxAnimate as FlxAnimate;
 import flixel.sound.FlxSound;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.FlxSubState;
 import flixel.FlxCamera;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
@@ -62,7 +62,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.group.FlxSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.addons.transition.FlxTransitionableState;
 
 using StringTools;
 #end

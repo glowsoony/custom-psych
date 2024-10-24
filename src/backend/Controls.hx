@@ -1,166 +1,203 @@
 package backend;
 
-import flixel.input.gamepad.FlxGamepadButton;
 import flixel.input.gamepad.FlxGamepadInputID;
-import flixel.input.gamepad.mappings.FlxGamepadMapping;
 import flixel.input.keyboard.FlxKey;
+import flixel.input.FlxInput.FlxInputState;
+import flixel.util.FlxSave;
 
-class Controls
-{
-	//Keeping same use cases on stuff for it to be easier to understand/use
-	//I'd have removed it but this makes it a lot less annoying to use in my opinion
+class Controls {
+	// Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx
+	public static final default_keyBinds:Map<String, Array<FlxKey>> = [
+		'note_up'		=> [W, UP],
+		'note_left'		=> [A, LEFT],
+		'note_down'		=> [S, DOWN],
+		'note_right'	=> [D, RIGHT],
+		
+		'ui_up'			=> [W, UP],
+		'ui_left'		=> [A, LEFT],
+		'ui_down'		=> [S, DOWN],
+		'ui_right'		=> [D, RIGHT],
+		
+		'accept'		=> [SPACE, ENTER],
+		'back'			=> [BACKSPACE, ESCAPE],
+		'pause'			=> [ENTER, ESCAPE],
+		'reset'			=> [R],
+		
+		'volume_mute'	=> [ZERO],
+		'volume_up'		=> [NUMPADPLUS, PLUS],
+		'volume_down'	=> [NUMPADMINUS, MINUS],
+		
+		'debug_1'		=> [SEVEN],
+		'debug_2'		=> [EIGHT]
+	];
 
-	//You do NOT have to create these variables/getters for adding new keys,
-	//but you will instead have to use:
-	//   controls.justPressed("ui_up")   instead of   controls.UI_UP
+	public static final default_gamepadBinds:Map<String, Array<FlxGamepadInputID>> = [
+		'note_up'		=> [DPAD_UP, Y],
+		'note_left'		=> [DPAD_LEFT, X],
+		'note_down'		=> [DPAD_DOWN, A],
+		'note_right'	=> [DPAD_RIGHT, B],
+		
+		'ui_up'			=> [DPAD_UP, LEFT_STICK_DIGITAL_UP],
+		'ui_left'		=> [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
+		'ui_down'		=> [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
+		'ui_right'		=> [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
+		
+		'accept'		=> [A, START],
+		'back'			=> [B],
+		'pause'			=> [START],
+		'reset'			=> [BACK]
+	];
 
-	//Dumb but easily usable code, or Smart but complicated? Your choice.
-	//Also idk how to use macros they're weird as fuck lol
+	public static var keyBinds:Map<String, Array<Int>> = default_keyBinds;
+	public static var gamepadBinds:Map<String, Array<Int>> = default_gamepadBinds;
 
-	// Pressed buttons (directions)
-	public var UI_UP_P(get, never):Bool;
-	public var UI_DOWN_P(get, never):Bool;
-	public var UI_LEFT_P(get, never):Bool;
-	public var UI_RIGHT_P(get, never):Bool;
-	public var NOTE_UP_P(get, never):Bool;
-	public var NOTE_DOWN_P(get, never):Bool;
-	public var NOTE_LEFT_P(get, never):Bool;
-	public var NOTE_RIGHT_P(get, never):Bool;
-	private function get_UI_UP_P() return justPressed('ui_up');
-	private function get_UI_DOWN_P() return justPressed('ui_down');
-	private function get_UI_LEFT_P() return justPressed('ui_left');
-	private function get_UI_RIGHT_P() return justPressed('ui_right');
-	private function get_NOTE_UP_P() return justPressed('note_up');
-	private function get_NOTE_DOWN_P() return justPressed('note_down');
-	private function get_NOTE_LEFT_P() return justPressed('note_left');
-	private function get_NOTE_RIGHT_P() return justPressed('note_right');
+	public static var controllerMode:Bool = false;
 
-	// Held buttons (directions)
-	public var UI_UP(get, never):Bool;
-	public var UI_DOWN(get, never):Bool;
-	public var UI_LEFT(get, never):Bool;
-	public var UI_RIGHT(get, never):Bool;
-	public var NOTE_UP(get, never):Bool;
-	public var NOTE_DOWN(get, never):Bool;
-	public var NOTE_LEFT(get, never):Bool;
-	public var NOTE_RIGHT(get, never):Bool;
-	private function get_UI_UP() return pressed('ui_up');
-	private function get_UI_DOWN() return pressed('ui_down');
-	private function get_UI_LEFT() return pressed('ui_left');
-	private function get_UI_RIGHT() return pressed('ui_right');
-	private function get_NOTE_UP() return pressed('note_up');
-	private function get_NOTE_DOWN() return pressed('note_down');
-	private function get_NOTE_LEFT() return pressed('note_left');
-	private function get_NOTE_RIGHT() return pressed('note_right');
+	static var _save:FlxSave;
 
-	// Released buttons (directions)
-	public var UI_UP_R(get, never):Bool;
-	public var UI_DOWN_R(get, never):Bool;
-	public var UI_LEFT_R(get, never):Bool;
-	public var UI_RIGHT_R(get, never):Bool;
-	public var NOTE_UP_R(get, never):Bool;
-	public var NOTE_DOWN_R(get, never):Bool;
-	public var NOTE_LEFT_R(get, never):Bool;
-	public var NOTE_RIGHT_R(get, never):Bool;
-	private function get_UI_UP_R() return justReleased('ui_up');
-	private function get_UI_DOWN_R() return justReleased('ui_down');
-	private function get_UI_LEFT_R() return justReleased('ui_left');
-	private function get_UI_RIGHT_R() return justReleased('ui_right');
-	private function get_NOTE_UP_R() return justReleased('note_up');
-	private function get_NOTE_DOWN_R() return justReleased('note_down');
-	private function get_NOTE_LEFT_R() return justReleased('note_left');
-	private function get_NOTE_RIGHT_R() return justReleased('note_right');
-
-
-	// Pressed buttons (others)
-	public var ACCEPT(get, never):Bool;
-	public var BACK(get, never):Bool;
-	public var PAUSE(get, never):Bool;
-	public var RESET(get, never):Bool;
-	private function get_ACCEPT() return justPressed('accept');
-	private function get_BACK() return justPressed('back');
-	private function get_PAUSE() return justPressed('pause');
-	private function get_RESET() return justPressed('reset');
-
-	//Gamepad & Keyboard stuff
-	public var keyboardBinds:Map<String, Array<FlxKey>>;
-	public var gamepadBinds:Map<String, Array<FlxGamepadInputID>>;
-	public function justPressed(key:String)
-	{
-		var result:Bool = (FlxG.keys.anyJustPressed(keyboardBinds[key]) == true);
-		if(result) controllerMode = false;
-
-		return result || _myGamepadJustPressed(gamepadBinds[key]) == true;
+	// general use
+	public static function justPressed(name:String, ?allowGamepad:Bool = true):Bool {
+		if (!allowGamepad) return keyJustPressed(name);
+		return gamepadJustPressed(name) == true || keyJustPressed(name);
 	}
 
-	public function pressed(key:String)
-	{
-		var result:Bool = (FlxG.keys.anyPressed(keyboardBinds[key]) == true);
-		if(result) controllerMode = false;
-
-		return result || _myGamepadPressed(gamepadBinds[key]) == true;
+	public static function pressed(name:String, ?allowGamepad:Bool = true):Bool {
+		if (!allowGamepad) return keyPressed(name);
+		return gamepadPressed(name) == true || keyPressed(name);
 	}
 
-	public function justReleased(key:String)
-	{
-		var result:Bool = (FlxG.keys.anyJustReleased(keyboardBinds[key]) == true);
-		if(result) controllerMode = false;
-
-		return result || _myGamepadJustReleased(gamepadBinds[key]) == true;
+	public static function released(name:String, ?allowGamepad:Bool = true):Bool {
+		if (!allowGamepad) return keyReleased(name);
+		return gamepadReleased(name) == true || keyReleased(name);
 	}
 
-	public var controllerMode:Bool = false;
-	private function _myGamepadJustPressed(keys:Array<FlxGamepadInputID>):Bool
-	{
-		if(keys != null)
-		{
-			for (key in keys)
-			{
-				if (FlxG.gamepads.anyJustPressed(key) == true)
-				{
-					controllerMode = true;
-					return true;
-				}
+	// keyboard specific
+	public static function keyJustPressed(name:String) {
+		return _getKeyStatus(name, JUST_PRESSED);
+	}
+
+	public static function keyPressed(name:String) {
+		return _getKeyStatus(name, PRESSED);
+	}
+
+	public static function keyReleased(name:String) {
+		return _getKeyStatus(name, JUST_RELEASED);
+	}
+	
+	// gamepad specific
+	public static function gamepadJustPressed(name:String):Bool {
+		return _getGamepadStatus(name, JUST_PRESSED);
+	}
+
+	public static function gamepadPressed(name:String):Bool {
+		return _getGamepadStatus(name, PRESSED);
+	}
+
+	public static function gamepadReleased(name:String):Bool {
+		return _getGamepadStatus(name, JUST_RELEASED);
+	}
+
+	// backend functions to reduce repetitive code
+	static function _getKeyStatus(name:String, state:FlxInputState):Bool {
+		var binds:Array<FlxKey> = keyBinds[name];
+		if (binds == null) {
+			trace('Keybind "$name" doesn\'t exist.');
+			return false;
+		}
+
+		var keyHasState:Bool = false;
+
+		for (key in binds) {
+			@:privateAccess
+			if (FlxG.keys.getKey(key).hasState(state)) {
+				keyHasState = true;
+				controllerMode = false;
+				break;
 			}
 		}
-		return false;
-	}
-	private function _myGamepadPressed(keys:Array<FlxGamepadInputID>):Bool
-	{
-		if(keys != null)
-		{
-			for (key in keys)
-			{
-				if (FlxG.gamepads.anyPressed(key) == true)
-				{
-					controllerMode = true;
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	private function _myGamepadJustReleased(keys:Array<FlxGamepadInputID>):Bool
-	{
-		if(keys != null)
-		{
-			for (key in keys)
-			{
-				if (FlxG.gamepads.anyJustReleased(key) == true)
-				{
-					controllerMode = true;
-					return true;
-				}
-			}
-		}
-		return false;
+
+		return keyHasState;
 	}
 
-	// IGNORE THESE
-	public static var instance:Controls;
-	public function new()
-	{
-		keyboardBinds = ClientPrefs.keyBinds;
-		gamepadBinds = ClientPrefs.gamepadBinds;
+	static function _getGamepadStatus(name:String, state:FlxInputState):Bool {
+		var binds:Array<FlxGamepadInputID> = gamepadBinds[name];
+		if (binds == null) {
+			trace('Gamepad bind "$name" doesn\'t exist.');
+			return false;
+		}
+
+		var buttonHasState:Bool = false;
+
+		for (button in binds) {
+			@:privateAccess
+			if (FlxG.gamepads.anyHasState(button, state)) {
+				buttonHasState = true;
+				controllerMode = true;
+				break;
+			}
+		}
+
+		return buttonHasState;
+	}
+
+	public static function save() {
+		_save.data.keyboard = keyBinds;
+		_save.data.gamepad = gamepadBinds;
+		_save.flush();
+	}
+
+	public static function load() {
+		if (_save == null) {
+			_save = new FlxSave();
+			_save.bind('controls', CoolUtil.getSavePath());
+		}
+
+		if (_save.data.keyboard != null) {
+			var loadedKeys:Map<String, Array<FlxKey>> = _save.data.keyboard;
+			for (control => keys in loadedKeys)
+				if (keyBinds.exists(control)) keyBinds.set(control, keys);
+		}
+
+		if (_save.data.gamepad != null) {
+			var loadedKeys:Map<String, Array<FlxGamepadInputID>> = _save.data.gamepad;
+			for (control => keys in loadedKeys)
+				if (gamepadBinds.exists(control)) gamepadBinds.set(control, keys);
+		}
+
+		reloadVolumeBinds();
+	}
+
+	// null = both
+	// false = keyboard only
+	// true = controller only
+	public static function reset(controller:Null<Bool>) {
+		if (controller != true) {
+			for (key in keyBinds.keys()) {
+				if (!default_keyBinds.exists(key)) continue;
+				keyBinds.set(key, default_keyBinds.get(key).copy());
+			}
+		}
+
+		if (controller == false) return;
+
+		for (button in gamepadBinds.keys()) {
+			if (!default_gamepadBinds.exists(button)) continue;
+			gamepadBinds.set(button, default_gamepadBinds.get(button).copy());
+		}
+	}
+
+	public static function reloadVolumeBinds() {
+		Main.muteKeys = keyBinds.get('volume_mute').copy();
+		Main.volumeDownKeys = keyBinds.get('volume_down').copy();
+		Main.volumeUpKeys = keyBinds.get('volume_up').copy();
+		toggleVolumeKeys(true);
+	}
+
+	public static function toggleVolumeKeys(?enabled:Bool = true) {
+		final emptyArray = [];
+
+		FlxG.sound.muteKeys = enabled ? Main.muteKeys : emptyArray;
+		FlxG.sound.volumeDownKeys = enabled ? Main.volumeDownKeys : emptyArray;
+		FlxG.sound.volumeUpKeys = enabled ? Main.volumeUpKeys : emptyArray;
 	}
 }

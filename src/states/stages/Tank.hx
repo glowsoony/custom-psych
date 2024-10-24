@@ -17,7 +17,7 @@ class Tank extends BaseStage
 		var sky:BGSprite = new BGSprite('tankSky', -400, -400, 0, 0);
 		add(sky);
 
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 		{
 			var clouds:BGSprite = new BGSprite('tankClouds', FlxG.random.int(-700, -100), FlxG.random.int(-20, 20), 0.1, 0.1);
 			clouds.active = true;
@@ -40,7 +40,7 @@ class Tank extends BaseStage
 		ruins.updateHitbox();
 		add(ruins);
 
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 		{
 			var smokeLeft:BGSprite = new BGSprite('smokeLeft', -200, -100, 0.4, 0.4, ['SmokeBlurLeft'], true);
 			add(smokeLeft);
@@ -64,11 +64,11 @@ class Tank extends BaseStage
 
 		foregroundSprites = new FlxTypedGroup<BGSprite>();
 		foregroundSprites.add(new BGSprite('tank0', -500, 650, 1.7, 1.5, ['fg']));
-		if(!ClientPrefs.data.lowQuality) foregroundSprites.add(new BGSprite('tank1', -300, 750, 2, 0.2, ['fg']));
+		if(!Settings.data.lowQuality) foregroundSprites.add(new BGSprite('tank1', -300, 750, 2, 0.2, ['fg']));
 		foregroundSprites.add(new BGSprite('tank2', 450, 940, 1.5, 1.5, ['foreground']));
-		if(!ClientPrefs.data.lowQuality) foregroundSprites.add(new BGSprite('tank4', 1300, 900, 1.5, 1.5, ['fg']));
+		if(!Settings.data.lowQuality) foregroundSprites.add(new BGSprite('tank4', 1300, 900, 1.5, 1.5, ['fg']));
 		foregroundSprites.add(new BGSprite('tank5', 1620, 700, 1.5, 1.5, ['fg']));
-		if(!ClientPrefs.data.lowQuality) foregroundSprites.add(new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']));
+		if(!Settings.data.lowQuality) foregroundSprites.add(new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']));
 
 		// Default GFs
 		if(songName == 'stress') setDefaultGF('pico-speaker');
@@ -91,7 +91,7 @@ class Tank extends BaseStage
 	{
 		add(foregroundSprites);
 
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 		{
 			for (daGf in gfGroup)
 			{
@@ -100,7 +100,7 @@ class Tank extends BaseStage
 				{
 					var firstTank:TankmenBG = new TankmenBG(20, 500, true);
 					firstTank.resetShit(20, 1500, true);
-					firstTank.strumTime = 10;
+					firstTank.time = 10;
 					firstTank.visible = false;
 					tankmanRun.add(firstTank);
 
@@ -108,7 +108,7 @@ class Tank extends BaseStage
 					{
 						if(FlxG.random.bool(16)) {
 							var tankBih = tankmanRun.recycle(TankmenBG);
-							tankBih.strumTime = TankmenBG.animationNotes[i][0];
+							tankBih.time = TankmenBG.animationNotes[i][0];
 							tankBih.resetShit(500, 200 + FlxG.random.int(50, 100), TankmenBG.animationNotes[i][1] < 2);
 							tankmanRun.add(tankBih);
 						}
@@ -123,7 +123,7 @@ class Tank extends BaseStage
 	override function beatHit(beat:Int) everyoneDance();
 	function everyoneDance()
 	{
-		if(!ClientPrefs.data.lowQuality) tankWatchtower.dance();
+		if(!Settings.data.lowQuality) tankWatchtower.dance();
 		foregroundSprites.forEach(function(spr:BGSprite)
 		{
 			spr.dance();
@@ -147,7 +147,7 @@ class Tank extends BaseStage
 		tankman = new FlxAnimate(dad.x + 419, dad.y + 225);
 		tankman.showPivot = false;
 		Paths.loadAnimateAtlas(tankman, 'cutscenes/tankman');
-		tankman.antialiasing = ClientPrefs.data.antialiasing;
+		tankman.antialiasing = Settings.data.antialiasing;
 		addBehindDad(tankman);
 		cutsceneHandler.push(tankman);
 
@@ -295,7 +295,7 @@ class Tank extends BaseStage
 		pico = new FlxAnimate(gf.x + 150, gf.y + 450);
 		pico.showPivot = false;
 		Paths.loadAnimateAtlas(pico, 'cutscenes/picoAppears');
-		pico.antialiasing = ClientPrefs.data.antialiasing;
+		pico.antialiasing = Settings.data.antialiasing;
 		pico.anim.addBySymbol('dance', 'GF Dancing at Gunpoint', 24, true);
 		pico.anim.addBySymbol('dieBitch', 'GF Time to Die sequence', 24, false);
 		pico.anim.addBySymbol('picoAppears', 'Pico Saves them sequence', 24, false);
@@ -332,7 +332,7 @@ class Tank extends BaseStage
 		pico.anim.onComplete.add(picoStressCycle);
 
 		boyfriendCutscene = new FlxSprite(boyfriend.x + 5, boyfriend.y + 20);
-		boyfriendCutscene.antialiasing = ClientPrefs.data.antialiasing;
+		boyfriendCutscene.antialiasing = Settings.data.antialiasing;
 		boyfriendCutscene.frames = Paths.getSparrowAtlas('characters/BOYFRIEND');
 		boyfriendCutscene.animation.addByPrefix('idle', 'BF idle dance', 24, false);
 		boyfriendCutscene.animation.play('idle', true);

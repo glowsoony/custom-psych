@@ -16,7 +16,7 @@ class MetaNote extends Note
 	{
 		super(time, lane, null, false, true);
 		this.songData = songData;
-		this.strumTime = time;
+		this.time = time;
 		this.chartLane = lane;
 	}
 
@@ -25,7 +25,7 @@ class MetaNote extends Note
 		this.chartLane = v; //despite being so arbitrary its sadly needed to fix a bug on moving notes
 		this.songData[1] = v;
 		this.lane = v % ChartingState.GRID_COLUMNS_PER_PLAYER;
-		this.mustPress = (v < ChartingState.GRID_COLUMNS_PER_PLAYER);
+		this.player = (v < ChartingState.GRID_COLUMNS_PER_PLAYER);
 		
 		if(!PlayState.isPixelStage)
 			loadNoteAnims();
@@ -42,7 +42,7 @@ class MetaNote extends Note
 
 	public function setStrumTime(v:Float) {
 		this.songData[0] = v;
-		this.strumTime = v;
+		this.time = v;
 	}
 
 	var _lastZoom:Float = -1;
@@ -164,7 +164,7 @@ class EventMetaNote extends MetaNote
 	public var events:Array<Array<String>>;
 	public function updateEventText()
 	{
-		var myTime:Float = Math.floor(this.strumTime);
+		var myTime:Float = Math.floor(this.time);
 		if(events.length == 1)
 		{
 			var event = events[0];

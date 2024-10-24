@@ -10,7 +10,7 @@ import flixel.math.FlxRect;
 using StringTools;
 
 typedef EventNote = {
-	strumTime:Float,
+	time:Float,
 	event:String,
 	value1:String,
 	value2:String
@@ -43,17 +43,17 @@ class Note extends FlxSprite
 
 	public var extraData:Map<String, Dynamic> = new Map<String, Dynamic>();
 
-	public var strumTime:Float = 0;
+	public var time:Float = 0;
 	public var lane:Int = 0;
 
-	public var mustPress:Bool = false;
+	public var player:Bool = false;
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
 
 	public var wasGoodHit:Bool = false;
 	public var missed:Bool = false;
 
-	public var ignoreNote:Bool = false;
+	public var ignore:Bool = false;
 	public var hitByOpponent:Bool = false;
 	public var noteWasHit:Bool = false;
 	public var prevNote:Note;
@@ -68,7 +68,7 @@ class Note extends FlxSprite
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
-	public var noteType(default, set):String = null;
+	public var type(default, set):String = null;
 
 	public var eventName:String = '';
 	public var eventLength:Int = 0;
@@ -92,7 +92,7 @@ class Note extends FlxSprite
 		disabled: false,
 		texture: null,
 		antialiasing: !PlayState.isPixelStage,
-		a: ClientPrefs.data.splashAlpha
+		a: Settings.data.splashAlpha
 	};
 
 	public var offsetX:Float = 0;
@@ -100,6 +100,8 @@ class Note extends FlxSprite
 	public var offsetAngle:Float = 0;
 	public var multAlpha:Float = 1;
 	public var multSpeed(default, set):Float = 1;
+
+	public var hitTime(get, never):Float;
 
 	public var copyX:Bool = true;
 	public var copyY:Bool = true;
@@ -127,7 +129,7 @@ class Note extends FlxSprite
 	public var hitsoundForce:Bool = false;
 	public var hitsoundVolume(get, default):Float = 1.0;
 	function get_hitsoundVolume():Float {
-		if (ClientPrefs.data.hitsoundVolume > 0) return ClientPrefs.data.hitsoundVolume;
+		if (Settings.data.hitsoundVolume > 0) return Settings.data.hitsoundVolume;
 		return hitsoundForce ? hitsoundVolume : 0.0;
 	}
 	public var hitsound:String = 'hitsound';
@@ -153,13 +155,13 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	private function set_noteType(value:String):String {
+	private function set_type(value:String):String {
 		noteSplashData.texture = PlayState.SONG != null ? PlayState.SONG.splashSkin : 'noteSplashes';
 
-		if (lane > -1 && noteType != value) {
-			switch(value) {
+		if (lane > -1 && type != value) {
+			switch (value) {
 				case 'Hurt Note':
-					ignoreNote = mustPress;
+					ignore = player;
 
 					noteSplashData.texture = 'noteSplashes-electric';
 
@@ -179,17 +181,17 @@ class Note extends FlxSprite
 			}
 			if (value != null && value.length > 1) NoteTypesConfig.applyNoteTypeData(this, value);
 			if (hitsound != 'hitsound' && hitsoundVolume > 0) Paths.sound(hitsound); //precache new sound for being idiot-proof
-			noteType = value;
+			type = value;
 		}
 		return value;
 	}
 
-	public function new(strumTime:Float, lane:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?createdFrom:Dynamic = null) {
+	public function new(time:Float, lane:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?createdFrom:Dynamic = null) {
 		super();
 
 		animation = new PsychAnimationController(this);
 
-		antialiasing = ClientPrefs.data.antialiasing;
+		antialiasing = Settings.data.antialiasing;
 		if (createdFrom == null) createdFrom = PlayState.instance;
 
 		if (prevNote == null)
@@ -200,11 +202,11 @@ class Note extends FlxSprite
 		this.inEditor = inEditor;
 		this.moves = false;
 
-		x += (ClientPrefs.data.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
+		x += (Settings.data.centeredStrums ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
-		this.strumTime = strumTime;
-		if (!inEditor) this.strumTime += ClientPrefs.data.noteOffset;
+		this.time = time;
+		if (!inEditor) this.time += Settings.data.noteOffset;
 
 		this.lane = lane;
 
@@ -228,7 +230,7 @@ class Note extends FlxSprite
 			alpha = 0.6;
 			multAlpha = 0.6;
 			hitsoundDisabled = true;
-			if (ClientPrefs.data.downScroll) flipY = true;
+			flipY = Settings.data.scrollDirection == 'Down';
 
 			offsetX += width / 2;
 			copyAngle = false;
@@ -334,7 +336,7 @@ class Note extends FlxSprite
 	}
 
 	public static function getNoteSkinSuffix() {
-		return (ClientPrefs.data.noteSkin != ClientPrefs.defaultData.noteSkin) ? '-${ClientPrefs.data.noteSkin.trim().toLowerCase().replace(' ', '_')}' : '';
+		return (Settings.data.noteSkin != Settings.default_data.noteSkin) ? '-${Settings.data.noteSkin.trim().toLowerCase().replace(' ', '_')}' : '';
 	}
 
 	function loadNoteAnims() {
@@ -373,20 +375,24 @@ class Note extends FlxSprite
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (mustPress) {
-			canBeHit = (strumTime > Conductor.time - (Conductor.safeZoneOffset * lateHitMult) &&
-						strumTime < Conductor.time + (Conductor.safeZoneOffset * earlyHitMult));
+		if (player) {
+			canBeHit = (time > Conductor.time - (Conductor.safeZoneOffset * lateHitMult) &&
+						time < Conductor.time + (Conductor.safeZoneOffset * earlyHitMult));
 
-			if (strumTime < Conductor.time - Conductor.safeZoneOffset && !wasGoodHit)
+			if (time < Conductor.time - Conductor.safeZoneOffset && !wasGoodHit)
 				tooLate = true;
 		} else {
 			canBeHit = false;
 
-			if (!wasGoodHit && strumTime <= Conductor.time) {
-				if (!isSustainNote || (prevNote.wasGoodHit && !ignoreNote))
+			if (!wasGoodHit && time <= Conductor.time) {
+				if (!isSustainNote || (prevNote.wasGoodHit && !ignore))
 					wasGoodHit = true;
 			}
 		}
+	}
+
+	function get_hitTime():Float {
+		return Conductor.time - time;
 	}
 
 	override public function destroy() {
@@ -400,7 +406,7 @@ class Note extends FlxSprite
 		var strumAngle:Float = myStrum.angle;
 		var strumAlpha:Float = myStrum.alpha;
 
-		distance = (0.45 * (Conductor.time - strumTime) * songSpeed * multSpeed);
+		distance = (0.45 * hitTime * songSpeed * multSpeed);
 		if (!myStrum.downScroll) distance *= -1;
 
 		var angleDir = 90 * Math.PI / 180;
@@ -424,7 +430,7 @@ class Note extends FlxSprite
 	public function clipToStrumNote(myStrum:StrumNote) {
 		var center:Float = myStrum.y + offsetY + Note.swagWidth * 0.5;
 		
-		if ((mustPress || !ignoreNote) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit))) {
+		if ((player || !ignore) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit))) {
 			var swagRect:FlxRect = clipRect;
 			if (swagRect == null) swagRect = new FlxRect(0, 0, frameWidth, frameHeight);
 

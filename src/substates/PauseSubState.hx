@@ -10,8 +10,7 @@ import states.StoryMenuState;
 import states.FreeplayState;
 import options.OptionsState;
 
-class PauseSubState extends MusicBeatSubstate
-{
+class PauseSubState extends FlxSubState {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
@@ -149,7 +148,7 @@ class PauseSubState extends MusicBeatSubstate
 	function getPauseSong()
 	{
 		var formattedSongName:String = (songName != null ? Paths.formatToSongPath(songName) : '');
-		var formattedPauseMusic:String = Paths.formatToSongPath(ClientPrefs.data.pauseMusic);
+		var formattedPauseMusic:String = Paths.formatToSongPath(Settings.data.pauseMusic);
 		if(formattedSongName == 'none' || (formattedSongName != 'none' && formattedPauseMusic == 'none')) return null;
 
 		return (formattedSongName != '') ? formattedSongName : formattedPauseMusic;
@@ -165,8 +164,7 @@ class PauseSubState extends MusicBeatSubstate
 
 		super.update(elapsed);
 
-		if(controls.BACK)
-		{
+		if (Controls.justPressed('back')) {
 			close();
 			return;
 		}
@@ -180,38 +178,30 @@ class PauseSubState extends MusicBeatSubstate
 		}
 
 		updateSkipTextStuff();
-		if (controls.UI_UP_P)
-		{
-			changeSelection(-1);
-		}
-		if (controls.UI_DOWN_P)
-		{
-			changeSelection(1);
-		}
+
+		final upPressed:Bool = Controls.pressed('ui_up');
+		if (upPressed || Controls.pressed('ui_down')) changeSelection(upPressed ? -1 : 1);
 
 		var daSelected:String = menuItems[curSelected];
-		switch (daSelected)
-		{
+		switch (daSelected) {
 			case 'Skip Time':
-				if (controls.UI_LEFT_P)
+				if (Controls.pressed('ui_left'))
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 					curTime -= 1000;
 					holdTime = 0;
-				}
-				if (controls.UI_RIGHT_P)
-				{
+				} else if (Controls.pressed('ui_right')) {
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 					curTime += 1000;
 					holdTime = 0;
 				}
 
-				if(controls.UI_LEFT || controls.UI_RIGHT)
-				{
+				final leftJustPressed:Bool = Controls.justPressed('ui_left');
+				if (leftJustPressed || Controls.justPressed('ui_right')) {
 					holdTime += elapsed;
 					if(holdTime > 0.5)
 					{
-						curTime += 45000 * elapsed * (controls.UI_LEFT ? -1 : 1);
+						curTime += 45000 * elapsed * (leftJustPressed ? -1 : 1);
 					}
 
 					if(curTime >= FlxG.sound.music.length) curTime -= FlxG.sound.music.length;
@@ -220,7 +210,7 @@ class PauseSubState extends MusicBeatSubstate
 				}
 		}
 
-		if (controls.ACCEPT && (cantUnpause <= 0 || !controls.controllerMode))
+		if (Controls.justPressed('accept') && (cantUnpause <= 0 || !Controls.controllerMode))
 		{
 			if (menuItems == difficultyChoices)
 			{
@@ -310,9 +300,9 @@ class PauseSubState extends MusicBeatSubstate
 					Conductor.vocals.volume = 0;
 					PlayState.instance.canResync = false;
 					MusicBeatState.switchState(new OptionsState());
-					if(ClientPrefs.data.pauseMusic != 'None')
+					if(Settings.data.pauseMusic != 'None')
 					{
-						FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)), pauseMusic.volume);
+						FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(Settings.data.pauseMusic)), pauseMusic.volume);
 						FlxTween.tween(FlxG.sound.music, {volume: 1}, 0.8);
 						FlxG.sound.music.time = pauseMusic.time;
 					}

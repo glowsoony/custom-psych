@@ -77,7 +77,7 @@ class StrumNote extends FunkinSprite {
 
 		animation.finishCallback = _ -> {
 			active = false;
-			if ((!parent.player || (parent.player && ClientPrefs.getGameplaySetting('botplay'))) && animation.curAnim.name == 'notePressed') {
+			if ((!parent.player || (parent.player && Settings.getGameplaySetting('botplay'))) && animation.curAnim.name == 'notePressed') {
 				playAnim('default');
 			}
 		}

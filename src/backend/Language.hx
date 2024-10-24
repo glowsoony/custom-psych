@@ -10,7 +10,7 @@ class Language
 	public static function reloadPhrases()
 	{
 		#if TRANSLATIONS_ALLOWED
-		var langFile:String = ClientPrefs.data.language;
+		var langFile:String = Settings.data.language;
 		var loadedText:Array<String> = Mods.mergeAllTextsNamed('data/$langFile.lang');
 		//trace(loadedText);
 
@@ -42,15 +42,15 @@ class Language
 			hasPhrases = true;
 		}
 
-		if(!hasPhrases) ClientPrefs.data.language = ClientPrefs.defaultData.language;
+		if (!hasPhrases) Settings.data.language = Settings.default_data.language;
 		
 		var alphaPath:String = getFileTranslation('images/alphabet');
 		if(alphaPath.startsWith('images/')) alphaPath = alphaPath.substr('images/'.length);
 		var pngPos:Int = alphaPath.indexOf('.png');
 		if(pngPos > -1) alphaPath = alphaPath.substring(0, pngPos);
-		AlphaCharacter.loadAlphabetData(alphaPath);
+		Alphabet.loadData(alphaPath);
 		#else
-		AlphaCharacter.loadAlphabetData();
+		Alphabet.loadData();
 		#end
 	}
 
@@ -89,18 +89,6 @@ class Language
 	{
 		final hideChars = ~/[~&\\\/;:<>#.,'"%?!]/g;
 		return hideChars.replace(key.replace(' ', '_'), '').toLowerCase().trim();
-	}
-	#end
-
-	#if LUA_ALLOWED
-	public static function addLuaCallbacks(lua:State) {
-		Lua_helper.add_callback(lua, "getTranslationPhrase", function(key:String, ?defaultPhrase:String, ?values:Array<Dynamic> = null) {
-			return getPhrase(key, defaultPhrase, values);
-		});
-
-		Lua_helper.add_callback(lua, "getFileTranslation", function(key:String) {
-			return getFileTranslation(key);
-		});
 	}
 	#end
 }

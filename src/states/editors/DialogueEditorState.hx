@@ -49,7 +49,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 		add(character);
 
 		box = new FlxSprite(70, 370);
-		box.antialiasing = ClientPrefs.data.antialiasing;
+		box.antialiasing = Settings.data.antialiasing;
 		box.frames = Paths.getSparrowAtlas('speech_bubble');
 		box.scrollFactor.set();
 		box.animation.addByPrefix('normal', 'speech bubble normal', 24);
@@ -225,7 +225,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 		}
 
 		daText.y = DialogueBoxPsych.DEFAULT_TEXT_Y;
-		if(daText.rows > 2) daText.y -= DialogueBoxPsych.LONG_TEXT_ADD;
+		if(daText.length > 2) daText.y -= DialogueBoxPsych.LONG_TEXT_ADD;
 
 		#if DISCORD_ALLOWED
 		// Updating Discord Rich Presence
@@ -307,7 +307,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 
 		if(PsychUIInputText.focusOn == null)
 		{
-			ClientPrefs.toggleVolumeKeys(true);
+			Controls.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.SPACE) {
 				reloadText(false);
 			}
@@ -356,7 +356,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 				changeText(1);
 			}
 		}
-		else ClientPrefs.toggleVolumeKeys(false);
+		else Controls.toggleVolumeKeys(false);
 		super.update(elapsed);
 	}
 

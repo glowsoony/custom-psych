@@ -15,7 +15,7 @@ class Mall extends BaseStage
 		bg.updateHitbox();
 		add(bg);
 
-		if(!ClientPrefs.data.lowQuality) {
+		if(!Settings.data.lowQuality) {
 			upperBoppers = new BGSprite('christmas/upperBop', -240, -90, 0.33, 0.33, ['Upper Crowd Bob']);
 			upperBoppers.setGraphicSize(Std.int(upperBoppers.width * 0.85));
 			upperBoppers.updateHitbox();
@@ -48,7 +48,7 @@ class Mall extends BaseStage
 	override function countdownTick(count:Countdown, num:Int) everyoneDance();
 	override function beatHit(beat:Int) everyoneDance();
 
-	override function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, strumTime:Float)
+	override function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, time:Float)
 	{
 		switch(eventName)
 		{
@@ -64,7 +64,7 @@ class Mall extends BaseStage
 
 	function everyoneDance()
 	{
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 			upperBoppers.dance(true);
 
 		bottomBoppers.dance(true);

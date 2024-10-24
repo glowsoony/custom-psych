@@ -44,7 +44,7 @@ class OptionsState extends MusicBeatState
 		#end
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.antialiasing = ClientPrefs.data.antialiasing;
+		bg.antialiasing = Settings.data.antialiasing;
 		bg.color = 0xFFea71fd;
 		bg.updateHitbox();
 
@@ -66,7 +66,7 @@ class OptionsState extends MusicBeatState
 		add(selectorRight = new Alphabet(0, 0, '<', BOLD));
 
 		changeSelection();
-		ClientPrefs.saveSettings();
+		Settings.save();
 
 		super.create();
 	}
@@ -74,7 +74,7 @@ class OptionsState extends MusicBeatState
 	override function closeSubState()
 	{
 		super.closeSubState();
-		ClientPrefs.saveSettings();
+		Settings.save();
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Options Menu", null);
 		#end
@@ -83,23 +83,17 @@ class OptionsState extends MusicBeatState
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (controls.UI_UP_P)
-			changeSelection(-1);
-		if (controls.UI_DOWN_P)
-			changeSelection(1);
+		final upJustPressed:Bool = Controls.justPressed('ui_up');
+		if (upJustPressed || Controls.justPressed('ui_down')) changeSelection(upJustPressed ? -1 : 1);
 
-		if (controls.BACK)
-		{
+		if (Controls.justPressed('back')) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			if(onPlayState)
-			{
+			if (onPlayState) {
 				StageData.loadDirectory(PlayState.SONG);
 				LoadingState.loadAndSwitchState(new PlayState());
 				FlxG.sound.music.volume = 0;
-			}
-			else MusicBeatState.switchState(new MainMenuState());
-		}
-		else if (controls.ACCEPT) openSelectedSubstate(options[curSelected]);
+			} else MusicBeatState.switchState(new MainMenuState());
+		} else if (Controls.justPressed('accept')) openSelectedSubstate(options[curSelected]);
 	}
 	
 	function changeSelection(change:Int = 0)
@@ -122,9 +116,8 @@ class OptionsState extends MusicBeatState
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 
-	override function destroy()
-	{
-		ClientPrefs.loadPrefs();
+	override function destroy() {
+		Settings.load();
 		super.destroy();
 	}
 }

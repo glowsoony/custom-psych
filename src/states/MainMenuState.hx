@@ -40,7 +40,7 @@ class MainMenuState extends MusicBeatState {
 		add(camFollow = new FlxObject(FlxG.width * 0.5, 0, 1, 1));
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
-		bg.antialiasing = ClientPrefs.data.antialiasing;
+		bg.antialiasing = Settings.data.antialiasing;
 		bg.scrollFactor.set(0, Math.max(0.25 - (0.05 * (options.length - 4)), 0.1));
 		bg.setGraphicSize(Std.int(bg.width * 1.175));
 		bg.updateHitbox();
@@ -80,8 +80,8 @@ class MainMenuState extends MusicBeatState {
 			return;
 		}
 
-		final downJustPressed:Bool = controls.UI_DOWN_P;
-		if (downJustPressed || controls.UI_UP_P) changeSelection(downJustPressed ? 1 : -1);
+		final downJustPressed:Bool = Controls.justPressed('ui_down');
+		if (downJustPressed || Controls.justPressed('ui_up')) changeSelection(downJustPressed ? 1 : -1);
 
 		if (mouseControls && (FlxG.mouse.deltaScreenX != 0 || FlxG.mouse.deltaScreenY != 0)) {
 			for (index => option in optionGrp.members) {
@@ -92,7 +92,7 @@ class MainMenuState extends MusicBeatState {
 			}
 		}
 
-		if (controls.ACCEPT || (mouseControls && FlxG.mouse.overlaps(optionGrp.members[curSelected]) && FlxG.mouse.justPressed)) {
+		if (Controls.justPressed('accept') || (mouseControls && FlxG.mouse.overlaps(optionGrp.members[curSelected]) && FlxG.mouse.justPressed)) {
 			alreadyPressedEnter = true;
 			FlxG.sound.play(Paths.sound('confirmMenu'));
 

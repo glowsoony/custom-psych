@@ -20,7 +20,7 @@ class SchoolEvil extends BaseStage
 		var posY = 200;
 
 		var bg:BGSprite;
-		if(!ClientPrefs.data.lowQuality)
+		if(!Settings.data.lowQuality)
 			bg = new BGSprite('weeb/animatedEvilSchool', posX, posY, 0.8, 0.9, ['background 2'], true);
 		else
 			bg = new BGSprite('weeb/animatedEvilSchool_low', posX, posY, 0.8, 0.9);
@@ -46,12 +46,12 @@ class SchoolEvil extends BaseStage
 
 	// Ghouls event
 	var bgGhouls:BGSprite;
-	override function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, strumTime:Float)
+	override function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, time:Float)
 	{
 		switch(eventName)
 		{
 			case "Trigger BG Ghouls":
-				if(!ClientPrefs.data.lowQuality)
+				if(!Settings.data.lowQuality)
 				{
 					bgGhouls.dance(true);
 					bgGhouls.visible = true;
@@ -64,7 +64,7 @@ class SchoolEvil extends BaseStage
 		switch(event.event)
 		{
 			case "Trigger BG Ghouls":
-				if(!ClientPrefs.data.lowQuality)
+				if(!Settings.data.lowQuality)
 				{
 					bgGhouls = new BGSprite('weeb/bgGhouls', -100, 190, 0.9, 0.9, ['BG freaks glitch instance'], false);
 					bgGhouls.setGraphicSize(Std.int(bgGhouls.width * PlayState.daPixelZoom));
@@ -84,7 +84,7 @@ class SchoolEvil extends BaseStage
 	var doof:DialogueBox = null;
 	function initDoof()
 	{
-		var file:String = Paths.txt('$songName/${songName}Dialogue_${ClientPrefs.data.language}'); //Checks for vanilla/Senpai dialogue
+		var file:String = Paths.txt('$songName/${songName}Dialogue_${Settings.data.language}'); //Checks for vanilla/Senpai dialogue
 		#if MODS_ALLOWED
 		if (!FileSystem.exists(file))
 		#else

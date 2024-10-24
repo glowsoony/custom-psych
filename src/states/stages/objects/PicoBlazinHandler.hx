@@ -24,7 +24,7 @@ class PicoBlazinHandler
 			return;
 		}
 
-		switch(note.noteType)
+		switch(note.type)
 		{
 			case "weekend-1-punchlow":
 				playPunchLowAnim();
@@ -110,7 +110,7 @@ class PicoBlazinHandler
 			return;
 		}
 
-		switch (note.noteType)
+		switch (note.type)
 		{
 			// Pico fails to punch, and instead gets hit!
 			case "weekend-1-punchlow":
