@@ -8,15 +8,6 @@ enum abstract AlphabetAlignment(String) from String to String {
     var LEFT = 'left';
     var CENTER = 'center';
     var RIGHT = 'right';
-
-	@:from
-	public static function fromString(alignment:String):AlphabetAlignment {
-		return switch (alignment.toLowerCase().trim()) {
-			case 'right': RIGHT;
-			case 'center', 'centered': CENTER;
-			default: LEFT;
-		}
-	}
 }
 
 enum abstract AlphabetGlyphType(String) from String to String {
@@ -116,14 +107,16 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetRow> {
 		}
 	}
 
+	// genuinely losing my fucking mind like 
+	// why the fuck does center and right alignment not work
 	function updateAlignment(align:AlphabetAlignment) {
 		final totalWidth:Float = width;
 
 		for (row in members) {
 			row.x = switch (align) {
                 case LEFT: x;
-                case CENTER: x + ((totalWidth - row.width) * 0.5);
-                case RIGHT: x + (totalWidth - row.width);
+                case CENTER: x; // ????????????
+                case RIGHT: x; // ????????????
 			}
 		}
 	}

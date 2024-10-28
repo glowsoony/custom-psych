@@ -2,19 +2,10 @@ package;
 
 import debug.FPSCounter;
 
-
-import flixel.input.keyboard.FlxKey;
-
-import flixel.graphics.FlxGraphic;
 import flixel.FlxGame;
 import flixel.FlxState;
-import haxe.io.Path;
-import openfl.Assets;
-import openfl.Lib;
 import openfl.display.Sprite;
-import openfl.events.Event;
 import openfl.display.StageScaleMode;
-import lime.app.Application;
 import states.TitleState;
 
 #if linux
@@ -28,7 +19,8 @@ import haxe.CallStack;
 import haxe.io.Path;
 #end
 
-import backend.Highscore;
+import flixel.input.keyboard.FlxKey;
+import openfl.Lib;
 
 #if linux
 @:cppInclude('./external/gamemode_client.h')
@@ -60,7 +52,7 @@ class Main extends Sprite {
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		fpsCounter.visible = Settings.data.fpsCounter;
 
-		FlxG.sound.volume = Settings.data.volume;
+		if (FlxG.save.data.volume != null) FlxG.sound.volume = FlxG.save.data.volume;
 
 		#if linux
 		Lib.current.stage.window.setIcon(Image.fromFile("icon.png"));
@@ -116,7 +108,7 @@ class Main extends Sprite {
 		File.saveContent('./crash/$date.txt', 'errMsg\n');
 		Sys.println('\n$errMsg');
 
-		Application.current.window.alert(errMsg, "Error!");
+		lime.app.Application.current.window.alert(errMsg, "Error!");
 		DiscordClient.shutdown();
 		Sys.exit(1);
 	}

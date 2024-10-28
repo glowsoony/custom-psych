@@ -5,9 +5,11 @@ class InitState extends flixel.FlxState {
 		#end
 		Mods.loadTopMod();
 
-		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
+		#if ACHIEVEMENTS_ALLOWED 
+		Achievements.load();
+		#end
 		Controls.load();
-		Highscore.load();
+		Scores.load();
 		
 		Language.reloadPhrases();
 
@@ -15,12 +17,12 @@ class InitState extends flixel.FlxState {
 		DiscordClient.prepare();
 		#end
 
-		#if LUA_ALLOWED Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(psychlua.CallbackHandler.call)); #end
 		FlxG.plugins.add(new backend.Conductor());
 
 		FlxG.fullscreen = Settings.data.fullscreen;
 		FlxG.fixedTimestep = false;
 		FlxG.game.focusLostFramerate = 10;
+		FlxG.drawFramerate = FlxG.updateFramerate = Settings.data.framerate;
 		FlxG.keys.preventDefaultKeys = [TAB];
 		FlxG.cameras.useBufferLocking = true;
 

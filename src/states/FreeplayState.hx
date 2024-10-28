@@ -1,7 +1,6 @@
 package states;
 
 import backend.WeekData;
-import backend.Highscore;
 import backend.Song;
 
 import objects.HealthIcon;
@@ -302,8 +301,8 @@ class FreeplayState extends MusicBeatState
 				FlxG.sound.music.volume = 0;
 
 				Mods.currentModDirectory = songs[curSelected].folder;
-				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-				Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+/*				var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
+				Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());*/
 				if (PlayState.SONG.needsVoices) {
 					vocals = new FlxSound();
 					try {
@@ -361,10 +360,10 @@ class FreeplayState extends MusicBeatState
 		} else if (Controls.justPressed('accept') && !player.playingMusic) {
 			persistentUpdate = false;
 			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
-			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+			//var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 
 			try {
-				Song.loadFromJson(poop, songLowercase);
+				//Song.loadFromJson(poop, songLowercase);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 
@@ -436,10 +435,8 @@ class FreeplayState extends MusicBeatState
 			return;
 
 		curDifficulty = FlxMath.wrap(curDifficulty + change, 0, Difficulty.list.length-1);
-		#if !switch
-		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
-		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
-		#end
+		//intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
+		//intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
 
 		lastDifficultyName = Difficulty.getString(curDifficulty, false);
 		var displayDiff:String = Difficulty.getString(curDifficulty);

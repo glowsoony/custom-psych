@@ -32,7 +32,7 @@ import backend.BaseStage;
 import backend.Difficulty;
 import backend.Mods;
 import backend.Language;
-import backend.Highscore;
+import backend.Scores;
 
 import backend.ui.*; //Psych-UI
 

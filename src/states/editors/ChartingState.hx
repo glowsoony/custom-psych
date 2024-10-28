@@ -25,7 +25,6 @@ import states.editors.content.*;
 
 import backend.Song;
 import backend.StageData;
-import backend.Highscore;
 import backend.Difficulty;
 
 import objects.Character;

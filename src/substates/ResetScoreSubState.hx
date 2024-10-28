@@ -1,7 +1,6 @@
 package substates;
 
 import backend.WeekData;
-import backend.Highscore;
 
 import flixel.FlxSubState;
 import objects.HealthIcon;
@@ -97,8 +96,8 @@ class ResetScoreSubState extends FlxSubState {
 			close();
 		} else if (Controls.justPressed('accept')) {
 			if (onYes) {
-				if (week == -1) Highscore.resetSong(song, difficulty);
-				else Highscore.resetWeek(WeekData.weeksList[week], difficulty);
+/*				if (week == -1) Highscore.resetSong(song, difficulty);
+				else Highscore.resetWeek(WeekData.weeksList[week], difficulty);*/
 			}
 
 			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
