@@ -3,7 +3,7 @@ package options;
 import states.MainMenuState;
 import backend.StageData;
 
-class OptionsState extends MusicBeatState
+class OptionsState extends MusicState
 {
 	var options:Array<String> = [
 		'Controls',
@@ -29,7 +29,7 @@ class OptionsState extends MusicBeatState
 			case 'Gameplay':
 				openSubState(new options.GameplaySettingsSubState());
 			case 'Adjust Delay and Combo':
-				MusicBeatState.switchState(new options.NoteOffsetState());
+				MusicState.switchState(new options.NoteOffsetState());
 			case 'Language':
 				openSubState(new options.LanguageSubState());
 		}
@@ -92,7 +92,7 @@ class OptionsState extends MusicBeatState
 				StageData.loadDirectory(PlayState.SONG);
 				LoadingState.loadAndSwitchState(new PlayState());
 				FlxG.sound.music.volume = 0;
-			} else MusicBeatState.switchState(new MainMenuState());
+			} else MusicState.switchState(new MainMenuState());
 		} else if (Controls.justPressed('accept')) openSelectedSubstate(options[curSelected]);
 	}
 	

@@ -162,9 +162,9 @@ class GameOverSubstate extends FlxSubState {
 	
 				Mods.loadTopMod();
 				if (PlayState.isStoryMode)
-					MusicBeatState.switchState(new StoryMenuState());
+					MusicState.switchState(new StoryMenuState());
 				else
-					MusicBeatState.switchState(new FreeplayState());
+					MusicState.switchState(new FreeplayState());
 	
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			} else if (justPlayedLoop) {
@@ -224,7 +224,7 @@ class GameOverSubstate extends FlxSubState {
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 2, false, function()
 				{
-					MusicBeatState.resetState();
+					MusicState.resetState();
 				});
 			});
 		}

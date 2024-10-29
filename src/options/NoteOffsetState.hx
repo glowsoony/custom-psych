@@ -7,7 +7,7 @@ import flixel.addons.display.shapes.FlxShapeCircle;
 
 import states.stages.StageWeek1 as BackgroundStage;
 
-class NoteOffsetState extends MusicBeatState
+class NoteOffsetState extends MusicState
 {
 	var stageDirectory:String = 'week1';
 	var boyfriend:Character;
@@ -390,7 +390,7 @@ class NoteOffsetState extends MusicBeatState
 			if(beatTween != null) beatTween.cancel();
 
 			persistentUpdate = false;
-			MusicBeatState.switchState(new options.OptionsState());
+			MusicState.switchState(new options.OptionsState());
 			if(OptionsState.onPlayState)
 			{
 				if(Settings.data.pauseMusic != 'None')

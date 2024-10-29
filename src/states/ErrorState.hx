@@ -1,6 +1,6 @@
 package states;
 
-class ErrorState extends MusicBeatState {
+class ErrorState extends MusicState {
 	public dynamic function acceptCallback():Void {}
 	public dynamic function backCallback():Void {}
 	public var errorMsg:String;

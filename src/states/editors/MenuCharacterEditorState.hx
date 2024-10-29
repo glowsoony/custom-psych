@@ -11,7 +11,7 @@ import objects.MenuCharacter;
 import states.editors.content.Prompt;
 import states.editors.content.PsychJsonPrinter;
 
-class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class MenuCharacterEditorState extends MusicState implements PsychUIEventHandler.PsychUIEvent
 {
 	var grpWeekCharacters:FlxTypedGroup<MenuCharacter>;
 	var characterFile:MenuCharacterFile = null;
@@ -215,7 +215,7 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 			if(FlxG.keys.justPressed.ESCAPE) {
 				if(!unsavedProgress)
 				{
-					MusicBeatState.switchState(new states.editors.MasterEditorMenu());
+					MusicState.switchState(new states.editors.MasterEditorMenu());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
 				else openSubState(new ExitConfirmationPrompt());

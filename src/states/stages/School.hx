@@ -127,7 +127,7 @@ class School extends BaseStage
 			return;
 		}
 
-		doof = new DialogueBox(false, CoolUtil.coolTextFile(file));
+		doof = new DialogueBox(false, Util.coolTextFile(file));
 		doof.cameras = [camHUD];
 		doof.scrollFactor.set();
 		doof.finishThing = startCountdown;

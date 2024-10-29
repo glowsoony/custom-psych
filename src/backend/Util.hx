@@ -1,25 +1,21 @@
 package backend;
 
-import openfl.utils.Assets;
-import lime.utils.Assets as LimeAssets;
-
 class Util {
 	inline public static function quantize(f:Float, snap:Float):Float {
 		return Math.fround(f * snap) / snap;
 	}
 
-	public static function capitalize(text:String):String {
+	inline public static function listFromString(string:String):Array<String> {
+		return string.trim().split('\n');
+	}
+
+	inline public static function capitalize(text:String):String {
 		return '${text.charAt(0).toUpperCase()}${text.substr(1).toLowerCase()}';
 	}
 
 	public static function coolTextFile(path:String):Array<String> {
-		var daList:String = null;
-		#if (sys && MODS_ALLOWED)
-		if(FileSystem.exists(path)) daList = File.getContent(path);
-		#else
-		if(Assets.exists(path)) daList = Assets.getText(path);
-		#end
-		return daList != null ? listFromString(daList) : [];
+		var file:String = FileSystem.exists(path) ? File.getContent(path) : null;
+		return file != null ? listFromString(file) : [];
 	}
 
 	inline public static function colorFromString(color:String):FlxColor {
@@ -29,15 +25,6 @@ class Util {
 
 		var colorNum:Null<FlxColor> = FlxColor.fromString(color) ?? FlxColor.fromString('#$color');
 		return colorNum ?? FlxColor.WHITE;
-	}
-
-	public static function listFromString(string:String):Array<String> {
-		var daList:Array<String> = [];
-		daList = string.trim().split('\n');
-
-		for (i in 0...daList.length) daList[i] = daList[i].trim();
-
-		return daList;
 	}
 
 	public static function floorDecimal(value:Float, decimals:Int):Float {
@@ -76,7 +63,7 @@ class Util {
 		return maxKey;
 	}
 
-	inline public static function browserLoad(site:String) {
+	inline public static function openURL(site:String) {
 		#if linux
 		Sys.command('/usr/bin/xdg-open', [site]);
 		#else

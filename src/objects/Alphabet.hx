@@ -113,10 +113,11 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetRow> {
 		final totalWidth:Float = width;
 
 		for (row in members) {
+			row.updateHitbox();
 			row.x = switch (align) {
                 case LEFT: x;
-                case CENTER: x; // ????????????
-                case RIGHT: x; // ????????????
+                case CENTER: x + ((totalWidth - row.width) * 0.5); // ????????????
+                case RIGHT: x + (totalWidth - row.width); // ????????????
 			}
 		}
 	}

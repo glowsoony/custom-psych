@@ -14,7 +14,7 @@ import cutscenes.DialogueCharacter;
 
 import states.editors.content.Prompt;
 
-class DialogueCharacterEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class DialogueCharacterEditorState extends MusicState implements PsychUIEventHandler.PsychUIEvent
 {
 	var box:FlxSprite;
 	var daText:TypedAlphabet = null;
@@ -602,7 +602,7 @@ class DialogueCharacterEditorState extends MusicBeatState implements PsychUIEven
 			if(FlxG.keys.justPressed.ESCAPE) {
 				if(!unsavedProgress)
 				{
-					MusicBeatState.switchState(new states.editors.MasterEditorMenu());
+					MusicState.switchState(new states.editors.MasterEditorMenu());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 					transitioning = true;
 				}

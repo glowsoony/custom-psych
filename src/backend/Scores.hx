@@ -95,7 +95,7 @@ class Scores {
 
 	public static function load():Void {
 		_save = new FlxSave();
-		_save.bind('scores', CoolUtil.getSavePath());
+		_save.bind('scores', Util.getSavePath());
 
 		if (_save.data.weekScores != null) weekScores = _save.data.weekScores;
 		if (_save.data.songScores != null) songScores = _save.data.songScores;

@@ -72,7 +72,7 @@ class Settings {
 	}
 
 	public static function load() {
-		FlxG.save.bind('funkin', CoolUtil.getSavePath());
+		FlxG.save.bind('funkin', Util.getSavePath());
 
 		for (key in Reflect.fields(data))
 			if (key != 'gameplaySettings' && Reflect.hasField(FlxG.save.data, key))

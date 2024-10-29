@@ -5,7 +5,7 @@ import flixel.util.FlxSort;
 import objects.Bar;
 
 #if ACHIEVEMENTS_ALLOWED
-class AchievementsMenuState extends MusicBeatState
+class AchievementsMenuState extends MusicState
 {
 	public var curSelected:Int = 0;
 
@@ -195,7 +195,7 @@ class AchievementsMenuState extends MusicBeatState
 
 		if (Controls.justPressed('back')) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
+			MusicState.switchState(new MainMenuState());
 			goingBack = true;
 		}
 		super.update(elapsed);
@@ -214,7 +214,7 @@ class AchievementsMenuState extends MusicBeatState
 		if (hasProgress) {
 			var val1:Float = options[curSelected].curProgress;
 			var val2:Float = options[curSelected].maxProgress;
-			progressTxt.text = CoolUtil.floorDecimal(val1, options[curSelected].decProgress) + ' / ' + CoolUtil.floorDecimal(val2, options[curSelected].decProgress);
+			progressTxt.text = Util.floorDecimal(val1, options[curSelected].decProgress) + ' / ' + Util.floorDecimal(val2, options[curSelected].decProgress);
 
 			barTween = FlxTween.tween(progressBar, {percent: (val1 / val2) * 100}, 0.5, {ease: FlxEase.quadOut,
 				onComplete: function(twn:FlxTween) progressBar.updateBar(),

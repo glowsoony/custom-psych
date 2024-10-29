@@ -4,7 +4,7 @@ import objects.Note;
 import objects.StrumNote;
 import objects.NoteSplash;
 
-class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class NoteSplashDebugState extends MusicState implements PsychUIEventHandler.PsychUIEvent
 {
 	var config:NoteSplashConfig;
 	var forceFrame:Int = -1;
@@ -175,7 +175,7 @@ class NoteSplashDebugState extends MusicBeatState implements PsychUIEventHandler
 		var notTyping:Bool = (PsychUIInputText.focusOn == null);
 		if(controls.BACK && notTyping)
 		{
-			MusicBeatState.switchState(new MasterEditorMenu());
+			MusicState.switchState(new MasterEditorMenu());
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			FlxG.mouse.visible = false;
 		}

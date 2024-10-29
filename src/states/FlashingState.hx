@@ -36,7 +36,7 @@ class FlashingState extends flixel.FlxState {
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				FlxTween.tween(warnText, {alpha: 0}, 1, {
 					onComplete: function (_) {
-						MusicBeatState.switchState(new TitleState());
+						MusicState.switchState(new TitleState());
 					}
 				});
 
@@ -47,7 +47,7 @@ class FlashingState extends flixel.FlxState {
 			Settings.save();
 			FlxG.sound.play(Paths.sound('confirmMenu'));
 			FlxFlicker.flicker(warnText, 1, 0.1, false, true, function(_) {
-				MusicBeatState.switchState(new TitleState());
+				MusicState.switchState(new TitleState());
 			});	
 		}
 	}

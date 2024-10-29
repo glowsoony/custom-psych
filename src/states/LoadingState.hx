@@ -21,7 +21,7 @@ import sys.thread.Mutex;
 import objects.Note;
 import objects.NoteSplash;
 
-class LoadingState extends MusicBeatState
+class LoadingState extends MusicState
 {
 	public static var loaded:Int = 0;
 	public static var loadMax:Int = 0;
@@ -39,7 +39,7 @@ class LoadingState extends MusicBeatState
 	}
 
 	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false, intrusive:Bool = true)
-		MusicBeatState.switchState(getNextState(target, stopMusic, intrusive));
+		MusicState.switchState(getNextState(target, stopMusic, intrusive));
 	
 	var target:FlxState = null;
 	var stopMusic:Bool = false;
@@ -240,8 +240,8 @@ class LoadingState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 		FlxG.camera.visible = false;
-		MusicBeatState.skipNextTransIn = true;
-		MusicBeatState.switchState(target);
+		MusicState.skipNextTransIn = true;
+		MusicState.switchState(target);
 		transitioning = true;
 		finishedLoading = true;
 		mutex = null;

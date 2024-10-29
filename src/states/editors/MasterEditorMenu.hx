@@ -7,7 +7,7 @@ import objects.Character;
 import states.MainMenuState;
 import states.FreeplayState;
 
-class MasterEditorMenu extends MusicBeatState {
+class MasterEditorMenu extends MusicState {
 	var options:Array<String> = [
 		'Chart Editor',
 		'Character Editor',
@@ -87,7 +87,7 @@ class MasterEditorMenu extends MusicBeatState {
 
 		if (Controls.justPressed('back'))
 		{
-			MusicBeatState.switchState(new MainMenuState());
+			MusicState.switchState(new MainMenuState());
 		}
 
 		if (Controls.justPressed('accept'))
@@ -98,15 +98,15 @@ class MasterEditorMenu extends MusicBeatState {
 				case 'Character Editor':
 					LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
 				case 'Week Editor':
-					MusicBeatState.switchState(new WeekEditorState());
+					MusicState.switchState(new WeekEditorState());
 				case 'Menu Character Editor':
-					MusicBeatState.switchState(new MenuCharacterEditorState());
+					MusicState.switchState(new MenuCharacterEditorState());
 				case 'Dialogue Editor':
 					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
 				case 'Dialogue Portrait Editor':
 					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
 				case 'Note Splash Editor':
-					MusicBeatState.switchState(new NoteSplashEditorState());
+					MusicState.switchState(new NoteSplashEditorState());
 			}
 			FlxG.sound.music.volume = 0;
 			FreeplayState.destroyFreeplayVocals();

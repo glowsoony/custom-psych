@@ -14,7 +14,7 @@ import substates.ResetScoreSubState;
 
 import backend.StageData;
 
-class StoryMenuState extends MusicBeatState
+class StoryMenuState extends MusicState
 {
 	public static var weekCompleted:Map<String, Bool> = new Map<String, Bool>();
 
@@ -58,11 +58,11 @@ class StoryMenuState extends MusicBeatState
 
 		if(WeekData.weeksList.length < 1)
 		{
-			MusicBeatState.skipNextTransIn = true;
+			MusicState.skipNextTransIn = true;
 			persistentUpdate = false;
-			MusicBeatState.switchState(new states.ErrorState("NO WEEKS ADDED FOR STORY MODE\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu.",
-				function() MusicBeatState.switchState(new states.editors.WeekEditorState()),
-				function() MusicBeatState.switchState(new states.MainMenuState())));
+			MusicState.switchState(new states.ErrorState("NO WEEKS ADDED FOR STORY MODE\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu.",
+				function() MusicState.switchState(new states.editors.WeekEditorState()),
+				function() MusicState.switchState(new states.MainMenuState())));
 			return;
 		}
 
@@ -199,7 +199,7 @@ class StoryMenuState extends MusicBeatState
 			{
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				movedBack = true;
-				MusicBeatState.switchState(new MainMenuState());
+				MusicState.switchState(new MainMenuState());
 			}
 			super.update(elapsed);
 			return;
@@ -247,7 +247,7 @@ class StoryMenuState extends MusicBeatState
 		if (Controls.justPressed('back') && !movedBack && !selectedWeek) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			movedBack = true;
-			MusicBeatState.switchState(new MainMenuState());
+			MusicState.switchState(new MainMenuState());
 		}
 
 		super.update(elapsed);

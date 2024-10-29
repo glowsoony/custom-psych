@@ -15,7 +15,7 @@ import options.ModSettingsSubState;
 import openfl.display.BitmapData;
 import lime.utils.Assets;
 
-class ModsMenuState extends MusicBeatState {
+class ModsMenuState extends MusicState {
 	var bg:FlxSprite;
 	var icon:FlxSprite;
 	var modName:Alphabet;
@@ -106,7 +106,7 @@ class ModsMenuState extends MusicBeatState {
 				trace('created missing folder');
 				FileSystem.createDirectory(modFolder);
 			}
-			CoolUtil.openFolder(modFolder);
+			Util.openFolder(modFolder);
 		});
 		add(buttonModFolder);*/
 
@@ -308,7 +308,7 @@ class ModsMenuState extends MusicBeatState {
 				TitleState.seenIntro = false;
 				Conductor.inst.fadeOut(0.3);
 				FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
-			} else MusicBeatState.switchState(new MainMenuState());
+			} else MusicState.switchState(new MainMenuState());
 
 			persistentUpdate = false;
 			FlxG.autoPause = Settings.data.autoPause;
@@ -667,10 +667,10 @@ class ModsMenuState extends MusicBeatState {
 	function reload() {
 		saveTxt();
 		FlxG.autoPause = Settings.data.autoPause;
-		MusicBeatState.skipNextTransIn = true;
-		MusicBeatState.skipNextTransOut = true;
+		MusicState.skipNextTransIn = true;
+		MusicState.skipNextTransOut = true;
 		var curMod:ModItem = modsGroup.members[curSelectedMod];
-		MusicBeatState.switchState(new ModsMenuState(curMod != null ? curMod.folder : null));
+		MusicState.switchState(new ModsMenuState(curMod != null ? curMod.folder : null));
 	}
 	
 	function saveTxt() {

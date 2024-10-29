@@ -16,7 +16,7 @@ import openfl.utils.Assets;
 
 import haxe.Json;
 
-class FreeplayState extends MusicBeatState
+class FreeplayState extends MusicState
 {
 	var songs:Array<SongMetadata> = [];
 
@@ -67,11 +67,11 @@ class FreeplayState extends MusicBeatState
 
 		if(WeekData.weeksList.length < 1)
 		{
-			MusicBeatState.skipNextTransIn = true;
+			MusicState.skipNextTransIn = true;
 			persistentUpdate = false;
-			MusicBeatState.switchState(new states.ErrorState("NO WEEKS ADDED FOR FREEPLAY\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu.",
-				function() MusicBeatState.switchState(new states.editors.WeekEditorState()),
-				function() MusicBeatState.switchState(new states.MainMenuState())));
+			MusicState.switchState(new states.ErrorState("NO WEEKS ADDED FOR FREEPLAY\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu.",
+				function() MusicState.switchState(new states.editors.WeekEditorState()),
+				function() MusicState.switchState(new states.MainMenuState())));
 			return;
 		}
 
@@ -222,7 +222,7 @@ class FreeplayState extends MusicBeatState
 		if (Math.abs(lerpScore - intendedScore) <= 10) lerpScore = intendedScore;
 		if (Math.abs(lerpRating - intendedRating) <= 0.01) lerpRating = intendedRating;
 
-		var ratingSplit:Array<String> = Std.string(CoolUtil.floorDecimal(lerpRating * 100, 2)).split('.');
+		var ratingSplit:Array<String> = Std.string(Util.floorDecimal(lerpRating * 100, 2)).split('.');
 		if(ratingSplit.length < 2) //No decimals, add an empty space
 			ratingSplit.push('');
 		
@@ -288,7 +288,7 @@ class FreeplayState extends MusicBeatState
 			} else {
 				persistentUpdate = false;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
-				MusicBeatState.switchState(new MainMenuState());
+				MusicState.switchState(new MainMenuState());
 			}
 		}
 

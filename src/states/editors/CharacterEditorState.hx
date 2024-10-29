@@ -17,7 +17,7 @@ import objects.Bar;
 import states.editors.content.Prompt;
 import states.editors.content.PsychJsonPrinter;
 
-class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
+class CharacterEditorState extends MusicState implements PsychUIEventHandler.PsychUIEvent
 {
 	var character:Character;
 	var ghost:FlxSprite;
@@ -629,7 +629,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 		var decideIconColor:PsychUIButton = new PsychUIButton(reloadImage.x, reloadImage.y + 30, "Get Icon Color", function()
 			{
-				var coolColor:FlxColor = FlxColor.fromInt(CoolUtil.dominantColor(healthIcon));
+				var coolColor:FlxColor = FlxColor.fromInt(Util.dominantColor(healthIcon));
 				character.healthColorArray[0] = coolColor.red;
 				character.healthColorArray[1] = coolColor.green;
 				character.healthColorArray[2] = coolColor.blue;
@@ -1054,7 +1054,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			{
 				if(!unsavedProgress)
 				{
-					MusicBeatState.switchState(new states.editors.MasterEditorMenu());
+					MusicState.switchState(new states.editors.MasterEditorMenu());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				}
 				else openSubState(new ExitConfirmationPrompt());
@@ -1062,7 +1062,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			else
 			{
 				FlxG.mouse.visible = false;
-				MusicBeatState.switchState(new PlayState());
+				MusicState.switchState(new PlayState());
 			}
 			return;
 		}

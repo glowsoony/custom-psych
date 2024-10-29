@@ -27,7 +27,7 @@ import objects.*;
 import states.stages.*;
 import states.stages.objects.*;
 
-class PlayState extends MusicBeatState {
+class PlayState extends MusicState {
 	public static var STRUM_X = 42;
 	public static var STRUM_X_MIDDLESCROLL = -278;
 
@@ -524,7 +524,7 @@ class PlayState extends MusicBeatState {
 				Conductor.inst.play();
 				#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
 
-				MusicBeatState.switchState(new StoryMenuState());
+				MusicState.switchState(new StoryMenuState());
 				if (!Settings.getGameplaySetting('practice') && !Settings.getGameplaySetting('botplay')) {
 					StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
 
@@ -535,8 +535,8 @@ class PlayState extends MusicBeatState {
 			} else {
 				var difficulty:String = Difficulty.getFilePath();
 
-				MusicBeatState.skipNextTransIn = true;
-				MusicBeatState.skipNextTransOut = true;
+				MusicState.skipNextTransIn = true;
+				MusicState.skipNextTransOut = true;
 
 				Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
 				Conductor.stop();
@@ -548,7 +548,7 @@ class PlayState extends MusicBeatState {
 			Mods.loadTopMod();
 			#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
 
-			MusicBeatState.switchState(new FreeplayState());
+			MusicState.switchState(new FreeplayState());
 			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
 			Conductor.inst.play();
 			changedDifficulty = false;

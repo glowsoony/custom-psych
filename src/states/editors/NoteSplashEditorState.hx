@@ -13,7 +13,7 @@ import openfl.net.FileReference;
 import haxe.Json;
 
 @:access(objects.NoteSplash)
-class NoteSplashEditorState extends MusicBeatState
+class NoteSplashEditorState extends MusicState
 {
     var strums:FlxTypedSpriteGroup<StrumNote> = new FlxTypedSpriteGroup();
     var splashes:FlxTypedSpriteGroup<NoteSplash> = new FlxTypedSpriteGroup();
@@ -460,7 +460,7 @@ class NoteSplashEditorState extends MusicBeatState
         if (!blockInput)
         {
             if (Controls.justPressed('back'))
-                MusicBeatState.switchState(new MasterEditorMenu());
+                MusicState.switchState(new MasterEditorMenu());
             if (FlxG.keys.justPressed.F1)
                 openSubState(new NoteSplashEditorHelpSubState());
         }

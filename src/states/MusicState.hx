@@ -1,9 +1,9 @@
-package backend;
+package states;
 
 import flixel.FlxState;
 import backend.PsychCamera;
 
-class MusicBeatState extends FlxState {
+class MusicState extends FlxState {
 	var curStep:Int = 0;
 	var curBeat:Int = 0;
 	var curMeasure:Int = 0;
@@ -20,7 +20,7 @@ class MusicBeatState extends FlxState {
 
 		if (!_psychCameraInitialized) initPsychCamera();
 
-		if (!skipNextTransOut) openSubState(new CustomFadeTransition(0.5, true));
+		if (!skipNextTransOut) openSubState(new Transition(0.5, true));
 		skipNextTransOut = false;
 
 		Conductor.onStep = stepHit;
@@ -67,15 +67,15 @@ class MusicBeatState extends FlxState {
 	public static function startTransition(?nextState:FlxState) {
 		if (nextState == null) nextState = FlxG.state;
 
-		FlxG.state.openSubState(new CustomFadeTransition(0.5, false));
-		CustomFadeTransition.finishCallback = function() {
+		FlxG.state.openSubState(new Transition(0.5, false));
+		Transition.finishCallback = function() {
 			if (nextState == FlxG.state) FlxG.resetState();
 			else FlxG.switchState(nextState);
 		}
 	}
 
-	public static function getState():MusicBeatState {
-		return cast (FlxG.state, MusicBeatState);
+	public static function getState():MusicState {
+		return cast (FlxG.state, MusicState);
 	}
 
 	public function stepHit(step:Int):Void {

@@ -105,9 +105,9 @@ class LanguageSubState extends FlxSubState
 
 		if (Controls.justPressed('back')) {
 			if (changedLanguage) {
-				MusicBeatState.skipNextTransIn = true;
-				MusicBeatState.skipNextTransOut = true;
-				MusicBeatState.resetState();
+				MusicState.skipNextTransIn = true;
+				MusicState.skipNextTransOut = true;
+				MusicState.resetState();
 			} else close();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
