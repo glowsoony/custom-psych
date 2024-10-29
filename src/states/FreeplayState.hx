@@ -386,8 +386,7 @@ class FreeplayState extends MusicState
 				return;
 			}
 
-			LoadingState.prepareToSong();
-			LoadingState.loadAndSwitchState(new PlayState());
+			MusicState.switchState(new PlayState());
 			#if !SHOW_LOADING_SCREEN Conductor.inst.stop(); #end
 			stopMusicPlay = true;
 

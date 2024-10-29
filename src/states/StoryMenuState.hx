@@ -312,15 +312,9 @@ class StoryMenuState extends MusicState
 				stopspamming = true;
 			}
 
-			var directory = StageData.forceNextDirectory;
-			LoadingState.loadNextDirectory();
-			StageData.forceNextDirectory = directory;
-
-			LoadingState.prepareToSong();
-			new FlxTimer().start(1, function(tmr:FlxTimer)
-			{
-				#if !SHOW_LOADING_SCREEN FlxG.sound.music.stop(); #end
-				LoadingState.loadAndSwitchState(new PlayState(), true);
+			new FlxTimer().start(1, function(tmr:FlxTimer) {
+				Conductor.inst.stop();
+				MusicState.switchState(new PlayState());
 				FreeplayState.destroyFreeplayVocals();
 			});
 			

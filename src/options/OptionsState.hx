@@ -90,7 +90,7 @@ class OptionsState extends MusicState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			if (onPlayState) {
 				StageData.loadDirectory(PlayState.SONG);
-				LoadingState.loadAndSwitchState(new PlayState());
+				MusicState.switchState(new PlayState());
 				FlxG.sound.music.volume = 0;
 			} else MusicState.switchState(new MainMenuState());
 		} else if (Controls.justPressed('accept')) openSelectedSubstate(options[curSelected]);

@@ -4513,7 +4513,7 @@ class ChartingState extends MusicState implements PsychUIEventHandler.PsychUIEve
 		setSongPlaying(false);
 		updateChartData();
 		StageData.loadDirectory(PlayState.SONG);
-		LoadingState.loadAndSwitchState(new PlayState());
+		MusicState.switchState(new PlayState());
 		Controls.toggleVolumeKeys(true);
 	}
 	

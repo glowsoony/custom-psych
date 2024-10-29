@@ -541,8 +541,7 @@ class PlayState extends MusicState {
 				Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
 				Conductor.stop();
 
-				LoadingState.prepareToSong();
-				LoadingState.loadAndSwitchState(new PlayState(), false, false);
+				MusicState.switchState(new PlayState());
 			}
 		} else {
 			Mods.loadTopMod();

@@ -9,7 +9,6 @@
 	<define name="ACHIEVEMENTS_ALLOWED" />
 	<define name="DISCORD_ALLOWED" />
 	<define name="TRANSLATIONS_ALLOWED" />
-	<!--<define name="SHOW_LOADING_SCREEN" />-->
 	<define name="PSYCH_WATERMARKS"/> 
 
 	<!-- DISABLE THIS IF ISSUES ARE FOUND -->
