@@ -100,7 +100,7 @@ class GameplayChangersSubstate extends FlxSubState {
 		for (i => option in optionsArray) {
 			var optionText:Alphabet = new Alphabet(150, 360, option.name);
 			optionText.isMenuItem = true;
-			optionText.setScale(0.8);
+			optionText.updateScale(0.8, 0.8);
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 

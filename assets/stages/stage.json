@@ -1,0 +1,14 @@
+{
+	zoom: 0.9,
+
+	player: [0, 0],
+	spectator: [0, 0],
+	enemy: [0, 0],
+
+	isSpectatorVisible: true,
+
+	cameraSpeed: 1,
+	playerCamera: [0, 0],
+	spectatorCamera: [0, 0],
+	enemyCamera: [0, 0]
+}

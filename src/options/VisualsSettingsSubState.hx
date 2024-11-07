@@ -36,7 +36,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		}
 
 		// options
-		var noteSkins:Array<String> = Mods.mergeAllTextsNamed('images/noteSkins/list.txt');
+/*		var noteSkins:Array<String> = Mods.mergeAllTextsNamed('images/noteSkins/list.txt');
 		if(noteSkins.length > 0)
 		{
 			if (!noteSkins.contains(Settings.data.noteSkin))
@@ -67,7 +67,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 				noteSplashes);
 			addOption(option);
 			option.onChange = onChangeSplashSkin;
-		}
+		}*/
 
 		var option:Option = new Option('Note Splash Opacity',
 			'How much transparent should the Note Splashes be.',
@@ -205,7 +205,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		if(Settings.data.pauseMusic == 'None')
 			FlxG.sound.music.volume = 0;
 		else
-			FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(Settings.data.pauseMusic)));
+			FlxG.sound.playMusic(Paths.music(Settings.data.pauseMusic));
 
 		changedMusic = true;
 	}
@@ -223,7 +223,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 	{
 		var skin:String = Note.defaultNoteSkin;
 		var customSkin:String = skin + Note.getNoteSkinSuffix();
-		if(Paths.fileExists('images/$customSkin.png', IMAGE)) skin = customSkin;
+		if(Paths.exists('images/$customSkin.png')) skin = customSkin;
 
 		note.texture = skin; //Load texture and anims
 		note.reloadNote();

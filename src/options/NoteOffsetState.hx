@@ -1,11 +1,8 @@
 package options;
 
-import backend.StageData;
 import objects.Character;
 import objects.Bar;
 import flixel.addons.display.shapes.FlxShapeCircle;
-
-import states.stages.StageWeek1 as BackgroundStage;
 
 class NoteOffsetState extends MusicState
 {
@@ -58,8 +55,8 @@ class NoteOffsetState extends MusicState
 		FlxG.sound.pause();
 
 		// Stage
-		Paths.setCurrentLevel(stageDirectory);
-		new BackgroundStage();
+		//Paths.setCurrentLevel(stageDirectory);
+		//new BackgroundStage();
 
 		// Characters
 		gf = new Character(400, 130, 'gf');
@@ -116,7 +113,7 @@ class NoteOffsetState extends MusicState
 
 		// Note delay stuff
 		beatText = new Alphabet(0, 0, Language.getPhrase('delay_beat_hit', 'Beat Hit!'), BOLD);
-		beatText.setScale(0.6, 0.6);
+		beatText.updateScale(0.6, 0.6);
 		beatText.x += 260;
 		beatText.alpha = 0;
 		beatText.acceleration.y = 250;
@@ -394,7 +391,7 @@ class NoteOffsetState extends MusicState
 			if(OptionsState.onPlayState)
 			{
 				if(Settings.data.pauseMusic != 'None')
-					FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(Settings.data.pauseMusic)));
+					FlxG.sound.playMusic(Paths.music(Settings.data.pauseMusic));
 				else
 					FlxG.sound.music.volume = 0;
 			}

@@ -38,7 +38,7 @@ class BaseOptionsMenu extends FlxSubState
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/desatBG'));
 		bg.color = 0xFFea71fd;
 		bg.screenCenter();
 		bg.antialiasing = Settings.data.antialiasing;
@@ -59,7 +59,7 @@ class BaseOptionsMenu extends FlxSubState
 		add(descBox);
 
 		var titleText:Alphabet = new Alphabet(75, 45, title, BOLD);
-		titleText.setScale(0.6);
+		titleText.updateScale(0.6, 0.6);
 		titleText.alpha = 0.4;
 		add(titleText);
 

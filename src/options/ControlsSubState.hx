@@ -71,7 +71,7 @@ class ControlsSubState extends FlxSubState
 		options.push([true]);
 		options.push([true, defaultKey]);
 
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/desatBG'));
 		bg.color = keyboardColor;
 		bg.antialiasing = Settings.data.antialiasing;
 		bg.screenCenter();
@@ -105,7 +105,7 @@ class ControlsSubState extends FlxSubState
 
 		var text:Alphabet = new Alphabet(60, 90, 'CTRL', NORMAL);
 		text.alignment = CENTER;
-		text.setScale(0.4);
+		text.updateScale(0.4, 0.4);
 		add(text);
 
 		createTexts();
@@ -146,6 +146,7 @@ class ControlsSubState extends FlxSubState
 
 					if (!isDisplayKey) {
 						text.alignment = RIGHT;
+						text.x -= 200;
 						grpOptions.add(text);
 						curOptions.push(i);
 						curOptionsValid.push(myID);

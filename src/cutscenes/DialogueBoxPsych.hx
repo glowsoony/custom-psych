@@ -72,7 +72,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 
 		box = new FlxSprite(70, 370);
 		box.antialiasing = Settings.data.antialiasing;
-		box.frames = Paths.getSparrowAtlas('speech_bubble');
+		box.frames = Paths.sparrowAtlas('speech_bubble');
 		box.scrollFactor.set();
 		box.animation.addByPrefix('normal', 'speech bubble normal', 24);
 		box.animation.addByPrefix('normalOpen', 'Speech Bubble Normal Open', 24, false);
@@ -89,7 +89,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		add(box);
 
 		daText = new TypedAlphabet(DEFAULT_TEXT_X, DEFAULT_TEXT_Y, '');
-		daText.setScale(0.7);
+		daText.updateScale(0.7, 0.7);
 		add(daText);
 
 		skipText = new FlxText(FlxG.width - 320, FlxG.height - 30, 300, Language.getPhrase('dialogue_skip', 'Press BACK to Skip'), 16);
@@ -167,22 +167,19 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			if(bgFade.alpha > 0.5) bgFade.alpha = 0.5;
 
 			var back:Bool = Controls.justPressed('back');
-			if(Controls.justPressed('accept') || back) {
-				if(!daText.finishedText && !back)
-				{
+			if (Controls.justPressed('accept') || back) {
+				if(!daText.finishedText && !back) {
 					daText.finishText();
 					if(skipDialogueThing != null) {
 						skipDialogueThing();
 					}
-				}
-				else if(back || currentText >= dialogueList.dialogue.length)
-				{
+				} else if (back || currentText >= dialogueList.dialogue.length) {
 					dialogueEnded = true;
 					for (i in 0...textBoxTypes.length) {
 						var checkArray:Array<String> = ['', 'center-'];
 						var animName:String = box.animation.curAnim.name;
 						for (j in 0...checkArray.length) {
-							if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
+							if (animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
 								box.animation.play(checkArray[j] + textBoxTypes[i] + 'Open', true);
 							}
 						}
@@ -190,8 +187,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 
 					box.animation.curAnim.curFrame = box.animation.curAnim.frames.length - 1;
 					box.animation.curAnim.reverse();
-					if(daText != null)
-					{
+					if (daText != null) {
 						daText.kill();
 						remove(daText);
 						daText.destroy();
@@ -199,9 +195,8 @@ class DialogueBoxPsych extends FlxSpriteGroup
 					skipText.visible = false;
 					updateBoxOffsets(box);
 					FlxG.sound.music.fadeOut(1, 0, (_) -> FlxG.sound.music.stop());
-				} else {
-					startNextDialog();
-				}
+				} else startNextDialog();
+
 				FlxG.sound.play(Paths.sound(closeSound), closeVolume);
 			} else if(daText.finishedText) {
 				var char:DialogueCharacter = arrayCharacters[lastCharacter];
@@ -210,17 +205,17 @@ class DialogueBoxPsych extends FlxSpriteGroup
 				}
 			} else {
 				var char:DialogueCharacter = arrayCharacters[lastCharacter];
-				if(char != null && char.animation.curAnim != null && char.animation.finished) {
+				if (char != null && char.animation.curAnim != null && char.animation.finished) {
 					char.animation.curAnim.restart();
 				}
 			}
 
-			if(box.animation.curAnim.finished) {
+			if (box.animation.curAnim.finished) {
 				for (i in 0...textBoxTypes.length) {
 					var checkArray:Array<String> = ['', 'center-'];
 					var animName:String = box.animation.curAnim.name;
 					for (j in 0...checkArray.length) {
-						if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
+						if (animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
 							box.animation.play(checkArray[j] + textBoxTypes[i], true);
 						}
 					}
@@ -228,12 +223,12 @@ class DialogueBoxPsych extends FlxSpriteGroup
 				updateBoxOffsets(box);
 			}
 
-			if(lastCharacter != -1 && arrayCharacters.length > 0) {
+			if (lastCharacter != -1 && arrayCharacters.length > 0) {
 				for (i in 0...arrayCharacters.length) {
 					var char = arrayCharacters[i];
-					if(char != null) {
-						if(i != lastCharacter) {
-							switch(char.jsonFile.dialogue_pos) {
+					if (char != null) {
+						if (i != lastCharacter) {
+							switch (char.jsonFile.dialogue_pos) {
 								case 'left':
 									char.x -= scrollSpeed * elapsed;
 									if(char.x < char.startingPos + offsetPos) char.x = char.startingPos + offsetPos;

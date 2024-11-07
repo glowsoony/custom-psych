@@ -1,7 +1,6 @@
 package options;
 
 import states.MainMenuState;
-import backend.StageData;
 
 class OptionsState extends MusicState
 {
@@ -43,7 +42,7 @@ class OptionsState extends MusicState
 		DiscordClient.changePresence("Options Menu", null);
 		#end
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menus/desatBG'));
 		bg.antialiasing = Settings.data.antialiasing;
 		bg.color = 0xFFea71fd;
 		bg.updateHitbox();
@@ -89,7 +88,6 @@ class OptionsState extends MusicState
 		if (Controls.justPressed('back')) {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			if (onPlayState) {
-				StageData.loadDirectory(PlayState.SONG);
 				MusicState.switchState(new PlayState());
 				FlxG.sound.music.volume = 0;
 			} else MusicState.switchState(new MainMenuState());

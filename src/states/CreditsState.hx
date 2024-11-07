@@ -27,8 +27,7 @@ class CreditsState extends MusicState {
 		add(bg);
 		bg.screenCenter();
 		
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
+		add(grpOptions = new FlxTypedGroup<Alphabet>());
 
 		#if MODS_ALLOWED
 		for (mod in Mods.parseList().enabled) pushModCreditsToList(mod);
@@ -81,15 +80,13 @@ class CreditsState extends MusicState {
 
 			if(isSelectable)
 			{
-				if(credit[5] != null)
-					Mods.currentModDirectory = credit[5];
 
 				var str:String = 'credits/missing_icon';
 				if(credit[1] != null && credit[1].length > 0)
 				{
 					var fileName = 'credits/' + credit[1];
-					if (Paths.fileExists('images/$fileName.png', IMAGE)) str = fileName;
-					else if (Paths.fileExists('images/$fileName-pixel.png', IMAGE)) str = fileName + '-pixel';
+					if (Paths.exists('images/$fileName.png')) str = fileName;
+					else if (Paths.exists('images/$fileName-pixel.png')) str = fileName + '-pixel';
 				}
 
 				var icon:AttachedSprite = new AttachedSprite(str);
@@ -100,7 +97,6 @@ class CreditsState extends MusicState {
 				// using a FlxGroup is too much fuss!
 				iconArray.push(icon);
 				add(icon);
-				Mods.currentModDirectory = '';
 
 				if(curSelected == -1) curSelected = i;
 			}

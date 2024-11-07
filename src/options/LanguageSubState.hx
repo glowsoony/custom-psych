@@ -22,14 +22,14 @@ class LanguageSubState extends FlxSubState
 
 		languages.push(Settings.default_data.language); //English (US)
 		displayLanguages.set(Settings.default_data.language, Language.defaultLangName);
-		var directories:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'data/');
+		var directories:Array<String> = []; //Mods.directoriesWithFile('assets/', 'locale/');
 		for (directory in directories)
 		{
 			for (file in FileSystem.readDirectory(directory))
 			{
-				if(file.toLowerCase().endsWith('.lang'))
+				if(file.toLowerCase().endsWith('.txt'))
 				{
-					var langFile:String = file.substring(0, file.length - '.lang'.length).trim();
+					var langFile:String = file.substring(0, file.length - '.txt'.length).trim();
 					if(!languages.contains(langFile))
 						languages.push(langFile);
 

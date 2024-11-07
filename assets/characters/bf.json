@@ -1,0 +1,22 @@
+{
+	animations: [
+		{
+			name: 'left', // name of the animation (like `obj.animation.play(name);`
+			id: 'left', // name of the animation in the xml
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [0, 0]
+		}
+	],
+
+	antialiasing: true,
+	singDuration: 4,
+	scale: [1, 1],
+	healthColor: 0xFF000000,
+	sheets: 'characters/bf',
+	icon: 'bf',
+	cameraOffsets: [0, 0],
+	
+	flipX: false
+}

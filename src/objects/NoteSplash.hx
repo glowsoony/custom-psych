@@ -50,18 +50,18 @@ class NoteSplash extends FlxSprite
 
 		this.skin = skin;
 
-		try frames = Paths.getSparrowAtlas(skin) catch (e) {
+		try frames = Paths.sparrowAtlas(skin) catch (e) {
 			skin = DEFAULT_SKIN; // The splash skin was not found, return to the default
 			this.skin = skin;
-			try frames = Paths.getSparrowAtlas(skin) catch (e) {
+			try frames = Paths.sparrowAtlas(skin) catch (e) {
 				active = visible = false;
 			}
 		}
 
 		var path:String = 'images/$skin.json';
 		if (configs.exists(path)) this.config = configs.get(path);
-		else if (Paths.fileExists(path, TEXT)) {
-			var config:Dynamic = haxe.Json.parse(Paths.getTextFromFile(path));
+		else if (Paths.exists(path)) {
+			var config:Dynamic = haxe.Json.parse(Paths.getFileContent(path));
 			if (config != null) {
 				var tempConfig:NoteSplashConfig = {
 					animations: new Map(),

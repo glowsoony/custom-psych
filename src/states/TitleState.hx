@@ -7,22 +7,20 @@ import flixel.graphics.frames.FlxFrame;
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
 import haxe.Json;
+import hxjson5.Json5;
 
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 
-import states.StoryMenuState;
+//import states.StoryMenuState;
 import states.MainMenuState;
 
 typedef TitleData = {
-	var titlex:Float;
-	var titley:Float;
-	var startx:Float;
-	var starty:Float;
-	var gfx:Float;
-	var gfy:Float;
-	var backgroundSprite:String;
+	var logoPos:Array<Float>;
+	var textPos:Array<Float>;
+	var gfPos:Array<Float>;
+	var background:String;
 	var bpm:Float;
 	
 	@:optional var animation:String;
@@ -41,7 +39,7 @@ class TitleState extends MusicState {
 		persistentUpdate = true;
 
 		if (FlxG.save.data.weekCompleted != null) {
-			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
+			//StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
 		FlxG.mouse.visible = false;
@@ -72,15 +70,15 @@ class TitleState extends MusicState {
 		introGroup.visible = false;
 
 		logo = new FlxSprite(logoPosition.x, logoPosition.y);
-		logo.frames = Paths.getSparrowAtlas('logoBumpin');
+		logo.frames = Paths.sparrowAtlas('menus/title/logoBumpin');
 		logo.antialiasing = Settings.data.antialiasing;
 		logo.animation.addByPrefix('bump', 'logo bumpin', 24, false);
 		logo.animation.play('bump');
 		logo.updateHitbox();
 
 		gf = new FlxSprite(gfPosition.x, gfPosition.y);
+		gf.frames = Paths.sparrowAtlas('menus/title/gfTitle');
 		gf.antialiasing = Settings.data.antialiasing;
-		gf.frames = Paths.getSparrowAtlas(characterImage);
 		if (!useIdle) 	{
 			gf.animation.addByIndices('danceLeft', animationName, danceLeftFrames, '', 24, false);
 			gf.animation.addByIndices('danceRight', animationName, danceRightFrames, '', 24, false);
@@ -92,7 +90,7 @@ class TitleState extends MusicState {
 
 		var animFrames:Array<FlxFrame> = [];
 		titleText = new FlxSprite(enterPosition.x, enterPosition.y);
-		titleText.frames = Paths.getSparrowAtlas('titleEnter');
+		titleText.frames = Paths.sparrowAtlas('menus/title/pressEnter');
 		@:privateAccess {
 			titleText.animation.findByPrefix(animFrames, "ENTER IDLE");
 			titleText.animation.findByPrefix(animFrames, "ENTER FREEZE");
@@ -123,7 +121,11 @@ class TitleState extends MusicState {
 		add(ngSpr);
 
 		Conductor.bpm = musicBPM;
-		if (seenIntro) return;
+		Conductor.self.active = true;
+		if (seenIntro) {
+			skipIntro();
+			return;
+		}
 
 		Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0, true);
 		Conductor.play();
@@ -131,7 +133,6 @@ class TitleState extends MusicState {
 	}
 
 	// JSON data
-	var characterImage:String = 'gfDanceTitle';
 	var animationName:String = 'gfDance';
 
 	var gfPosition:FlxPoint = FlxPoint.get(512, 40);
@@ -144,19 +145,19 @@ class TitleState extends MusicState {
 	var danceRightFrames:Array<Int> = [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 	function loadJsonData() {
-		if (!Paths.fileExists('images/gfDanceTitle.json', TEXT)) {
+		if (!Paths.exists('data/titleData.json')) {
 			trace('[WARN] No Title JSON detected, using default values.');
 			return;
 		}
 
-		var titleRaw:String = Paths.getTextFromFile('images/gfDanceTitle.json');
+		var titleRaw:String = Paths.getFileContent('data/titleData.json');
 		if (titleRaw == null || titleRaw.length == 0) return;
 
 		try {
-			var titleJSON:TitleData = tjson.TJSON.parse(titleRaw);
-			gfPosition.set(titleJSON.gfx, titleJSON.gfy);
-			logoPosition.set(titleJSON.titlex, titleJSON.titley);
-			enterPosition.set(titleJSON.startx, titleJSON.starty);
+			var titleJSON:TitleData = Json5.parse(titleRaw);
+			gfPosition.set(titleJSON.gfPos[0], titleJSON.gfPos[1]);
+			logoPosition.set(titleJSON.logoPos[0], titleJSON.logoPos[1]);
+			enterPosition.set(titleJSON.textPos[0], titleJSON.textPos[1]);
 			musicBPM = titleJSON.bpm;
 					
 			if (titleJSON.animation != null && titleJSON.animation.length > 0) animationName = titleJSON.animation;
@@ -164,8 +165,8 @@ class TitleState extends MusicState {
 			if (titleJSON.dance_right != null && titleJSON.dance_right.length > 0) danceRightFrames = titleJSON.dance_right;
 			useIdle = titleJSON.idle;
 	
-			if (titleJSON.backgroundSprite != null && titleJSON.backgroundSprite.trim().length > 0) {
-				var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(titleJSON.backgroundSprite));
+			if (titleJSON.background != null && titleJSON.background.trim().length > 0) {
+				var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(titleJSON.background));
 				bg.antialiasing = Settings.data.antialiasing;
 				add(bg);
 			}
@@ -173,11 +174,7 @@ class TitleState extends MusicState {
 	}
 
 	function getIntroTexts():Array<Array<String>> {
-		#if MODS_ALLOWED
-		var firstArray:Array<String> = Mods.mergeAllTextsNamed('data/introText.txt');
-		#else
-		var firstArray:Array<String> = sys.io.File.getContent(Paths.txt('introText')).split('\n');
-		#end
+		var firstArray:Array<String> = File.getContent(Paths.text('introText.txt')).split('\n');
 
 		return [for (i in firstArray) i.split('--')];
 	}
@@ -219,7 +216,7 @@ class TitleState extends MusicState {
 				titleText.animation.play('press');
 
 				FlxG.camera.flash(Settings.data.flashingLights ? FlxColor.WHITE : 0x4CFFFFFF, 1);
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+				FlxG.sound.play(Paths.sound('confirm'), 0.7);
 				skipped = true;
 				transitionTmr = new FlxTimer().start(1.5, function(_) {
 					MusicState.switchState(new MainMenuState());
@@ -282,10 +279,7 @@ class TitleState extends MusicState {
 		alphabet.screenCenter(X);
 	}
 
-	var increaseVolume:Bool = false;
 	function skipIntro():Void {
-		if (seenIntro) return;
-
 		remove(ngSpr);
 		remove(alphabet);
 		introGroup.visible = true;

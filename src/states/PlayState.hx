@@ -1,6 +1,5 @@
 package states;
 
-import backend.StageData;
 import backend.WeekData;
 import backend.Song;
 import backend.Rating;
@@ -20,7 +19,7 @@ import haxe.Json;
 
 import cutscenes.DialogueBoxPsych;
 
-import states.StoryMenuState;
+//import states.StoryMenuState;
 import states.FreeplayState;
 
 import objects.*;
@@ -45,7 +44,7 @@ class PlayState extends MusicState {
 	static function get_isPixelStage():Bool
 		return stageUI == "pixel" || stageUI.endsWith("-pixel");
 
-	public static var SONG:SwagSong = null;
+	public static var SONG:Chart = null;
 	public static var isStoryMode:Bool = false;
 	public static var storyWeek:Int = 0;
 	public static var storyPlaylist:Array<String> = [];
@@ -266,13 +265,13 @@ class PlayState extends MusicState {
 		Conductor.mainVocals = new FlxSound();
 		Conductor.opponentVocals = new FlxSound();
 		try {
-			if (songData.needsVoices) {
+/*			if (songData.needsVoices) {
 				var playerVocals = Paths.voices(songData.song, 'Player');
 				Conductor.mainVocals.loadEmbedded(playerVocals != null ? playerVocals : Paths.voices(songData.song));
 				
 				var oppVocals = Paths.voices(songData.song, 'Opponent');
 				if (oppVocals != null && oppVocals.length > 0) Conductor.opponentVocals.loadEmbedded(oppVocals);
-			}
+			}*/
 		} catch (e:Dynamic) {}
 
 		Conductor.vocals.play();
@@ -285,15 +284,15 @@ class PlayState extends MusicState {
 		FlxG.sound.list.add(Conductor.opponentVocals);
 
 		try {
-			Conductor.inst = FlxG.sound.load(Paths.inst(songData.song));
-			Conductor.inst.onComplete = endCallback;
+/*			Conductor.inst = FlxG.sound.load(Paths.inst(songData.song));
+			Conductor.inst.onComplete = endCallback;*/
 		} catch (e:Dynamic) {}
 
 		notes = new FlxTypedGroup<Note>();
 		noteGroup.add(notes);
 
 		var oldNote:Note = null;
-		var sectionsData:Array<SwagSection> = PlayState.SONG.notes;
+		var sectionsData:Array<Section> = PlayState.SONG.notes;
 		var ghostNotesCaught:Int = 0;
 		var daBpm:Float = Conductor.bpm;
 	
@@ -519,32 +518,30 @@ class PlayState extends MusicState {
 			storyPlaylist.remove(storyPlaylist[0]);
 
 			if (storyPlaylist.length <= 0) {
-				Mods.loadTopMod();
 				Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
 				Conductor.inst.play();
 				#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
 
-				MusicState.switchState(new StoryMenuState());
+				//MusicState.switchState(new StoryMenuState());
 				if (!Settings.getGameplaySetting('practice') && !Settings.getGameplaySetting('botplay')) {
-					StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
+					//StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
 
-					FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+					//FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
 					FlxG.save.flush();
 				}
 				changedDifficulty = false;
 			} else {
-				var difficulty:String = Difficulty.getFilePath();
+/*				var difficulty:String = Difficulty.format();
 
 				MusicState.skipNextTransIn = true;
 				MusicState.skipNextTransOut = true;
 
-				Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
-				Conductor.stop();
+				Song.load(PlayState.storyPlaylist[0] + difficulty);
+				Conductor.stop();*/
 
 				MusicState.switchState(new PlayState());
 			}
 		} else {
-			Mods.loadTopMod();
 			#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
 
 			MusicState.switchState(new FreeplayState());
@@ -721,7 +718,7 @@ class PlayState extends MusicState {
 		if (Settings.data.ghostTapping) return;
 
 		noteMissCommon(direction);
-		FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+		FlxG.sound.play(Paths.sound('miss${FlxG.random.int(1, 3)}'), FlxG.random.float(0.1, 0.2));
 	}
 
 	function noteMissCommon(direction:Int, note:Note = null) {

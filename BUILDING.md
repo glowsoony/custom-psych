@@ -14,6 +14,7 @@
 	- TJson 1.4.0 `haxelib install tjson 1.4.0`
 	- hxDiscord_RPC 1.2.4 `haxelib install hxdiscord_rpc 1.2.4`
 	- hxVLC 1.8.2 `haxelib install hxvlc 1.8.2`
+	- hxcpp (GIT) `haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp 54af892be2ca4c63988c99c9c524431af6c6f036`
 	- FlxAnimate (GIT) `haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e`
 	- LINC_LuaJIT (GIT) `haxelib git linc_luajit https://github.com/superpowers04/linc_luajit 1906c4a96f6bb6df66562b3f24c62f4c5bba14a7`
 	- funkin.vis (GIT) `haxelib git funkin.vis https://github.com/FunkinCrew/funkVis 22b1ce089dd924f15cdc4632397ef3504d464e90`

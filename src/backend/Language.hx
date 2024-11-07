@@ -7,17 +7,19 @@ class Language
 	private static var phrases:Map<String, String> = [];
 	#end
 
-	public static function reloadPhrases()
-	{
+	static var isDirectory(get, never):Bool;
+	static function get_isDirectory():Bool {
+		return FileSystem.isDirectory(Paths.get('locale/${Settings.data.language}'));
+	}
+
+	public static function reloadPhrases() {
 		#if TRANSLATIONS_ALLOWED
 		var langFile:String = Settings.data.language;
-		var loadedText:Array<String> = Mods.mergeAllTextsNamed('data/$langFile.lang');
-		//trace(loadedText);
+		var loadedText:Array<String> = Paths.getFileContent(isDirectory ? 'locale/$langFile/data.txt' : 'locale/$langFile.txt').split('\n');
 
 		phrases.clear();
 		var hasPhrases:Bool = false;
-		for (num => phrase in loadedText)
-		{
+		for (num => phrase in loadedText) {
 			phrase = phrase.trim();
 			if(num < 1 && !phrase.contains(':'))
 			{
@@ -26,7 +28,7 @@ class Language
 				continue;
 			}
 
-			if(phrase.length < 4 || phrase.startsWith('//')) continue; 
+			if (phrase.length < 4 || phrase.startsWith('//')) continue; 
 
 			var n:Int = phrase.indexOf(':');
 			if(n < 0) continue;
@@ -43,50 +45,42 @@ class Language
 		}
 
 		if (!hasPhrases) Settings.data.language = Settings.default_data.language;
-		
-		var alphaPath:String = getFileTranslation('images/alphabet');
-		if(alphaPath.startsWith('images/')) alphaPath = alphaPath.substr('images/'.length);
-		var pngPos:Int = alphaPath.indexOf('.png');
-		if(pngPos > -1) alphaPath = alphaPath.substring(0, pngPos);
-		Alphabet.loadData(alphaPath);
+		Alphabet.loadData(getFileTranslation('data/alphabet'));
 		#else
 		Alphabet.loadData();
 		#end
 	}
 
-	inline public static function getPhrase(key:String, ?defaultPhrase:String, values:Array<Dynamic> = null):String
-	{
+	inline public static function getPhrase(key:String, ?defaultPhrase:String, values:Array<Dynamic> = null):String {
 		#if TRANSLATIONS_ALLOWED
 		//trace(formatKey(key));
-		var str:String = phrases.get(formatKey(key));
-		if(str == null) str = defaultPhrase;
+		var str:String = phrases.get(formatKey(key)) ?? defaultPhrase;
 		#else
 		var str:String = defaultPhrase;
 		#end
 
-		if(str == null)
-			str = key;
+		if (str == null) str = key;
 		
-		if(values != null)
-			for (num => value in values)
-				str = str.replace('{${num+1}}', value);
+		if (values != null) {
+			for (num => value in values) str = str.replace('{${num + 1}}', value);
+		}
 
 		return str;
 	}
 
-	// More optimized for file loading
-	inline public static function getFileTranslation(key:String)
-	{
-		#if TRANSLATIONS_ALLOWED
-		var str:String = phrases.get(key.trim().toLowerCase());
-		if(str != null) key = str;
-		#end
-		return key;
+	public static function getFileTranslation(id:String, ?subFolder:String):String {
+		var defaultPath:String = return Paths.get(id, subFolder);
+		if (!isDirectory) return defaultPath; // not gonna have a file to give if the language doesn't have any
+
+		if (subFolder != null && subFolder.length != 0) subFolder = 'locale/${Settings.data.language}/$subFolder';
+		var path:String = Paths.get(id, subFolder);
+
+		if (FileSystem.exists(path)) return path;
+		return defaultPath;
 	}
 	
 	#if TRANSLATIONS_ALLOWED
-	inline static private function formatKey(key:String)
-	{
+	inline static private function formatKey(key:String) {
 		final hideChars = ~/[~&\\\/;:<>#.,'"%?!]/g;
 		return hideChars.replace(key.replace(' ', '_'), '').toLowerCase().trim();
 	}

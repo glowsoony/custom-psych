@@ -1,67 +1,43 @@
 package objects;
 
-import haxe.Json;
 import flixel.math.FlxPoint;
-import openfl.utils.Assets;
+import flixel.group.FlxSpriteGroup;
+import haxe.Json;
+import flixel.util.FlxAxes;
+import flixel.FlxObject;
 
-enum abstract AlphabetAlignment(String) from String to String {
-    var LEFT = 'left';
-    var CENTER = 'center';
-    var RIGHT = 'right';
-}
+// swordcube's alphabet but heavily modified to work with psych
+// since i had alignment issues getting it to work the other way around (psych alphabet working with swordcube's code
+class Alphabet extends FlxTypedSpriteGroup<AlphabetLine> {
+    public var type(default, set):AlphabetGlyphType;
 
-enum abstract AlphabetGlyphType(String) from String to String {
-	var BOLD = 'bold';
-	var NORMAL = 'normal';
-}
+    public var alignment(default, set):AlphabetAlignment;
 
-// literally just swordcube's alphabet
-// but the base is psych's alphabet
-// because i need alot of shit from psych's alphabet
-// lmfao
-class Alphabet extends FlxTypedSpriteGroup<AlphabetRow> {
-	public var text(default, set):String;
+    public var text(default, set):String;
 
-	public var type:AlphabetGlyphType;
-
-	public var isMenuItem:Bool = false;
-	public var targetY:Int = 0;
 	public var changeX:Bool = true;
 	public var changeY:Bool = true;
 
 	public var scaleX(default, set):Float = 1.0;
 	public var scaleY(default, set):Float = 1.0;
 
-	public var alignment(default, set):AlphabetAlignment = LEFT;
-
 	public var letters(get, never):Array<AlphabetGlyph>;
-
-	public var distancePerItem:FlxPoint = new FlxPoint(20, 120);
-	public var spawnPos:FlxPoint = new FlxPoint(0, 0);
-
-	public function new(x:Float, y:Float, text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:AlphabetAlignment = LEFT) {
-		super(x, y);
-
-		this.spawnPos.set(x, y);
-		@:bypassAccessor this.alignment = alignment;
-		this.type = type;
-		this.text = text;
-	}
-
-	function set_alignment(align:AlphabetAlignment) {
-		updateAlignment(align);
-		return alignment = align;
-	}
-
 	function get_letters():Array<AlphabetGlyph> {
-		var retValue:Array<AlphabetGlyph> = [];
-		for (i in 0...members.length) retValue.concat(members[i].members);
-		return retValue;
+		return [for (line in members) {
+			for (glyph in line) glyph;
+		}];
 	}
 
-	public static function loadData(?request:String = 'alphabet') {
-		var path:String = Paths.getPath('images/$request.json');
-		if (!FileSystem.exists(path)) path = Paths.getPath('images/alphabet.json');
+    public var targetY:Int = 0;
+
+    public var isMenuItem:Bool = false;
+
+    public var distancePerItem:FlxPoint = FlxPoint.get(20, 120);
+	public var spawnPos:FlxPoint = FlxPoint.get();
+
+	public static function loadData(?request:String) {
+		var path:String = '$request.json';
+		if (!FileSystem.exists(path)) path = Paths.get('data/alphabet.json');
 
 		AlphabetGlyph.allGlyphs = new Map<String, Glyph>();
 		try {
@@ -95,6 +71,7 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetRow> {
 					}
 				}
 			}
+			
 			trace('Reloaded members successfully ($path)!');
 		} catch(e:Dynamic) trace('Error on loading alphabet data: $e');
 
@@ -107,73 +84,24 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetRow> {
 		}
 	}
 
-	// genuinely losing my fucking mind like 
-	// why the fuck does center and right alignment not work
-	function updateAlignment(align:AlphabetAlignment) {
-		final totalWidth:Float = width;
+    public function new(x:Float = 0, y:Float = 0, text:String = "", ?type:AlphabetGlyphType = BOLD, ?alignment:AlphabetAlignment = LEFT, ?size:Float = 1.0) {
+        super(x, y);
+		this.spawnPos.set(x, y);
 
-		for (row in members) {
-			row.updateHitbox();
-			row.x = switch (align) {
-                case LEFT: x;
-                case CENTER: x + ((totalWidth - row.width) * 0.5); // ????????????
-                case RIGHT: x + (totalWidth - row.width); // ????????????
-			}
-		}
-	}
+        @:bypassAccessor this.type = type;
+        this.text = text;
+		this.alignment = alignment;
+    }
 
-	function set_text(newText:String) {
-		newText = newText.replace('\\n', '\n');
-		updateText(newText);
-		updateAlignment(alignment);
-		return text = newText;
-	}
-
-	public function clearLetters() {
-		for (row in members) row.destroy();
-		clear();
-	}
-
-	public function setScale(newX:Float, ?newY:Float = 0.0) {
-		if (newY == 0.0) newY = newX;
-		scale.x = newX;
-		scale.y = newY;
-		@:bypassAccessor scaleX = newX;
-		@:bypassAccessor scaleY = newY;
-
-		for (row in members) {
-            for (glyph in row) {
-                glyph.scale.set(newX, newY);
-                glyph.updateHitbox();
-                glyph.setPosition(row.x + (glyph.spawnPos.x * newX), row.y + (glyph.spawnPos.y * newY));
-            }
-        }
-
-        updateAlignment(alignment);
-	}
-
-	function set_scaleX(value:Float):Float {
-		setScale(value, scaleY);
-		return scaleX = value;
-	}
-
-	function set_scaleY(value:Float):Float {
-		setScale(scaleX, value);
-		return scaleY = value;
-	}
-
-	override function update(elapsed:Float) {
-		if (!isMenuItem) {
+    override function update(elapsed:Float) {
+        if (!isMenuItem) {
 			super.update(elapsed);
 			return;
 		}
 
-		var lerpVal:Float = Math.exp(-elapsed * 9.6);
-		if (changeX) x = FlxMath.lerp((targetY * distancePerItem.x) + spawnPos.x, x, lerpVal);
-		if (changeY) y = FlxMath.lerp((targetY * 1.3 * distancePerItem.y) + spawnPos.y, y, lerpVal);
-
-		super.update(elapsed);
-	}
+        if (changeX) x = Util.ilerp(x, (targetY * distancePerItem.x) + spawnPos.x, 0.16);
+        if (changeY) y = Util.ilerp(y, (targetY * 1.3 * distancePerItem.y) + spawnPos.y, 0.16);
+    }
 
 	public function snapToPosition() {
 		if (!isMenuItem) return;
@@ -182,66 +110,149 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetRow> {
 		if (changeY) y = (targetY * 1.3 * distancePerItem.y) + spawnPos.y;
 	}
 
-	static var Y_PER_ROW:Float = 60;
+    // --------------- //
+    // [ Private API ] //
+    // --------------- //
 
-	function updateText(newText:String) {
-		if (newText == null || text == newText) return;
+	static final Y_PER_ROW:Float = 60;
 
-        clearLetters();
+    @:noCompletion
+    function updateText(newText:String, ?force:Bool = false) {
+        if (text == newText && !force) return; // what's the point of regenerating
 
-		final glyphPos:FlxPoint = FlxPoint.get();
-		var row:AlphabetRow = new AlphabetRow();
-		var rows:Int = 0;
+        for (glyph in members) glyph.destroy();
+        clear();
 
-		for (i in 0...newText.length) {
-			final char:String = newText.charAt(i);
+        final glyphPos:FlxPoint = FlxPoint.get();
+        var rows:Int = 0;
 
-			if (char == '\n') {
-				glyphPos.set(0, ++rows * Y_PER_ROW);
-                add(row);
-                row = new AlphabetRow();
+        var line:AlphabetLine = new AlphabetLine();
+
+        for (i in 0...newText.length) {
+            final char:String = newText.charAt(i);
+            if (char == "\n") {
+                glyphPos.x = 0;
+                glyphPos.y = ++rows * Y_PER_ROW;
+                add(line);
+                line = new AlphabetLine();
                 continue;
-			}
+            }
 
-            if (char == ' ') {
+            final spaceChar:Bool = (char == " ");
+            if (spaceChar) {
                 glyphPos.x += 28;
                 continue;
             }
 
             if (!AlphabetGlyph.allGlyphs.exists(char.toLowerCase())) continue;
 
-            final glyph:AlphabetGlyph = new AlphabetGlyph().setup(glyphPos.x, glyphPos.y, char, type);
+            final glyph:AlphabetGlyph = new AlphabetGlyph(glyphPos.x, glyphPos.y, char, type);
             glyph.row = rows;
             glyph.color = color;
             glyph.spawnPos.copyFrom(glyphPos);
-            row.add(glyph);
+            line.add(glyph);
 
             glyphPos.x += glyph.width;
-		}
+        }
 
-        if (members.indexOf(row) == -1) add(row);
+        if (members.indexOf(line) == -1) add(line);
+        
+        glyphPos.put();
+    }
 
-		glyphPos.put();
+    public function updateAlignment(align:AlphabetAlignment) {
+        final totalWidth:Float = width;
+        for (line in members) {
+            line.x = switch (align) {
+                case LEFT: x;
+                case CENTER: x + ((x - totalWidth) * 0.5);
+                case RIGHT: x + (x - totalWidth);
+            }
+        }
+    }
+
+	@:noCompletion
+	function set_scaleX(value:Float):Float {
+		updateScale(value, scaleY);
+		return value;
 	}
 
+	@:noCompletion
+	function set_scaleY(value:Float):Float {
+		updateScale(scaleX, value);
+		return value;
+	}
+
+    public function updateScale(?_x:Float, ?_y:Float) {
+		_x ??= scaleX;
+		_y ??= scaleY;
+
+		@:bypassAccessor scaleX = _x;
+		@:bypassAccessor scaleY = _y;
+
+        for (line in members) {
+            for (glyph in line) {
+                glyph.scale.set(_x, _y);
+                glyph.updateHitbox();
+                glyph.setPosition(line.x + (glyph.spawnPos.x * _x), line.y + (glyph.spawnPos.y * _y));
+            }
+        }
+
+        updateAlignment(alignment);
+    }
+
     @:noCompletion
-    override function set_color(value:Int):Int {
-        for (row in members) row.color = value;
+    inline function set_type(newType:AlphabetGlyphType):AlphabetGlyphType {
+        type = newType;
+        updateText(text, true);
+        updateScale(scaleX, scaleY);
+        return newType;
+    }
+
+    @:noCompletion
+    function set_text(newText:String):String {
+        newText = newText.replace('\\n', '\n');
+        updateText(newText);
+        updateScale(scaleX, scaleY);
+        return text = newText;
+    }
+
+    @:noCompletion
+    inline function set_alignment(newAlign:AlphabetAlignment):AlphabetAlignment {
+        alignment = newAlign;
+        updateScale(scaleX, scaleY);
+        return newAlign;
+    }
+
+    @:noCompletion
+    override function set_color(value:Int) {
+        for(line in members)
+            line.color = value;
+        return super.set_color(value);
+    }
+
+    override function destroy() {
+        distancePerItem.put();
+        super.destroy();
+    }
+	
+}
+
+class AlphabetLine extends FlxTypedSpriteGroup<AlphabetGlyph> {
+    @:noCompletion
+    override function set_color(value:Int) {
+        for(letter in members)
+            letter.color = value;
+
         return super.set_color(value);
     }
 }
 
-private class AlphabetRow extends FlxTypedSpriteGroup<AlphabetGlyph> {
-    @:noCompletion
-    override function set_color(value:Int):Int {
-        for (letter in members) letter.color = value;
-        return super.set_color(value);
-    }
+enum abstract AlphabetAlignment(String) from String to String {
+    var LEFT = "left";
+    var CENTER = "center";
+    var RIGHT = "right";
 }
-
-///////////////////////////////////////////
-// ALPHABET LETTERS, SYMBOLS AND NUMBERS //
-///////////////////////////////////////////
 
 typedef Glyph = {
 	var anim:Null<String>;
@@ -249,83 +260,82 @@ typedef Glyph = {
 	var offsetsBold:Array<Float>;
 }
 
-class AlphabetGlyph extends FlxSprite {
+class AlphabetGlyph extends FunkinSprite {
 	public var image(default, set):String;
 	public static var allGlyphs:Map<String, Glyph>;
 
-	var parent:Alphabet;
-	public var spawnPos:FlxPoint = FlxPoint.get();
-	public var letterOffset:Array<Float> = [0, 0];
+	public var type(default, set):AlphabetGlyphType;
+	public var char(default, set):String;
 
 	public var row:Int = 0;
-	public var character:String = '?';
-	public function new() {
-		super();
-		image = 'alphabet';
-		antialiasing = Settings.data.antialiasing;
-	}
-	
+	public var spawnPos:FlxPoint = FlxPoint.get();
+	public var letterOffset:Array<Float> = [0, 0];
 	public var curGlyph:Glyph = null;
-	public function setup(x:Float, y:Float, ?character:String, ?type:AlphabetGlyphType):AlphabetGlyph {
-		setPosition(x, y);
 
-		if (parent != null) {
-			if (type == null) type = parent.type;
-			scale.set(parent.scaleX, parent.scaleY);
-		}
-		
-		if (character != null) {
-			this.character = character;
+	public var parent:Alphabet;
 
-			var converted:String = character.toLowerCase();
-			final isLowerCase:Bool = converted == character;
-			var suffix:String = ' ';
-
-			curGlyph = allGlyphs.get(allGlyphs.exists(converted) ? converted : '?');
-
-			if (type == NORMAL) {
-				if (isLetter(converted)) suffix += isLowerCase ? 'lowercase' : 'uppercase';
-				else suffix += 'normal';
-			} else suffix += 'bold';
-
-			converted = '${curGlyph.anim}$suffix';
-			animation.addByPrefix(converted, converted, 24);
-			animation.play(converted);
-		}
-		updateHitbox();
-
-		return this;
+	public function new(x:Float = 0, y:Float = 0, char:String = "", ?type:AlphabetGlyphType = BOLD) {
+		super(x, y);
+		image = 'alphabet';
+		@:bypassAccessor this.type = type;
+		this.char = char;
 	}
 
-	public static function isLetter(c:String) { // thanks kade
-		var ascii:Int = StringTools.fastCodeAt(c, 0);
-		return (ascii >= 65 && ascii <= 90)
-			|| (ascii >= 97 && ascii <= 122)
-			|| (ascii >= 192 && ascii <= 214)
-			|| (ascii >= 216 && ascii <= 246)
-			|| (ascii >= 248 && ascii <= 255);
+	@:noCompletion
+	inline function set_type(newType:String):String {
+		set_char(char);
+		return type = newType;
 	}
 
-	function set_image(name:String) {
+	@:noCompletion
+	function set_image(value:String):String {
 		if (frames == null) {
-			image = name;
-			frames = Paths.getSparrowAtlas(name);
-			return name;
+			frames = Paths.sparrowAtlas(image = value);
+			return value;
 		}
 
 		var lastAnim:String = null;
 		if (animation != null) lastAnim = animation.name;
 
-		frames = Paths.getSparrowAtlas(image = name);
-		scale.set(parent.scaleX, parent.scaleY);
+		frames = Paths.sparrowAtlas(image = value);
 		
 		if (lastAnim != null) {
 			animation.addByPrefix(lastAnim, lastAnim, 24);
 			animation.play(lastAnim, true);
-			
 			updateHitbox();
 		}
-		return name;
+
+		return value;
+	}
+
+	@:noCompletion
+	inline function set_char(newChar:String):String {
+		frames = Paths.sparrowAtlas(image);
+
+		var converted:String = newChar.toLowerCase();
+		final isLowerCase:Bool = converted == newChar;
+		var suffix:String;
+
+		curGlyph = allGlyphs[allGlyphs.exists(converted) ? converted : '?'];
+
+		if (type == NORMAL) {
+			if (Util.isLetter(converted)) suffix = isLowerCase ? 'lowercase' : 'uppercase';
+			else suffix = 'normal';
+		} else suffix = 'bold';
+
+		converted = '${curGlyph.anim} $suffix';
+		
+		animation.addByPrefix(converted, converted, 24);
+		animation.play(converted);
+
+		updateHitbox();
+
+		return char = newChar;
+	}
+
+	override function destroy() {
+		spawnPos.put();
+		super.destroy();
 	}
 
 	public function updateLetterOffset() {
@@ -335,17 +345,20 @@ class AlphabetGlyph extends FlxSprite {
 		if (animation.curAnim.name.endsWith('bold')) {
 			if (curGlyph.offsetsBold != null) letterOffset = curGlyph.offsetsBold;
 			add = 70;
-		} else if (curGlyph.offsets != null) {
-			letterOffset = curGlyph.offsets;
-		}
+		} else if (curGlyph.offsets != null) letterOffset = curGlyph.offsets;
 
 		add *= scale.y;
 		offset.x += letterOffset[0] * scale.x;
 		offset.y += letterOffset[1] * scale.y - (add - height);
 	}
 
-	override public function updateHitbox() {
+	override function updateHitbox() {
 		super.updateHitbox();
 		updateLetterOffset();
 	}
+}
+
+enum abstract AlphabetGlyphType(String) from String to String {
+	var BOLD = "bold";
+	var NORMAL = "normal";
 }

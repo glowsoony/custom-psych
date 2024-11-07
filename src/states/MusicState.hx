@@ -20,7 +20,7 @@ class MusicState extends FlxState {
 
 		if (!_psychCameraInitialized) initPsychCamera();
 
-		if (!skipNextTransOut) openSubState(new Transition(0.5, true));
+		if (!skipNextTransOut && Settings.data.transitions) openSubState(new Transition(0.5, true));
 		skipNextTransOut = false;
 
 		Conductor.onStep = stepHit;
@@ -52,13 +52,13 @@ class MusicState extends FlxState {
 			return;
 		}
 
-		if (skipNextTransIn) FlxG.switchState(nextState);
+		if (!Settings.data.transitions || skipNextTransIn) FlxG.switchState(nextState);
 		else startTransition(nextState);
 		skipNextTransIn = false;
 	}
 
 	public static function resetState() {
-		if (skipNextTransIn) FlxG.resetState();
+		if (!Settings.data.transitions || skipNextTransIn) FlxG.resetState();
 		else startTransition();
 		skipNextTransIn = false;
 	}

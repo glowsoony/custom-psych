@@ -66,7 +66,7 @@ class Scores {
 	}
 
 	public static function formatSong(song:String, diff:Int):String {
-		return '${Paths.formatToSongPath(song)}${Difficulty.getFilePath(diff)}';
+		return '';
 	}
 
 	public static function getScore(song:String, diff:Int):Int {

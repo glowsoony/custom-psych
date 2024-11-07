@@ -30,7 +30,7 @@ class StrumNote extends FlxSprite {
 		else skin = Note.defaultNoteSkin;
 
 		var customSkin:String = skin + Note.getNoteSkinSuffix();
-		if (Paths.fileExists('images/$customSkin.png', IMAGE)) skin = customSkin;
+		if (Paths.exists('images/$customSkin.png')) skin = customSkin;
 
 		texture = skin; //Load texture and anims
 		scrollFactor.set();
@@ -71,7 +71,7 @@ class StrumNote extends FlxSprite {
 					animation.add('confirm', [15, 19], 24, false);
 			}
 		} else {
-			frames = Paths.getSparrowAtlas(texture);
+			frames = Paths.sparrowAtlas(texture);
 			animation.addByPrefix('green', 'arrowUP');
 			animation.addByPrefix('blue', 'arrowDOWN');
 			animation.addByPrefix('purple', 'arrowLEFT');

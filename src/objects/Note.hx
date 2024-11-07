@@ -294,7 +294,7 @@ class Note extends FlxSprite
 		var skinSuffix:String = getNoteSkinSuffix();
 		var customSkin:String = skin + skinSuffix;
 		var path:String = PlayState.isPixelStage ? 'pixelUI/' : '';
-		if (customSkin == _lastValidChecked || Paths.fileExists('images/' + path + customSkin + '.png', IMAGE)) {
+		if (customSkin == _lastValidChecked || Paths.exists('images/$path$customSkin.png')) {
 			skin = customSkin;
 			_lastValidChecked = customSkin;
 		} else skinSuffix = '';
@@ -318,7 +318,7 @@ class Note extends FlxSprite
 				offsetX -= _lastNoteOffX;
 			}
 		} else {
-			frames = Paths.getSparrowAtlas(skin);
+			frames = Paths.sparrowAtlas(skin);
 			loadNoteAnims();
 			if (!isSustainNote) {
 				centerOffsets();

@@ -1,64 +1,42 @@
 package objects;
 
-class HealthIcon extends FlxSprite
-{
-	public var sprTracker:FlxSprite;
-	private var isPlayer:Bool = false;
-	private var char:String = '';
+import flixel.graphics.FlxGraphic;
 
-	public function new(char:String = 'face', isPlayer:Bool = false, ?allowGPU:Bool = true)
-	{
+class HealthIcon extends FlxSprite {
+	public var character:String = '';
+	var isPlayer:Bool = false;
+	var iconOffsets:Array<Float> = [0.0, 0.0];
+
+	public function new(?char:String = 'face', ?isPlayer:Bool = false, ?allowGPU:Bool = true) {
 		super();
 		this.isPlayer = isPlayer;
-		changeIcon(char, allowGPU);
-		scrollFactor.set();
+		change(char, allowGPU);
 	}
 
-	override function update(elapsed:Float)
-	{
-		super.update(elapsed);
+	function change(name:String, ?allowGPU:Bool = true):String {
+		if (character == name) return name;
 
-		if (sprTracker != null)
-			setPosition(sprTracker.x + sprTracker.width + 12, sprTracker.y - 30);
+		if (!Paths.exists('images/icons/$name.png')) name = 'face';
+		var graphic:FlxGraphic = Paths.image('icons/$name', allowGPU);
+
+		var size:Float = Math.round(graphic.width / graphic.height);
+		loadGraphic(graphic, true, Math.floor(graphic.width / size), Math.floor(graphic.height));
+		iconOffsets = [(width - 150) / size, (height - 150) / size];
+		updateHitbox();
+
+		animation.add(name, [for (i in 0...frames.frames.length) i], 0, false, isPlayer);
+		animation.play(name);
+		
+		antialiasing = name.endsWith('-pixel') ? false : Settings.data.antialiasing;
+
+		return this.character = name;
 	}
 
-	private var iconOffsets:Array<Float> = [0, 0];
-	public function changeIcon(char:String, ?allowGPU:Bool = true) {
-		if(this.char != char) {
-			var name:String = 'icons/' + char;
-			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-' + char; //Older versions of psych engine's support
-			if(!Paths.fileExists('images/' + name + '.png', IMAGE)) name = 'icons/icon-face'; //Prevents crash from missing icon
-			
-			var graphic = Paths.image(name, allowGPU);
-			var iSize:Float = Math.round(graphic.width / graphic.height);
-			loadGraphic(graphic, true, Math.floor(graphic.width / iSize), Math.floor(graphic.height));
-			iconOffsets[0] = (width - 150) / iSize;
-			iconOffsets[1] = (height - 150) / iSize;
-			updateHitbox();
-
-			animation.add(char, [for(i in 0...frames.frames.length) i], 0, false, isPlayer);
-			animation.play(char);
-			this.char = char;
-
-			if(char.endsWith('-pixel'))
-				antialiasing = false;
-			else
-				antialiasing = Settings.data.antialiasing;
-		}
-	}
-
-	public var autoAdjustOffset:Bool = true;
-	override function updateHitbox()
-	{
+	public var autoOffset:Bool = true;
+	override function updateHitbox() {
 		super.updateHitbox();
-		if(autoAdjustOffset)
-		{
-			offset.x = iconOffsets[0];
-			offset.y = iconOffsets[1];
-		}
-	}
 
-	public function getCharacter():String {
-		return char;
+		if (!autoOffset) return;
+		offset.set(iconOffsets[0], iconOffsets[1]);
 	}
 }

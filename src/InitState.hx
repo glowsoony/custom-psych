@@ -1,10 +1,5 @@
 class InitState extends flixel.FlxState {
 	override function create() {
-		#if MODS_ALLOWED
-		Mods.pushGlobalMods();
-		#end
-		Mods.loadTopMod();
-
 		#if ACHIEVEMENTS_ALLOWED 
 		Achievements.load();
 		#end

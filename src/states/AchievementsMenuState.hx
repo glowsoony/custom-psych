@@ -52,24 +52,19 @@ class AchievementsMenuState extends MusicState
 		grpOptions.scrollFactor.x = 0;
 
 		options.sort(sortByID);
-		for (option in options)
-		{
+		for (option in options) {
 			var hasAntialias:Bool = Settings.data.antialiasing;
 			var graphic = null;
-			if(option.unlocked)
-			{
+			if (option.unlocked) {
 				#if MODS_ALLOWED Mods.currentModDirectory = option.mod; #end
 				var image:String = 'achievements/' + option.name;
-				if(Paths.fileExists('images/$image-pixel.png', IMAGE))
-				{
+				if (Paths.exists('images/$image-pixel.png')) {
 					graphic = Paths.image('$image-pixel');
 					hasAntialias = false;
-				}
-				else graphic = Paths.image(image);
+				} else graphic = Paths.image(image);
 
-				if(graphic == null) graphic = Paths.image('unknownMod');
-			}
-			else graphic = Paths.image('achievements/lockedachievement');
+				if (graphic == null) graphic = Paths.image('unknownMod');
+			} else graphic = Paths.image('achievements/lockedachievement');
 
 			var spr:FlxSprite = new FlxSprite(0, Math.floor(grpOptions.members.length / MAX_PER_ROW) * 180).loadGraphic(graphic);
 			spr.scrollFactor.x = 0;
@@ -214,7 +209,7 @@ class AchievementsMenuState extends MusicState
 		if (hasProgress) {
 			var val1:Float = options[curSelected].curProgress;
 			var val2:Float = options[curSelected].maxProgress;
-			progressTxt.text = Util.floorDecimal(val1, options[curSelected].decProgress) + ' / ' + Util.floorDecimal(val2, options[curSelected].decProgress);
+			progressTxt.text = '${Util.truncateFloat(val1, options[curSelected].decProgress)} / ${Util.truncateFloat(val2, options[curSelected].decProgress)}';
 
 			barTween = FlxTween.tween(progressBar, {percent: (val1 / val2) * 100}, 0.5, {ease: FlxEase.quadOut,
 				onComplete: function(twn:FlxTween) progressBar.updateBar(),

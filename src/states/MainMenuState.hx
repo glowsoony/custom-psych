@@ -2,7 +2,6 @@ package states;
 
 import flixel.FlxObject;
 import flixel.effects.FlxFlicker;
-import states.editors.MasterEditorMenu;
 import options.OptionsState;
 
 import objects.FunkinSprite;
@@ -28,18 +27,13 @@ class MainMenuState extends MusicState {
 
 		persistentUpdate = true;
 
-		#if MODS_ALLOWED
-		Mods.pushGlobalMods();
-		#end
-		Mods.loadTopMod();
-
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
 		add(camFollow = new FlxObject(FlxG.width * 0.5, 0, 1, 1));
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menus/yellowBG'));
 		bg.antialiasing = Settings.data.antialiasing;
 		bg.scrollFactor.set(0, Math.max(0.25 - (0.05 * (options.length - 4)), 0.1));
 		bg.setGraphicSize(Std.int(bg.width * 1.175));
@@ -94,7 +88,7 @@ class MainMenuState extends MusicState {
 
 		if (Controls.justPressed('accept') || (mouseControls && FlxG.mouse.overlaps(optionGrp.members[curSelected]) && FlxG.mouse.justPressed)) {
 			alreadyPressedEnter = true;
-			FlxG.sound.play(Paths.sound('confirmMenu'));
+			FlxG.sound.play(Paths.sound('confirm'));
 
 			for (i => option in optionGrp.members) {
 				if (i == curSelected) continue;
@@ -107,7 +101,7 @@ class MainMenuState extends MusicState {
 
 			FlxFlicker.flicker(optionGrp.members[curSelected], 1, 0.06, false, false, function(_) {
 				switch (options[curSelected]) {
-					case 'story_mode': MusicState.switchState(new StoryMenuState());
+					//case 'story_mode': MusicState.switchState(new StoryMenuState());
 					case 'freeplay': MusicState.switchState(new FreeplayState());
 
 					#if MODS_ALLOWED
@@ -131,13 +125,15 @@ class MainMenuState extends MusicState {
 			});
 		}
 
+		if (Controls.justPressed('back')) MusicState.switchState(new TitleState());
+
 		super.update(elapsed);
 	}
 
 	function createItem(option:String, x:Float, y:Float):FunkinSprite {
 		final item:FunkinSprite = new FunkinSprite(x, y);
 		item.scrollFactor.set();
-		item.frames = Paths.getSparrowAtlas('mainmenu/menu_$option');
+		item.frames = Paths.sparrowAtlas('menus/main/$option');
 		item.animation.addByPrefix('idle', '$option idle', 24, true);
 		item.animation.addByPrefix('selected', '$option selected', 24, true);
 		item.playAnim('idle');
@@ -158,7 +154,7 @@ class MainMenuState extends MusicState {
 		curItem.centerOffsets();
 		curItem.screenCenter(X);
 
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('scroll'));
 		camFollow.y = curItem.getGraphicMidpoint().y - (optionGrp.length > 4 ? optionGrp.length * 8 : 0);
 	}
 }

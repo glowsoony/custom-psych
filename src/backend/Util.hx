@@ -5,6 +5,19 @@ class Util {
 		return Math.fround(f * snap) / snap;
 	}
 
+    public static function ilerp(from:Float, to:Float, weight:Float):Float {
+		return from + FlxMath.bound(weight * 60 * FlxG.elapsed, 0, 1) * (to - from);
+    }
+
+	public static function isLetter(c:String) { // thanks kade
+		var ascii:Int = StringTools.fastCodeAt(c, 0);
+		return (ascii >= 65 && ascii <= 90)
+			|| (ascii >= 97 && ascii <= 122)
+			|| (ascii >= 192 && ascii <= 214)
+			|| (ascii >= 216 && ascii <= 246)
+			|| (ascii >= 248 && ascii <= 255);
+	}
+
 	inline public static function listFromString(string:String):Array<String> {
 		return string.trim().split('\n');
 	}
@@ -13,12 +26,7 @@ class Util {
 		return '${text.charAt(0).toUpperCase()}${text.substr(1).toLowerCase()}';
 	}
 
-	public static function coolTextFile(path:String):Array<String> {
-		var file:String = FileSystem.exists(path) ? File.getContent(path) : null;
-		return file != null ? listFromString(file) : [];
-	}
-
-	inline public static function colorFromString(color:String):FlxColor {
+	public static function colorFromString(color:String):FlxColor {
 		var hideChars = ~/[\t\n\r]/;
 		var color:String = hideChars.split(color).join('').trim();
 		if (color.startsWith('0x')) color = color.substring(color.length - 6);
@@ -27,14 +35,9 @@ class Util {
 		return colorNum ?? FlxColor.WHITE;
 	}
 
-	public static function floorDecimal(value:Float, decimals:Int):Float {
-		if (decimals < 1) return Math.floor(value);
-
-		var tempMult:Float = 1;
-		for (i in 0...decimals) tempMult *= 10;
-
-		var newValue:Float = Math.floor(value * tempMult);
-		return newValue / tempMult;
+	public static function truncateFloat(number:Float, precision:Float = 2):Float {
+		number *= (precision = Math.pow(10, precision));
+		return Math.floor(number) / precision;
 	}
 
 	public static function dominantColor(sprite:flixel.FlxSprite):Int {

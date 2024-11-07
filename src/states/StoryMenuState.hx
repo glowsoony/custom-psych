@@ -12,8 +12,6 @@ import objects.MenuCharacter;
 import options.GameplayChangersSubstate;
 import substates.ResetScoreSubState;
 
-import backend.StageData;
-
 class StoryMenuState extends MusicState
 {
 	public static var weekCompleted:Map<String, Bool> = new Map<String, Bool>();
@@ -56,12 +54,10 @@ class StoryMenuState extends MusicState
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
-		if(WeekData.weeksList.length < 1)
-		{
+		if(WeekData.weeksList.length < 1) {
 			MusicState.skipNextTransIn = true;
 			persistentUpdate = false;
-			MusicState.switchState(new states.ErrorState("NO WEEKS ADDED FOR STORY MODE\n\nPress ACCEPT to go to the Week Editor Menu.\nPress BACK to return to Main Menu.",
-				function() MusicState.switchState(new states.editors.WeekEditorState()),
+			MusicState.switchState(new states.ErrorState("NO WEEKS ADDED FOR STORY MODE\n\nPress BACK to return to Main Menu.", null,
 				function() MusicState.switchState(new states.MainMenuState())));
 			return;
 		}
@@ -75,7 +71,7 @@ class StoryMenuState extends MusicState
 		txtWeekTitle.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
 		txtWeekTitle.alpha = 0.7;
 
-		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		var ui_tex = Paths.sparrowAtlas('campaign_menu_UI_assets');
 		var bgYellow:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 386, 0xFFF9CF51);
 		bgSprite = new FlxSprite(0, 56);
 
@@ -99,7 +95,6 @@ class StoryMenuState extends MusicState
 			if(!isLocked || !weekFile.hiddenUntilUnlocked)
 			{
 				loadedWeeks.push(weekFile);
-				WeekData.setDirectoryFromWeek(weekFile);
 				var weekThing:MenuItem = new MenuItem(0, bgSprite.y + 396, WeekData.weeksList[i]);
 				weekThing.y += ((weekThing.height + 20) * num);
 				weekThing.ID = num;
@@ -125,7 +120,6 @@ class StoryMenuState extends MusicState
 			}
 		}
 
-		WeekData.setDirectoryFromWeek(loadedWeeks[0]);
 		var charArray:Array<String> = loadedWeeks[0].weekCharacters;
 		for (char in 0...3)
 		{
@@ -282,12 +276,12 @@ class StoryMenuState extends MusicState
 				PlayState.isStoryMode = true;
 				selectedWeek = true;
 	
-				var diffic = Difficulty.getFilePath(curDifficulty);
+				var diffic = Difficulty.format(curDifficulty);
 				if(diffic == null) diffic = '';
 	
 				PlayState.storyDifficulty = curDifficulty;
 	
-				Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
+				Song.load(PlayState.storyPlaylist[0].toLowerCase() + diffic);
 				PlayState.campaignScore = 0;
 				PlayState.campaignMisses = 0;
 			}
@@ -334,10 +328,8 @@ class StoryMenuState extends MusicState
 		if (curDifficulty >= Difficulty.list.length)
 			curDifficulty = 0;
 
-		WeekData.setDirectoryFromWeek(loadedWeeks[curWeek]);
-
 		var diff:String = Difficulty.getString(curDifficulty, false);
-		var newImage:FlxGraphic = Paths.image('menudifficulties/' + Paths.formatToSongPath(diff));
+		var newImage:FlxGraphic = Paths.image('menudifficulties/${diff.toLowerCase()}');
 		//trace(Mods.currentModDirectory + ', menudifficulties/' + Paths.formatToSongPath(diff));
 
 		if(sprDifficulty.graphic != newImage)
@@ -371,7 +363,6 @@ class StoryMenuState extends MusicState
 			curWeek = loadedWeeks.length - 1;
 
 		var leWeek:WeekData = loadedWeeks[curWeek];
-		WeekData.setDirectoryFromWeek(leWeek);
 
 		var leName:String = Language.getPhrase('storyname_${leWeek.fileName}', leWeek.storyName);
 		txtWeekTitle.text = leName.toUpperCase();
@@ -390,7 +381,7 @@ class StoryMenuState extends MusicState
 		if(assetName == null || assetName.length < 1) {
 			bgSprite.visible = false;
 		} else {
-			bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_' + assetName));
+			bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_$assetName'));
 		}
 		PlayState.storyWeek = curWeek;
 

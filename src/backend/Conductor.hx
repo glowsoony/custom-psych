@@ -212,7 +212,7 @@ class Conductor extends flixel.FlxBasic {
 		return lastChange;
 	}
 
-	public static function setBPMChanges(song:SwagSong) {
+	public static function setBPMChanges(song:Chart) {
 		bpmChanges = [];
 
 		var curBPM:Float = song.bpm;
@@ -235,7 +235,7 @@ class Conductor extends flixel.FlxBasic {
 		}
 	}
 
-	inline static function getSectionBeats(section:SwagSection):Int {
+	inline static function getSectionBeats(section:Section):Int {
 		return section?.sectionBeats ?? 4;
 	}
 }
