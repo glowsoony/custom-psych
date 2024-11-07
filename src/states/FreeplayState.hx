@@ -144,7 +144,7 @@ class FreeplayState extends MusicState {
 			changeSelection();
 			holdTime = 0;	
 		} else if (FlxG.keys.justPressed.END) {
-			curSelected = songs.length - 1;
+			curSelected = songList.length - 1;
 			changeSelection();
 			holdTime = 0;	
 		}

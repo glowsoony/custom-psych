@@ -11,7 +11,7 @@
 	- Flixel Addons 3.2.2 `haxelib install flixel-addons 3.2.2`
 	- Flixel Tools 1.5.1 `haxelib install flixel-tools 1.5.1`
 	- HScript (Iris) 1.1.0 `haxelib install hscript-iris 1.1.0`
-	- TJson 1.4.0 `haxelib install tjson 1.4.0`
+	- hxJson5 `haxelib install hxjson5`
 	- hxDiscord_RPC 1.2.4 `haxelib install hxdiscord_rpc 1.2.4`
 	- hxVLC 1.8.2 `haxelib install hxvlc 1.8.2`
 	- hxcpp (GIT) `haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp 54af892be2ca4c63988c99c9c524431af6c6f036`

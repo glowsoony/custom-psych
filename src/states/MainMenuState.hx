@@ -101,7 +101,7 @@ class MainMenuState extends MusicState {
 
 			FlxFlicker.flicker(optionGrp.members[curSelected], 1, 0.06, false, false, function(_) {
 				switch (options[curSelected]) {
-					//case 'story_mode': MusicState.switchState(new StoryMenuState());
+					case 'story_mode': MusicState.switchState(new StoryMenuState());
 					case 'freeplay': MusicState.switchState(new FreeplayState());
 
 					#if MODS_ALLOWED

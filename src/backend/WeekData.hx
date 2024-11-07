@@ -63,9 +63,9 @@ class WeekData {
 				if (FileSystem.isDirectory(week)) continue;
 
 				var file:WeekFile = getFile('$path/$week');
-				file.fileName = week;
+				file.fileName = week.replace('.json', '');
 
-				listMap.set(week.replace('.json', ''), file);
+				listMap.set(file.fileName, file);
 				list.push(file);
 			}
 		}
