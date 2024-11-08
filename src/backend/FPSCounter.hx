@@ -8,7 +8,7 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import flixel.util.FlxStringUtil;
 
-import external.DefinesMacro;
+
 import external.memory.Memory;
 
 class FPSCounter extends Sprite {
@@ -21,10 +21,6 @@ class FPSCounter extends Sprite {
 	final pollingRate:Int = 1000;
 
 	final font:String = 'assets/fonts/Nunito-Medium.ttf';
-
-	// adds extra values to the text
-	// like library and haxe versions etc
-	public static var debugging:Bool = false;
 
 	public static var gcMemoryInBytes(get, never):Float;
 	static function get_gcMemoryInBytes():Float return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
@@ -70,10 +66,5 @@ class FPSCounter extends Sprite {
 
 		// y'all are nerds smh.........................................
 		text.text = '$currentFPS FPS\nRAM: APP: $appMemory / GC: $gcMemory';
-
-		if (!debugging) return;
-
-		final defines:Map<String, Dynamic> = DefinesMacro.defines;
-		text.text += '\n\nOS: ${Util.getOperatingSystem()}\nHaxe: ${defines['haxe']}\nFlixel: ${defines['flixel']}\nOpenFL: ${defines['openfl']}\nLime: ${defines['lime']}';
 	}
 }

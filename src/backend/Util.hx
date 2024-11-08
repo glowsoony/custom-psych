@@ -128,4 +128,14 @@ class Util {
 		return 'Unknown';
 		#end
 	}
+
+	public static function getTarget():String {
+		#if cpp
+		return 'C++';
+		#elseif hl
+		return 'Hashlink';
+		#else
+		return 'Unknown';
+		#end
+	}
 }

@@ -8,6 +8,8 @@ import openfl.display.Sprite;
 import openfl.display.StageScaleMode;
 import states.TitleState;
 
+import external.DefinesMacro;
+
 #if linux
 import lime.graphics.Image;
 #end
@@ -42,6 +44,14 @@ class Main extends Sprite {
 	public function new() {
 		super();
 
+		#if CRASH_HANDLER
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+		#end
+
+		#if linux
+		Lib.current.stage.window.setIcon(Image.fromFile("icon.png"));
+		#end
+
 		Settings.load();
 		addChild(new FlxGame(0, 0, InitState, 60, 60, true, false));
 
@@ -52,14 +62,6 @@ class Main extends Sprite {
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		
 		if (FlxG.save.data.volume != null) FlxG.sound.volume = FlxG.save.data.volume;
-
-		#if linux
-		Lib.current.stage.window.setIcon(Image.fromFile("icon.png"));
-		#end
-		
-		#if CRASH_HANDLER
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		#end
 
 		// shader coords fix
 		FlxG.signals.gameResized.add(function (_, _) {
@@ -97,14 +99,15 @@ class Main extends Sprite {
 			}
 		}
 
-		// if you're modding source
-		// please either remove this line, or replace the link to your mod's github repo
-		// so that the original repo doesn't get false issues
-		errMsg += "\nPlease report this error to the GitHub page: https://github.com/Rudyrue/custom-psych";
+		errMsg += '\nExtra Info:\n';
+		errMsg += 'Operating System: ${Util.getOperatingSystem()}\nTarget: ${Util.getTarget()}\n\n';
 
-		if (!FileSystem.exists("./crash/")) FileSystem.createDirectory("./crash/");
+		final defines:Map<String, Dynamic> = DefinesMacro.defines;
+		errMsg += 'Haxe: ${defines['haxe']}\nFlixel: ${defines['flixel']}\nOpenFL: ${defines['openfl']}\nLime: ${defines['lime']}';
 
-		File.saveContent('./crash/$date.txt', 'errMsg\n');
+		if (!FileSystem.exists('./crash/')) FileSystem.createDirectory('./crash/');
+
+		File.saveContent('./crash/$date.txt', '$errMsg\n');
 		Sys.println('\n$errMsg');
 
 		lime.app.Application.current.window.alert(errMsg, "Error!");

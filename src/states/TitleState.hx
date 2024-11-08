@@ -31,6 +31,12 @@ typedef TitleData = {
 
 class TitleState extends MusicState {
 	override public function create():Void {
+		// forces a null object ref
+		// for testing crashing
+		// thumbs up emoji
+		//var fuck:FlxSprite = null;
+		//fuck.visible = true;
+
 		MusicState.skipNextTransIn = true;
 		MusicState.skipNextTransOut = true;
 
