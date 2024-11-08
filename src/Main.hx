@@ -1,6 +1,6 @@
 package;
 
-import debug.FPSCounter;
+import backend.FPSCounter;
 
 import flixel.FlxGame;
 import flixel.FlxState;
@@ -24,9 +24,7 @@ import openfl.Lib;
 
 #if linux
 @:cppInclude('./external/gamemode_client.h')
-@:cppFileCode('
-	#define GAMEMODE_AUTO
-')
+@:cppFileCode('#define GAMEMODE_AUTO')
 #end
 
 class Main extends Sprite {
@@ -47,11 +45,12 @@ class Main extends Sprite {
 		Settings.load();
 		addChild(new FlxGame(0, 0, InitState, 60, 60, true, false));
 
-		addChild(fpsCounter = new FPSCounter(10, 3, 0xFFFFFF));
-		Lib.current.stage.align = "tl";
-		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
+		addChild(fpsCounter = new FPSCounter(10, 10, 12));
 		fpsCounter.visible = Settings.data.fpsCounter;
 
+		Lib.current.stage.align = "tl";
+		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
+		
 		if (FlxG.save.data.volume != null) FlxG.sound.volume = FlxG.save.data.volume;
 
 		#if linux

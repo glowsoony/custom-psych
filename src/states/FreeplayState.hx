@@ -122,9 +122,8 @@ class FreeplayState extends MusicState {
 		var accuracy:Array<String> = '${Util.truncateFloat(lerpAccuracy, 2)}'.split('.');
 		if (accuracy.length < 2) accuracy.push(''); // No decimals, add an empty space
 		while (accuracy[1].length < 2) accuracy[1] += '0'; // Less than 2 decimals in it, add decimals then
-		accuracy.join('.');
-
-		scoreText.text = 'PERSONAL BEST: $lerpScore ($accuracy%)';
+		
+		scoreText.text = 'PERSONAL BEST: $lerpScore (${accuracy.join('.')}%)';
 
 		positionStats();
 

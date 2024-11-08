@@ -15,7 +15,7 @@ typedef WeekFile = {
 	var hideFreeplay:Bool;
 	var difficulties:Array<String>;
 
-	var fileName:String;
+	var ?fileName:String;
 }
 
 // synonym for "Song" because Song.hx already exists lmao

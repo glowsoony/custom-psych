@@ -22,6 +22,18 @@ class Util {
 		return string.trim().split('\n');
 	}
 
+	// FlxStringUtil.formatBytes() but it just adds a space between the size and the unit lol
+	public static function formatBytes(bytes:Float, ?precision:Int = 2):String {
+		final units:Array<String> = ["Bytes", "kB", "MB", "GB", "TB", "PB"];
+		var curUnit:Int = 0;
+		while (bytes >= 1024 && curUnit < units.length - 1) {
+			bytes /= 1024;
+			curUnit++;
+		}
+
+		return '${FlxMath.roundDecimal(bytes, precision)} ${units[curUnit]}';
+	}
+
 	inline public static function capitalize(text:String):String {
 		return '${text.charAt(0).toUpperCase()}${text.substr(1).toLowerCase()}';
 	}
@@ -103,5 +115,17 @@ class Util {
 		final file:String = FlxG.stage.application.meta.get('file');
 
 		return '${company}/${flixel.util.FlxSave.validate(file)}';
+	}
+
+	public static function getOperatingSystem():String {
+		#if windows
+		return 'Windows';
+		#elseif linux
+		return 'Linux';
+		#elseif mac
+		return 'macOS';
+		#else
+		return 'Unknown';
+		#end
 	}
 }
