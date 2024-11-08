@@ -122,7 +122,7 @@ class Util {
 		return 'Windows';
 		#elseif linux
 		return 'Linux';
-		#elseif mac
+		#elseif (mac || macos)
 		return 'macOS';
 		#else
 		return 'Unknown';
