@@ -2,6 +2,7 @@ package states;
 
 import backend.WeekData;
 import flixel.graphics.FlxGraphic;
+import objects.MenuCharacter;
 
 class StoryMenuState extends MusicState {
 	var grpWeeks:FlxTypedSpriteGroup<WeekSprite>;
@@ -15,7 +16,10 @@ class StoryMenuState extends MusicState {
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
 
+	var characters:FlxTypedSpriteGroup<MenuCharacter>;
+
 	static var curWeek:Int = 0;
+	static var curWeekData:WeekFile;
 	static var curDifficulty:Int;
 	static var curDiffName:String = Difficulty.current;
 	static var curDiffs:Array<String> = Difficulty.list;
@@ -31,7 +35,12 @@ class StoryMenuState extends MusicState {
 		var bgYellow:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 386, 0xFFF9CF51);
 		add(bgYellow);
 
-		bgSprite = new FlxSprite(bgYellow.x, bgYellow.y);
+		add(bgSprite = new FlxSprite(bgYellow.x, bgYellow.y));
+
+		add(characters = new FlxTypedSpriteGroup<MenuCharacter>());
+		for (i in 1...4) {
+			characters.add(new MenuCharacter((FlxG.width - 960) * i - 150, 70));
+		}
 
 		var itemTargetY:Float = 0;
 		for (index => week in WeekData.list) {
@@ -86,8 +95,10 @@ class StoryMenuState extends MusicState {
 			sprite.alpha = curWeek == index ? 1 : 0.5;
 		}
 
+		curWeekData = WeekData.list[curWeek];
+
 		var tracks:String = '';
-		var songList:Array<Track> = WeekData.list[curWeek].songs;
+		var songList:Array<Track> = curWeekData.songs;
 		for (index => song in songList) {
 			tracks += song.id.toUpperCase();
 			if (index != songList.length - 1) tracks += '\n';
@@ -103,6 +114,10 @@ class StoryMenuState extends MusicState {
 		curDifficulty = curDiffs.indexOf(curDiffName);
 		if (curDifficulty == -1) curDifficulty = 0;
 		changeDifficulty();
+
+		for (index => item in characters.members) {
+			item.character = curWeekData.characters[index];
+		}
 	}
 
 	function changeDifficulty(?change:Int = 0) {

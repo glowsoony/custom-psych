@@ -1,92 +1,78 @@
 package objects;
 
-import openfl.utils.Assets;
-import haxe.Json;
-
 typedef MenuCharacterFile = {
 	var image:String;
 	var scale:Float;
-	var position:Array<Int>;
-	var idle_anim:String;
-	var confirm_anim:String;
-	var flipX:Bool;
-	var antialiasing:Null<Bool>;
+	var offset:Array<Float>;
+	var idle:String;
+	var confirm:String;
+	var ?flipX:Bool;
+	var ?antialiasing:Bool;
 }
 
-class MenuCharacter extends FlxSprite
-{
-	public var character:String;
+class MenuCharacter extends FlxSprite {
+	public var character(default, set):String;
+	var _file:MenuCharacterFile;
 	public var hasConfirmAnimation:Bool = false;
 	private static var DEFAULT_CHARACTER:String = 'bf';
 
-	public function new(x:Float, character:String = 'bf')
-	{
-		super(x);
-
-		changeCharacter(character);
+	public function new(?x:Float, ?y:Float, ?character:String = 'bf') {
+		super(x, y);
+		this.character = character;
 	}
 
-	public function changeCharacter(?character:String = 'bf') {
-		if(character == null) character = '';
-		if(character == this.character) return;
+	function set_character(?value:String = 'bf'):String {
+		if (character == value) return value;
 
-		this.character = character;
+		if (value.length == 0) {
+			visible = false;
+			return character = value;
+		}
+
 		visible = true;
 
-		var dontPlayAnim:Bool = false;
 		scale.set(1, 1);
 		updateHitbox();
 		
 		color = FlxColor.WHITE;
 		alpha = 1;
 
+
 		hasConfirmAnimation = false;
-		switch(character) {
-			case '':
-				visible = false;
-				dontPlayAnim = true;
-			default:
-				var characterPath:String = 'images/menucharacters/' + character + '.json';
-
-				var path:String = Paths.get(characterPath);
-				if (!FileSystem.exists(path))
-				{
-					path = Paths.get('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
-					color = FlxColor.BLACK;
-					alpha = 0.6;
-				}
-
-				var charFile:MenuCharacterFile = null;
-				try
-				{
-					charFile = Json.parse(File.getContent(path));
-				}
-				catch(e:Dynamic)
-				{
-					trace('Error loading menu character file of "$character": $e');
-				}
-
-				frames = Paths.sparrowAtlas('menucharacters/' + charFile.image);
-				animation.addByPrefix('idle', charFile.idle_anim, 24);
-
-				var confirmAnim:String = charFile.confirm_anim;
-				if(confirmAnim != null && confirmAnim.length > 0 && confirmAnim != charFile.idle_anim)
-				{
-					animation.addByPrefix('confirm', confirmAnim, 24, false);
-					if (animation.getByName('confirm') != null) //check for invalid animation
-						hasConfirmAnimation = true;
-				}
-				flipX = (charFile.flipX == true);
-
-				if(charFile.scale != 1)
-				{
-					scale.set(charFile.scale, charFile.scale);
-					updateHitbox();
-				}
-				offset.set(charFile.position[0], charFile.position[1]);
-				animation.play('idle');
-
-				antialiasing = (charFile.antialiasing != false && Settings.data.antialiasing);
+		var filePath:String = '$value.json';
+		var path:String = 'images/menus/story/characters';
+		if (!FileSystem.exists(Paths.get('$path/$filePath'))) {
+			filePath = '$DEFAULT_CHARACTER.json'; // If a character couldn't be found, change him to BF just to prevent a crash
+			color = FlxColor.BLACK;
+			alpha = 0.6;
 		}
+
+		try {
+			_file = Json5.parse(Paths.getFileContent('$path/$filePath'));
+		} catch(e:Dynamic) {
+			trace('Error loading menu character file of "$value": $e');
+		}
+
+		frames = Paths.sparrowAtlas('menus/story/characters/${_file.image}');
+		animation.addByPrefix('idle', _file.idle, 24);
+
+		var confirmAnim:String = _file.confirm;
+		if (confirmAnim != null && confirmAnim.length > 0 && confirmAnim != _file.idle) {
+			animation.addByPrefix('confirm', confirmAnim, 24, false);
+			if (animation.getByName('confirm') != null) // check for invalid animation
+				hasConfirmAnimation = true;
+		}
+		flipX = _file.flipX == true;
+
+		if (_file.scale != 1) {
+			scale.set(_file.scale, _file.scale);
+			updateHitbox();
+		}
+		offset.set(_file.offset[0], _file.offset[1]);
+		animation.play('idle');
+
+		antialiasing = _file.antialiasing != false && Settings.data.antialiasing;
+
+		return character = value;
 	}
 }

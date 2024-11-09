@@ -1,23 +1,19 @@
 package states;
 
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFrame;
-import flixel.input.gamepad.FlxGamepad;
-
-import openfl.display.Bitmap;
-import openfl.display.BitmapData;
 
 typedef TitleData = {
+	var gfPos:Array<Float>;
 	var logoPos:Array<Float>;
 	var textPos:Array<Float>;
-	var gfPos:Array<Float>;
-	var background:String;
-	var bpm:Float;
 	
-	@:optional var animation:String;
-	@:optional var dance_left:Array<Int>;
-	@:optional var dance_right:Array<Int>;
-	@:optional var idle:Bool;
+	var bpm:Float;
+
+	var ?animation:String;
+	var ?dance_left:Array<Int>;
+	var ?dance_right:Array<Int>;
+	var ?idle:Bool;
+	var ?background:String;
 }
 
 class TitleState extends MusicState {
@@ -125,7 +121,6 @@ class TitleState extends MusicState {
 		Conductor.inst.fadeIn(4, 0, 0.7);
 	}
 
-	// JSON data
 	var animationName:String = 'gfDance';
 
 	var gfPosition:FlxPoint = FlxPoint.get(512, 40);
@@ -135,7 +130,7 @@ class TitleState extends MusicState {
 	var useIdle:Bool = false;
 	var musicBPM:Float = 102;
 	var danceLeftFrames:Array<Int> = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
-	var danceRightFrames:Array<Int> = [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+	var danceRightFrames:Array<Int> = [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];	
 
 	function loadJsonData() {
 		if (!Paths.exists('data/titleData.json')) {
@@ -147,19 +142,19 @@ class TitleState extends MusicState {
 		if (titleRaw == null || titleRaw.length == 0) return;
 
 		try {
-			var titleJSON:TitleData = Json5.parse(titleRaw);
-			gfPosition.set(titleJSON.gfPos[0], titleJSON.gfPos[1]);
-			logoPosition.set(titleJSON.logoPos[0], titleJSON.logoPos[1]);
-			enterPosition.set(titleJSON.textPos[0], titleJSON.textPos[1]);
-			musicBPM = titleJSON.bpm;
+			var data:TitleData = cast Json5.parse(titleRaw);
+			gfPosition.set(data.gfPos[0], data.gfPos[1]);
+			logoPosition.set(data.logoPos[0], data.logoPos[1]);
+			enterPosition.set(data.textPos[0], data.textPos[1]);
+			musicBPM = data.bpm;
 					
-			if (titleJSON.animation != null && titleJSON.animation.length > 0) animationName = titleJSON.animation;
-			if (titleJSON.dance_left != null && titleJSON.dance_left.length > 0) danceLeftFrames = titleJSON.dance_left;
-			if (titleJSON.dance_right != null && titleJSON.dance_right.length > 0) danceRightFrames = titleJSON.dance_right;
-			useIdle = titleJSON.idle;
+			if (data?.animation.length > 0) animationName = data.animation;
+			if (data?.dance_left.length > 0) danceLeftFrames = data.dance_left;
+			if (data?.dance_right.length > 0) danceRightFrames = data.dance_right;
+			useIdle = data.idle;
 	
-			if (titleJSON.background != null && titleJSON.background.trim().length > 0) {
-				var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(titleJSON.background));
+			if (data.background != null && data.background.trim().length > 0) {
+				var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(data.background));
 				bg.antialiasing = Settings.data.antialiasing;
 				add(bg);
 			}

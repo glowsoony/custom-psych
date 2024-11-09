@@ -154,14 +154,18 @@ class Controls {
 
 		if (_save.data.keyboard != null) {
 			var loadedKeys:Map<String, Array<FlxKey>> = _save.data.keyboard;
-			for (control => keys in loadedKeys)
-				if (keyBinds.exists(control)) keyBinds.set(control, keys);
+			for (control => keys in loadedKeys) {
+				if (!keyBinds.exists(control)) continue;
+				keyBinds.set(control, keys);
+			}
 		}
 
 		if (_save.data.gamepad != null) {
 			var loadedKeys:Map<String, Array<FlxGamepadInputID>> = _save.data.gamepad;
-			for (control => keys in loadedKeys)
-				if (gamepadBinds.exists(control)) gamepadBinds.set(control, keys);
+			for (control => keys in loadedKeys) {
+				if (!gamepadBinds.exists(control)) continue;
+				gamepadBinds.set(control, keys);
+			}
 		}
 
 		reloadVolumeBinds();
