@@ -24,7 +24,7 @@ class Util {
 
 	// FlxStringUtil.formatBytes() but it just adds a space between the size and the unit lol
 	public static function formatBytes(bytes:Float, ?precision:Int = 2):String {
-		final units:Array<String> = ["Bytes", "kB", "MB", "GB", "TB", "PB"];
+		final units:Array<String> = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
 		var curUnit:Int = 0;
 		while (bytes >= 1024 && curUnit < units.length - 1) {
 			bytes /= 1024;
@@ -78,7 +78,7 @@ class Util {
 		return maxKey;
 	}
 
-	inline public static function openURL(site:String) {
+	public static function openURL(site:String) {
 		#if linux
 		Sys.command('/usr/bin/xdg-open', [site]);
 		#else
@@ -86,15 +86,14 @@ class Util {
 		#end
 	}
 
-	inline public static function openFolder(folder:String, absolute:Bool = false) {
+	public static function openFolder(folder:String, ?absolute:Bool = false) {
 		#if sys
 		if (!absolute) folder = '${Sys.getCwd()}$folder';
 
 		folder = folder.replace('/', '\\');
 		if (folder.endsWith('/')) folder.substr(0, folder.length - 1);
 
-		var command:String = #if linux '/usr/bin/xdg-open'; #else 'explorer.exe'; #end
-		Sys.command(command, [folder]);
+		Sys.command(#if linux '/usr/bin/xdg-open' #else 'explorer.exe' #end, [folder]);
 		#else
 		FlxG.error("Platform is not supported for Util.openFolder");
 		#end

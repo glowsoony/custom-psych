@@ -20,6 +20,7 @@ class InitState extends flixel.FlxState {
 		FlxG.drawFramerate = FlxG.updateFramerate = Settings.data.framerate;
 		FlxG.keys.preventDefaultKeys = [TAB];
 		FlxG.cameras.useBufferLocking = true;
+		FlxG.mouse.useSystemCursor = true;
 
 		if (Settings.data.flashingLights) {
 			FlxG.switchState(new states.FlashingState());

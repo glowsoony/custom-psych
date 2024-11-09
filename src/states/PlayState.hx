@@ -1,30 +1,12 @@
 package states;
 
-import backend.WeekData;
-import backend.Song;
-import backend.Rating;
-
-import flixel.FlxBasic;
-import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.util.FlxSort;
-import flixel.util.FlxStringUtil;
-import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
 import flixel.animation.FlxAnimationController;
-import lime.utils.Assets;
-import openfl.utils.Assets as OpenFlAssets;
 import openfl.events.KeyboardEvent;
-import haxe.Json;
-
-import cutscenes.DialogueBoxPsych;
-
-//import states.StoryMenuState;
-import states.FreeplayState;
 
 import objects.*;
-import states.stages.*;
-import states.stages.objects.*;
 
 class PlayState extends MusicState {
 	public static var STRUM_X = 42;

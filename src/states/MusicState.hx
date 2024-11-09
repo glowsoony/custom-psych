@@ -2,6 +2,7 @@ package states;
 
 import flixel.FlxState;
 import backend.PsychCamera;
+import backend.Transition;
 
 class MusicState extends FlxState {
 	var curStep:Int = 0;
@@ -37,14 +38,6 @@ class MusicState extends FlxState {
 		return camera;
 	}
 
-	override function update(elapsed:Float) {
-		stagesFunc(function(stage:BaseStage) {
-			stage.update(elapsed);
-		});
-
-		super.update(elapsed);
-	}
-
 	public static function switchState(nextState:FlxState = null) {
 		if(nextState == null) nextState = FlxG.state;
 		if(nextState == FlxG.state) {
@@ -75,38 +68,18 @@ class MusicState extends FlxState {
 	}
 
 	public static function getState():MusicState {
-		return cast (FlxG.state, MusicState);
+		return cast(FlxG.state, MusicState);
 	}
 
 	public function stepHit(step:Int):Void {
 		curStep = step;
-		stagesFunc(function(stage:BaseStage) {
-			stage.curStep = step;
-			stage.stepHit(step);
-		});
 	}
 
-	public var stages:Array<BaseStage> = [];
 	public function beatHit(beat:Int):Void {
 		curBeat = beat;
-		stagesFunc(function(stage:BaseStage) {
-			stage.curBeat = beat;
-			stage.beatHit(beat);
-		});
 	}
 
 	public function measureHit(measure:Int):Void {
 		curMeasure = measure;
-		stagesFunc(function(stage:BaseStage) {
-			stage.curMeasure = measure;
-			stage.measureHit(measure);
-		});
-	}
-
-	function stagesFunc(func:BaseStage -> Void) {
-		for (stage in stages) {
-			if (stage == null || !stage.exists || !stage.active) continue;
-			func(stage);
-		}
 	}
 }

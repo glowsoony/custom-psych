@@ -1,7 +1,6 @@
 package backend;
 
 #if DISCORD_ALLOWED
-import Sys.sleep;
 import sys.thread.Thread;
 import lime.app.Application;
 

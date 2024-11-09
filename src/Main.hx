@@ -23,6 +23,7 @@ import haxe.io.Path;
 
 import flixel.input.keyboard.FlxKey;
 import openfl.Lib;
+import backend.DiscordClient;
 
 #if linux
 @:cppInclude('./external/gamemode_client.h')

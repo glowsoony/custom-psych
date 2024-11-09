@@ -1,23 +1,15 @@
 package backend;
 
-import sys.io.File;
-import haxe.ds.Either;
-
 import flixel.graphics.FlxGraphic;
 import openfl.system.System;
 
 import lime.utils.Assets as LimeAssets;
-import openfl.utils.Assets as OpenFLAssets;
-import flixel.system.FlxAssets;
 import openfl.media.Sound;
 
 import openfl.display.BitmapData;
 
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.graphics.frames.FlxAtlasFrames;
-
-import sys.FileSystem;
-import flixel.util.typeLimit.OneOfTwo;
 
 // credits to Chris Speciale (lead openfl maintainer) for giving me this abstract lmao
 // was a pain in the ass to deal with Dynamic
@@ -179,7 +171,7 @@ class Paths {
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
 		if (!FileSystem.exists(key)) {
-			return beepIfNull ? FlxAssets.getSound('flixel/sounds/beep') : null;
+			return beepIfNull ? flixel.system.FlxAssets.getSound('flixel/sounds/beep') : null;
 		}
 		if (!localTrackedAssets.contains(key)) localTrackedAssets.push(key);
 

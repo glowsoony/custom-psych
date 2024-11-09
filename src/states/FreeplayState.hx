@@ -8,14 +8,9 @@ import objects.HealthIcon;
 import options.GameplayChangersSubstate;
 import substates.ResetScoreSubState;
 
-import flixel.math.FlxMath;
 import flixel.util.FlxDestroyUtil;
 
 import openfl.utils.Assets;
-
-import haxe.Json;
-
-import flixel.text.FlxText;
 
 class FreeplayState extends MusicState {
 	var songList:Array<Track> = [];

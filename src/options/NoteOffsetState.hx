@@ -1,14 +1,11 @@
 package options;
 
-import objects.Character;
 import objects.Bar;
 import flixel.addons.display.shapes.FlxShapeCircle;
 
 class NoteOffsetState extends MusicState
 {
 	var stageDirectory:String = 'week1';
-	var boyfriend:Character;
-	var gf:Character;
 
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
@@ -57,17 +54,6 @@ class NoteOffsetState extends MusicState
 		// Stage
 		//Paths.setCurrentLevel(stageDirectory);
 		//new BackgroundStage();
-
-		// Characters
-		gf = new Character(400, 130, 'gf');
-		gf.x += gf.positionArray[0];
-		gf.y += gf.positionArray[1];
-		gf.scrollFactor.set(0.95, 0.95);
-		boyfriend = new Character(770, 100, 'bf', true);
-		boyfriend.x += boyfriend.positionArray[0];
-		boyfriend.y += boyfriend.positionArray[1];
-		add(gf);
-		add(boyfriend);
 
 		// Combo stuff
 		coolText = new FlxText(0, 0, 0, '', 32);
@@ -412,12 +398,6 @@ class NoteOffsetState extends MusicState
 		if(lastBeatHit == curBeat)
 		{
 			return;
-		}
-
-		if(curBeat % 2 == 0)
-		{
-			boyfriend.dance();
-			gf.dance();
 		}
 		
 		if(curBeat % 4 == 2)

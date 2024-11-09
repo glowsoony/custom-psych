@@ -1,20 +1,11 @@
 package states;
 
-import backend.WeekData;
-
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFrame;
-import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
-import haxe.Json;
-import hxjson5.Json5;
 
-import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-
-//import states.StoryMenuState;
-import states.MainMenuState;
 
 typedef TitleData = {
 	var logoPos:Array<Float>;
@@ -43,10 +34,6 @@ class TitleState extends MusicState {
 		Paths.clearStoredMemory();
 		super.create();
 		persistentUpdate = true;
-
-		if (FlxG.save.data.weekCompleted != null) {
-			//StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
-		}
 
 		FlxG.mouse.visible = false;
 		startIntro();
