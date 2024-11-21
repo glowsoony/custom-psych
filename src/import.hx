@@ -3,7 +3,7 @@
 import backend.Util;
 import backend.Conductor;
 import backend.DiscordClient;
-import backend.Achievements;
+import backend.Awards;
 import backend.Controls;
 import backend.Settings;
 import backend.Language;

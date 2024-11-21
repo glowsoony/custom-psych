@@ -316,7 +316,7 @@ class NoteSplashDebugState extends MusicState implements PsychUIEventHandler.Psy
 	function saveFile()
 	{
 		#if sys
-		var maxLen:Int = maxAnims * Note.colArray.length;
+		var maxLen:Int = maxAnims * Note.colours.length;
 		var curLen:Int = config.offsets.length;
 		while(curLen > maxLen)
 		{
@@ -374,9 +374,9 @@ class NoteSplashDebugState extends MusicState implements PsychUIEventHandler.Psy
 			var animID:Int = maxAnims + 1;
 			splashes.forEachAlive(function(spr:FlxSprite)
 			{
-				for (i in 0...Note.colArray.length) {
+				for (i in 0...Note.colours.length) {
 					var animName = 'note$i-$animID';
-					if (!addAnimAndCheck(spr, animName, '${config.anim} ${Note.colArray[i]} $animID', 24, false)) {
+					if (!addAnimAndCheck(spr, animName, '${config.anim} ${Note.colours[i]} $animID', 24, false)) {
 						loopContinue = false;
 						return;
 					}
@@ -426,7 +426,7 @@ class NoteSplashDebugState extends MusicState implements PsychUIEventHandler.Psy
 
 	function changeSelection(change:Int = 0)
 	{
-		var max:Int = Note.colArray.length;
+		var max:Int = Note.colours.length;
 		curSelected = FlxMath.wrap(curSelected + change, 0, max - 1);
 
 		selection.x = curSelected * 220 + 220;
@@ -436,7 +436,7 @@ class NoteSplashDebugState extends MusicState implements PsychUIEventHandler.Psy
 	function selectedArray(sel:Int = -1)
 	{
 		if(sel < 0) sel = curSelected;
-		var animID:Int = sel + ((curAnim - 1) * Note.colArray.length);
+		var animID:Int = sel + ((curAnim - 1) * Note.colours.length);
 		if(config.offsets[animID] == null)
 		{
 			while(config.offsets[animID] == null)

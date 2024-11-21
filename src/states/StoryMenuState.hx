@@ -100,7 +100,7 @@ class StoryMenuState extends MusicState {
 		var tracks:String = '';
 		var songList:Array<Track> = curWeekData.songs;
 		for (index => song in songList) {
-			tracks += song.id.toUpperCase();
+			tracks += song.name.toUpperCase();
 			if (index != songList.length - 1) tracks += '\n';
 		}
 

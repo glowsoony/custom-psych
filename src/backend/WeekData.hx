@@ -20,20 +20,19 @@ typedef WeekFile = {
 
 // synonym for "Song" because Song.hx already exists lmao
 typedef Track = {
-	var id:String;
+	var name:String;
 	var icon:String;
 	var color:Int;
 	var ?difficulties:Array<String>;
 }
 
 class WeekData {
-	public static var listMap:Map<String, WeekFile> = [];
 	public static var list:Array<WeekFile> = [];
 
 	public static function createDummy():WeekFile {
 		return {
 			songs: [{
-				id: 'Tutorial', 
+				name: 'Tutorial', 
 				icon: 'face', 
 				color: 0xFF9271FD
 			}],
@@ -53,8 +52,7 @@ class WeekData {
 	}
 
 	public static function reload() {
-		listMap.clear();
-		list = [];
+		list.resize(0);
 
 		// making it an array for mods later
 		final directories:Array<String> = [Paths.get('weeks')];
@@ -65,7 +63,6 @@ class WeekData {
 				var file:WeekFile = getFile('$path/$week');
 				file.fileName = week.replace('.json', '');
 
-				listMap.set(file.fileName, file);
 				list.push(file);
 			}
 		}

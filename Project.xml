@@ -41,14 +41,12 @@
 	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED" version="1.1.0"/>
 	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" version="1.9.2"/>
 	<haxelib name="hxdiscord_rpc" version="1.2.4" if="DISCORD_ALLOWED"/>
-	<!--<haxelib name="flxanimate"/>-->
 
 	<!-- Assets -->
 	<classpath name="src" />
 
 	<assets path="assets/characters" />
 	<assets path="assets/data" />
-	<assets path="assets/embed" embed="true"/>
 	<assets path="assets/fonts" />
 	<assets path="assets/images" />
 	<assets path="assets/music" />

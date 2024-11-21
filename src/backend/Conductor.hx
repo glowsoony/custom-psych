@@ -1,7 +1,6 @@
 package backend;
 
 import flixel.sound.FlxSoundGroup;
-import objects.Note;
 import backend.Song;
 
 typedef BPMChange = {
@@ -11,18 +10,21 @@ typedef BPMChange = {
 }
 
 class Conductor extends flixel.FlxBasic {
-	public static var bpm(default, set):Float = 102.0;
+	public static var playing:Bool = false;
+	public static var length:Float = 0.0;
+
+	public static var bpm(default, set):Float = 120.0;
 	public static var crotchet:Float = (60 / bpm) * 1000;
 	public static var stepCrotchet:Float = crotchet * 0.25;
 	public static var offset:Float = 0.0;
-
-	public static var safeZoneOffset:Float = 0.0;
 
 	public static var rate(default, set):Float = 1.0;
 	public static var volume(default, set):Float = 1.0;
 
 	public static var time:Float = 0.0;
-	public static var lastTime:Float = 0.0;
+	static var lastTime:Float = 0.0;
+
+	static var _resyncTimer:Float = 0.0;
 
 	public static var bpmChanges:Array<BPMChange> = [];
 
@@ -49,6 +51,7 @@ class Conductor extends flixel.FlxBasic {
 		vocals = new FlxSoundGroup(2);
 		self = this;
 		visible = false;
+		reset();
 	}
 
 	public static function reset() {
@@ -59,31 +62,24 @@ class Conductor extends flixel.FlxBasic {
 		bpmChanges = [];
 	}
 
-	public static function judgeNote(arr:Array<Rating>, diff:Float=0):Rating // die
-	{
-		var data:Array<Rating> = arr;
-		for(i in 0...data.length-1) //skips last window (Shit)
-			if (diff <= data[i].hitWindow)
-				return data[i];
-
-		return data[data.length - 1];
-	}
-
-	var _resyncTimer:Float = 0.0;
-	override function update(elapsed:Float) {
-		var oldStep:Int = step;
-		var oldBeat:Int = beat;
-		var oldMeasure:Int = measure;
-
-		final addition:Float = (elapsed * 1000) * rate;
+	static function syncTime(delta:Float):Void {
+		final addition:Float = (delta * 1000) * rate;
 		if (inst != null && inst.playing) {
 			if (inst.time == lastTime) _resyncTimer += addition;
 			else _resyncTimer = 0;
 
 			time = (inst.time + _resyncTimer) + offset;
 			lastTime = inst.time;
-			resyncVocals();
 		} else time += addition;
+	}
+
+	override function update(elapsed:Float) {
+		var oldStep:Int = step;
+		var oldBeat:Int = beat;
+		var oldMeasure:Int = measure;
+
+		syncTime(elapsed);
+		syncVocals();
 
 		var bpmChange:BPMChange = getBPMChangeFromMS(time);
 		if (bpmChange.bpm != bpm) bpm = bpmChange.bpm;
@@ -97,36 +93,42 @@ class Conductor extends flixel.FlxBasic {
 		if (oldMeasure != curMeasure) onMeasure(measure = curMeasure);
 	}
 
-	public static function resyncVocals() {
+	static function syncVocals() {
+		if (inst == null || !inst.playing) return;
+
 		final instTime:Float = inst.time;
 
 		for (vocal in vocals.members) {
-			if (vocal == null || !vocal.playing) continue;
+			if (vocal == null || !vocal.playing || vocal.length < instTime) continue;
 
 			final vocalDT:Float = Math.abs(vocal.time - instTime);
 			vocal.time = vocalDT >= vocalResyncDiff ? instTime : vocal.time;
 		}
 	}
 
-	public static function play() {
+	public static function play(fromTime:Float = 0.0) {
+		playing = true;
 		inst.play();
 		vocals.play();
 		self.active = true;
 	}
 
 	public static function stop() {
+		playing = false;
 		inst.stop();
 		vocals.stop();
 		self.active = false;
 	}
 
 	public static function pause() {
+		playing = false;
 		inst.pause();
 		vocals.pause();
 		self.active = false;
 	}
 
 	public static function resume() {
+		playing = true;
 		inst.resume();
 		vocals.resume();
 		self.active = true;
@@ -149,6 +151,7 @@ class Conductor extends flixel.FlxBasic {
 
 		value.persist = true;
 		value.pitch = rate;
+		length = value.length;
 		return inst = value;
 	}
 

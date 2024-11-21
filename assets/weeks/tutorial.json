@@ -1,7 +1,7 @@
 {
 	songs: [
 		{
-			id: 'Tutorial',
+			name: 'Tutorial',
 			icon: 'gf',
 			color: 0xFFA5004D,
 		}

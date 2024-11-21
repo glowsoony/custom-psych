@@ -4,14 +4,15 @@ import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.util.FlxSave;
+import lime.ui.KeyCode;
 
 class Controls {
 	// Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx
 	public static final default_keyBinds:Map<String, Array<FlxKey>> = [
-		'note_up'		=> [W, UP],
-		'note_left'		=> [A, LEFT],
-		'note_down'		=> [S, DOWN],
-		'note_right'	=> [D, RIGHT],
+		'note_left'		=> [D, LEFT],
+		'note_down'		=> [F, DOWN],
+		'note_up'		=> [J, UP],
+		'note_right'	=> [K, RIGHT],
 		
 		'ui_up'			=> [W, UP],
 		'ui_left'		=> [A, LEFT],
@@ -32,9 +33,9 @@ class Controls {
 	];
 
 	public static final default_gamepadBinds:Map<String, Array<FlxGamepadInputID>> = [
-		'note_up'		=> [DPAD_UP, Y],
 		'note_left'		=> [DPAD_LEFT, X],
 		'note_down'		=> [DPAD_DOWN, A],
+		'note_up'		=> [DPAD_UP, Y],
 		'note_right'	=> [DPAD_RIGHT, B],
 		
 		'ui_up'			=> [DPAD_UP, LEFT_STICK_DIGITAL_UP],
@@ -170,6 +171,23 @@ class Controls {
 
 		reloadVolumeBinds();
 	}
+
+	public static function convertStrumKey(arr:Array<String>, key:FlxKey):Int {
+		if (key == NONE) return -1;
+		for (i in 0...arr.length) {
+			for (possibleKey in keyBinds[arr[i]]) {
+				if (key == possibleKey) return i;
+			}
+		}
+
+		return -1;
+	}
+
+	// because openfl inlines it for some reason
+    public static function convertLimeKeyCode(code:KeyCode):Int {
+        @:privateAccess
+        return openfl.ui.Keyboard.__convertKeyCode(code);
+    }
 
 	// null = both
 	// false = keyboard only

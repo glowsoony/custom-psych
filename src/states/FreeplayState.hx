@@ -44,7 +44,6 @@ class FreeplayState extends MusicState {
 
 	override function create() {
 		persistentUpdate = true;
-		PlayState.isStoryMode = false;
 		WeekData.reload();
 
 		#if DISCORD_ALLOWED
@@ -70,7 +69,7 @@ class FreeplayState extends MusicState {
 		add(grpIcons = new FlxTypedSpriteGroup<HealthIcon>());
 
 		for (index => song in songList) {
-			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, song.id));
+			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, song.name));
 			alphabet.visible = alphabet.active = false;
 			alphabet.targetY = index;
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
@@ -126,6 +125,20 @@ class FreeplayState extends MusicState {
 		difficultyControls();
 		updateTexts(elapsed);
 		super.update(elapsed);
+
+		if (Controls.justPressed('accept')) {
+			try {
+				final songName:String = songList[curSelected].name;
+				final difficulty:String = Difficulty.format(curDiffName);
+				PlayState.song = Song.load('assets/songs/$songName/$difficulty.json');
+				PlayState.songID = songName;
+			} catch(e:haxe.Exception) {
+				trace('${e.message}');
+				return;
+			}
+
+			MusicState.switchState(new PlayState());
+		}
 
 		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
 	}

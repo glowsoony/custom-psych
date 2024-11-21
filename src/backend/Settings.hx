@@ -8,13 +8,13 @@ import flixel.input.gamepad.FlxGamepadInputID;
 @:structInit 
 class SaveVariables {
 	public var scrollDirection:String = 'Up';
-	public var centeredStrums:Bool = false;
-	public var opponentStrums:Bool = true;
+	public var centeredNotes:Bool = false;
+	public var opponentNotes:Bool = true;
 	public var fpsCounter:Bool = true;
 	public var flashingLights:Bool = true;
 	public var autoPause:Bool = true;
 	public var antialiasing:Bool = true;
-	public var noteSkin:String = 'Default';
+	public var noteSkin:String = 'Funkin';
 	public var splashSkin:String = 'Psych';
 	public var splashAlpha:Float = 0.6;
 	public var lowQuality:Bool = false;

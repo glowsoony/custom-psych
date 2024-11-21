@@ -66,11 +66,11 @@ class Main extends Sprite {
 
 		// shader coords fix
 		FlxG.signals.gameResized.add(function (_, _) {
-		     if (FlxG.cameras != null) {
-			   for (cam in FlxG.cameras.list) {
-				if (cam != null && cam.filters != null)
+		    if (FlxG.cameras != null) {
+				for (cam in FlxG.cameras.list) {
+					if (cam == null || cam.filters == null) continue;
 					resetSpriteCache(cam.flashSprite);
-			   }
+				}
 			}
 
 			if (FlxG.game != null) resetSpriteCache(FlxG.game);

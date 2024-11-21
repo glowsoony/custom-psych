@@ -17,7 +17,7 @@ class MainMenuState extends MusicState {
 		'story_mode',
 		'freeplay',
 		#if MODS_ALLOWED 'mods', #end
-		#if ACHIEVEMENTS_ALLOWED 'awards', #end
+		#if AWARDS_ALLOWED 'awards', #end
 		'credits',
 		'options'
 	];
@@ -101,26 +101,29 @@ class MainMenuState extends MusicState {
 
 			FlxFlicker.flicker(optionGrp.members[curSelected], 1, 0.06, false, false, function(_) {
 				switch (options[curSelected]) {
-					case 'story_mode': MusicState.switchState(new StoryMenuState());
-					case 'freeplay': MusicState.switchState(new FreeplayState());
+					case 'story_mode':
+						MusicState.switchState(new StoryMenuState());
+						
+					case 'freeplay':
+						MusicState.switchState(new FreeplayState());
 
 					#if MODS_ALLOWED
-					case 'mods': MusicState.switchState(new ModsMenuState());
+					case 'mods':
+						MusicState.switchState(new ModsMenuState());
 					#end
 
-					#if ACHIEVEMENTS_ALLOWED
-					case 'awards': MusicState.switchState(new AchievementsMenuState());
+					#if AWARDS_ALLOWED
+					case 'awards':
+						MusicState.switchState(new AchievementsMenuState());
 					#end
 
-					case 'credits': MusicState.switchState(new CreditsState());
+					case 'credits':
+						MusicState.switchState(new CreditsState());
+
 					case 'options':
-						MusicState.switchState(new OptionsState());
 						OptionsState.onPlayState = false;
-						if (PlayState.SONG != null) {
-							PlayState.SONG.arrowSkin = null;
-							PlayState.SONG.splashSkin = null;
-							PlayState.stageUI = 'normal';
-						}
+						MusicState.switchState(new OptionsState());
+						
 				}
 			});
 		}

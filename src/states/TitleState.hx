@@ -59,7 +59,7 @@ class TitleState extends MusicState {
 		introGroup.visible = false;
 
 		logo = new FlxSprite(logoPosition.x, logoPosition.y);
-		logo.frames = Paths.sparrowAtlas('menus/title/logoBumpin');
+		logo.frames = Paths.sparrowAtlas('menus/title/logo');
 		logo.antialiasing = Settings.data.antialiasing;
 		logo.animation.addByPrefix('bump', 'logo bumpin', 24, false);
 		logo.animation.play('bump');
@@ -109,7 +109,7 @@ class TitleState extends MusicState {
 		introGroup.add(titleText); //"Press Enter to Begin" text
 		add(ngSpr);
 
-		Conductor.bpm = musicBPM;
+		Conductor.bpm = bpm;
 		Conductor.self.active = true;
 		if (seenIntro) {
 			skipIntro();
@@ -128,7 +128,7 @@ class TitleState extends MusicState {
 	var enterPosition:FlxPoint = FlxPoint.get(100, 576);
 	
 	var useIdle:Bool = false;
-	var musicBPM:Float = 102;
+	var bpm:Float = 102;
 	var danceLeftFrames:Array<Int> = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
 	var danceRightFrames:Array<Int> = [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];	
 
@@ -146,7 +146,7 @@ class TitleState extends MusicState {
 			gfPosition.set(data.gfPos[0], data.gfPos[1]);
 			logoPosition.set(data.logoPos[0], data.logoPos[1]);
 			enterPosition.set(data.textPos[0], data.textPos[1]);
-			musicBPM = data.bpm;
+			bpm = data.bpm;
 					
 			if (data?.animation.length > 0) animationName = data.animation;
 			if (data?.dance_left.length > 0) danceLeftFrames = data.dance_left;

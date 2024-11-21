@@ -1,39 +1,13 @@
 package options;
 
 import objects.Note;
-import objects.StrumNote;
-import objects.NoteSplash;
-import objects.Alphabet;
 
-class VisualsSettingsSubState extends BaseOptionsMenu
-{
+class VisualsSettingsSubState extends BaseOptionsMenu {
 	var noteOptionID:Int = -1;
-	var notes:FlxTypedGroup<StrumNote>;
-	var splashes:FlxTypedGroup<NoteSplash>;
 	var noteY:Float = 90;
 	public function new() {
 		title = Language.getPhrase('visuals_menu', 'Visuals Settings');
 		rpcTitle = 'Visuals Settings Menu'; //for Discord Rich Presence
-
-		// for note skins and splash skins
-		notes = new FlxTypedGroup<StrumNote>();
-		splashes = new FlxTypedGroup<NoteSplash>();
-		for (i in 0...Note.colArray.length) {
-			var note:StrumNote = new StrumNote(370 + (560 / Note.colArray.length) * i, -200, i, 0);
-			note.centerOffsets();
-			note.centerOrigin();
-			note.playAnim('static');
-			notes.add(note);
-			
-			var splash:NoteSplash = new NoteSplash();
-			splash.lane = i;
-			splash.setPosition(note.x, noteY);
-			splash.loadSplash();
-			splash.visible = false;
-			splash.alpha = Settings.data.splashAlpha;
-			splash.animation.finishCallback = function(name:String) splash.visible = false;
-			splashes.add(splash);
-		}
 
 		// options
 /*		var noteSkins:Array<String> = Mods.mergeAllTextsNamed('images/noteSkins/list.txt');
@@ -68,7 +42,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 			addOption(option);
 			option.onChange = onChangeSplashSkin;
 		}*/
-
+/*
 		var option:Option = new Option('Note Splash Opacity',
 			'How much transparent should the Note Splashes be.',
 			'splashAlpha',
@@ -79,7 +53,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		option.changeValue = 0.1;
 		option.decimals = 1;
 		addOption(option);
-		option.onChange = playNoteSplashes;
+		option.onChange = playNoteSplashes;*/
 
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
@@ -156,15 +130,9 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 		#end
 
-		var option:Option = new Option('Combo Stacking',
-			"If unchecked, Ratings and Combo won't stack, saving on System Memory and making them easier to read",
-			'comboStacking',
-			BOOL);
-		addOption(option);
-
 		super();
-		add(notes);
-		add(splashes);
+		//add(notes);
+		//add(splashes);
 	}
 
 	var notesShown:Bool = false;
@@ -172,7 +140,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 	{
 		super.changeSelection(change);
 		
-		switch(curOption.variable)
+		/*switch(curOption.variable)
 		{
 			case 'noteSkin', 'splashSkin', 'splashAlpha':
 				if(!notesShown)
@@ -196,7 +164,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 					}
 				}
 				notesShown = false;
-		}
+		}*/
 	}
 
 	var changedMusic:Bool = false;
@@ -210,7 +178,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		changedMusic = true;
 	}
 
-	function onChangeNoteSkin()
+/*	function onChangeNoteSkin()
 	{
 		notes.forEachAlive(function(note:StrumNote) {
 			changeNoteSkin(note);
@@ -258,7 +226,7 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 				splash.offset.set(offsets[0], offsets[1]);
 			}
 		}
-	}
+	}*/
 
 	override function destroy()
 	{

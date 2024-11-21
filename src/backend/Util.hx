@@ -38,6 +38,20 @@ class Util {
 		return '${text.charAt(0).toUpperCase()}${text.substr(1).toLowerCase()}';
 	}
 
+	public static function mean(values:Array<Float>):Float {
+		final amount:Int = values.length;
+		var result:Float = 0.0;
+
+		var value:Float = 0;
+		for (i in 0...amount) {
+			value = values[i];
+			if (value == 0) continue;
+			result += value;
+		}
+
+		return result / amount;
+	}
+
 	public static function colorFromString(color:String):FlxColor {
 		var hideChars = ~/[\t\n\r]/;
 		var color:String = hideChars.split(color).join('').trim();

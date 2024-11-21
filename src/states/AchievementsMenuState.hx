@@ -4,9 +4,8 @@ import flixel.FlxObject;
 import flixel.util.FlxSort;
 import objects.Bar;
 
-#if ACHIEVEMENTS_ALLOWED
-class AchievementsMenuState extends MusicState
-{
+#if AWARDS_ALLOWED
+class AchievementsMenuState extends MusicState {
 	public var curSelected:Int = 0;
 
 	public var options:Array<Dynamic> = [];
@@ -30,9 +29,9 @@ class AchievementsMenuState extends MusicState
 		#end
 
 		// prepare achievement list
-		for (achievement => data in Achievements.achievements)
+		for (achievement => data in Awards.list)
 		{
-			var unlocked:Bool = Achievements.isUnlocked(achievement);
+			var unlocked:Bool = Awards.isUnlocked(achievement);
 			if(data.hidden != true || unlocked)
 				options.push(makeAchievement(achievement, data, unlocked, data.mod));
 		}
@@ -122,13 +121,13 @@ class AchievementsMenuState extends MusicState
 		FlxG.camera.scroll.y = -FlxG.height;
 	}
 
-	function makeAchievement(achievement:String, data:Achievement, unlocked:Bool, mod:String = null)
+	function makeAchievement(achievement:String, data:Award, unlocked:Bool, mod:String = null)
 	{
 		return {
 			name: achievement,
 			displayName: unlocked ? Language.getPhrase('achievement_$achievement', data.name) : '???',
 			description: Language.getPhrase('description_$achievement', data.description),
-			curProgress: data.maxScore > 0 ? Achievements.getScore(achievement) : 0,
+			curProgress: data.maxScore > 0 ? Awards.getScore(achievement) : 0,
 			maxProgress: data.maxScore > 0 ? data.maxScore : 0,
 			decProgress: data.maxScore > 0 ? data.maxDecimals : 0,
 			unlocked: unlocked,
@@ -291,8 +290,8 @@ class ResetAchievementSubstate extends FlxSubState {
 				var state:AchievementsMenuState = cast FlxG.state;
 				var option:Dynamic = state.options[state.curSelected];
 
-				Achievements.variables.remove(option.name);
-				Achievements.achievementsUnlocked.remove(option.name);
+				Awards.variables.remove(option.name);
+				Awards.unlocked.remove(option.name);
 				option.unlocked = false;
 				option.curProgress = 0;
 				option.name = state.nameText.text = '???';
@@ -307,7 +306,7 @@ class ResetAchievementSubstate extends FlxSubState {
 						onUpdate: function(twn:FlxTween) state.progressBar.updateBar()
 					});
 				}
-				Achievements.save();
+				Awards.save();
 				FlxG.save.flush();
 
 				FlxG.sound.play(Paths.sound('cancelMenu'));

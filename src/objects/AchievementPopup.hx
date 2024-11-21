@@ -1,6 +1,6 @@
 package objects;
 
-#if ACHIEVEMENTS_ALLOWED
+#if AWARDS_ALLOWED
 import openfl.events.Event;
 import openfl.geom.Matrix;
 import flash.display.BitmapData;
@@ -10,8 +10,7 @@ class AchievementPopup extends openfl.display.Sprite {
 	public var onFinish:Void->Void = null;
 	var alphaTween:FlxTween;
 	var lastScale:Float = 1;
-	public function new(achieve:String, onFinish:Void->Void)
-	{
+	public function new(achieve:String, onFinish:Void -> Void) {
 		super();
 
 		// bg
@@ -23,8 +22,8 @@ class AchievementPopup extends openfl.display.Sprite {
 		var hasAntialias:Bool = Settings.data.antialiasing;
 		var image:String = 'achievements/$achieve';
 		
-		var achievement:Achievement = null;
-		if(Achievements.exists(achieve)) achievement = Achievements.get(achieve);
+		var achievement:Award = null;
+		if (Awards.exists(achieve)) achievement = Awards.get(achieve);
 
 		#if MODS_ALLOWED
 		var lastMod = Mods.currentModDirectory;
@@ -148,8 +147,8 @@ class AchievementPopup extends openfl.display.Sprite {
 
 	public function destroy()
 	{
-		Achievements._popups.remove(this);
-		//trace('destroyed achievement, new count: ' + Achievements._popups.length);
+		Awards._popups.remove(this);
+		//trace('destroyed achievement, new count: ' + Awards._popups.length);
 
 		if (FlxG.game.contains(this))
 		{

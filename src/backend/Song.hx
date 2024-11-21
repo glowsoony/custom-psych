@@ -1,7 +1,6 @@
 package backend;
 
-import haxe.Json;
-import lime.utils.Assets;
+import objects.Note.NoteData;
 
 typedef Chart = {
 	var song:String;
@@ -13,17 +12,18 @@ typedef Chart = {
 
 	var player1:String;
 	var player2:String;
+	var ?player3:String;
 	var gfVersion:String;
 	var stage:String;
 
-	@:optional var gameOverChar:String;
-	@:optional var gameOverSound:String;
-	@:optional var gameOverLoop:String;
-	@:optional var gameOverEnd:String;
-	@:optional var offset:Float;
+	var ?gameOverChar:String;
+	var ?gameOverSound:String;
+	var ?gameOverLoop:String;
+	var ?gameOverEnd:String;
+	var ?offset:Float;
 
-	@:optional var arrowSkin:String;
-	@:optional var splashSkin:String;
+	var ?arrowSkin:String;
+	var ?splashSkin:String;
 }
 
 typedef Section = {
@@ -31,30 +31,13 @@ typedef Section = {
 	var sectionBeats:Int;
 	var mustHitSection:Bool;
 	var gfSection:Bool;
-	var bpm:Null<Float>;
-	var changeBPM:Null<Bool>;
+	var bpm:Float;
+	var changeBPM:Bool;
 	var altAnim:Bool;
 }
 
 class Song {
-	public var song:String;
-	public var notes:Array<Section>;
-	public var events:Array<Dynamic>;
-	public var bpm:Float;
-	public var needsVoices:Bool = true;
-	public var arrowSkin:String;
-	public var splashSkin:String;
-	public var gameOverChar:String;
-	public var gameOverSound:String;
-	public var gameOverLoop:String;
-	public var gameOverEnd:String;
-	public var speed:Float = 1;
-	public var stage:String;
-	public var player1:String = 'bf';
-	public var player2:String = 'dad';
-	public var gfVersion:String = 'gf';
-
-	static function convert(songJson:Dynamic):Chart { // Convert old charts to newest format
+	static function convert(songJson:Chart):Chart { // Convert old charts to newest format
 		if (songJson.gfVersion == null) {
 			songJson.gfVersion = songJson.player3;
 			songJson.player3 = null;
@@ -82,21 +65,59 @@ class Song {
 		return songJson;
 	}
 
-	public function new(song:Chart) {
-		for (field in Reflect.fields(song)) {
-			if (!Reflect.hasField(this, field)) continue;
-			Reflect.setField(this, field, Reflect.field(song, field));
+	static function createDummy():Chart {
+		return {
+			song: 'Unknown',
+			notes: [{
+				sectionNotes: [],
+				sectionBeats: 4,
+				mustHitSection: false,
+				bpm: 0,
+				gfSection: false,
+				changeBPM: false,
+				altAnim: false
+			}],
+			events: [],
+			bpm: 120,
+			needsVoices: false,
+			speed: 1.0,
+
+			player1: 'bf',
+			player2: 'bf',
+			gfVersion: 'bf',
+			stage: 'stage'
 		}
 	}
 
 	public static function load(path:String):Chart {
-		var rawJson:String = Paths.getFileContent(path).trim();
-		while (!rawJson.endsWith("}")) {
-			rawJson = rawJson.substr(0, rawJson.length - 1);
-			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
+		var file:Chart = createDummy();
+		var data = Json.parse(File.getContent(path)).song;
+		for (property in Reflect.fields(data)) {
+			if (!Reflect.hasField(file, property)) continue;
+			Reflect.setField(file, property, Reflect.field(data, property));
 		}
 
-		var songJson:Chart = cast Json.parse(rawJson).song;
-		return convert(songJson);
+		return file;
+	}
+
+	public static function parse(chart:Chart):Array<NoteData> {
+		final notes:Array<NoteData> = [];
+		if (chart == null) return notes;
+
+		for (section in chart.notes) {
+			for (note in section.sectionNotes) {
+				notes.push({
+					time: Math.max(0, note[0]),
+					lane: Std.int(note[1] % 4),
+					player: note[1] > 3 ? !section.mustHitSection : section.mustHitSection,
+					length: note[2],
+					type: '',
+					speed: chart.speed
+				});
+			}
+		}
+
+		notes.sort((a, b) -> Std.int(a.time - b.time));
+		return notes;
 	}
 }
