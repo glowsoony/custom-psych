@@ -48,6 +48,15 @@ class Note extends FlxSprite {
 		return time - Conductor.time;
 	}
 
+	public var canHit:Bool = true;
+	public var hittable(get, never):Bool;
+	function get_hittable():Bool {
+		return (time > Conductor.time - (166 * lateHitMult)) && (time < Conductor.time + (166 * earlyHitMult)) && canHit;
+	}
+
+	public var lateHitMult:Float = 1;
+	public var earlyHitMult:Float = 1;
+
 	// sustain stuff
 	public var tail:Array<Note> = []; 
 	public var parent:Note;
@@ -58,8 +67,7 @@ class Note extends FlxSprite {
 	public static var colours:Array<String> = ['purple', 'blue', 'green', 'red'];
 	public static var directions:Array<String> = ['left', 'down', 'up', 'right'];
 	public var multSpeed(default, set):Float = 1;
-
-	public var offsetX:Float = 0.0;
+	public var multAlpha:Float = 1;
 
 	public var copyX:Bool = true;
 	public var copyY:Bool = true;
@@ -103,6 +111,8 @@ class Note extends FlxSprite {
 
 		if (isSustain) {
 			alpha = 0.6;
+			multAlpha = 0.6;
+			earlyHitMult = 0;
 
 			correctionOffset.x += width * 0.5;
 			flipY = Settings.data.scrollDirection == 'Down';
@@ -144,7 +154,7 @@ class Note extends FlxSprite {
 		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;
-		if (copyAlpha) alpha = strum.alpha;
+		if (copyAlpha) alpha = strum.alpha * multAlpha;
 
 		if (copyX) x = strum.x + correctionOffset.x;
 		if (copyY) {

@@ -158,10 +158,11 @@ class PlayState extends MusicState {
 	}
 
 	function checkNoteHitWithAI(strumline:Strumline, note:Note) {
-		if (!note.alive || note.time > Conductor.time) return;
+		if (!note.alive || !note.hittable || note.time > Conductor.time) return;
 
 		strumline.members[note.lane].playAnim('notePressed');
 		//(strumline.player ? onNoteHit : onOpponentNoteHit)(note);
+		note.canHit = false;
 		if (note.isSustain) return;
 		note.destroy();
 		notes.remove(note);
