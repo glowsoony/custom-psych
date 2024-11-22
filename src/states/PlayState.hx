@@ -11,6 +11,20 @@ import objects.Strumline.StrumNote;
 class PlayState extends MusicState {
 	public static var song:Chart;
 
+	var scrollSpeed(default, set):Float = 1;
+	var scrollType:String;
+
+	function set_scrollSpeed(value:Float):Float {
+		var ratio:Float = value / scrollSpeed; //funny word huh
+		if (ratio != 1) {
+			for (note in unspawnedNotes) {
+				note.resizeByRatio(ratio);
+			}
+		}
+
+		return scrollSpeed = value;
+	}
+
 	public var opponentStrums:Strumline;
 	public var playerStrums:Strumline;
 
@@ -41,8 +55,11 @@ class PlayState extends MusicState {
 
 		FlxG.cameras.reset();
 
-		add(playerStrums = new Strumline(750, 50));
-		add(opponentStrums = new Strumline(100, 50));
+		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
+		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
+
+		add(playerStrums = new Strumline(750, strumlineYPos));
+		add(opponentStrums = new Strumline(100, strumlineYPos));
 
 		if (Settings.data.centeredNotes) {
 			playerStrums.screenCenter(X);
@@ -58,6 +75,13 @@ class PlayState extends MusicState {
 
 		loadSong(songID);
 		Conductor.play();
+
+		scrollType = Settings.data.gameplaySettings['scrollType'];
+		scrollSpeed = switch (scrollType) {
+			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
+			case 'Multiplicative': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
+			default: song.speed;
+		}
 	}
 
 	function loadSong(id:String):Void {
@@ -107,7 +131,7 @@ class PlayState extends MusicState {
 			if (note == null || !note.alive) continue;
 
 			final strumline:Strumline = note.player ? playerStrums : opponentStrums;
-			note.followStrum(strumline.members[note.lane]);
+			note.followStrum(strumline.members[note.lane], scrollSpeed);
 
 			if (note.time < Conductor.time - 300) {
 				notes.remove(note);
@@ -143,7 +167,7 @@ class PlayState extends MusicState {
 						speed: note.speed
 					}, oldNote, true);
 					sustainNote.parent = swagNote;
-					sustainNote.correctionOffset = Settings.data.scrollDirection == 'Down' ? 0 : swagNote.height * 0.5;
+					sustainNote.correctionOffset.y = Settings.data.scrollDirection == 'Down' ? 0 : swagNote.height * 0.5;
 					unspawnedNotes.push(sustainNote);
 					swagNote.tail.push(sustainNote);
 

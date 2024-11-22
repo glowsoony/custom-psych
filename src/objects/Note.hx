@@ -39,29 +39,27 @@ class Note extends FlxSprite {
 	public var lane:Int = 0;
 	public var speed:Float = 1.0;
 	public var player:Bool = false;
+	public var spawned:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;
-	public var spawned:Bool = false;
 
 	public var hitTime(get, never):Float;
 	function get_hitTime():Float {
 		return time - Conductor.time;
 	}
 
-	public var tail:Array<Note> = []; // for sustains
+	// sustain stuff
+	public var tail:Array<Note> = []; 
 	public var parent:Note;
-
+	public var correctionOffset:FlxPoint = FlxPoint.get(0, 0); // don't touch this one specifically
 	public var sustainLength:Float = 0;
 	public var isSustain:Bool = false;
-	public var type(default, set):String = null;
 
 	public static var colours:Array<String> = ['purple', 'blue', 'green', 'red'];
 	public static var directions:Array<String> = ['left', 'down', 'up', 'right'];
 	public var multSpeed(default, set):Float = 1;
 
-	public var correctionOffset:Float = 0;
 	public var offsetX:Float = 0.0;
-	public var offsetY:Float = 0.0;
 
 	public var copyX:Bool = true;
 	public var copyY:Bool = true;
@@ -76,10 +74,6 @@ class Note extends FlxSprite {
 
 		scale.y *= ratio;
 		updateHitbox();
-	}
-
-	private function set_type(value:String):String {
-		return type = value;
 	}
 
 	public function new(data:NoteData, ?prevNote:Note, ?sustainNote:Bool = false) {
@@ -101,26 +95,24 @@ class Note extends FlxSprite {
 		this.sustainLength = data.length;
 
 		reload();
-		if (!isSustain && lane < colours.length) { //Doing this 'if' check to fix the warnings on Senpai songs
+		if (!isSustain && lane < colours.length) { // Doing this 'if' check to fix the warnings on Senpai songs
 			animation.play('default');
 		}
 
 		if (isSustain) {
 			alpha = 0.6;
 
-			offsetX += width * 0.5;
+			correctionOffset.x += width * 0.5;
 			flipY = Settings.data.scrollDirection == 'Down';
 			animation.play('holdend');
 			updateHitbox();
 
-			offsetX -= width * 0.5;
-			x += (frameWidth * Strumline.size) * lane;
+			correctionOffset.x -= width * 0.5;
 
 			if (prevNote.isSustain) {
 				prevNote.animation.play('hold');
 
 				prevNote.scale.y *= Conductor.stepCrotchet * 0.01 * 1.05;
-				prevNote.scale.y *= speed;
 				prevNote.updateHitbox();
 			}
 		}
@@ -145,13 +137,13 @@ class Note extends FlxSprite {
 		updateHitbox();
 	}
 
-	public function followStrum(strum:StrumNote) {
-		var distance:Float = (hitTime * 0.45 * (speed / Conductor.rate));
+	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
+		var distance:Float = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
 		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
 
-		if (copyX) x = strum.x + offsetX;
+		if (copyX) x = strum.x + correctionOffset.x;
 		if (copyY) {
-			y = strum.y + offsetY + correctionOffset + distance;
+			y = strum.y + correctionOffset.y + distance;
 			if (Settings.data.scrollDirection == 'Down' && isSustain) {
 				y -= (frameHeight * scale.y) - ((frameWidth * Strumline.size) * 0.5);
 			}

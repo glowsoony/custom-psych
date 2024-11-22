@@ -38,7 +38,7 @@ class SaveVariables {
 	public var checkForUpdates:Bool = true;
 	public var gameplaySettings:Map<String, Dynamic> = [
 		'scrollSpeed' => 1.0,
-		'scrollType' => 'multiplicative', 
+		'scrollType' => 'Multiplicative', 
 		'playbackRate' => 1.0,
 		'healthGain' => 1.0,
 		'healthLoss' => 1.0,
