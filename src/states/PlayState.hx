@@ -28,6 +28,8 @@ class PlayState extends MusicState {
 	public var opponentStrums:Strumline;
 	public var playerStrums:Strumline;
 
+	public var botplay:Bool = false;
+
 	var songName:String;
 	public static var songID:String;
 	public var paused:Bool = false;
@@ -60,6 +62,8 @@ class PlayState extends MusicState {
 
 		add(playerStrums = new Strumline(750, strumlineYPos));
 		add(opponentStrums = new Strumline(100, strumlineYPos));
+
+		playerStrums.members[1].playAnim('notePressed');
 
 		if (Settings.data.centeredNotes) {
 			playerStrums.screenCenter(X);
@@ -133,11 +137,27 @@ class PlayState extends MusicState {
 			final strumline:Strumline = note.player ? playerStrums : opponentStrums;
 			note.followStrum(strumline.members[note.lane], scrollSpeed);
 
+			if (botplay) checkNoteHitWithAI(playerStrums, note);
+			checkNoteHitWithAI(opponentStrums, note);
+
 			if (note.time < Conductor.time - 300) {
 				notes.remove(note);
-				note.kill();
+				note.destroy();
 			}
 		}
+	}
+
+	function checkNoteHitWithAI(strumline:Strumline, note:Note) {
+		if (!note.alive || note.time > Conductor.time) return;
+
+		strumline.members[note.lane].playAnim('notePressed');
+		//(strumline.player ? onNoteHit : onOpponentNoteHit)(note);
+		note.destroy();
+		notes.remove(note);
+	}
+
+	function noteHit(note:Note) {
+		playerStrums.members[note.lane].playAnim('notePressed');
 	}
 
 	function loadNotes(id:String) {

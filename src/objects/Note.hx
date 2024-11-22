@@ -63,6 +63,8 @@ class Note extends FlxSprite {
 
 	public var copyX:Bool = true;
 	public var copyY:Bool = true;
+	public var copyAngle:Bool = true;
+	public var copyAlpha:Bool = true;
 
 	private function set_multSpeed(value:Float):Float {
 		resizeByRatio(value / multSpeed);
@@ -140,6 +142,9 @@ class Note extends FlxSprite {
 	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
 		var distance:Float = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
 		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
+
+		if (copyAngle) angle = strum.angle;
+		if (copyAlpha) alpha = strum.alpha;
 
 		if (copyX) x = strum.x + correctionOffset.x;
 		if (copyY) {

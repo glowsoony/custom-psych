@@ -7,13 +7,9 @@ class FunkinSprite extends flixel.FlxSprite {
 
 	public function new(?x:Float, ?y:Float, ?graphic:FlxGraphicAsset) {
 		super(x, y, graphic);
-		this.moves = false;
-		this.active = false;
-		this.antialiasing = Settings.data.antialiasing;
-
-		this.animation.finishCallback = _ -> {
-			this.active = false;
-		}
+		moves = false;
+		active = false;
+		antialiasing = Settings.data.antialiasing;
 	}
 
 	// knew this was gonna get to me eventually lol
@@ -35,9 +31,9 @@ class FunkinSprite extends flixel.FlxSprite {
 			return;
 		}
 
-		final offsetsForAnim:Array<Float> = offsetMap.exists(name) ? offsetMap.get(name) : [0, 0];
+		final offsetsForAnim:Array<Float> = offsetMap[name] ?? [0, 0];
+		//active = animation.curAnim.frames.length > 1;
 		animation.play(name, forced);
-		this.active = animation.curAnim.frames.length > 1;
 		offset.set(offsetsForAnim[0], offsetsForAnim[1]);
 	}
 }
