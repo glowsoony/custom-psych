@@ -155,6 +155,27 @@ class Note extends FlxSprite {
 		}
 	}
 
+	public function clipToStrum(strum:StrumNote) {
+		// function's for cliprecting sustains
+		// why would you wanna cliprect normal notes lmao
+		if (!isSustain) return;
+
+		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
+		var swagRect:FlxRect = clipRect ?? FlxRect.get(0, 0, frameWidth, frameHeight);
+		var center:Float = strum.getGraphicMidpoint().y + offset.y; 
+
+		if (downscroll) {
+			if (y * scale.y + height >= center) {
+				swagRect.y = frameHeight - swagRect.height;
+				swagRect.height = (center - y) / scale.y;
+			}
+		} else if (y - (height * 0.5) <= center) {
+			swagRect.y = (center - y) / scale.y;
+			swagRect.height = (height / scale.y) - swagRect.y;
+		}
+		clipRect = swagRect;
+	}
+
 	function loadAnims() {
 		final colour:String = colours[lane];
 		if (colour == null) return;

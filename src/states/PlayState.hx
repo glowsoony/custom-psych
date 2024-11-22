@@ -28,7 +28,11 @@ class PlayState extends MusicState {
 	public var opponentStrums:Strumline;
 	public var playerStrums:Strumline;
 
-	public var botplay:Bool = false;
+	public var botplay(default, set):Bool = true;
+	function set_botplay(value:Bool):Bool {
+		if (playerStrums != null) playerStrums.player = value;
+		return botplay = value;
+	}
 
 	var songName:String;
 	public static var songID:String;
@@ -55,15 +59,16 @@ class PlayState extends MusicState {
 		super.create();
 		self = this;
 
+		scrollType = Settings.data.gameplaySettings['scrollType'];
+		//botplay = Settings.data.gameplaySettings['botplay'];
+
 		FlxG.cameras.reset();
 
 		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
 
-		add(playerStrums = new Strumline(750, strumlineYPos));
+		add(playerStrums = new Strumline(750, strumlineYPos, !botplay));
 		add(opponentStrums = new Strumline(100, strumlineYPos));
-
-		playerStrums.members[1].playAnim('notePressed');
 
 		if (Settings.data.centeredNotes) {
 			playerStrums.screenCenter(X);
@@ -80,7 +85,6 @@ class PlayState extends MusicState {
 		loadSong(songID);
 		Conductor.play();
 
-		scrollType = Settings.data.gameplaySettings['scrollType'];
 		scrollSpeed = switch (scrollType) {
 			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
 			case 'Multiplicative': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
@@ -120,7 +124,7 @@ class PlayState extends MusicState {
 		loadNotes(songID);
 	}
 
-	override function update(elapsed):Void {
+	override function update(elapsed:Float):Void {
 		// note spawning
 		while (noteSpawnIndex < unspawnedNotes.length) {
 			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
@@ -135,16 +139,22 @@ class PlayState extends MusicState {
 			if (note == null || !note.alive) continue;
 
 			final strumline:Strumline = note.player ? playerStrums : opponentStrums;
-			note.followStrum(strumline.members[note.lane], scrollSpeed);
-
-			if (botplay) checkNoteHitWithAI(playerStrums, note);
-			checkNoteHitWithAI(opponentStrums, note);
+			final strum:StrumNote = strumline.members[note.lane];
+			note.followStrum(strum, scrollSpeed);
+			note.clipToStrum(strum);
 
 			if (note.time < Conductor.time - 300) {
 				notes.remove(note);
 				note.destroy();
 			}
+
+			if (note.player) {
+				if (botplay) checkNoteHitWithAI(playerStrums, note);
+			} else checkNoteHitWithAI(opponentStrums, note);
+
 		}
+
+		super.update(elapsed);
 	}
 
 	function checkNoteHitWithAI(strumline:Strumline, note:Note) {
@@ -152,6 +162,7 @@ class PlayState extends MusicState {
 
 		strumline.members[note.lane].playAnim('notePressed');
 		//(strumline.player ? onNoteHit : onOpponentNoteHit)(note);
+		if (note.isSustain) return;
 		note.destroy();
 		notes.remove(note);
 	}
@@ -209,7 +220,7 @@ class PlayState extends MusicState {
 	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
 	inline function keyPressed(key:KeyCode, _):Void {
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
-		if (dir == -1 || keysHeld[dir] || paused) return;
+		if (dir == -1 || keysHeld[dir] || botplay || paused) return;
 
 		var strumNote:StrumNote = playerStrums.members[dir];
 		strumNote.playAnim('pressed');
@@ -218,7 +229,7 @@ class PlayState extends MusicState {
 
 	inline function keyReleased(key:KeyCode, _):Void {
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
-		if (dir == -1) return;
+		if (dir == -1 || botplay) return;
 		keysHeld[dir] = false;
 
 		playerStrums.members[dir].playAnim('default');
