@@ -107,13 +107,7 @@ class PlayState extends MusicState {
 			if (note == null || !note.alive) continue;
 
 			final strumline:Strumline = note.player ? playerStrums : opponentStrums;
-			final receptor:StrumNote = strumline.members[note.lane];
-			final distance:Float = (note.hitTime * 0.45 * (note.speed / Conductor.rate));
-			final downscrollMult:Int = Settings.data.scrollDirection == 'Down' ? -1 : 1;
-
-			note.x = receptor.x + note.offsetX;
-			if (!note.isSustain) note.y = receptor.y + distance;
-			else note.y = receptor.y + (note.height * 0.5) + distance;
+			note.followStrum(strumline.members[note.lane]);
 
 			if (note.time < Conductor.time - 300) {
 				notes.remove(note);
@@ -149,6 +143,7 @@ class PlayState extends MusicState {
 						speed: note.speed
 					}, oldNote, true);
 					sustainNote.parent = swagNote;
+					sustainNote.correctionOffset = Settings.data.scrollDirection == 'Down' ? 0 : swagNote.height * 0.5;
 					unspawnedNotes.push(sustainNote);
 					swagNote.tail.push(sustainNote);
 

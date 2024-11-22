@@ -3,6 +3,8 @@ package objects;
 import backend.animation.PsychAnimationController;
 import backend.NoteTypesConfig;
 
+import objects.Strumline.StrumNote;
+
 import flixel.math.FlxRect;
 
 typedef NoteData = {
@@ -57,8 +59,12 @@ class Note extends FlxSprite {
 	public static var directions:Array<String> = ['left', 'down', 'up', 'right'];
 	public var multSpeed(default, set):Float = 1;
 
+	public var correctionOffset:Float = 0;
 	public var offsetX:Float = 0.0;
 	public var offsetY:Float = 0.0;
+
+	public var copyX:Bool = true;
+	public var copyY:Bool = true;
 
 	private function set_multSpeed(value:Float):Float {
 		resizeByRatio(value / multSpeed);
@@ -103,6 +109,7 @@ class Note extends FlxSprite {
 			alpha = 0.6;
 
 			offsetX += width * 0.5;
+			flipY = Settings.data.scrollDirection == 'Down';
 			animation.play('holdend');
 			updateHitbox();
 
@@ -136,6 +143,19 @@ class Note extends FlxSprite {
 		}
 
 		updateHitbox();
+	}
+
+	public function followStrum(strum:StrumNote) {
+		var distance:Float = (hitTime * 0.45 * (speed / Conductor.rate));
+		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
+
+		if (copyX) x = strum.x + offsetX;
+		if (copyY) {
+			y = strum.y + offsetY + correctionOffset + distance;
+			if (Settings.data.scrollDirection == 'Down' && isSustain) {
+				y -= (frameHeight * scale.y) - ((frameWidth * Strumline.size) * 0.5);
+			}
+		}
 	}
 
 	function loadAnims() {

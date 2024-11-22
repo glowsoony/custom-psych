@@ -7,7 +7,7 @@ import flixel.input.gamepad.FlxGamepadInputID;
 // Add a variable here and it will get automatically saved
 @:structInit 
 class SaveVariables {
-	public var scrollDirection:String = 'Up';
+	public var scrollDirection:String = 'Down';
 	public var centeredNotes:Bool = false;
 	public var opponentNotes:Bool = true;
 	public var fpsCounter:Bool = true;
