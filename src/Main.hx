@@ -65,6 +65,7 @@ class Main extends Sprite {
 		if (FlxG.save.data.volume != null) FlxG.sound.volume = FlxG.save.data.volume;
 
 		// shader coords fix
+		// by ne_eo
 		FlxG.signals.gameResized.add(function (_, _) {
 		    if (FlxG.cameras != null) {
 				for (cam in FlxG.cameras.list) {
