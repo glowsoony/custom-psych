@@ -178,7 +178,7 @@ class Note extends FlxSprite {
 		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
 		var swagRect:FlxRect = clipRect ?? FlxRect.get(0, 0, frameWidth, frameHeight);
 		//trace(offset == null);
-		var center:Float = strum.getGraphicMidpoint().y + offset?.y; 
+		var center:Float = strum.getGraphicMidpoint().y + offset.y; 
 
 		if (downscroll) {
 			if (y * scale.y + height >= center) {
