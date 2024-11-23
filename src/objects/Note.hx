@@ -49,14 +49,18 @@ class Note extends FlxSprite {
 	}
 
 	public var canHit:Bool = true;
+	public var inHitRange(get, never):Bool;
+	function get_inHitRange():Bool {
+		return (time > Conductor.time - (166 * lateHitMult)) && (time < Conductor.time + (166 * earlyHitMult));
+	}
+
 	public var hittable(get, never):Bool;
 	function get_hittable():Bool {
 		if (animation == null || animation.curAnim == null) return false;
-		
-		final inRange:Bool = (time > Conductor.time - (166 * lateHitMult)) && (time < Conductor.time + (166 * earlyHitMult));
+
 		final notEnd:Bool = animation.curAnim.name != 'holdend';
 		final notDestroyed:Bool = exists && alive;
-		return notDestroyed && notEnd && inRange && canHit;
+		return notDestroyed && notEnd && inHitRange && canHit && !missed;
 	}
 
 	public var lateHitMult:Float = 1;
@@ -68,6 +72,8 @@ class Note extends FlxSprite {
 	public var correctionOffset:FlxPoint = FlxPoint.get(0, 0); // don't touch this one specifically
 	public var sustainLength:Float = 0;
 	public var isSustain:Bool = false;
+	public var missed:Bool = false;
+	public var wasHit:Bool = false;
 
 	public static var colours:Array<String> = ['purple', 'blue', 'green', 'red'];
 	public static var directions:Array<String> = ['left', 'down', 'up', 'right'];
@@ -173,11 +179,11 @@ class Note extends FlxSprite {
 	public function clipToStrum(strum:StrumNote) {
 		// function's for cliprecting sustains
 		// why would you wanna cliprect normal notes lmao
-		if (!isSustain || !exists || !alive) return;
+		if (!exists || !alive) return;
+		if (!isSustain || !canHit) return;
 
 		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
 		var swagRect:FlxRect = clipRect ?? FlxRect.get(0, 0, frameWidth, frameHeight);
-		//trace(offset == null);
 		var center:Float = strum.getGraphicMidpoint().y + offset.y; 
 
 		if (downscroll) {

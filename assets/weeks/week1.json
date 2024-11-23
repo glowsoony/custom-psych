@@ -19,6 +19,12 @@
 			name: 'Taste For Blood',
 			icon: 'dad',
 			color: 0xFF000000
+		},
+		{
+			name: 'TremENDouS',
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['maniac']
 		}
 	],
 
