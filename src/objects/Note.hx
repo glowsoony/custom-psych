@@ -51,7 +51,12 @@ class Note extends FlxSprite {
 	public var canHit:Bool = true;
 	public var hittable(get, never):Bool;
 	function get_hittable():Bool {
-		return (time > Conductor.time - (166 * lateHitMult)) && (time < Conductor.time + (166 * earlyHitMult)) && canHit;
+		if (animation == null || animation.curAnim == null) return false;
+		
+		final inRange:Bool = (time > Conductor.time - (166 * lateHitMult)) && (time < Conductor.time + (166 * earlyHitMult));
+		final notEnd:Bool = animation.curAnim.name != 'holdend';
+		final notDestroyed:Bool = exists && alive;
+		return notDestroyed && notEnd && inRange && canHit;
 	}
 
 	public var lateHitMult:Float = 1;
@@ -80,7 +85,7 @@ class Note extends FlxSprite {
 	}
 
 	public function resizeByRatio(ratio:Float) { // haha funny twitter shit
-		if (!isSustain || animation.curAnim == null || animation.curAnim.name.endsWith('holdend')) return;
+		if (!isSustain || animation.curAnim == null || animation.curAnim.name == 'holdend') return;
 
 		scale.y *= ratio;
 		updateHitbox();
@@ -168,11 +173,12 @@ class Note extends FlxSprite {
 	public function clipToStrum(strum:StrumNote) {
 		// function's for cliprecting sustains
 		// why would you wanna cliprect normal notes lmao
-		if (!isSustain) return;
+		if (!isSustain || !exists || !alive) return;
 
 		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
 		var swagRect:FlxRect = clipRect ?? FlxRect.get(0, 0, frameWidth, frameHeight);
-		var center:Float = strum.getGraphicMidpoint().y + offset.y; 
+		//trace(offset == null);
+		var center:Float = strum.getGraphicMidpoint().y + offset?.y; 
 
 		if (downscroll) {
 			if (y * scale.y + height >= center) {

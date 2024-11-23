@@ -141,7 +141,6 @@ class PlayState extends MusicState {
 			final strumline:Strumline = note.player ? playerStrums : opponentStrums;
 			final strum:StrumNote = strumline.members[note.lane];
 			note.followStrum(strum, scrollSpeed);
-			note.clipToStrum(strum);
 
 			if (note.time < Conductor.time - 300) {
 				notes.remove(note);
@@ -149,26 +148,43 @@ class PlayState extends MusicState {
 			}
 
 			if (note.player) {
-				if (botplay) checkNoteHitWithAI(playerStrums, note);
-			} else checkNoteHitWithAI(opponentStrums, note);
+				if (botplay) {
+					note.clipToStrum(strum);
+					checkNoteHitWithAI(playerStrums, note);
+				} else if (note.isSustain && keysHeld[note.lane]) {
+					note.clipToStrum(strum);
+					noteHit(note);
+				}
+			} else {
+				note.clipToStrum(strum);
+				checkNoteHitWithAI(opponentStrums, note);
+			}
 
 		}
 
 		super.update(elapsed);
 	}
 
-	function checkNoteHitWithAI(strumline:Strumline, note:Note) {
-		if (!note.alive || !note.hittable || note.time > Conductor.time) return;
+	dynamic function checkNoteHitWithAI(strumline:Strumline, note:Note) {
+		if (!note.hittable || note.time > Conductor.time) return;
 
 		strumline.members[note.lane].playAnim('notePressed');
-		//(strumline.player ? onNoteHit : onOpponentNoteHit)(note);
 		note.canHit = false;
+
 		if (note.isSustain) return;
 		note.destroy();
 		notes.remove(note);
 	}
 
 	function noteHit(note:Note) {
+		if (note.isSustain) {
+			if (!note.hittable || note.time > Conductor.time) return;
+
+			playerStrums.members[note.lane].playAnim('notePressed');
+			note.canHit = false;
+			return;
+		}
+
 		playerStrums.members[note.lane].playAnim('notePressed');
 	}
 
@@ -178,8 +194,19 @@ class PlayState extends MusicState {
 		notes.clear();
 
 		var oldNote:Note = null;
-		for (note in parsedNotes) {
+		for (i => note in parsedNotes) {
 			var daBPM:Float = Conductor.getBPMChangeFromMS(note.time).bpm;
+
+			if (i != 0) {
+				// CLEAR ANY POSSIBLE GHOST NOTES
+				for (evilNote in unspawnedNotes) {
+					var matches:Bool = (note.lane == evilNote.lane && note.player == evilNote.player);
+					if (matches && Math.abs(note.time - evilNote.time) < 2.0) {
+						evilNote.destroy();
+						unspawnedNotes.remove(evilNote);
+					}
+				}
+			}
 
 			var swagNote:Note = new Note(note, oldNote);
 			unspawnedNotes.push(swagNote);
@@ -223,8 +250,23 @@ class PlayState extends MusicState {
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
 		if (dir == -1 || keysHeld[dir] || botplay || paused) return;
 
-		var strumNote:StrumNote = playerStrums.members[dir];
-		strumNote.playAnim('pressed');
+		var strum:StrumNote = playerStrums.members[dir];
+		final sortedNotes:Array<Note> = notes.members.filter(function(note:Note):Bool {
+			return note != null && note.lane == dir && note.player && !note.isSustain && note.hittable;
+		});
+
+		if (sortedNotes.length > 0) {
+			sortedNotes.sort((a, b) -> Std.int(a.time - b.time));
+			var note:Note = sortedNotes[0];
+
+			noteHit(note);
+			note.destroy();
+			notes.remove(note);
+			note = null;
+		} else {
+			strum.playAnim('pressed');
+		}
+
 		keysHeld[dir] = true;
 	}
 
