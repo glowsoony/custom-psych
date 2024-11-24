@@ -54,6 +54,11 @@ class Note extends FlxSprite {
 		return (time > Conductor.time - (166 * lateHitMult)) && (time < Conductor.time + (166 * earlyHitMult));
 	}
 
+	public var tooLate(get, never):Bool;
+	function get_tooLate():Bool {
+		return hitTime < -(166 + 25);
+	}
+
 	public var hittable(get, never):Bool;
 	function get_hittable():Bool {
 		if (animation == null || animation.curAnim == null) return false;

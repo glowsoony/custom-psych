@@ -28,7 +28,7 @@ class PlayState extends MusicState {
 	public var opponentStrums:Strumline;
 	public var playerStrums:Strumline;
 
-	public var botplay(default, set):Bool = true;
+	public var botplay(default, set):Bool = false;
 	function set_botplay(value:Bool):Bool {
 		if (playerStrums != null) playerStrums.player = value;
 		return botplay = value;
@@ -124,94 +124,6 @@ class PlayState extends MusicState {
 		loadNotes(songID);
 	}
 
-	override function update(elapsed:Float):Void {
-		// note spawning
-		while (noteSpawnIndex < unspawnedNotes.length) {
-			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
-			if (noteToSpawn.hitTime > noteSpawnDelay) break;
-
-			notes.add(noteToSpawn);
-			noteToSpawn.spawned = true;
-			noteSpawnIndex++;
-		}
-
-		for (note in notes.members) {
-			if (note == null || !note.alive) continue;
-
-			final strum:StrumNote = (note.player ? playerStrums : opponentStrums).members[note.lane];
-			note.followStrum(strum, scrollSpeed);
-
-			if (note.player) {
-				if (botplay) {
-					checkNoteHitWithAI(strum, note);
-				} else sustainInputs(strum, note);
-			} else {
-				checkNoteHitWithAI(strum, note);
-			}
-
-			if (!note.isSustain && note.hitTime < -(166 + 25)) {
-				note.missed = true;
-			}
-
-			if (note.time < Conductor.time - 300) {
-				notes.remove(note);
-				note.destroy();
-			}
-		}
-
-		super.update(elapsed);
-	}
-
-	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note) {
-		if (!note.canHit || note.time > Conductor.time) return;
-
-		// ai sustain input
-		if (note.isSustain) {
-			
-			note.clipToStrum(strum);
-			if (note.wasHit) return;
-			note.wasHit = true;
-			strum.playAnim('notePressed');
-			return;
-		}
-
-		// normal notes
-		strum.playAnim('notePressed');
-		note.destroy();
-		notes.remove(note);
-	}
-
-	dynamic function sustainInputs(strum:StrumNote, note:Note) {
-		if (!note.isSustain) return;
-
-		var parent:Note = note.parent;
-		if (!parent.canHit || parent.missed || !parent.wasHit) return;
-
-		if (!keysHeld[parent.lane] && note.hitTime < -(166 + 25)) {
-			parent.missed = true;
-			return;
-		}
-
-		if (!keysHeld[parent.lane]) return;
-
-		if (note.wasHit) {
-			note.clipToStrum(strum);
-			return;
-		}
-
-		note.wasHit = true;
-
-		note.clipToStrum(strum);
-		strum.playAnim('notePressed');
-	}
-
-	function noteHit(note:Note) {
-		playerStrums.members[note.lane].playAnim('notePressed');
-		note.wasHit = true;
-		note.destroy();
-		notes.remove(note);
-	}
-
 	function loadNotes(id:String) {
 		var parsedNotes:Array<NoteData> = Song.parse(song);
 
@@ -267,6 +179,97 @@ class PlayState extends MusicState {
 
 		unspawnedNotes.sort((a, b) -> Std.int(a.time - b.time));
 		oldNote = null;
+	}
+
+	override function update(elapsed:Float):Void {
+		// note spawning
+		while (noteSpawnIndex < unspawnedNotes.length) {
+			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
+			if (noteToSpawn.hitTime > noteSpawnDelay) break;
+
+			notes.add(noteToSpawn);
+			noteToSpawn.spawned = true;
+			noteSpawnIndex++;
+		}
+
+		for (note in notes.members) {
+			if (note == null || !note.alive) continue;
+
+			final strum:StrumNote = (note.player ? playerStrums : opponentStrums).members[note.lane];
+			note.followStrum(strum, scrollSpeed);
+
+			if (note.player) {
+				if (botplay) checkNoteHitWithAI(strum, note);
+				else sustainInputs(strum, note);
+			} else checkNoteHitWithAI(strum, note);
+
+			if (note.player && !note.missed && !note.isSustain && note.hitTime < -(166 + 25)) {
+				note.missed = true;
+				noteMiss(note);
+			}
+
+			if (note.time < Conductor.time - 300) {
+				notes.remove(note);
+				note.destroy();
+			}
+		}
+
+		super.update(elapsed);
+	}
+
+	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note) {
+		if (!note.canHit || note.time > Conductor.time) return;
+
+		// ai sustain input
+		if (note.isSustain) {
+			
+			note.clipToStrum(strum);
+			if (note.wasHit) return;
+			note.wasHit = true;
+			strum.playAnim('notePressed');
+			return;
+		}
+
+		// normal notes
+		strum.playAnim('notePressed');
+		note.destroy();
+		notes.remove(note);
+	}
+
+	dynamic function sustainInputs(strum:StrumNote, note:Note) {
+		if (!note.isSustain) return;
+
+		var parent:Note = note.parent;
+		if (!parent.canHit || parent.missed || !parent.wasHit) return;
+
+		if (!keysHeld[parent.lane] && note.hitTime < -(166 + 25)) {
+			parent.missed = true;
+			noteMiss(note);
+			return;
+		}
+
+		if (!keysHeld[parent.lane]) return;
+
+		if (note.wasHit) {
+			note.clipToStrum(strum);
+			return;
+		}
+
+		note.wasHit = true;
+
+		note.clipToStrum(strum);
+		strum.playAnim('notePressed');
+	}
+
+	function noteHit(note:Note) {
+		playerStrums.members[note.lane].playAnim('notePressed');
+		note.wasHit = true;
+		note.destroy();
+		notes.remove(note);
+	}
+
+	function noteMiss(note:Note) {
+		trace('missed !!!!');
 	}
 
 	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
