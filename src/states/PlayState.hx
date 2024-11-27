@@ -5,7 +5,7 @@ import lime.ui.KeyCode;
 import lime.app.Application;
 
 import objects.*;
-import objects.Note;
+import objects.Note.NoteData;
 import objects.Strumline.StrumNote;
 
 import backend.Judgement;
@@ -52,6 +52,10 @@ class PlayState extends MusicState {
 	var totalNotesHit:Int = 0;
 
 	var combo:Int = 0;
+	var health(default, set):Float = 50;
+	function set_health(value:Float):Float {
+		return health = FlxMath.bound(value, 0, 100);
+	}
 	
 	var notes:FlxTypedSpriteGroup<Note>;
 	var unspawnedNotes:Array<Note> = [];
@@ -60,6 +64,8 @@ class PlayState extends MusicState {
 
 	var judgeSpr:JudgementSpr;
 	var comboNumbers:ComboNums;
+
+	var healthBar:Bar;
 
 	var keys:Array<String> = [
 		'note_left',
@@ -102,6 +108,11 @@ class PlayState extends MusicState {
 
 		add(hudGroup = new FlxSpriteGroup());
 		//hudGroup.cameras = [camHUD];
+
+		hudGroup.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
+		healthBar.setColors(FlxColor.RED, FlxColor.LIME);
+		healthBar.screenCenter(X);
+		healthBar.leftToRight = false;
 
 		scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, 'Score: 0 | Combo Breaks: 0 | Accuracy: ?', 16);
 		scoreTxt.font = Paths.font('vcr.ttf');
@@ -250,6 +261,8 @@ class PlayState extends MusicState {
 			}
 		}
 
+		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, Math.exp(-elapsed * 3.125));
+
 		super.update(elapsed);
 	}
 
@@ -319,7 +332,7 @@ class PlayState extends MusicState {
 			if (Math.abs(note.hitTime) >= judge.timing) continue;
 
 			totalNotesPlayed += judge.accuracy;
-
+			health += judge.health;
 			judgeSpr.display(judge.name);
 
 			break;
@@ -339,11 +352,17 @@ class PlayState extends MusicState {
 		comboBreaks++;
 		combo = 0;
 		score -= 20;
+		health -= 6;
 
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
 
 		updateAccuracy();
 		updateScoreTxt();
+	}
+
+	override function measureHit(measure:Int) {
+		super.measureHit(measure);
+		FlxG.camera.zoom += 0.015;
 	}
 
 	// in case someone wants to make their own accuracy calc
