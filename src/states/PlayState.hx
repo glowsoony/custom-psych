@@ -8,6 +8,8 @@ import objects.*;
 import objects.Note;
 import objects.Strumline.StrumNote;
 
+import backend.Judgement;
+
 class PlayState extends MusicState {
 	public static var song:Chart;
 
@@ -41,9 +43,23 @@ class PlayState extends MusicState {
 
 	var noteSpawnIndex:Int = 0;
 	var noteSpawnDelay:Float = 1500;
+
+	var comboBreaks:Int = 0;
+	var score:Int = 0;
+	var accuracy:Float = 0.0;
+
+	var totalNotesPlayed:Float = 0.0;
+	var totalNotesHit:Int = 0;
+
+	var combo:Int = 0;
 	
 	var notes:FlxTypedSpriteGroup<Note>;
 	var unspawnedNotes:Array<Note> = [];
+
+	var scoreTxt:FlxText;
+
+	var judgeSpr:JudgementSpr;
+	var comboNumbers:ComboNums;
 
 	var keys:Array<String> = [
 		'note_left',
@@ -51,6 +67,9 @@ class PlayState extends MusicState {
 		'note_up',
 		'note_right'
 	];
+
+	var camHUD:FlxCamera;
+	var hudGroup:FlxSpriteGroup;
 
 	override function create() {
 		Paths.clearStoredMemory();
@@ -60,9 +79,11 @@ class PlayState extends MusicState {
 		self = this;
 
 		scrollType = Settings.data.gameplaySettings['scrollType'];
-		//botplay = Settings.data.gameplaySettings['botplay'];
+		botplay = Settings.data.gameplaySettings['botplay'];
 
 		FlxG.cameras.reset();
+/*		camHUD = FlxG.cameras.add(new FlxCamera(), false);
+		camHUD.bgColor.alphaFloat = 1 - (Settings.data.stageBrightness * 0.01);*/
 
 		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
@@ -78,6 +99,21 @@ class PlayState extends MusicState {
 		if (!Settings.data.opponentNotes) opponentStrums.alpha = 0;
 
 		add(notes = new FlxTypedSpriteGroup<Note>());
+
+		add(hudGroup = new FlxSpriteGroup());
+		//hudGroup.cameras = [camHUD];
+
+		scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, 'Score: 0 | Combo Breaks: 0 | Accuracy: ?', 16);
+		scoreTxt.font = Paths.font('vcr.ttf');
+		scoreTxt.alignment = CENTER;
+		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		scoreTxt.borderColor = FlxColor.BLACK;
+		scoreTxt.borderSize = 1.25;
+		hudGroup.add(scoreTxt);
+		scoreTxt.screenCenter(X);
+
+		hudGroup.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
+		hudGroup.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
 
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
@@ -220,17 +256,23 @@ class PlayState extends MusicState {
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note) {
 		if (!note.canHit || note.time >= Conductor.time) return;
 
+		final func = note.player ? noteHit : opponentNoteHit;
+
 		// ai sustain input
 		if (note.isSustain) {
 			note.clipToStrum(strum);
 			if (note.wasHit) return;
+
 			note.wasHit = true;
 			strum.playAnim('notePressed');
+			func(note);
 			return;
 		}
 
 		// normal notes
 		strum.playAnim('notePressed');
+		note.wasHit = true;
+		func(note);
 		note.destroy();
 		notes.remove(note);
 	}
@@ -238,7 +280,7 @@ class PlayState extends MusicState {
 	dynamic function sustainInputs(strum:StrumNote, note:Note) {
 		var parent:Note = note.parent;
 
-		if (parent.missed) return;
+		if (!parent.canHit || parent.missed) return;
 
 		if (!keysHeld[parent.lane] && ((parent.wasHit ? note.time < Conductor.time : parent.tooLate)) && !note.wasHit) {
 			noteMiss(note);
@@ -252,22 +294,61 @@ class PlayState extends MusicState {
 
 		if (note.wasHit) return;
 
-		if (note.time <= Conductor.time) {
-			note.wasHit = true;
-		} else return;
-
+		if (note.time <= Conductor.time) note.wasHit = true;
+		else return;
+		
 		strum.playAnim('notePressed');
 	}
 
-	function noteHit(note:Note) {
+	dynamic function opponentNoteHit(note:Note) {
+		if (song.needsVoices && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
+	}
+
+	dynamic function noteHit(note:Note) {
 		playerStrums.members[note.lane].playAnim('notePressed');
 		note.wasHit = true;
+
+		if (song.needsVoices) Conductor.mainVocals.volume = 1;
+
+		totalNotesHit++;
+		for (id => judge in Judgement.list) {
+			if (Math.abs(note.hitTime) >= judge.timing) continue;
+
+			score += judge.score;
+			totalNotesPlayed += judge.accuracy;
+
+			judgeSpr.display(judge.name);
+
+			break;
+		}
+
+		combo++;
+		comboNumbers.display(combo);
+
+		updateAccuracy();
+		updateScoreTxt();
+
 		note.destroy();
 		notes.remove(note);
 	}
 
-	function noteMiss(note:Note) {
-		trace('missed !!!!');
+	dynamic function noteMiss(note:Note) {
+		comboBreaks++;
+		combo = 0;
+
+		if (song.needsVoices) Conductor.mainVocals.volume = 0;
+
+		updateAccuracy();
+		updateScoreTxt();
+	}
+
+	// in case someone wants to make their own accuracy calc
+	dynamic function updateAccuracy() {
+		accuracy = totalNotesPlayed / (totalNotesHit + comboBreaks);
+	}
+
+	dynamic function updateScoreTxt() {
+		scoreTxt.text = 'Score: $score | Combo Breaks: $comboBreaks | Accuracy: ${Util.truncateFloat(accuracy, 2)}%';
 	}
 
 	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];

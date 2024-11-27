@@ -6,6 +6,8 @@ import options.OptionsState;
 
 import objects.FunkinSprite;
 
+import scripting.ScriptHandler;
+
 class MainMenuState extends MusicState {
 	public static var curSelected:Int = 0;
 	public static var mouseControls:Bool = true;
@@ -65,6 +67,8 @@ class MainMenuState extends MusicState {
 
 		FlxG.camera.follow(camFollow, null, 0.15);
 		FlxG.mouse.visible = true;
+
+		ScriptHandler.loadFile('scripts/test.hx');
 	}
 
 	var alreadyPressedEnter:Bool = false;

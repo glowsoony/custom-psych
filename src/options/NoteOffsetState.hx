@@ -241,13 +241,13 @@ class NoteOffsetState extends MusicState
 								case 3:
 									Settings.data.comboPosition[1] -= addNum;
 								case 4:
-									Settings.data.judgementPosition[2] -= addNum;
+									Settings.data.judgePosition[2] -= addNum;
 								case 5:
-									Settings.data.judgementPosition[2] += addNum;
+									Settings.data.judgePosition[2] += addNum;
 								case 6:
-									Settings.data.judgementPosition[3] += addNum;
+									Settings.data.judgePosition[3] += addNum;
 								case 7:
-									Settings.data.judgementPosition[3] -= addNum;
+									Settings.data.judgePosition[3] -= addNum;
 							}
 						}
 					}
@@ -288,8 +288,8 @@ class NoteOffsetState extends MusicState
 					startMousePos.y - comboNums.y >= 0 && startMousePos.y - comboNums.y <= comboNums.height)
 				{
 					holdingObjectType = true;
-					startComboOffset.x = Settings.data.judgementPosition[2];
-					startComboOffset.y = Settings.data.judgementPosition[3];
+					startComboOffset.x = Settings.data.judgePosition[2];
+					startComboOffset.y = Settings.data.judgePosition[3];
 					//trace('yo bro');
 				}
 				else if (startMousePos.x - rating.x >= 0 && startMousePos.x - rating.x <= rating.width &&
@@ -320,8 +320,8 @@ class NoteOffsetState extends MusicState
 					Settings.data.comboPosition[addNum] = Math.round((mousePos.x - startMousePos.x) + startComboOffset.x);
 					Settings.data.comboPosition[addNum + 1] = -Math.round((mousePos.y - startMousePos.y) - startComboOffset.y);
 
-					Settings.data.judgementPosition[addNum] = Math.round((mousePos.x - startMousePos.x) + startComboOffset.x);
-					Settings.data.judgementPosition[addNum + 1] = -Math.round((mousePos.y - startMousePos.y) - startComboOffset.y);
+					Settings.data.judgePosition[addNum] = Math.round((mousePos.x - startMousePos.x) + startComboOffset.x);
+					Settings.data.judgePosition[addNum + 1] = -Math.round((mousePos.y - startMousePos.y) - startComboOffset.y);
 					repositionCombo();
 				}
 			}
@@ -329,7 +329,7 @@ class NoteOffsetState extends MusicState
 			if (Controls.justPressed('reset')) {
 				for (i in 0...2) {
 					Settings.data.comboPosition[i] = 0;
-					Settings.data.judgementPosition[i] = 0;
+					Settings.data.judgePosition[i] = 0;
 				}
 				repositionCombo();
 			}
@@ -459,7 +459,7 @@ class NoteOffsetState extends MusicState
 			switch(i)
 			{
 				case 0: dumbTexts.members[i].text = Language.getPhrase('combo_rating_offset', 'Judgement Position:');
-				case 1: dumbTexts.members[i].text = '[${Settings.data.judgementPosition[0]}, ${Settings.data.judgementPosition[1]}]';
+				case 1: dumbTexts.members[i].text = '[${Settings.data.judgePosition[0]}, ${Settings.data.judgePosition[1]}]';
 				case 2: dumbTexts.members[i].text = Language.getPhrase('combo_numbers_offset', 'Combo Position:');
 				case 3: dumbTexts.members[i].text = '[${Settings.data.comboPosition[0]}, ${Settings.data.comboPosition[1]}]';
 			}

@@ -7,14 +7,14 @@ import flixel.input.gamepad.FlxGamepadInputID;
 // Add a variable here and it will get automatically saved
 @:structInit 
 class SaveVariables {
-	public var scrollDirection:String = 'Down';
+	public var scrollDirection:String = 'Up';
 	public var centeredNotes:Bool = false;
 	public var opponentNotes:Bool = true;
 	public var fpsCounter:Bool = true;
 	public var flashingLights:Bool = true;
 	public var autoPause:Bool = true;
 	public var antialiasing:Bool = true;
-	public var noteSkin:String = 'Funkin';
+	public var noteSkin:String = 'Default';
 	public var splashSkin:String = 'Psych';
 	public var splashAlpha:Float = 0.6;
 	public var lowQuality:Bool = false;
@@ -27,6 +27,8 @@ class SaveVariables {
 
 	public var fullscreen:Bool = false;
 	public var volume:Float = 1;
+
+	public var stageBrightness:Int = 100;
 
 	public var ghostTapping:Bool = true;
 	public var timeBarType:String = 'Time Left';
@@ -47,13 +49,15 @@ class SaveVariables {
 		'botplay' => false
 	];
 
-	public var comboPosition:Array<Float> = [0.0, 0.0];
-	public var judgementPosition:Array<Float> = [0.0, 0.0];
+	public var comboPosition:Array<Float> = [300, 300];
+	public var judgePosition:Array<Float> = [300, 200];
 	public var ratingOffset:Float = 0.0;
-	public var sickWindow:Int = 45;
-	public var goodWindow:Int = 90;
-	public var badWindow:Int = 135;
-	public var safeFrames:Float = 10;
+
+	public var sickHitWindow:Int = 45;
+	public var goodHitWindow:Int = 90;
+	public var badHitWindow:Int = 135;
+	public var shitHitWindow:Int = 180;
+
 	public var guitarHeroSustains:Bool = true;
 	public var discordRPC:Bool = true;
 	public var loadingScreen:Bool = true;
