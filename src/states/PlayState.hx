@@ -311,10 +311,13 @@ class PlayState extends MusicState {
 		if (song.needsVoices) Conductor.mainVocals.volume = 1;
 
 		totalNotesHit++;
+		
+		// pbot1 scoring system
+		// cuz judgement based is super boring :sob:
+		score += Math.floor(500 - Math.abs(note.hitTime));
 		for (id => judge in Judgement.list) {
 			if (Math.abs(note.hitTime) >= judge.timing) continue;
 
-			score += judge.score;
 			totalNotesPlayed += judge.accuracy;
 
 			judgeSpr.display(judge.name);
@@ -335,6 +338,7 @@ class PlayState extends MusicState {
 	dynamic function noteMiss(note:Note) {
 		comboBreaks++;
 		combo = 0;
+		score -= 20;
 
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
 

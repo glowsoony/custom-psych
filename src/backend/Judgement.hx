@@ -5,10 +5,10 @@ import flixel.math.FlxPoint;
 @:structInit
 class Judgement {
 	public static var list:Array<Judgement> = [
-		{name: 'sick', timing: Settings.data.sickHitWindow, score: 350, accuracy: 100, health: 2.5},
-		{name: 'good', timing: Settings.data.goodHitWindow, score: 200, accuracy: 85, health: 1},
-		{name: 'bad', timing: Settings.data.badHitWindow, score: 100, accuracy: 60, health: -2.5},
-		{name: 'shit', timing: Settings.data.shitHitWindow, score: -50, accuracy: 40, health: -4}
+		{name: 'sick', timing: Settings.data.sickHitWindow, accuracy: 100, health: 2.5},
+		{name: 'good', timing: Settings.data.goodHitWindow, accuracy: 85, health: 1},
+		{name: 'bad', timing: Settings.data.badHitWindow, accuracy: 60, health: -2.5},
+		{name: 'shit', timing: Settings.data.shitHitWindow, accuracy: 40, health: -4}
 	];
 
 	public static var maxHitWindow(get, never):Float;
@@ -19,7 +19,6 @@ class Judgement {
 
 	public var name:String;
 	public var timing:Float;
-	public var score:Int = 0;
 	public var accuracy:Float = 0.0;
 	public var health:Float = 0.0;
 	public var breakCombo:Bool = false;
