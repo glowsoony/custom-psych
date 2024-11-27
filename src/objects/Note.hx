@@ -51,7 +51,7 @@ class Note extends FlxSprite {
 	public var canHit:Bool = true;
 	public var inHitRange(get, never):Bool;
 	function get_inHitRange():Bool {
-		return (time > Conductor.time - (166 * lateHitMult)) && (time < Conductor.time + (166 * earlyHitMult));
+		return (time < Conductor.time + (166 * earlyHitMult) && (time > Conductor.time - (166 * lateHitMult)));
 	}
 
 	public var tooLate(get, never):Bool;

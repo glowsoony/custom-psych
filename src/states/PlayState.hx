@@ -200,10 +200,10 @@ class PlayState extends MusicState {
 
 			if (note.player) {
 				if (botplay) checkNoteHitWithAI(strum, note);
-				else sustainInputs(strum, note);
+				else if (note.isSustain) sustainInputs(strum, note);
 			} else checkNoteHitWithAI(strum, note);
 
-			if (note.player && !note.missed && !note.isSustain && note.hitTime < -(166 + 25)) {
+			if (note.player && !note.missed && !note.isSustain && note.tooLate) {
 				note.missed = true;
 				noteMiss(note);
 			}
@@ -218,11 +218,10 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note) {
-		if (!note.canHit || note.time > Conductor.time) return;
+		if (!note.canHit || note.time >= Conductor.time) return;
 
 		// ai sustain input
 		if (note.isSustain) {
-			
 			note.clipToStrum(strum);
 			if (note.wasHit) return;
 			note.wasHit = true;
@@ -237,27 +236,26 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function sustainInputs(strum:StrumNote, note:Note) {
-		if (!note.isSustain) return;
-
 		var parent:Note = note.parent;
-		if (!parent.canHit || parent.missed || !parent.wasHit) return;
 
-		if (!keysHeld[parent.lane] && note.hitTime < -(166 + 25)) {
-			parent.missed = true;
+		if (parent.missed) return;
+
+		if (!keysHeld[parent.lane] && ((parent.wasHit ? note.time < Conductor.time : parent.tooLate)) && !note.wasHit) {
 			noteMiss(note);
+			parent.missed = true;
 			return;
 		}
 
 		if (!keysHeld[parent.lane]) return;
 
-		if (note.wasHit) {
-			note.clipToStrum(strum);
-			return;
-		}
-
-		note.wasHit = true;
-
 		note.clipToStrum(strum);
+
+		if (note.wasHit) return;
+
+		if (note.time <= Conductor.time) {
+			note.wasHit = true;
+		} else return;
+
 		strum.playAnim('notePressed');
 	}
 
