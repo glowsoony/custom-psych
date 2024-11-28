@@ -3,12 +3,12 @@ package substates;
 import backend.WeekData;
 
 import flixel.FlxSubState;
-import objects.HealthIcon;
+import objects.CharIcon;
 
 class ResetScoreSubState extends FlxSubState {
 	var bg:FlxSprite;
 	var alphabetArray:Array<Alphabet> = [];
-	var icon:HealthIcon;
+	var icon:CharIcon;
 	var onYes:Bool = false;
 	var yesText:Alphabet;
 	var noText:Alphabet;
@@ -52,7 +52,7 @@ class ResetScoreSubState extends FlxSubState {
 		add(text);
 
 		if (week == -1) {
-			icon = new HealthIcon(character);
+			icon = new CharIcon(character);
 			icon.setGraphicSize(Std.int(icon.width * tooLong));
 			icon.updateHitbox();
 			icon.setPosition(text.x - icon.width + (10 * tooLong), text.y - 30);

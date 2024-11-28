@@ -183,7 +183,7 @@ class AchievementsMenuState extends MusicState {
 			}
 			
 			if (Controls.justPressed('reset') && (options[curSelected].unlocked || options[curSelected].curProgress > 0)) {
-				openSubState(new ResetAchievementSubstate());
+				openSubstate(new ResetAchievementSubstate());
 			}
 		}
 

@@ -3,7 +3,7 @@ package states;
 import backend.WeekData;
 import backend.Song;
 
-import objects.HealthIcon;
+import objects.CharIcon;
 
 import options.GameplayChangersSubstate;
 import substates.ResetScoreSubState;
@@ -23,7 +23,7 @@ class FreeplayState extends MusicState {
 	static var curDiffs:Array<String> = Difficulty.list;
 
 	var grpSongs:FlxTypedSpriteGroup<Alphabet>;
-	var grpIcons:FlxTypedSpriteGroup<HealthIcon>;
+	var grpIcons:FlxTypedSpriteGroup<CharIcon>;
 
 	var bg:FlxSprite;
 	var intendedColour:Int;
@@ -66,7 +66,7 @@ class FreeplayState extends MusicState {
 		bg.color = intendedColour = songList[curSelected].color;
 
 		add(grpSongs = new FlxTypedSpriteGroup<Alphabet>());
-		add(grpIcons = new FlxTypedSpriteGroup<HealthIcon>());
+		add(grpIcons = new FlxTypedSpriteGroup<CharIcon>());
 
 		for (index => song in songList) {
 			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, song.name));
@@ -75,7 +75,7 @@ class FreeplayState extends MusicState {
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
 			alphabet.snapToPosition();
 
-			var icon:HealthIcon = new HealthIcon(song.icon);
+			var icon:CharIcon = new CharIcon(song.icon);
 			icon.visible = icon.active = false;
 			grpIcons.add(icon);
 		}
@@ -249,7 +249,7 @@ class FreeplayState extends MusicState {
 			item.x = ((item.targetY - lerpSelected) * item.distancePerItem.x) + item.spawnPos.x;
 			item.y = ((item.targetY - lerpSelected) * 1.3 * item.distancePerItem.y) + item.spawnPos.y;
 
-			var icon:HealthIcon = grpIcons.members[i];
+			var icon:CharIcon = grpIcons.members[i];
 			icon.visible = true;
 			icon.setPosition(item.x + (item.width + (icon.width * 0.05)), item.y - (item.height * 0.5));
 			_lastVisibles.push(i);

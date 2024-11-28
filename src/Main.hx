@@ -54,7 +54,7 @@ class Main extends Sprite {
 		#end
 
 		Settings.load();
-		addChild(new FlxGame(0, 0, InitState, 60, 60, true, false));
+		addChild(new flixel.FlxGame(InitState, 0, 0, 60, true));
 
 		addChild(fpsCounter = new FPSCounter(10, 10, 12));
 		fpsCounter.visible = Settings.data.fpsCounter;

@@ -20,17 +20,17 @@ class OptionsState extends MusicState
 	function openSelectedSubstate(label:String) {
 		switch (label) {
 			case 'Controls':
-				openSubState(new options.ControlsSubState());
+				openSubstate(new options.ControlsSubState());
 			case 'Graphics':
-				openSubState(new options.GraphicsSettingsSubState());
+				openSubstate(new options.GraphicsSettingsSubState());
 			case 'Visuals':
-				openSubState(new options.VisualsSettingsSubState());
+				openSubstate(new options.VisualsSettingsSubState());
 			case 'Gameplay':
-				openSubState(new options.GameplaySettingsSubState());
+				openSubstate(new options.GameplaySettingsSubState());
 			case 'Adjust Delay and Combo':
 				MusicState.switchState(new options.NoteOffsetState());
 			case 'Language':
-				openSubState(new options.LanguageSubState());
+				openSubstate(new options.LanguageSubState());
 		}
 	}
 
@@ -70,9 +70,8 @@ class OptionsState extends MusicState
 		super.create();
 	}
 
-	override function closeSubState()
-	{
-		super.closeSubState();
+	override function closeSubstate() {
+		super.closeSubstate();
 		Settings.save();
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Options Menu", null);

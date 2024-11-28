@@ -99,8 +99,9 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetLine> {
 			return;
 		}
 
-        if (changeX) x = Util.ilerp(x, (targetY * distancePerItem.x) + spawnPos.x, 0.16);
-        if (changeY) y = Util.ilerp(y, (targetY * 1.3 * distancePerItem.y) + spawnPos.y, 0.16);
+		var lerpVal:Float = Math.exp(-elapsed * 9.6);
+		if (changeX) x = FlxMath.lerp((targetY * distancePerItem.x) + spawnPos.x, x, lerpVal);
+		if (changeY) y = FlxMath.lerp((targetY * 1.3 * distancePerItem.y) + spawnPos.y, y, lerpVal);
     }
 
 	public function snapToPosition() {
