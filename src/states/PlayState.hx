@@ -4,6 +4,8 @@ import openfl.media.Sound;
 import lime.ui.KeyCode;
 import lime.app.Application;
 
+import flixel.util.FlxSort;
+
 import objects.*;
 import objects.Note.NoteData;
 import objects.Strumline.StrumNote;
@@ -69,7 +71,6 @@ class PlayState extends MusicState {
 		return playbackRate;
 	}
 
-
 	var combo:Int = 0;
 	var comboBreaks:Int = 0;
 	var score:Int = 0;
@@ -81,8 +82,12 @@ class PlayState extends MusicState {
 	public var paused:Bool = false;
 
 	// objects
-	public var opponentStrums:Strumline;
-	public var playerStrums:Strumline;
+	var bf:Character;
+	var dad:Character;
+	var gf:Character;
+
+	var opponentStrums:Strumline;
+	var playerStrums:Strumline;
 
 	var hudGroup:FlxSpriteGroup;
 
@@ -132,13 +137,23 @@ class PlayState extends MusicState {
 		// set up cameras
 		FlxG.cameras.reset();
 
+		camHUD = FlxG.cameras.add(new FlxCamera(), false);
+		camHUD.bgColor.alphaFloat = 1 - (Settings.data.stageBrightness * 0.01);
+
 		camOther = FlxG.cameras.add(new FlxCamera(), false);
 		camOther.bgColor.alpha = 0;
+
+		// characters
+		add(dad = new Character(100, 225, '', false));
+		add(bf = new Character(750, 225));
 
 		// set up strumlines and the note group
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
 		add(playerStrums = new Strumline(750, strumlineYPos, !botplay));
 		add(opponentStrums = new Strumline(100, strumlineYPos));
+
+		playerStrums.cameras = [camHUD];
+		opponentStrums.cameras = [camHUD];
 
 		if (Settings.data.centeredNotes) {
 			playerStrums.screenCenter(X);
@@ -148,9 +163,11 @@ class PlayState extends MusicState {
 		if (!Settings.data.opponentNotes) opponentStrums.alpha = 0;
 
 		add(notes = new FlxTypedSpriteGroup<Note>());
+		notes.cameras = [camHUD];
 
 		// set up hud elements
 		add(hudGroup = new FlxSpriteGroup());
+		hudGroup.cameras = [camHUD];
 
 		hudGroup.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
 		healthBar.setColors(FlxColor.RED, FlxColor.LIME);
@@ -318,7 +335,7 @@ class PlayState extends MusicState {
 			}
 		}
 
-		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, Math.exp(-elapsed * 3.125 * playbackRate));
+		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 3.125 * playbackRate));
 
 		updateIconScales(elapsed);
 		updateIconPositions();
@@ -378,6 +395,8 @@ class PlayState extends MusicState {
 
 	dynamic function opponentNoteHit(note:Note) {
 		if (song.needsVoices && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
+
+		dad.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 	}
 
 	// note hitting specific to the player
@@ -402,6 +421,7 @@ class PlayState extends MusicState {
 		else return;
 		
 		strum.playAnim('notePressed');
+		bf.playAnim('sing${Note.directions[parent.lane].toUpperCase()}');
 	}
 
 	dynamic function noteHit(note:Note) {
@@ -428,6 +448,8 @@ class PlayState extends MusicState {
 		combo++;
 		comboNumbers.display(combo);
 
+		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+
 		updateAccuracy();
 		updateScoreTxt();
 
@@ -442,6 +464,7 @@ class PlayState extends MusicState {
 		health -= 6;
 
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
+		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
 
 		updateAccuracy();
 		updateScoreTxt();
@@ -455,11 +478,16 @@ class PlayState extends MusicState {
 
 		iconP2.scale.set(1.2, 1.2);
 		iconP2.updateHitbox();
+
+		if (beat % 2 == 0) {
+			bf.dance();
+			dad.dance();
+		}
 	}
 
 	override function measureHit(measure:Int) {
 		super.measureHit(measure);
-		FlxG.camera.zoom += 0.015;
+		camHUD.zoom += 0.015;
 	}
 
 	function openPauseMenu() {

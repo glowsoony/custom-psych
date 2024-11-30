@@ -32,8 +32,9 @@ class FunkinSprite extends flixel.FlxSprite {
 		}
 
 		final offsetsForAnim:Array<Float> = offsetMap[name] ?? [0, 0];
+
 		animation.play(name, forced);
 		active = animation.curAnim != null ? animation.curAnim.frames.length > 1 : false;
-		offset.set(offsetsForAnim[0], offsetsForAnim[1]);
+		offset.set(offsetsForAnim[0] * scale.x, offsetsForAnim[1] * scale.y);
 	}
 }

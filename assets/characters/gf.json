@@ -16,7 +16,7 @@
 	healthColor: 0xFF000000,
 	sheets: 'characters/boyfriend',
 	icon: 'bf',
-	cameraOffsets: [0, 0],
+	cameraOffset: [0, 0],
 	
 	flipX: false
 }
