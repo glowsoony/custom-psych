@@ -72,7 +72,7 @@ class Note extends FlxSprite {
 	public var earlyHitMult:Float = 1;
 
 	// sustain stuff
-	public var tail:Array<Note> = []; 
+	public var pieces:Array<Note> = []; 
 	public var parent:Note;
 	public var correctionOffset:FlxPoint = FlxPoint.get(0, 0); // don't touch this one specifically
 	public var sustainLength:Float = 0;
@@ -182,7 +182,7 @@ class Note extends FlxSprite {
 	}
 
 	public function clipToStrum(strum:StrumNote) {
-		// function's for cliprecting sustains
+		// function for cliprecting sustains
 		// why would you wanna cliprect normal notes lmao
 		if (!exists || !alive) return;
 		if (!isSustain || !canHit) return;

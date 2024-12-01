@@ -269,7 +269,7 @@ class PlayState extends MusicState {
 
 			var curStepCrochet:Float = (60 / daBPM) * 1000 * 0.25;
 			final roundSus:Int = Math.round(swagNote.sustainLength / curStepCrochet);
-			if (roundSus > 1) {
+			if (roundSus > 0) {
 				for (susNote in 0...roundSus) {
 					oldNote = unspawnedNotes[unspawnedNotes.length - 1];
 
@@ -284,7 +284,7 @@ class PlayState extends MusicState {
 					sustainNote.parent = swagNote;
 					sustainNote.correctionOffset.y = Settings.data.scrollDirection == 'Down' ? 0 : swagNote.height * 0.5;
 					unspawnedNotes.push(sustainNote);
-					swagNote.tail.push(sustainNote);
+					swagNote.pieces.push(sustainNote);
 
 					if (oldNote.isSustain) {
 						oldNote.scale.y *= 44 / oldNote.frameHeight;
@@ -405,19 +405,33 @@ class PlayState extends MusicState {
 
 		if (!parent.canHit || parent.missed) return;
 
-		if (!keysHeld[parent.lane] && ((parent.wasHit ? note.time < Conductor.time : parent.tooLate)) && !note.wasHit) {
-			noteMiss(note);
-			parent.missed = true;
+		var heldKey:Bool = keysHeld[parent.lane];
+		var tooLate:Bool = (parent.wasHit ? note.time < Conductor.time : parent.tooLate);
+		var isTail:Bool = note.animation.curAnim.name == 'holdend';
+
+		if (!heldKey) {
+			if (tooLate && !note.wasHit) {
+				// ignore tails completely
+				if (isTail) {
+					note.destroy();
+					notes.remove(note);
+					return;
+				}
+
+				noteMiss(note);
+				parent.missed = true;
+				for (piece in parent.pieces) {
+					if (piece == null || !piece.exists || !piece.alive) continue;
+					piece.multAlpha = 0.2;
+				}
+			}
+
 			return;
 		}
 
-		if (!keysHeld[parent.lane]) return;
-
 		note.clipToStrum(strum);
 
-		if (note.wasHit) return;
-
-		if (note.time <= Conductor.time) note.wasHit = true;
+		if (note.time <= Conductor.time && !note.wasHit) note.wasHit = true;
 		else return;
 		
 		strum.playAnim('notePressed');
