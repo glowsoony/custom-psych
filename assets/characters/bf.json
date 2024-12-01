@@ -77,7 +77,7 @@
 	antialiasing: true,
 	singDuration: 4,
 	scale: [1, 1],
-	healthColor: 0xFF000000,
+	healthColor: 0xFF31B0D1,
 	sheets: 'characters/bf',
 	icon: 'bf',
 	cameraOffset: [0, 0],

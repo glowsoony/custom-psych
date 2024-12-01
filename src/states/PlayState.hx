@@ -171,15 +171,15 @@ class PlayState extends MusicState {
 		hudGroup.cameras = [camHUD];
 
 		hudGroup.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
-		healthBar.setColors(FlxColor.RED, FlxColor.LIME);
+		healthBar.setColors(dad.healthColor, bf.healthColor);
 		healthBar.screenCenter(X);
 		healthBar.leftToRight = false;
 
-		hudGroup.add(iconP1 = new CharIcon('face', true));
-		iconP1.y = healthBar.y - healthBar.height - (iconP1.height * 0.5);
+		hudGroup.add(iconP1 = new CharIcon(bf.icon, true));
+		iconP1.y = healthBar.y - (iconP1.height * 0.5);
 
-		hudGroup.add(iconP2 = new CharIcon('face'));
-		iconP2.y = healthBar.y - healthBar.height - (iconP2.height * 0.5);
+		hudGroup.add(iconP2 = new CharIcon(dad.icon));
+		iconP2.y = healthBar.y - (iconP2.height * 0.5);
 
 		updateIconPositions();
 
@@ -332,7 +332,6 @@ class PlayState extends MusicState {
 			} else checkNoteHitWithAI(strum, note);
 
 			if (note.player && !note.missed && !note.isSustain && note.tooLate) {
-				note.missed = true;
 				noteMiss(note);
 			}
 
@@ -419,18 +418,14 @@ class PlayState extends MusicState {
 		if (!heldKey) {
 			if (tooLate && !note.wasHit) {
 				// ignore tails completely
-				if (isTail) {
+				if (isTail && parent.wasHit) {
 					note.destroy();
 					notes.remove(note);
 					return;
 				}
 
-				noteMiss(note);
+				noteMiss(parent);
 				parent.missed = true;
-				for (piece in parent.pieces) {
-					if (piece == null || !piece.exists || !piece.alive) continue;
-					piece.multAlpha = 0.2;
-				}
 			}
 
 			return;
@@ -483,6 +478,12 @@ class PlayState extends MusicState {
 		combo = 0;
 		score -= 20;
 		health -= 6;
+
+		note.missed = true;
+		for (piece in note.pieces) {
+			if (piece == null || !piece.exists || !piece.alive) continue;
+			piece.multAlpha = 0.2;
+		}
 
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
 		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
