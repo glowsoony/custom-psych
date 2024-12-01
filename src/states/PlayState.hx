@@ -100,6 +100,8 @@ class PlayState extends MusicState {
 	var iconP1:CharIcon;
 	var iconP2:CharIcon;
 
+	var countdown:Countdown;
+
 	// cameras
 	var camHUD:FlxCamera;
 	var camOther:FlxCamera;
@@ -116,7 +118,6 @@ class PlayState extends MusicState {
 
 	override function create() {
 		super.create();
-		Paths.clearStoredMemory();
 		Language.reloadPhrases();
 
 		self = this;
@@ -194,12 +195,18 @@ class PlayState extends MusicState {
 		hudGroup.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
 		hudGroup.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
 
+		hudGroup.add(countdown = new Countdown());
+		countdown.screenCenter();
+		countdown.onStart = function() Conductor.self.active = true;
+		countdown.onFinish = Conductor.play;
+
 		// set up any other stuff we might need
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
 		loadSong(songID);
-		Conductor.play();
+		Conductor.time -= Conductor.crotchet * 5;
+		countdown.start();
 
 		// setting this after loading all the notes
 		// otherwise sustain scaling will get fucked and look weird

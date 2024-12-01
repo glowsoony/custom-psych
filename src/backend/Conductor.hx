@@ -106,7 +106,7 @@ class Conductor extends flixel.FlxBasic {
 		}
 	}
 
-	public static function play(fromTime:Float = 0.0) {
+	public static function play() {
 		playing = true;
 		inst.play();
 		vocals.play();
