@@ -126,9 +126,7 @@ class PlayState extends MusicState {
 		// precache the pause menu music
 		// to prevent the pause menu freezing on first pause
 		PauseMenu.musicPath = Settings.data.pauseMusic;
-		Paths.music(PauseMenu.musicPath); 
-
-		Settings.data.scrollDirection = 'Down';
+		Paths.music(PauseMenu.musicPath);
 
 		// set up gameplay settings
 		scrollType = Settings.data.gameplaySettings['scrollType'];
