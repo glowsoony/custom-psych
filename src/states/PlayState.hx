@@ -576,6 +576,7 @@ class PlayState extends MusicState {
 		FlxG.animationTimeScale = 1;
 
 		self = null;
+		Difficulty.reset();
 		super.destroy();
 	}
 }

@@ -132,6 +132,9 @@ class FreeplayState extends MusicState {
 				final difficulty:String = Difficulty.format(curDiffName);
 				PlayState.song = Song.load('assets/songs/$songName/$difficulty.json');
 				PlayState.songID = songName;
+
+				Difficulty.list = curDiffs;
+				Difficulty.current = curDiffName;
 			} catch(e:haxe.Exception) {
 				trace('${e.message}');
 				return;

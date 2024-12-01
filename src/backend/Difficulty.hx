@@ -36,6 +36,7 @@ class Difficulty {
 
 	inline public static function reset() {
 		list = default_list.copy();
+		current = default_current;
 	}
 
 	inline public static function copyFrom(diffs:Array<String>) {
