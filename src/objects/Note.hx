@@ -181,10 +181,11 @@ class Note extends FlxSprite {
 		}
 	}
 
+	// for clipping sustains
 	public function clipToStrum(strum:StrumNote) {
-		// function for cliprecting sustains
-		// why would you wanna cliprect normal notes lmao
 		if (!exists || !alive) return;
+
+		// why would you wanna cliprect normal notes lmao
 		if (!isSustain || !canHit) return;
 		
 		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
@@ -192,8 +193,8 @@ class Note extends FlxSprite {
 		var center:Float = strum.getMidpoint().y;
 		if (downscroll) {
 			if (y + height >= center) {
-				swagRect.y = frameHeight - swagRect.height;
 				swagRect.height = (center - y) / scale.y;
+				swagRect.y = frameHeight - swagRect.height;
 			}
 		} else if (y <= center) {
 			swagRect.y = (center - y) / scale.y;

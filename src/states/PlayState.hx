@@ -128,6 +128,8 @@ class PlayState extends MusicState {
 		PauseMenu.musicPath = Settings.data.pauseMusic;
 		Paths.music(PauseMenu.musicPath); 
 
+		Settings.data.scrollDirection = 'Down';
+
 		// set up gameplay settings
 		scrollType = Settings.data.gameplaySettings['scrollType'];
 		botplay = Settings.data.gameplaySettings['botplay'];
