@@ -54,7 +54,13 @@ class Main extends Sprite {
 		#end
 
 		Settings.load();
-		addChild(new flixel.FlxGame(InitState, 0, 0, 60, true));
+
+		var game:FlxGame = new FlxGame(InitState, 0, 0, 60, true);
+
+    	@:privateAccess
+    	game._customSoundTray = backend.FunkinSoundTray;
+
+		addChild(game);
 
 		addChild(fpsCounter = new FPSCounter(10, 10, 12));
 		fpsCounter.visible = Settings.data.fpsCounter;
