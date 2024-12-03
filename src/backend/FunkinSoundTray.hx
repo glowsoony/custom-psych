@@ -1,11 +1,7 @@
 package backend;
 
 import flixel.system.ui.FlxSoundTray;
-import flixel.tweens.FlxTween;
-import flixel.system.FlxAssets;
-import flixel.tweens.FlxEase;
 import openfl.display.Bitmap;
-import openfl.display.BitmapData;
 import openfl.utils.Assets;
 
 // totally didn't steal this from base game ahhahahefahfsdhahhashfahhasfhahahahahahahahashahahahahaa
@@ -59,7 +55,7 @@ class FunkinSoundTray extends FlxSoundTray {
 		volumeMaxSound = Paths.get("sounds/soundtray/VolMAX.ogg");
 	}
 
-	override public function update(MS:Float):Void {
+	override function update(MS:Float):Void {
 		y = FlxMath.lerp(y, lerpYPos, 0.1);
 		alpha = FlxMath.lerp(alpha, alphaTarget, 0.25);
 
@@ -79,8 +75,8 @@ class FunkinSoundTray extends FlxSoundTray {
 			active = false;
 		}
 	}
-	
-	override public function show(up:Bool = false):Void {
+
+	override function show(up:Bool = false):Void {
 		_timer = 1;
 		lerpYPos = 10;
 		visible = true;

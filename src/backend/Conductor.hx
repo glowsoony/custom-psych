@@ -62,17 +62,6 @@ class Conductor extends flixel.FlxBasic {
 		bpmChanges = [];
 	}
 
-	static function syncTime(delta:Float):Void {
-		final addition:Float = (delta * 1000) * rate;
-		if (inst != null && inst.playing) {
-			if (inst.time == lastTime) _resyncTimer += addition;
-			else _resyncTimer = 0;
-
-			time = (inst.time + _resyncTimer) + offset;
-			lastTime = inst.time;
-		} else time += addition;
-	}
-
 	override function update(elapsed:Float) {
 		var oldStep:Int = step;
 		var oldBeat:Int = beat;
@@ -93,7 +82,18 @@ class Conductor extends flixel.FlxBasic {
 		if (oldMeasure != curMeasure) onMeasure(measure = curMeasure);
 	}
 
-	static function syncVocals() {
+	public static dynamic function syncTime(delta:Float):Void {
+		final addition:Float = (delta * 1000) * rate;
+		if (inst != null && inst.playing) {
+			if (inst.time == lastTime) _resyncTimer += addition;
+			else _resyncTimer = 0;
+
+			time = (inst.time + _resyncTimer) + offset;
+			lastTime = inst.time;
+		} else time += addition;
+	}
+
+	public static dynamic function syncVocals() {
 		if (inst == null || !inst.playing) return;
 
 		final instTime:Float = inst.time;
