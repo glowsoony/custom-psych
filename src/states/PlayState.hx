@@ -117,9 +117,9 @@ class PlayState extends MusicState {
 	];
 
 	override function create() {
-		super.create();
 		Language.reloadPhrases();
 
+		super.create();
 		self = this;
 
 		Conductor.stop();
@@ -271,7 +271,7 @@ class PlayState extends MusicState {
 				}
 			}
 
-			var swagNote:Note = new Note(note, oldNote);
+			var swagNote:Note = new Note(note);
 			unspawnedNotes.push(swagNote);
 
 			var curStepCrochet:Float = (60 / daBPM) * 1000 * 0.25;
@@ -287,7 +287,7 @@ class PlayState extends MusicState {
 						type: note.type,
 						player: note.player,
 						speed: note.speed
-					}, oldNote, true);
+					},  true, oldNote);
 					sustainNote.parent = swagNote;
 					sustainNote.correctionOffset.y = Settings.data.scrollDirection == 'Down' ? 0 : swagNote.height * 0.5;
 					unspawnedNotes.push(sustainNote);
@@ -341,7 +341,7 @@ class PlayState extends MusicState {
 			}
 		}
 
-		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 3.125 * playbackRate));
+		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 6 * playbackRate));
 
 		updateIconScales(elapsed);
 		updateIconPositions();

@@ -16,7 +16,6 @@ class MusicState extends FlxState {
 
 	override function create() {
 		Conductor.reset();
-		#if MODS_ALLOWED Mods.updatedOnState = false; #end
 		Paths.clearUnusedMemory();
 
 		if (!_psychCameraInitialized) initPsychCamera();

@@ -8,6 +8,8 @@ class ScriptHandler {
 	public static var list:Array<Script> = [];
 
 	public static function loadFromDir(dir:String, ?subFolders:Bool = false):Void {
+		if (!FileSystem.exists(dir)) return;
+		
 		for (file in FileSystem.readDirectory(dir)) {
 			final absPath:String = '$dir/$file';
 			if (FileSystem.isDirectory(absPath) && subFolders) loadFromDir(absPath, subFolders);

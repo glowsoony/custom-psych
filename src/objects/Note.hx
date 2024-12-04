@@ -74,11 +74,18 @@ class Note extends FlxSprite {
 	// sustain stuff
 	public var pieces:Array<Note> = []; 
 	public var parent:Note;
+	public var distance:Float = 2000;
 	public var correctionOffset:FlxPoint = FlxPoint.get(0, 0); // don't touch this one specifically
 	public var sustainLength:Float = 0;
 	public var isSustain:Bool = false;
 	public var missed:Bool = false;
 	public var wasHit:Bool = false;
+
+	public var texture(default, set):String;
+	function set_texture(value:String):String {
+		reload(value);
+		return texture = value;
+	}
 
 	public static var colours:Array<String> = ['purple', 'blue', 'green', 'red'];
 	public static var directions:Array<String> = ['left', 'down', 'up', 'right'];
@@ -102,7 +109,7 @@ class Note extends FlxSprite {
 		updateHitbox();
 	}
 
-	public function new(data:NoteData, ?prevNote:Note, ?sustainNote:Bool = false) {
+	public function new(data:NoteData, ?sustainNote:Bool = false, ?prevNote:Note) {
 		super();
 
 		animation = new PsychAnimationController(this);
@@ -120,21 +127,18 @@ class Note extends FlxSprite {
 		this.speed = data.speed;
 		this.sustainLength = data.length;
 
-		reload();
+		texture = '';
 		if (!isSustain && lane < colours.length) { // Doing this 'if' check to fix the warnings on Senpai songs
 			animation.play('default');
 		}
 
 		if (isSustain) {
-			alpha = 0.6;
 			multAlpha = 0.6;
-			earlyHitMult = 0;
+			flipY = Settings.data.scrollDirection == 'Down';
 
 			correctionOffset.x += width * 0.5;
-			flipY = Settings.data.scrollDirection == 'Down';
 			animation.play('holdend');
 			updateHitbox();
-
 			correctionOffset.x -= width * 0.5;
 
 			if (prevNote.isSustain) {
@@ -148,25 +152,29 @@ class Note extends FlxSprite {
 		prevNote.nextNote = this;
 	}
 
-	public function reload() {
-		var lastScaleY:Float = scale.y;
+	public function reload(?path:String) {
+		path ??= '';
 
-		frames = Paths.sparrowAtlas('noteSkins/default');
+		if (path.length == 0) {
+			path = PlayState.song != null ? PlayState.song.arrowSkin : '';
+		}
+
+		if (!Paths.exists('images/$path.png')) path = Strumline.default_skin;
+
+		var lastScaleY:Float = scale.y;
+		
+		frames = Paths.sparrowAtlas(path);
 		loadAnims();
 		if (!isSustain) {
 			centerOffsets();
 			centerOrigin();
-		}
-
-		if (isSustain) {
-			scale.y = lastScaleY;
-		}
+		} else scale.y = lastScaleY;
 
 		updateHitbox();
 	}
 
 	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
-		var distance:Float = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
+		distance = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
 		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;
@@ -176,7 +184,7 @@ class Note extends FlxSprite {
 		if (copyY) {
 			y = strum.y + correctionOffset.y + distance;
 			if (Settings.data.scrollDirection == 'Down' && isSustain) {
-				y -= (frameHeight * scale.y) - ((frameWidth * Strumline.size) * 0.5);
+				y -= height - ((frameWidth * Strumline.size) * 0.5);
 			}
 		}
 	}
@@ -190,7 +198,7 @@ class Note extends FlxSprite {
 		
 		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
 		var swagRect:FlxRect = clipRect ?? FlxRect.get(0, 0, frameWidth, frameHeight);
-		var center:Float = strum.getMidpoint().y;
+		var center:Float = strum.y + (strum.height * 0.5);
 		if (downscroll) {
 			if (y + height >= center) {
 				swagRect.height = (center - y) / scale.y;
