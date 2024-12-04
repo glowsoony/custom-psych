@@ -20,6 +20,11 @@ class PlayState extends MusicState {
 	// chart stuff
 	public static var song:Chart;
 	public static var songID:String;
+
+	public static var songList:Array<String> = [];
+	public static var storyMode:Bool = false;
+	public static var currentLevel:Int = 0;
+
 	var songName:String;
 	var noteSpawnIndex:Int = 0;
 	var noteSpawnDelay:Float = 1500;
@@ -124,6 +129,8 @@ class PlayState extends MusicState {
 
 		Conductor.stop();
 
+		if (storyMode) songID = songList[currentLevel];
+
 		// precache the pause menu music
 		// to prevent the pause menu freezing on first pause
 		PauseMenu.musicPath = Settings.data.pauseMusic;
@@ -144,10 +151,6 @@ class PlayState extends MusicState {
 		camOther = FlxG.cameras.add(new FlxCamera(), false);
 		camOther.bgColor.alpha = 0;
 
-		// characters
-		add(dad = new Character(100, 225, '', false));
-		add(bf = new Character(750, 225));
-
 		// set up strumlines and the note group
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
 		add(playerStrums = new Strumline(750, strumlineYPos, !botplay));
@@ -165,6 +168,12 @@ class PlayState extends MusicState {
 
 		add(notes = new FlxTypedSpriteGroup<Note>());
 		notes.cameras = [camHUD];
+
+		loadSong();
+
+		// characters
+		add(dad = new Character(100, 225, '', false));
+		add(bf = new Character(750, 225));
 
 		// set up hud elements
 		add(hudGroup = new FlxSpriteGroup());
@@ -204,7 +213,6 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		loadSong(songID);
 		Conductor.time -= Conductor.crotchet * 5;
 		countdown.start();
 
@@ -220,7 +228,14 @@ class PlayState extends MusicState {
 		FlxG.mouse.visible = false;
 	}
 
-	function loadSong(id:String):Void {
+	function loadSong():Void {
+		try {
+			song = Song.load('songs/$songID/${Difficulty.format()}.json');
+		} catch (e:haxe.Exception) {
+			trace('"$songID (${Difficulty.current})" failed to load: ${e.message}');
+			return;
+		}
+
 		Conductor.setBPMChanges(song);
 		Conductor.bpm = song.bpm;
 		songName = song.song;
@@ -255,6 +270,11 @@ class PlayState extends MusicState {
 		var parsedNotes:Array<NoteData> = Song.parse(song);
 
 		notes.clear();
+		for (note in unspawnedNotes) {
+			note.destroy();
+			note = null;
+		}
+		unspawnedNotes.resize(0);
 
 		var oldNote:Note = null;
 		for (i => note in parsedNotes) {
@@ -367,11 +387,24 @@ class PlayState extends MusicState {
 	}
 
 	public function endSong():Void {
-		Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'));
+		Conductor.stop();
 		Conductor.vocals.destroy();
-		Conductor.play();
+		canPause = false;
+		// should automatically leave if you're not in story mode
+		var exitToMenu:Bool = !storyMode;
+		if (storyMode) {
+			++currentLevel < songList.length ? MusicState.resetState() : exitToMenu = true;
+		}
 
-		MusicState.switchState(new FreeplayState());
+		if (exitToMenu) {
+			persistentUpdate = true;
+			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
+			Conductor.play();
+			MusicState.switchState(storyMode ? new StoryMenuState() : new FreeplayState());
+			songList = [];
+			storyMode = false;
+			currentLevel = 0;
+		}
 	}
 
 	// ai note hitting

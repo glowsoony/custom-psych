@@ -127,20 +127,19 @@ class FreeplayState extends MusicState {
 		super.update(elapsed);
 
 		if (Controls.justPressed('accept')) {
-			try {
-				final songName:String = songList[curSelected].name;
-				final difficulty:String = Difficulty.format(curDiffName);
-				PlayState.song = Song.load('assets/songs/$songName/$difficulty.json');
-				PlayState.songID = songName;
-
+			final songID:String = songList[curSelected].name;
+			final diff:String = Difficulty.format(curDiffName);
+			final path:String = 'songs/$songID/$diff.json';
+			if (Paths.exists(path)) {
+				PlayState.songID = songID;
 				Difficulty.list = curDiffs;
-				Difficulty.current = curDiffName;
-			} catch(e:haxe.Exception) {
-				trace('${e.message}');
+				Difficulty.current = diff;
+				MusicState.switchState(new PlayState());
+			} else {
+				persistentUpdate = false;
+				trace('Song/Difficulty doesn\'t exist: "$path"');
 				return;
 			}
-
-			MusicState.switchState(new PlayState());
 		}
 
 		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());

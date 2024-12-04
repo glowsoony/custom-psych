@@ -1,36 +1,19 @@
 {
 	songs: [
 		{
-			name: 'Bopeebo',
-			icon: 'dad',
-			color: 0xFF000000
-		},
-		{
-			name: 'Fresh',
-			icon: 'dad',
-			color: 0xFF000000
-		},
-		{
-			name: 'Dad Battle',
-			icon: 'dad',
-			color: 0xFF000000
-		},
-		{
 			name: 'Taste For Blood',
 			icon: 'dad',
 			color: 0xFF000000
 		},
 		{
-			name: 'TremENDouS',
-			icon: 'dad',
-			color: 0xFF000000,
-			difficulties: ['maniac']
-		},
-		{
 			name: "You Can't Run",
 			icon: 'dad',
 			color: 0xFF000000,
-			difficulties: ['normal']
+		},
+		{
+			name: 'Dance With Silence',
+			icon: 'dad',
+			color: 0xFF000000,
 		}
 	],
 
@@ -38,6 +21,7 @@
 	weekBefore: 'tutorial',
 	background: 'stage',
 	characters: ['dad', 'gf', 'bf'],
+	difficulties: ['normal'],
 	startUnlocked: true,
 
 	hideStoryMode: false,

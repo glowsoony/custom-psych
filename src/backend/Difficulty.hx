@@ -9,7 +9,8 @@ class Difficulty {
 	public static var list:Array<String> = default_list;
 	public static var current:String = default_current;
 
-	inline public static function format(name:String):String {
+	inline public static function format(?name:String):String {
+		name ??= current;
 		return name.trim().toLowerCase().replace(' ', '-');
 	}
 

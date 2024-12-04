@@ -11,22 +11,22 @@ typedef MenuCharacterFile = {
 }
 
 class MenuCharacter extends FlxSprite {
-	public var character(default, set):String;
+	public var name(default, set):String;
 	var _file:MenuCharacterFile;
 	public var hasConfirmAnimation:Bool = false;
 	private static var DEFAULT_CHARACTER:String = 'bf';
 
-	public function new(?x:Float, ?y:Float, ?character:String = 'bf') {
+	public function new(?x:Float, ?y:Float, ?name:String = 'bf') {
 		super(x, y);
-		this.character = character;
+		this.name = name;
 	}
 
-	function set_character(?value:String = 'bf'):String {
-		if (character == value) return value;
+	function set_name(?value:String = 'bf'):String {
+		if (name == value) return value;
 
 		if (value.length == 0) {
 			visible = false;
-			return character = value;
+			return name = value;
 		}
 
 		visible = true;
@@ -36,7 +36,6 @@ class MenuCharacter extends FlxSprite {
 		
 		color = FlxColor.WHITE;
 		alpha = 1;
-
 
 		hasConfirmAnimation = false;
 		var filePath:String = '$value.json';
@@ -73,6 +72,6 @@ class MenuCharacter extends FlxSprite {
 
 		antialiasing = _file.antialiasing != false && Settings.data.antialiasing;
 
-		return character = value;
+		return name = value;
 	}
 }

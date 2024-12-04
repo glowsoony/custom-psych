@@ -91,7 +91,7 @@ class Song {
 
 	public static function load(path:String):Chart {
 		var file:Chart = createDummy();
-		var data = Json.parse(File.getContent(path)).song;
+		var data = Json.parse(Paths.getFileContent(path)).song;
 		for (property in Reflect.fields(data)) {
 			if (!Reflect.hasField(file, property)) continue;
 			Reflect.setField(file, property, Reflect.field(data, property));

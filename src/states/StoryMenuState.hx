@@ -7,6 +7,7 @@ import objects.MenuCharacter;
 class StoryMenuState extends MusicState {
 	var grpWeeks:FlxTypedSpriteGroup<WeekSprite>;
 	var difficultyList:Array<Array<String>> = [];
+	var songList:Array<Array<String>> = [];
 	var bgSprite:FlxSprite;
 
 	var tracksSprite:FlxSprite;
@@ -29,6 +30,13 @@ class StoryMenuState extends MusicState {
 
 		WeekData.reload();
 		if (curWeek >= WeekData.list.length) curWeek = 0;
+
+		for (week in WeekData.list) {
+			var songs:Array<String> = [];
+			for (song in week.songs) songs.push(song.name);
+
+			songList.push(songs);
+		}
 
 		add(grpWeeks = new FlxTypedSpriteGroup<WeekSprite>());
 
@@ -116,7 +124,7 @@ class StoryMenuState extends MusicState {
 		changeDifficulty();
 
 		for (index => item in characters.members) {
-			item.character = curWeekData.characters[index];
+			item.name = curWeekData.characters[index];
 		}
 	}
 
@@ -138,8 +146,11 @@ class StoryMenuState extends MusicState {
 		}
 	}
 
+	var accepted:Bool = false;
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
+
+		if (accepted) return;
 
 		final downJustPressed:Bool = Controls.justPressed('ui_down');
 		if (downJustPressed || Controls.justPressed('ui_up')) {
@@ -148,6 +159,24 @@ class StoryMenuState extends MusicState {
 
 		final leftJustPressed:Bool = Controls.justPressed('ui_left');
 		if (leftJustPressed || Controls.justPressed('ui_right')) changeDifficulty(leftJustPressed ? -1 : 1);
+
+		if (Controls.justPressed('accept')) {
+			accepted = true;
+			FlxG.sound.play(Paths.sound('confirm'));
+
+			for (char in characters.members) {
+				if (char.name == '' || !char.hasConfirmAnimation) continue;
+				char.animation.play('confirm');
+			}
+
+			PlayState.songList = songList[curWeek];
+			PlayState.storyMode = true;
+
+			Difficulty.list = curDiffs;
+			Difficulty.current = curDiffName;
+
+			new FlxTimer().start(1, function(_) MusicState.switchState(new PlayState()));
+		}
 		
 		leftArrow.animation.play(Controls.pressed('ui_left') ? 'press' : 'idle');
 		rightArrow.animation.play(Controls.pressed('ui_right') ? 'press' : 'idle');

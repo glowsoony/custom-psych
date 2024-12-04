@@ -91,7 +91,6 @@ class Note extends FlxSprite {
 
 	public var type(default, set):String;
 	function set_type(value:String):String {
-		trace(value);
 		switch (value) {
 			case 'Hurt Note':
 				
