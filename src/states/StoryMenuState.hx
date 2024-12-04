@@ -150,6 +150,10 @@ class StoryMenuState extends MusicState {
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		var offsetY:Float = grpWeeks.members[curWeek].targetY;
+		for (_ => item in grpWeeks.members)
+			item.y = FlxMath.lerp(item.targetY - offsetY + 480, item.y, Math.exp(-elapsed * 10.2));
+
 		if (accepted) return;
 
 		final downJustPressed:Bool = Controls.justPressed('ui_down');
@@ -180,10 +184,6 @@ class StoryMenuState extends MusicState {
 		
 		leftArrow.animation.play(Controls.pressed('ui_left') ? 'press' : 'idle');
 		rightArrow.animation.play(Controls.pressed('ui_right') ? 'press' : 'idle');
-
-		var offsetY:Float = grpWeeks.members[curWeek].targetY;
-		for (_ => item in grpWeeks.members)
-			item.y = FlxMath.lerp(item.targetY - offsetY + 480, item.y, Math.exp(-elapsed * 10.2));
 
 		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
 	}
