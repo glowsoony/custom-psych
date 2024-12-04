@@ -450,13 +450,23 @@ class PlayState extends MusicState {
 		
 		// pbot1 scoring system
 		// cuz judgement based is super boring :sob:
-		score += Math.floor(500 - Math.abs(note.hitTime));
+		if (!note.breakOnHit) score += Math.floor(500 - Math.abs(note.hitTime));
 		for (id => judge in Judgement.list) {
 			if (Math.abs(note.hitTime) >= judge.timing) continue;
 
-			totalNotesPlayed += judge.accuracy;
-			health += judge.health;
-			judgeSpr.display(judge.name);
+			if (judge.breakCombo || note.breakOnHit) {
+				comboNumbers.display(combo = 0);
+				comboBreaks++;
+			}
+
+			if (note.breakOnHit) {
+				score -= 20;
+				health -= 6;
+			} else {
+				totalNotesPlayed += judge.accuracy;
+				health += judge.health;
+				judgeSpr.display(judge.name);
+			}
 
 			break;
 		}
@@ -468,12 +478,11 @@ class PlayState extends MusicState {
 
 		updateAccuracy();
 		updateScoreTxt();
-
-		note.destroy();
-		notes.remove(note);
 	}
 
 	dynamic function noteMiss(note:Note) {
+		if (note.ignore) return;
+		
 		comboBreaks++;
 		combo = 0;
 		score -= 20;
@@ -551,6 +560,8 @@ class PlayState extends MusicState {
 			sortedNotes.sort((a, b) -> Std.int(a.time - b.time));
 			var note:Note = sortedNotes[0];
 			noteHit(note);
+			note.destroy();
+			notes.remove(note);
 			note = null;
 		}
 

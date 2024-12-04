@@ -25,6 +25,12 @@
 			icon: 'dad',
 			color: 0xFF000000,
 			difficulties: ['maniac']
+		},
+		{
+			name: "You Can't Run",
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['normal']
 		}
 	],
 

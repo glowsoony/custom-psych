@@ -1,7 +1,6 @@
 package objects;
 
 import backend.animation.PsychAnimationController;
-import backend.NoteTypesConfig;
 
 import objects.Strumline.StrumNote;
 
@@ -24,7 +23,7 @@ typedef NoteData = {
 class Note extends FlxSprite {
 	// This is needed for the hardcoded note types to appear on the Chart Editor,
 	// It's also used for backwards compatibility with 0.1 - 0.3.2 charts.
-	public static final defaultNoteTypes:Array<String> = [
+	public static final defaultTypes:Array<String> = [
 		'', // Always leave this one empty pls
 		'Alt Animation',
 		'Hey!',
@@ -81,10 +80,32 @@ class Note extends FlxSprite {
 	public var missed:Bool = false;
 	public var wasHit:Bool = false;
 
+	public var breakOnHit:Bool = false;
+	public var ignore:Bool = false;
+
 	public var texture(default, set):String;
 	function set_texture(value:String):String {
 		reload(value);
 		return texture = value;
+	}
+
+	public var type(default, set):String;
+	function set_type(value:String):String {
+		trace(value);
+		switch (value) {
+			case 'Hurt Note':
+				
+				texture = 'hurtNote';
+				ignore = true;
+				breakOnHit = true;
+				earlyHitMult = 0.8;
+				lateHitMult = 0.8;
+
+			default:
+				texture = '';
+		}
+
+		return type = value;
 	}
 
 	public static var colours:Array<String> = ['purple', 'blue', 'green', 'red'];
@@ -125,9 +146,9 @@ class Note extends FlxSprite {
 		this.lane = data.lane;
 		this.player = data.player;
 		this.speed = data.speed;
+		this.type = data.type;
 		this.sustainLength = data.length;
 
-		texture = '';
 		if (!isSustain && lane < colours.length) { // Doing this 'if' check to fix the warnings on Senpai songs
 			animation.play('default');
 		}
