@@ -80,7 +80,7 @@
 	healthColor: 0xFF31B0D1,
 	sheets: 'characters/bf',
 	icon: 'bf',
-	cameraOffset: [0, 0],
+	cameraOffset: [100, -100],
 	
 	flipX: true
 }

@@ -91,6 +91,9 @@ class PlayState extends MusicState {
 	var dad:Character;
 	var gf:Character;
 
+	var camFollow:FlxObject;
+	static var prevCamFollow:FlxObject;
+
 	var opponentStrums:Strumline;
 	var playerStrums:Strumline;
 
@@ -136,14 +139,36 @@ class PlayState extends MusicState {
 		PauseMenu.musicPath = Settings.data.pauseMusic;
 		Paths.music(PauseMenu.musicPath);
 
+		loadSong();
+
 		// set up gameplay settings
-		scrollType = Settings.data.gameplaySettings['scrollType'];
 		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
 		downscroll = Settings.data.scrollDirection == 'Down';
 
+		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
+			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
+			case 'Multiplicative': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
+			default: song.speed;
+		}
+
 		// set up cameras
 		FlxG.cameras.reset();
+
+		camFollow = new FlxObject();
+		if (prevCamFollow != null) {
+			camFollow = prevCamFollow;
+			prevCamFollow = null;
+		}
+		camFollow.setPosition(0, 0);
+		add(camFollow);
+		
+		FlxG.camera.follow(camFollow, LOCKON, 0);
+		FlxG.camera.zoom = 1;
+		FlxG.camera.snapToTarget();
+
+		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
+		moveCamera();
 
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
 		camHUD.bgColor.alphaFloat = 1 - (Settings.data.stageBrightness * 0.01);
@@ -168,8 +193,6 @@ class PlayState extends MusicState {
 
 		add(notes = new FlxTypedSpriteGroup<Note>());
 		notes.cameras = [camHUD];
-
-		loadSong();
 
 		// characters
 		add(dad = new Character(100, 225, '', false));
@@ -215,15 +238,6 @@ class PlayState extends MusicState {
 
 		Conductor.time -= Conductor.crotchet * 5;
 		countdown.start();
-
-		// setting this after loading all the notes
-		// otherwise sustain scaling will get fucked and look weird
-		// idk why either :Bert:
-		scrollSpeed = switch (scrollType) {
-			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
-			case 'Multiplicative': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
-			default: song.speed;
-		}
 
 		FlxG.mouse.visible = false;
 	}
@@ -286,7 +300,6 @@ class PlayState extends MusicState {
 			if (!Settings.data.gameplaySettings['sustains']) note.length = 0;
 		}
 
-		notes.clear();
 		for (note in unspawnedNotes) {
 			note.destroy();
 			note = null;
@@ -348,6 +361,8 @@ class PlayState extends MusicState {
 
 	var canPause:Bool = true;
 	override function update(elapsed:Float):Void {
+		super.update(elapsed);
+
 		// note spawning
 		while (noteSpawnIndex < unspawnedNotes.length) {
 			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
@@ -386,7 +401,10 @@ class PlayState extends MusicState {
 
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
-		super.update(elapsed);
+		
+
+		if (paused) FlxG.camera.followLerp = 0;
+		else FlxG.camera.followLerp = 0.04 * 1 * playbackRate;
 	}
 
 	public dynamic function updateIconPositions():Void {
@@ -422,7 +440,7 @@ class PlayState extends MusicState {
 			songList = [];
 			storyMode = false;
 			currentLevel = 0;
-		}
+		} else prevCamFollow = camFollow;
 	}
 
 	// ai note hitting
@@ -570,6 +588,34 @@ class PlayState extends MusicState {
 	override function measureHit(measure:Int) {
 		super.measureHit(measure);
 		camHUD.zoom += 0.015;
+
+		moveCamera(measure);
+	}
+
+	public function moveCamera(?measure:Int = 0) {
+		if (measure < 0) measure = 0;
+		if (song.notes[measure] == null) return;
+/*
+		if (gf != null && song.notes[measure].gfSection) {
+			camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
+			camFollow.x += gf.cameraOffset.x;
+			camFollow.y += gf.cameraOffset.y;
+			return;
+		}*/
+
+		var isOpponent:Bool = song.notes[measure].mustHitSection != true;
+		if (isOpponent) {
+			if (dad == null) return;
+			camFollow.setPosition(dad.getMidpoint().x, dad.getMidpoint().y);
+			camFollow.x += dad.cameraOffset.x;
+			camFollow.y += dad.cameraOffset.y;
+			return;
+		}
+		
+		if (bf == null) return;
+		camFollow.setPosition(bf.getMidpoint().x, bf.getMidpoint().y);
+		camFollow.x -= bf.cameraOffset.x;
+		camFollow.y += bf.cameraOffset.y;
 	}
 
 	function openPauseMenu() {
