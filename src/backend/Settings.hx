@@ -46,7 +46,11 @@ class SaveVariables {
 		'healthLoss' => 1.0,
 		'instakill' => false,
 		'practice' => false,
-		'botplay' => false
+		'botplay' => false,
+
+		'mirroredNotes' => false,
+		'randomizedNotes' => false,
+		'sustains' => true
 	];
 
 	public var comboPosition:Array<Float> = [300, 300];

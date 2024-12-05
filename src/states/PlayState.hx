@@ -232,7 +232,7 @@ class PlayState extends MusicState {
 		try {
 			song = Song.load('songs/$songID/${Difficulty.format()}.json');
 		} catch (e:haxe.Exception) {
-			trace('"$songID (${Difficulty.current})" failed to load: ${e.message}');
+			trace('"$songID (${Difficulty.current})" failed to load: $e');
 			return;
 		}
 
@@ -259,15 +259,32 @@ class PlayState extends MusicState {
 				Conductor.mainVocals = FlxG.sound.load(mainFile);
 				if (opponentFile != null) Conductor.opponentVocals = FlxG.sound.load(opponentFile);
 			}
-		} catch (e:Dynamic) {
-			Sys.println('Vocals failed to load: $e');
-		}
+		} catch (e:Dynamic) Sys.println('Vocals failed to load: $e');
 
 		loadNotes(songID);
 	}
 
 	function loadNotes(id:String) {
 		var parsedNotes:Array<NoteData> = Song.parse(song);
+
+		var randomizedLanes:Array<Int> = [];
+		for (i in 0...Strumline.keyCount) randomizedLanes.push(FlxG.random.int(0, Strumline.keyCount - 1, randomizedLanes));
+		for (note in parsedNotes) {
+			// dumbest way of doing it but whatever lmao
+			if (Settings.data.gameplaySettings['mirroredNotes']) {
+				if (note.lane == 0) note.lane = 3;
+				else if (note.lane == 3) note.lane = 0;
+				else if (note.lane == 1) note.lane = 2;
+				else note.lane = 1;
+			}
+
+			// stepmania shuffle
+			// instead of randomizing every note's lane individually
+			// because chords were buggy asf lmao
+			if (Settings.data.gameplaySettings['randomizedNotes']) note.lane = randomizedLanes[note.lane];
+
+			if (!Settings.data.gameplaySettings['sustains']) note.length = 0;
+		}
 
 		notes.clear();
 		for (note in unspawnedNotes) {
@@ -325,6 +342,7 @@ class PlayState extends MusicState {
 		}
 
 		unspawnedNotes.sort((a, b) -> Std.int(a.time - b.time));
+		
 		oldNote = null;
 	}
 
