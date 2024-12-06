@@ -173,6 +173,8 @@ class PlayState extends MusicState {
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
 		camHUD.bgColor.alphaFloat = 1 - (Settings.data.stageBrightness * 0.01);
 
+		if (Settings.data.stageBrightness <= 0) FlxG.camera.visible = false;
+
 		camOther = FlxG.cameras.add(new FlxCamera(), false);
 		camOther.bgColor.alpha = 0;
 
@@ -281,9 +283,17 @@ class PlayState extends MusicState {
 	function loadNotes(id:String) {
 		var parsedNotes:Array<NoteData> = Song.parse(song);
 
+		for (note in unspawnedNotes) {
+			note.destroy();
+			note = null;
+		}
+		unspawnedNotes.resize(0);
+
+		var oldNote:Note = null;
+
 		var randomizedLanes:Array<Int> = [];
 		for (i in 0...Strumline.keyCount) randomizedLanes.push(FlxG.random.int(0, Strumline.keyCount - 1, randomizedLanes));
-		for (note in parsedNotes) {
+		for (i => note in parsedNotes) {
 			// dumbest way of doing it but whatever lmao
 			if (Settings.data.gameplaySettings['mirroredNotes']) {
 				if (note.lane == 0) note.lane = 3;
@@ -298,16 +308,7 @@ class PlayState extends MusicState {
 			if (Settings.data.gameplaySettings['randomizedNotes']) note.lane = randomizedLanes[note.lane];
 
 			if (!Settings.data.gameplaySettings['sustains']) note.length = 0;
-		}
 
-		for (note in unspawnedNotes) {
-			note.destroy();
-			note = null;
-		}
-		unspawnedNotes.resize(0);
-
-		var oldNote:Note = null;
-		for (i => note in parsedNotes) {
 			var daBPM:Float = Conductor.getBPMChangeFromMS(note.time).bpm;
 
 			if (i != 0) {
@@ -355,7 +356,6 @@ class PlayState extends MusicState {
 		}
 
 		unspawnedNotes.sort((a, b) -> Std.int(a.time - b.time));
-		
 		oldNote = null;
 	}
 
