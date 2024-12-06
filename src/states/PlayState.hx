@@ -197,6 +197,7 @@ class PlayState extends MusicState {
 		notes.cameras = [camHUD];
 
 		// characters
+		add(gf = new Character(350, 225, 'gf', false));
 		add(dad = new Character(100, 225, '', false));
 		add(bf = new Character(750, 225));
 
@@ -560,7 +561,7 @@ class PlayState extends MusicState {
 		note.missed = true;
 		for (piece in note.pieces) {
 			if (piece == null || !piece.exists || !piece.alive) continue;
-			piece.multAlpha = 0.2;
+			piece.multAlpha = 0.25;
 		}
 
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
@@ -579,6 +580,9 @@ class PlayState extends MusicState {
 		iconP2.scale.set(1.2, 1.2);
 		iconP2.updateHitbox();
 
+		trace('what is happening');
+
+		gf.dance(true);
 		if (beat % 2 == 0) {
 			bf.dance();
 			dad.dance();
@@ -595,13 +599,13 @@ class PlayState extends MusicState {
 	public function moveCamera(?measure:Int = 0) {
 		if (measure < 0) measure = 0;
 		if (song.notes[measure] == null) return;
-/*
+
 		if (gf != null && song.notes[measure].gfSection) {
 			camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
 			camFollow.x += gf.cameraOffset.x;
 			camFollow.y += gf.cameraOffset.y;
 			return;
-		}*/
+		}
 
 		var isOpponent:Bool = song.notes[measure].mustHitSection != true;
 		if (isOpponent) {
@@ -674,7 +678,6 @@ class PlayState extends MusicState {
 	}
 
 	override function destroy() {
-		closeSubstate();
 		resetSubstate();
 		FlxG.camera.setFilters([]);
 

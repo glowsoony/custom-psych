@@ -66,7 +66,7 @@ class Character extends FunkinSprite {
 		}
 
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
-			animationList = ['danceLeft', 'danceRight'];
+			danceList = ['danceLeft', 'danceRight'];
 		}
 
 		dance(true);
@@ -74,7 +74,7 @@ class Character extends FunkinSprite {
 
 	public var dancing(get, never):Bool;
 	function get_dancing():Bool {
-		return animation.curAnim != null && animation.curAnim.name == animationList[animIndex];
+		return animation.curAnim != null && animation.curAnim.name == danceList[animIndex];
 	}
 
 	var _idleTimer:Float = 0.0;
@@ -89,12 +89,12 @@ class Character extends FunkinSprite {
 	}
 
 	var animIndex:Int = 0;
-	var animationList:Array<String> = ['idle'];
+	var danceList:Array<String> = ['idle'];
 	public function dance(?forced:Bool = false) {
 		if (!forced && (animation.curAnim == null || !animation.curAnim.finished)) return;
 
-		playAnim(animationList[animIndex]);
-		animIndex = FlxMath.wrap(animIndex + 1, 0, animationList.length - 1);
+		playAnim(danceList[animIndex]);
+		animIndex = FlxMath.wrap(animIndex + 1, 0, danceList.length - 1);
 	}
 
 	override function playAnim(name:String, ?forced:Bool = true) {
