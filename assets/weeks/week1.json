@@ -19,6 +19,11 @@
 			name: 'Termination',
 			icon: 'dad',
 			color: 0xFF000000,
+		},
+		{
+			name: 'Old Unbeatable',
+			icon: 'dad',
+			color: 0xFF000000,
 		}
 	],
 

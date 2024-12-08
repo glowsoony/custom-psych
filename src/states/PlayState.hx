@@ -356,7 +356,16 @@ class PlayState extends MusicState {
 			oldNote = swagNote;
 		}
 
-		unspawnedNotes.sort((a, b) -> Std.int(a.time - b.time));
+		// forces sustains to be behind notes
+		// if you want them to be in front just use this code instead lol
+
+		//unspawnedNotes.sort((a, b) -> Std.int(a.time - b.time));
+		unspawnedNotes.sort((a, b) -> {
+			if (a.time == b.time)
+				return a.isSustain ? -1 : 1;
+
+			return 1;
+		});
 		oldNote = null;
 	}
 
@@ -579,8 +588,6 @@ class PlayState extends MusicState {
 
 		iconP2.scale.set(1.2, 1.2);
 		iconP2.updateHitbox();
-
-		trace('what is happening');
 
 		gf.dance(true);
 		if (beat % 2 == 0) {
