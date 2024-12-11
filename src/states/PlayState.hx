@@ -52,7 +52,23 @@ class PlayState extends MusicState {
 		return botplay = value;
 	}
 
-	var downscroll:Bool;
+	var downscroll:Bool; 
+
+	var clearType:String;
+	var grade:String;
+
+	static var gradeSet:Array<Array<Dynamic>> = [
+		["Perfect!!", 1],
+		["Sick!", 0.9],
+		["Great", 0.8],
+		["Good", 0.7],
+		["Nice", 0.69],
+		["Meh", 0.6],
+		["Bruh", 0.5],
+		["Bad", 0.4],
+		["Shit", 0.2],
+		["You Suck!", 0],
+	];
 
 	var health(default, set):Float = 50;
 	function set_health(value:Float):Float {
@@ -75,6 +91,8 @@ class PlayState extends MusicState {
 		#end
 		return playbackRate;
 	}
+
+	var judgeData:Array<Judgement> = Judgement.list;
 
 	var defaultCamZoom:Float = 1.05;
 
@@ -555,6 +573,7 @@ class PlayState extends MusicState {
 				totalNotesPlayed += judge.accuracy;
 				health += judge.health;
 				judgeSpr.display(judge.name);
+				judge.hits++;
 			}
 
 			break;
@@ -565,7 +584,9 @@ class PlayState extends MusicState {
 
 		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 
-		updateAccuracy();
+		accuracy = updateAccuracy();
+		grade = updateGrade();
+		clearType = updateClearType();
 		updateScoreTxt();
 	}
 
@@ -655,12 +676,53 @@ class PlayState extends MusicState {
 	}
 
 	// in case someone wants to make their own accuracy calc
-	dynamic function updateAccuracy() {
-		accuracy = totalNotesPlayed / (totalNotesHit + comboBreaks);
+	dynamic function updateAccuracy():Float {
+		return totalNotesPlayed / (totalNotesHit + comboBreaks);
 	}
 
-	dynamic function updateScoreTxt() {
-		scoreTxt.text = 'Score: $score | Combo Breaks: $comboBreaks | Accuracy: ${Util.truncateFloat(accuracy, 2)}%';
+
+	dynamic function updateClearType():String {
+		var goods:Int = judgeData[1].hits;
+		var bads:Int = judgeData[2].hits;
+		var shits:Int = judgeData[3].hits;
+
+		var type:String = 'N/A';
+
+		if (comboBreaks == 0) {
+			if (bads > 0 || shits > 0) type = 'FC';
+			else if (goods == 1) type = 'BF';
+			else if (goods >= 2) type = 'SDG';
+			else if (goods >= 10) type = 'GFC';
+			else type = 'PFC';
+		} else {
+			if (comboBreaks == 1) type = 'MF';
+			else if (comboBreaks <= 9) type = 'SDCB';
+			else type = 'Clear';
+		}
+
+		return type;
+	}
+
+	// from troll engine
+	// lol luhmao
+	dynamic function updateGrade():String {
+		if (totalNotesPlayed < 1) return '?';
+		
+		final roundedAccuracy:Float = accuracy * 0.01;
+
+		if (roundedAccuracy >= 1) return gradeSet[0][0]; // Uses first string
+		else {
+			for (curGrade in gradeSet) {
+				if (roundedAccuracy <= curGrade[1]) continue;
+				return curGrade[0];
+			}
+		}
+		
+		return '?';
+	}
+
+	dynamic function updateScoreTxt():Void {
+		scoreTxt.text = 'Score: $score | Combo Breaks: $comboBreaks | Accuracy: ${Util.truncateFloat(accuracy, 2)}% [$clearType | $grade]';
 	}
 
 	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
@@ -703,6 +765,8 @@ class PlayState extends MusicState {
 
 		Application.current.window.onKeyDown.remove(keyPressed);
 		Application.current.window.onKeyUp.remove(keyReleased);
+
+		Judgement.resetHits();
 
 		Conductor.rate = 1;
 		FlxG.animationTimeScale = 1;

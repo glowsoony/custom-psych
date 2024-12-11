@@ -23,6 +23,8 @@ class Judgement {
 	public var health:Float = 0.0;
 	public var breakCombo:Bool = false;
 
+	public var hits:Int = 0;
+
 	public static function getFromName(name:String):Judgement {
 		var value:Judgement = null;
 		for (i in 0...list.length) {
@@ -45,5 +47,9 @@ class Judgement {
 		}
 
 		return value;
+	}
+
+	inline public static function resetHits():Void {
+		for (judge in list) judge.hits = 0;
 	}
 }
