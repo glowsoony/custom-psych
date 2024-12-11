@@ -1,15 +1,12 @@
 package states;
 
 import flixel.FlxState;
-import backend.PsychCamera;
 import backend.Transition;
 
 class MusicState extends FlxState {
 	var curStep:Int = 0;
 	var curBeat:Int = 0;
 	var curMeasure:Int = 0;
-
-	var _psychCameraInitialized:Bool = false;
 
 	public static var skipNextTransIn:Bool = false;
 	public static var skipNextTransOut:Bool = false;
@@ -18,8 +15,6 @@ class MusicState extends FlxState {
 		Conductor.reset();
 		Paths.clearUnusedMemory();
 
-		if (!_psychCameraInitialized) initPsychCamera();
-
 		if (!skipNextTransOut && Settings.data.transitions) openSubstate(new Transition(0.5, true));
 		skipNextTransOut = false;
 
@@ -27,14 +22,6 @@ class MusicState extends FlxState {
 		Conductor.onBeat = beatHit;
 		Conductor.onMeasure = measureHit;
 		Conductor.self.active = false;
-	}
-
-	public function initPsychCamera():PsychCamera {
-		var camera:PsychCamera = new PsychCamera();
-		FlxG.cameras.reset(camera);
-		FlxG.cameras.setDefaultDrawTarget(camera, true);
-		_psychCameraInitialized = true;
-		return camera;
 	}
 
 	public static function switchState(nextState:FlxState = null) {
@@ -70,15 +57,9 @@ class MusicState extends FlxState {
 		return cast(FlxG.state, MusicState);
 	}
 
-	public function stepHit(step:Int):Void {
-		curStep = step;
-	}
+	public function stepHit(step:Int):Void {}
 
-	public function beatHit(beat:Int):Void {
-		curBeat = beat;
-	}
+	public function beatHit(beat:Int):Void {}
 
-	public function measureHit(measure:Int):Void {
-		curMeasure = measure;
-	}
+	public function measureHit(measure:Int):Void {}
 }

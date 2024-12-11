@@ -76,6 +76,8 @@ class PlayState extends MusicState {
 		return playbackRate;
 	}
 
+	var defaultCamZoom:Float = 1.05;
+
 	var combo:Int = 0;
 	var comboBreaks:Int = 0;
 	var score:Int = 0;
@@ -111,6 +113,7 @@ class PlayState extends MusicState {
 	var countdown:Countdown;
 
 	// cameras
+	var camGame:FlxCamera;
 	var camHUD:FlxCamera;
 	var camOther:FlxCamera;
 
@@ -154,7 +157,7 @@ class PlayState extends MusicState {
 		}
 
 		// set up cameras
-		FlxG.cameras.reset();
+		FlxG.cameras.reset(camGame = new FlxCamera());
 
 		camFollow = new FlxObject();
 		if (prevCamFollow != null) {
@@ -164,9 +167,9 @@ class PlayState extends MusicState {
 		camFollow.setPosition(0, 0);
 		add(camFollow);
 		
-		FlxG.camera.follow(camFollow, LOCKON, 0);
-		FlxG.camera.zoom = 1;
-		FlxG.camera.snapToTarget();
+		camGame.follow(camFollow, LOCKON, 0);
+		camGame.zoom = 1;
+		camGame.snapToTarget();
 
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 		moveCamera();
@@ -175,7 +178,7 @@ class PlayState extends MusicState {
 		camHUD.bgColor.alphaFloat = 1 - (Settings.data.stageBrightness * 0.01);
 
 		// to prevent more lag when you can't even see the game camera
-		if (Settings.data.stageBrightness <= 0) FlxG.camera.visible = false;
+		if (Settings.data.stageBrightness <= 0) camGame.visible = false;
 
 		camOther = FlxG.cameras.add(new FlxCamera(), false);
 		camOther.bgColor.alpha = 0;
@@ -381,8 +384,8 @@ class PlayState extends MusicState {
 
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
-		if (paused) FlxG.camera.followLerp = 0;
-		else FlxG.camera.followLerp = 0.04 * 1 * playbackRate;
+		if (paused) camGame.followLerp = 0;
+		else camGame.followLerp = 0.04 * 1 * playbackRate;
 	}
 
 	dynamic function spawnNotes() {
@@ -420,6 +423,7 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function updateCameraScale(elapsed:Float):Void {
+		camGame.zoom = FlxMath.lerp(1, camGame.zoom, Math.exp(-elapsed * 6 * playbackRate));
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 6 * playbackRate));
 	}
 
@@ -463,7 +467,7 @@ class PlayState extends MusicState {
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
 		if (!note.canHit || note.time >= Conductor.time) return;
 
-		final func = note.player ? noteHit : opponentNoteHit;
+		final noteFunc = note.player ? noteHit : opponentNoteHit;
 
 		// sustain input
 		if (note.isSustain) {
@@ -472,14 +476,14 @@ class PlayState extends MusicState {
 
 			note.wasHit = true;
 			strum.playAnim('notePressed');
-			func(note);
+			noteFunc(note);
 			return;
 		}
 
 		// normal notes
 		strum.playAnim('notePressed');
 		note.wasHit = true;
-		func(note);
+		noteFunc(note);
 		note.destroy();
 		notes.remove(note);
 	}
@@ -501,7 +505,7 @@ class PlayState extends MusicState {
 		var isTail:Bool = note.animation.curAnim.name == 'holdend';
 
 		if (!heldKey) {
-			if (tooLate && !note.wasHit && Math.abs(note.hitTime) > 20) {
+			if (tooLate && !note.wasHit) {
 				// ignore tails completely
 				if (isTail && parent.wasHit) {
 					note.destroy();
@@ -587,8 +591,6 @@ class PlayState extends MusicState {
 	}
 
 	override function beatHit(beat:Int) {
-		super.beatHit(beat);
-
 		iconP1.scale.set(1.2, 1.2);
 		iconP1.updateHitbox();
 
@@ -608,7 +610,7 @@ class PlayState extends MusicState {
 	}
 
 	override function measureHit(measure:Int) {
-		super.measureHit(measure);
+		camGame.zoom += 0.03;
 		camHUD.zoom += 0.015;
 
 		moveCamera(measure);
@@ -697,7 +699,7 @@ class PlayState extends MusicState {
 
 	override function destroy() {
 		resetSubstate();
-		FlxG.camera.setFilters([]);
+		camGame.setFilters([]);
 
 		Application.current.window.onKeyDown.remove(keyPressed);
 		Application.current.window.onKeyUp.remove(keyReleased);

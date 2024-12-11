@@ -36,7 +36,7 @@ class NoteOffsetState extends MusicState
 		#end
 
 		// Cameras
-		camGame = initPsychCamera();
+		FlxG.cameras.reset(camGame);
 
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
