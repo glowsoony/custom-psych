@@ -174,6 +174,7 @@ class PlayState extends MusicState {
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
 		camHUD.bgColor.alphaFloat = 1 - (Settings.data.stageBrightness * 0.01);
 
+		// to prevent more lag when you can't even see the game camera
 		if (Settings.data.stageBrightness <= 0) FlxG.camera.visible = false;
 
 		camOther = FlxG.cameras.add(new FlxCamera(), false);
