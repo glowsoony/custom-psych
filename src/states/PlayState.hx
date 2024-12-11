@@ -116,6 +116,7 @@ class PlayState extends MusicState {
 
 	// whatever variables i also need lmao
 	final iconSpacing:Float = 20;
+	var gfSpeed:Int = 1;
 
 	var keys:Array<String> = [
 		'note_left',
@@ -139,12 +140,12 @@ class PlayState extends MusicState {
 		PauseMenu.musicPath = Settings.data.pauseMusic;
 		Paths.music(PauseMenu.musicPath);
 
-		loadSong();
-
 		// set up gameplay settings
 		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
 		downscroll = Settings.data.scrollDirection == 'Down';
+
+		loadSong();
 
 		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
 			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
@@ -341,7 +342,7 @@ class PlayState extends MusicState {
 						speed: note.speed
 					},  true, oldNote);
 					sustainNote.parent = swagNote;
-					sustainNote.correctionOffset.y = Settings.data.scrollDirection == 'Down' ? 0 : swagNote.height * 0.5;
+					sustainNote.correctionOffset.y = downscroll ? 0 : swagNote.height * 0.5;
 					unspawnedNotes.push(sustainNote);
 					swagNote.pieces.push(sustainNote);
 
@@ -361,10 +362,8 @@ class PlayState extends MusicState {
 
 		//unspawnedNotes.sort((a, b) -> Std.int(a.time - b.time));
 		unspawnedNotes.sort((a, b) -> {
-			if (a.time == b.time)
-				return a.isSustain ? -1 : 1;
-
-			return 1;
+			if (a.time == b.time) return a.isSustain ? -1 : Std.int(a.time - b.time);
+			return Std.int(a.time - b.time);
 		});
 		oldNote = null;
 	}
@@ -373,7 +372,19 @@ class PlayState extends MusicState {
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		// note spawning
+		spawnNotes();
+		updateNotes();
+		updateCameraScale(elapsed);
+		updateIconScales(elapsed);
+		updateIconPositions();
+
+		if (Controls.justPressed('pause') && canPause) openPauseMenu();
+
+		if (paused) FlxG.camera.followLerp = 0;
+		else FlxG.camera.followLerp = 0.04 * 1 * playbackRate;
+	}
+
+	dynamic function spawnNotes() {
 		while (noteSpawnIndex < unspawnedNotes.length) {
 			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
 			if (noteToSpawn.hitTime > noteSpawnDelay) break;
@@ -382,7 +393,9 @@ class PlayState extends MusicState {
 			noteToSpawn.spawned = true;
 			noteSpawnIndex++;
 		}
+	}
 
+	dynamic function updateNotes() {
 		for (note in notes.members) {
 			if (note == null || !note.alive) continue;
 
@@ -403,26 +416,18 @@ class PlayState extends MusicState {
 				note.destroy();
 			}
 		}
-
-		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 6 * playbackRate));
-
-		updateIconScales(elapsed);
-		updateIconPositions();
-
-		if (Controls.justPressed('pause') && canPause) openPauseMenu();
-
-		
-
-		if (paused) FlxG.camera.followLerp = 0;
-		else FlxG.camera.followLerp = 0.04 * 1 * playbackRate;
 	}
 
-	public dynamic function updateIconPositions():Void {
+	dynamic function updateCameraScale(elapsed:Float):Void {
+		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 6 * playbackRate));
+	}
+
+	dynamic function updateIconPositions():Void {
 		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconSpacing;
 		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconSpacing * 2;
 	}
 
-	public dynamic function updateIconScales(elapsed:Float):Void {
+	dynamic function updateIconScales(elapsed:Float):Void {
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-elapsed * 9 * playbackRate));
 		iconP1.scale.set(mult, mult);
 		iconP1.centerOrigin();
@@ -495,7 +500,7 @@ class PlayState extends MusicState {
 		var isTail:Bool = note.animation.curAnim.name == 'holdend';
 
 		if (!heldKey) {
-			if (tooLate && !note.wasHit) {
+			if (tooLate && !note.wasHit && Math.abs(note.hitTime) > 20) {
 				// ignore tails completely
 				if (isTail && parent.wasHit) {
 					note.destroy();
@@ -589,11 +594,16 @@ class PlayState extends MusicState {
 		iconP2.scale.set(1.2, 1.2);
 		iconP2.updateHitbox();
 
-		gf.dance(true);
-		if (beat % 2 == 0) {
+		characterBopper(beat);
+	}
+
+	function characterBopper(beat:Int):Void {
+		if (beat % Math.round(gfSpeed * gf.danceInterval) == 0)
+			gf.dance();
+		if (beat % bf.danceInterval == 0)
 			bf.dance();
+		if (beat % dad.danceInterval == 0)
 			dad.dance();
-		}
 	}
 
 	override function measureHit(measure:Int) {

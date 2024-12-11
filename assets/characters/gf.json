@@ -162,5 +162,6 @@
 	healthColor: 0xFFA5004D,
 	cameraOffset: [0, 0],
 	singDuration: 4,
-	scale: [1, 1]
+	scale: [1, 1],
+	danceInterval: 1
 }

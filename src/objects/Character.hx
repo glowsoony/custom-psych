@@ -9,6 +9,7 @@ typedef CharacterFile = {
 	var healthColor:Int;
 	var sheets:String;
 	var cameraOffset:Array<Float>;
+	var danceInterval:Int;
 
 	var animations:Array<CharacterAnim>;
 }
@@ -23,13 +24,15 @@ typedef CharacterAnim = {
 }
 
 class Character extends FunkinSprite {
-	public static final default_name:String = 'bf';
+	public static inline var default_name:String = 'bf';
 	public var name:String = default_name;
 	public var singDuration:Float = 4;
+	public var danceInterval:Int = 2;
 	public var healthColor:Int = 0xFFA1A1A1;
 	public var sheets:String;
 	public var icon:String = '';
 	public var cameraOffset:FlxPoint = FlxPoint.get(0, 0);
+	public var dancer:Bool = false;
 
 	var _file:CharacterFile;
 
@@ -48,6 +51,7 @@ class Character extends FunkinSprite {
 		this.healthColor = _file.healthColor;
 		this.sheets = _file.sheets;
 		this.icon = _file.icon;
+		this.danceInterval = _file.danceInterval;
 		this.cameraOffset.set(_file.cameraOffset[0], _file.cameraOffset[1]);
 		flipX = (_file.flipX != player);
 
@@ -67,6 +71,7 @@ class Character extends FunkinSprite {
 
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
 			danceList = ['danceLeft', 'danceRight'];
+			dancer = true;
 		}
 
 		dance(true);
@@ -74,23 +79,25 @@ class Character extends FunkinSprite {
 
 	public var dancing(get, never):Bool;
 	function get_dancing():Bool {
-		return animation.curAnim != null && animation.curAnim.name == danceList[animIndex];
+		return animation.curAnim != null && danceList.contains(animation.curAnim.name);
 	}
 
-	var _idleTimer:Float = 0.0;
+	var _singTimer:Float = 0.0;
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (animation.curAnim == null) return;
 		if (!dancing) {
-			_idleTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
-			if (_idleTimer <= 0.0) dance(true);
+			_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
+			if (_singTimer <= 0.0) dance(true);
 		}
 	}
 
 	var animIndex:Int = 0;
 	var danceList:Array<String> = ['idle'];
 	public function dance(?forced:Bool = false) {
+		// support for gf/spooky kids characters
+		if (dancer && !forced) forced = dancing;
+
 		if (!forced && (animation.curAnim == null || !animation.curAnim.finished)) return;
 
 		playAnim(danceList[animIndex]);
@@ -100,7 +107,7 @@ class Character extends FunkinSprite {
 	override function playAnim(name:String, ?forced:Bool = true) {
 		super.playAnim(name, forced);
 		if (name.startsWith('sing') || name.startsWith('miss')) {
-			_idleTimer = singDuration * (Conductor.stepCrotchet * 0.15);
+			_singTimer = singDuration * (Conductor.stepCrotchet * 0.15);
 		}
 	}
 
@@ -112,6 +119,7 @@ class Character extends FunkinSprite {
 			scale: [1, 1],
 			singDuration: 4,
 			healthColor: 0xFFA1A1A1,
+			danceInterval: 2,
 			sheets: 'characters/bf',
 			cameraOffset: [0, 0],
 

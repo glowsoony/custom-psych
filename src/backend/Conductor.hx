@@ -22,7 +22,7 @@ class Conductor extends flixel.FlxBasic {
 	public static var volume(default, set):Float = 1.0;
 
 	public static var time:Float = 0.0;
-	static var lastTime:Float = 0.0;
+	static var _lastTime:Float = 0.0;
 
 	static var _resyncTimer:Float = 0.0;
 
@@ -85,11 +85,11 @@ class Conductor extends flixel.FlxBasic {
 	public static dynamic function syncTime(delta:Float):Void {
 		final addition:Float = (delta * 1000) * rate;
 		if (inst != null && inst.playing) {
-			if (inst.time == lastTime) _resyncTimer += addition;
+			if (inst.time == _lastTime) _resyncTimer += addition;
 			else _resyncTimer = 0;
 
 			time = (inst.time + _resyncTimer) + offset;
-			lastTime = inst.time;
+			_lastTime = inst.time;
 		} else time += addition;
 	}
 

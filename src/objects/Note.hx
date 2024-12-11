@@ -1,9 +1,8 @@
 package objects;
 
 import backend.animation.PsychAnimationController;
-
+import backend.Judgement;
 import objects.Strumline.StrumNote;
-
 import flixel.math.FlxRect;
 
 typedef NoteData = {
@@ -50,7 +49,9 @@ class Note extends FlxSprite {
 	public var canHit:Bool = true;
 	public var inHitRange(get, never):Bool;
 	function get_inHitRange():Bool {
-		return (time < Conductor.time + (166 * earlyHitMult) && (time > Conductor.time - (166 * lateHitMult)));
+		//return (time < Conductor.time + (166 * earlyHitMult) && (time > Conductor.time - (166 * lateHitMult)));
+		return (time < Conductor.time + (Judgement.maxHitWindow * earlyHitMult) && 
+		(time > Conductor.time - (Judgement.maxHitWindow * lateHitMult)));
 	}
 
 	public var tooLate(get, never):Bool;
