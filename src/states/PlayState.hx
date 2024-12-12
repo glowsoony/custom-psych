@@ -761,7 +761,8 @@ class PlayState extends MusicState {
 	// from troll engine
 	// lol luhmao
 	dynamic function updateGrade():String {
-		if (totalNotesPlayed < 1) return '?';
+		var type:String = '?';
+		if (totalNotesPlayed < 1) return type;
 		
 		final roundedAccuracy:Float = accuracy * 0.01;
 
@@ -769,11 +770,12 @@ class PlayState extends MusicState {
 		else {
 			for (curGrade in gradeSet) {
 				if (roundedAccuracy <= curGrade[1]) continue;
-				return curGrade[0];
+				type = curGrade[0];
+				break;
 			}
 		}
 		
-		return '?';
+		return type;
 	}
 
 	dynamic function updateScoreTxt():Void {
