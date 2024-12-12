@@ -29,6 +29,11 @@
 			name: 'Unbeatable',
 			icon: 'dad',
 			color: 0xFF000000,
+		},
+		{
+			name: 'Little Man 2',
+			icon: 'dad',
+			color: 0xFF000000,
 		}
 	],
 

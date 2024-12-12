@@ -36,7 +36,7 @@ class Countdown extends FunkinSprite {
 		active = true;
 		onStart();
 
-		timer = new FlxTimer().start(Conductor.crotchet * 0.001, function(_) {
+		timer = new FlxTimer().start((Conductor.crotchet * 0.001) / Conductor.rate, function(_) {
 			onTick(timer.loopsLeft);
 
 			if (timer.loopsLeft > 0) {
