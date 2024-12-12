@@ -17,7 +17,7 @@ class Bar extends FlxSpriteGroup {
 	// you might need to change this if you want to use a custom bar
 	public var barWidth(default, set):Int = 1;
 	public var barHeight(default, set):Int = 1;
-	public var barOffset:FlxPoint = new FlxPoint(3, 3);
+	public var barOffset:FlxPoint = new FlxPoint(0, 0);
 
 	public function new(x:Float, y:Float, image:String = 'healthBar', valueFunction:Void -> Float = null, boundX:Float = 0, boundY:Float = 1) {
 		super(x, y);
@@ -26,11 +26,11 @@ class Bar extends FlxSpriteGroup {
 		setBounds(boundX, boundY);
 		
 		bg = new FlxSprite().loadGraphic(Paths.image(image));
-		barWidth = Math.floor(bg.width - 6);
-		barHeight = Math.floor(bg.height - 6);
+		barWidth = Math.floor(bg.width);
+		barHeight = Math.floor(bg.height);
 
-		leftBar = new FlxSprite().makeGraphic(Math.floor(bg.width), Math.floor(bg.height), FlxColor.WHITE);
-		rightBar = new FlxSprite().makeGraphic(Math.floor(bg.width), Math.floor(bg.height), FlxColor.WHITE);
+		leftBar = new FlxSprite().makeGraphic(barWidth, barHeight, FlxColor.WHITE);
+		rightBar = new FlxSprite().makeGraphic(barWidth, barHeight, FlxColor.WHITE);
 		rightBar.color = FlxColor.BLACK;
 
 		add(leftBar);

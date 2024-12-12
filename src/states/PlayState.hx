@@ -12,6 +12,10 @@ import objects.Strumline.StrumNote;
 
 import backend.Judgement;
 
+import flixel.util.FlxGradient;
+import flixel.util.FlxSpriteUtil;
+import flixel.util.FlxStringUtil;
+
 import substates.PauseMenu;
 
 class PlayState extends MusicState {
@@ -96,6 +100,9 @@ class PlayState extends MusicState {
 
 	var defaultCamZoom:Float = 1.05;
 
+	var songPercent:Float = 0.0;
+	var songLength:Float;
+
 	var combo:Int = 0;
 	var comboBreaks:Int = 0;
 	var score:Int = 0;
@@ -105,6 +112,7 @@ class PlayState extends MusicState {
 	var totalNotesHit:Int = 0;
 
 	public var paused:Bool = false;
+	var updateTime:Bool = false;
 
 	// objects
 	var bf:Character;
@@ -120,6 +128,9 @@ class PlayState extends MusicState {
 	var hudGroup:FlxSpriteGroup;
 
 	var scoreTxt:FlxText;
+
+	var timeBar:Bar;
+	var timeTxt:FlxText;
 
 	var judgeSpr:JudgementSpr;
 	var comboNumbers:ComboNums;
@@ -228,6 +239,25 @@ class PlayState extends MusicState {
 		add(hudGroup = new FlxSpriteGroup());
 		hudGroup.cameras = [camHUD];
 
+		hudGroup.add(timeBar = new Bar(0, downscroll ? FlxG.height - 30 : 15, 'timeBar', function() return songPercent, 0, 1));
+		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
+		timeBar.screenCenter(X);
+
+		hudGroup.add(timeTxt = new FlxText(0, 0, timeBar.width, '$songName - 0:00', 16));
+		timeTxt.font = Paths.font('vcr.ttf');
+		timeTxt.alignment = CENTER;
+		timeTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		timeTxt.borderColor = FlxColor.BLACK;
+		timeTxt.borderSize = 1.25;
+
+		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
+
+		// to make it fancy
+		// if you want it the generic psych way
+		// (black and white)
+		// then just take this long ass line out
+		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
+
 		hudGroup.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
 		healthBar.setColors(dad.healthColor, bf.healthColor);
 		healthBar.screenCenter(X);
@@ -241,13 +271,12 @@ class PlayState extends MusicState {
 
 		updateIconPositions();
 
-		scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, 'Score: 0 | Combo Breaks: 0 | Accuracy: ?', 16);
+		hudGroup.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, 'Score: 0 | Combo Breaks: 0 | Accuracy: ?', 16));
 		scoreTxt.font = Paths.font('vcr.ttf');
 		scoreTxt.alignment = CENTER;
 		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
 		scoreTxt.borderColor = FlxColor.BLACK;
 		scoreTxt.borderSize = 1.25;
-		hudGroup.add(scoreTxt);
 		scoreTxt.screenCenter(X);
 
 		hudGroup.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
@@ -256,7 +285,10 @@ class PlayState extends MusicState {
 		hudGroup.add(countdown = new Countdown());
 		countdown.screenCenter();
 		countdown.onStart = function() Conductor.self.active = true;
-		countdown.onFinish = Conductor.play;
+		countdown.onFinish = function() {
+			Conductor.play();
+			updateTime = true;
+		}
 
 		// set up any other stuff we might need
 		Application.current.window.onKeyDown.add(keyPressed);
@@ -300,6 +332,8 @@ class PlayState extends MusicState {
 				if (opponentFile != null) Conductor.opponentVocals = FlxG.sound.load(opponentFile);
 			}
 		} catch (e:Dynamic) Sys.println('Vocals failed to load: $e');
+
+		songLength = Conductor.inst.length;
 
 		loadNotes(songID);
 	}
@@ -399,11 +433,28 @@ class PlayState extends MusicState {
 		updateCameraScale(elapsed);
 		updateIconScales(elapsed);
 		updateIconPositions();
+		updateTimeBar();
 
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
 		if (paused) camGame.followLerp = 0;
 		else camGame.followLerp = 0.04 * 1 * playbackRate;
+	}
+
+	var _lastSeconds:Int = -1;
+	dynamic function updateTimeBar() {
+		if (paused || !updateTime) return;
+
+		var curTime:Float = Math.max(0, Conductor.time / Conductor.rate);
+		songPercent = (curTime / (songLength / Conductor.rate));
+
+		var seconds:Int = Math.floor(curTime * 0.001);
+		if (seconds < 0) seconds = 0;
+
+		if (seconds < _lastSeconds) return;
+
+		timeTxt.text = '$songName - ${FlxStringUtil.formatTime(seconds, false)}';
+		_lastSeconds = seconds;
 	}
 
 	dynamic function spawnNotes() {
