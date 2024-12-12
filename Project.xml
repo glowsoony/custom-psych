@@ -92,6 +92,13 @@
 	<haxeflag name="--macro" value="include('my.pack')" />
 	<define name="x86_BUILD" if="32bits" />
 
+	<!-- fixes a bug with compiling on mac-->
+	<!-- thanks neo -->
+	<define name="mac" if="macos"/>
+	<define name="macos" if="mac"/>
+	<haxedef name="mac" />
+	<haxedef name="macos" />
+
 	<define name="IRIS_DEBUG"/>
 
 	<assets path='icons/iconOG.png' rename='icon.png' if="linux" />
