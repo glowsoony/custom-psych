@@ -762,7 +762,7 @@ class PlayState extends MusicState {
 	// lol luhmao
 	dynamic function updateGrade():String {
 		var type:String = '?';
-		if (totalNotesPlayed < 1) return type;
+		if (totalNotesHit == 0) return type;
 		
 		final roundedAccuracy:Float = accuracy * 0.01;
 
