@@ -58,8 +58,8 @@ class PlayState extends MusicState {
 
 	var downscroll:Bool; 
 
-	var clearType:String;
-	var grade:String;
+	var clearType:String = 'N/A';
+	var grade:String = '?';
 
 	static var gradeSet:Array<Array<Dynamic>> = [
 		["Perfect!!", 1],
@@ -249,7 +249,6 @@ class PlayState extends MusicState {
 		timeTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
 		timeTxt.borderColor = FlxColor.BLACK;
 		timeTxt.borderSize = 1.25;
-
 		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
 
 		// to make it fancy
@@ -271,13 +270,14 @@ class PlayState extends MusicState {
 
 		updateIconPositions();
 
-		hudGroup.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, 'Score: 0 | Combo Breaks: 0 | Accuracy: ?', 16));
+		hudGroup.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, '', 16));
 		scoreTxt.font = Paths.font('vcr.ttf');
 		scoreTxt.alignment = CENTER;
 		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
 		scoreTxt.borderColor = FlxColor.BLACK;
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.screenCenter(X);
+		updateScoreTxt();
 
 		hudGroup.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
 		hudGroup.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));

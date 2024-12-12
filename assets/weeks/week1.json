@@ -21,7 +21,7 @@
 			color: 0xFF000000,
 		},
 		{
-			name: 'Old Unbeatable',
+			name: 'Beatable',
 			icon: 'dad',
 			color: 0xFF000000,
 		},
