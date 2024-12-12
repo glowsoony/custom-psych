@@ -58,8 +58,8 @@ class PlayState extends MusicState {
 
 	var downscroll:Bool; 
 
-	var clearType:String = 'N/A';
-	var grade:String = '?';
+	var clearType:String;
+	var grade:String;
 
 	static var gradeSet:Array<Array<Dynamic>> = [
 		["Perfect!!", 1],
@@ -176,6 +176,9 @@ class PlayState extends MusicState {
 		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
 		downscroll = Settings.data.scrollDirection == 'Down';
+
+		clearType = updateClearType();
+		grade = updateGrade();
 
 		loadSong();
 
@@ -733,6 +736,7 @@ class PlayState extends MusicState {
 
 
 	dynamic function updateClearType():String {
+		var sicks:Int = judgeData[0].hits;
 		var goods:Int = judgeData[1].hits;
 		var bads:Int = judgeData[2].hits;
 		var shits:Int = judgeData[3].hits;
@@ -744,7 +748,7 @@ class PlayState extends MusicState {
 			else if (goods == 1) type = 'BF';
 			else if (goods >= 2) type = 'SDG';
 			else if (goods >= 10) type = 'GFC';
-			else type = 'PFC';
+			else if (sicks > 0) type = 'PFC';
 		} else {
 			if (comboBreaks == 1) type = 'MF';
 			else if (comboBreaks <= 9) type = 'SDCB';
