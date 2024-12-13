@@ -135,6 +135,8 @@ class PlayState extends MusicState {
 	var judgeSpr:JudgementSpr;
 	var comboNumbers:ComboNums;
 
+	var judgeCounter:FlxText;
+
 	var healthBar:Bar;
 	var iconP1:CharIcon;
 	var iconP2:CharIcon;
@@ -284,6 +286,14 @@ class PlayState extends MusicState {
 
 		hudGroup.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
 		hudGroup.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
+
+		hudGroup.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
+		judgeCounter.font = Paths.font('vcr.ttf');
+		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
+		judgeCounter.borderColor = FlxColor.BLACK;
+		judgeCounter.borderSize = 1.25;
+		updateJudgeCounter();
+		judgeCounter.screenCenter(Y);
 
 		hudGroup.add(countdown = new Countdown());
 		countdown.screenCenter();
@@ -635,6 +645,7 @@ class PlayState extends MusicState {
 
 		combo++;
 		comboNumbers.display(combo);
+		updateJudgeCounter();
 
 		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 
@@ -682,6 +693,15 @@ class PlayState extends MusicState {
 			bf.dance();
 		if (beat % dad.danceInterval == 0)
 			dad.dance();
+	}
+
+	dynamic function updateJudgeCounter() {
+		var sicks:Int = judgeData[0].hits;
+		var goods:Int = judgeData[1].hits;
+		var bads:Int = judgeData[2].hits;
+		var shits:Int = judgeData[3].hits;
+
+		judgeCounter.text = 'Sicks: $sicks\nGoods: $goods\nBads: $bads\nShits: $shits';
 	}
 
 	override function measureHit(measure:Int) {
@@ -733,7 +753,6 @@ class PlayState extends MusicState {
 	dynamic function updateAccuracy():Float {
 		return totalNotesPlayed / (totalNotesHit + comboBreaks);
 	}
-
 
 	dynamic function updateClearType():String {
 		var sicks:Int = judgeData[0].hits;
