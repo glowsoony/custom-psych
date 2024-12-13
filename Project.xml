@@ -94,10 +94,10 @@
 
 	<!-- fixes a bug with compiling on mac-->
 	<!-- thanks neo -->
-<!--	<define name="mac" if="macos"/>
+	<define name="mac" if="macos"/>
 	<define name="macos" if="mac"/>
-	<haxedef name="mac" />
-	<haxedef name="macos" />-->
+	<haxedef name="mac" if="mac"/>
+	<haxedef name="macos" if="macos"/>
 
 	<define name="IRIS_DEBUG"/>
 
