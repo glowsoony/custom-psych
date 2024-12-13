@@ -84,13 +84,16 @@ class Conductor extends flixel.FlxBasic {
 
 	public static dynamic function syncTime(delta:Float):Void {
 		final addition:Float = (delta * 1000) * rate;
-		if (inst != null && inst.playing) {
-			if (inst.time == _lastTime) _resyncTimer += addition;
-			else _resyncTimer = 0;
+		if (inst == null || !inst.playing) {
+			time += addition;
+			return;
+		}
 
-			time = (inst.time + _resyncTimer) + offset;
-			_lastTime = inst.time;
-		} else time += addition;
+		if (inst.time == _lastTime) _resyncTimer += addition;
+		else _resyncTimer = 0;
+
+		time = (inst.time + _resyncTimer) + offset;
+		_lastTime = inst.time;
 	}
 
 	public static dynamic function syncVocals() {
