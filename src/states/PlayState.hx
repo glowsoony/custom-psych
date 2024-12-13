@@ -52,7 +52,8 @@ class PlayState extends MusicState {
 
 	public var botplay(default, set):Bool = false;
 	function set_botplay(value:Bool):Bool {
-		if (playerStrums != null) playerStrums.player = value;
+		if (playerStrums != null) playerStrums.player = !value;
+		if (botplayTxt != null) botplayTxt.visible = value;
 		return botplay = value;
 	}
 
@@ -103,6 +104,8 @@ class PlayState extends MusicState {
 	var songPercent:Float = 0.0;
 	var songLength:Float;
 
+	var botplayTxtSine:Float = 0.0;
+
 	var combo:Int = 0;
 	var comboBreaks:Int = 0;
 	var score:Int = 0;
@@ -128,6 +131,7 @@ class PlayState extends MusicState {
 	var hudGroup:FlxSpriteGroup;
 
 	var scoreTxt:FlxText;
+	var botplayTxt:FlxText;
 
 	var timeBar:Bar;
 	var timeTxt:FlxText;
@@ -174,8 +178,10 @@ class PlayState extends MusicState {
 		PauseMenu.musicPath = Settings.data.pauseMusic;
 		Paths.music(PauseMenu.musicPath);
 
+		Settings.data.scrollDirection = 'Down';
+
 		// set up gameplay settings
-		botplay = Settings.data.gameplaySettings['botplay'];
+		botplay = true; /*Settings.data.gameplaySettings['botplay'];*/
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
 		downscroll = Settings.data.scrollDirection == 'Down';
 
@@ -286,6 +292,15 @@ class PlayState extends MusicState {
 
 		hudGroup.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
 		hudGroup.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
+
+		hudGroup.add(botplayTxt = new FlxText(0, downscroll ? FlxG.height - 115 : 85, FlxG.width - 800, 'BOTPLAY', 32));
+		botplayTxt.font = Paths.font('vcr.ttf');
+		botplayTxt.alignment = CENTER;
+		botplayTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		botplayTxt.borderColor = FlxColor.BLACK;
+		botplayTxt.borderSize = 1.25;
+		botplayTxt.visible = botplay;
+		botplayTxt.screenCenter(X);
 
 		hudGroup.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
 		judgeCounter.font = Paths.font('vcr.ttf');
@@ -447,6 +462,13 @@ class PlayState extends MusicState {
 		updateIconScales(elapsed);
 		updateIconPositions();
 		updateTimeBar();
+
+		if (FlxG.keys.justPressed.F8) botplay = !botplay;
+
+		if (botplayTxt.visible) {
+			botplayTxtSine += 180 * elapsed;
+			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplayTxtSine) / 180);
+		}
 
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
@@ -612,10 +634,26 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function noteHit(note:Note) {
+		if (song.needsVoices) Conductor.mainVocals.volume = 1;
+
+		if (botplay) {
+			bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+			if (note.isSustain) return;
+
+			final judge:Judgement = Judgement.list[0];
+
+			health += judge.health;
+			judgeSpr.display(judge.name);
+			judge.hits++;
+			combo++;
+			comboNumbers.display(combo);
+			updateJudgeCounter();
+			
+			return;
+		}
+
 		playerStrums.members[note.lane].playAnim('notePressed');
 		note.wasHit = true;
-
-		if (song.needsVoices) Conductor.mainVocals.volume = 1;
 
 		totalNotesHit++;
 		

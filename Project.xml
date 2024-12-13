@@ -7,7 +7,7 @@
 	<!-- Project Defines -->
 	<!--<define name="SCRIPTING_ALLOWED" />-->
 	<define name="ACHIEVEMENTS_ALLOWED" />
-	<!--<define name="DISCORD_ALLOWED" />-->
+	<define name="DISCORD_ALLOWED" />
 	<define name="TRANSLATIONS_ALLOWED" />
 	<define name="PSYCH_WATERMARKS"/> 
 
@@ -15,7 +15,7 @@
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>
 
 	<!--<define name="BASE_GAME_ASSETS" /> -->
-	<!--<define name="VIDEOS_ALLOWED" if="windows || linux" unless="32bits"/>-->
+	<define name="VIDEOS_ALLOWED" if="windows || linux" unless="32bits"/>
 	<define name="CRASH_HANDLER" />
 	<define name="CHECK_FOR_UPDATES" />
 
@@ -94,10 +94,10 @@
 
 	<!-- fixes a bug with compiling on mac-->
 	<!-- thanks neo -->
-	<define name="mac" if="macos"/>
+<!--	<define name="mac" if="macos"/>
 	<define name="macos" if="mac"/>
 	<haxedef name="mac" />
-	<haxedef name="macos" />
+	<haxedef name="macos" />-->
 
 	<define name="IRIS_DEBUG"/>
 
