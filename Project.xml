@@ -15,7 +15,7 @@
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>
 
 	<!--<define name="BASE_GAME_ASSETS" /> -->
-	<define name="VIDEOS_ALLOWED" if="windows || linux" unless="32bits"/>
+	<define name="VIDEOS_ALLOWED" if="windows || linux || mac" unless="32bits"/>
 	<define name="CRASH_HANDLER" />
 	<define name="CHECK_FOR_UPDATES" />
 
