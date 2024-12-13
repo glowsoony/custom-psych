@@ -10,9 +10,7 @@ import states.TitleState;
 
 import external.DefinesMacro;
 
-#if linux
 import lime.graphics.Image;
-#end
 
 //crash handler stuff
 #if CRASH_HANDLER
