@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  cancel_previous_runs:
+  Cancel Previous Runs (ignore):
     runs-on: ubuntu-latest
     steps:
       - name: Cancel Previous Runs
