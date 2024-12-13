@@ -1,13 +1,12 @@
 package backend;
 
-#if DISCORD_ALLOWED
 import sys.thread.Thread;
 import lime.app.Application;
+import flixel.util.FlxStringUtil;
 
+#if DISCORD_ALLOWED
 import hxdiscord_rpc.Discord;
 import hxdiscord_rpc.Types;
-
-import flixel.util.FlxStringUtil;
 
 class DiscordClient {
 	public static var isInitialized:Bool = false;
@@ -224,5 +223,40 @@ private final class DiscordPresence {
 	{
 		return __presence.endTimestamp = value;
 	}
+}
+#else
+class DiscordClient {
+	public static var isInitialized:Bool = false;
+	inline static final _defaultID:String = "863222024192262205";
+
+	public static var clientID:String = _defaultID;
+
+	static var presence:DiscordPresence = new DiscordPresence();
+
+	public static function check() {}
+	public static function prepare() {}
+	public dynamic static function shutdown() {}
+	public static function initialize() {}
+	public static function changePresence(?_, ?_, ?_, ?_, ?_, ?_) {}
+	public static function updatePresence() {}
+	public static function resetClientID() {}
+
+	#if MODS_ALLOWED
+	public static function loadModRPC() {}
+	#end
+}
+
+private final class DiscordPresence {
+	public var state:String = '';
+	public var details:String = '';
+	public var smallImageKey:String = '';
+	public var largeImageKey:String = '';
+	public var largeImageText:String = '';
+	public var startTimestamp:Int = 0;
+	public var endTimestamp:Int = 0;
+
+	@:noCompletion var __presence:Dynamic;
+
+	public function new() {}
 }
 #end

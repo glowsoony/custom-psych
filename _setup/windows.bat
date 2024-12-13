@@ -10,8 +10,6 @@ haxelib install flixel 5.5.0 --quiet
 haxelib install flixel-addons 3.2.2 --quiet
 haxelib install flixel-tools 1.5.1 --quiet
 haxelib install hscript-iris 1.1.0 --quiet
-haxelib install hxdiscord_rpc 1.2.4 --quiet --skip-dependencies
-haxelib install hxvlc 1.9.2 --quiet --skip-dependencies
 haxelib install hxjson5 --quiet
 haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp 54af892be2ca4c63988c99c9c524431af6c6f036 --quiet
 haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e --quiet
