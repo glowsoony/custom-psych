@@ -40,6 +40,12 @@
 			icon: 'dad',
 			color: 0xFF000000,
 			difficulties: ['original', 'STARWALKER']
+		},
+		{
+			name: 'Silly Billy',
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['normal']
 		}
 	],
 
