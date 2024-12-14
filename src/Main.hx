@@ -47,7 +47,7 @@ class Main extends Sprite {
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		#end
 
-		#if (linux || mac)
+		#if linux
 		Lib.current.stage.window.setIcon(Image.fromFile("icon.png"));
 		#end
 
