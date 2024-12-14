@@ -56,7 +56,7 @@ class OptionsState extends MusicState
 		for (num => option in options)
 		{
 			var optionText:Alphabet = new Alphabet(200, 0, Language.getPhrase('options_$option', option), BOLD, CENTER);
-			optionText.screenCenter(Y);
+			optionText.screenCenter();
 			optionText.y += (92 * (num - (options.length / 2))) + 45;
 			grpOptions.add(optionText);
 		}

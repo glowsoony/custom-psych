@@ -166,8 +166,8 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetLine> {
         for (line in members) {
             line.x = switch (align) {
                 case LEFT: x;
-                case CENTER: x + ((x - totalWidth) * 0.5);
-                case RIGHT: x + (x - totalWidth);
+                case CENTER: getMidpoint().x - (line.width * 0.5);
+                case RIGHT: x + (totalWidth - line.width);
             }
         }
     }

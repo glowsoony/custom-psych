@@ -34,6 +34,12 @@
 			name: 'Little Man 2',
 			icon: 'dad',
 			color: 0xFF000000,
+		},
+		{
+			name: 'Stawrka',
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['original', 'STARWALKER']
 		}
 	],
 
