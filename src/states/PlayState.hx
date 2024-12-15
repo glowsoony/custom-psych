@@ -128,7 +128,7 @@ class PlayState extends MusicState {
 	var opponentStrums:Strumline;
 	var playerStrums:Strumline;
 
-	var hudGroup:FlxSpriteGroup;
+	var hud:FlxSpriteGroup;
 
 	var scoreTxt:FlxText;
 	var botplayTxt:FlxText;
@@ -248,14 +248,14 @@ class PlayState extends MusicState {
 		add(bf = new Character(750, 225));
 
 		// set up hud elements
-		add(hudGroup = new FlxSpriteGroup());
-		hudGroup.cameras = [camHUD];
+		add(hud = new FlxSpriteGroup());
+		hud.cameras = [camHUD];
 
-		hudGroup.add(timeBar = new Bar(0, downscroll ? FlxG.height - 30 : 15, 'timeBar', function() return songPercent, 0, 1));
+		hud.add(timeBar = new Bar(0, downscroll ? FlxG.height - 30 : 15, 'timeBar', function() return songPercent, 0, 1));
 		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
 		timeBar.screenCenter(X);
 
-		hudGroup.add(timeTxt = new FlxText(0, 0, timeBar.width, '$songName - 0:00', 16));
+		hud.add(timeTxt = new FlxText(0, 0, timeBar.width, '$songName - 0:00', 16));
 		timeTxt.font = Paths.font('vcr.ttf');
 		timeTxt.alignment = CENTER;
 		timeTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
@@ -269,20 +269,20 @@ class PlayState extends MusicState {
 		// then just take this long ass line out
 		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
 
-		hudGroup.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
+		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
 		healthBar.setColors(dad.healthColor, bf.healthColor);
 		healthBar.screenCenter(X);
 		healthBar.leftToRight = false;
 
-		hudGroup.add(iconP1 = new CharIcon(bf.icon, true));
+		hud.add(iconP1 = new CharIcon(bf.icon, true));
 		iconP1.y = healthBar.y - (iconP1.height * 0.5);
 
-		hudGroup.add(iconP2 = new CharIcon(dad.icon));
+		hud.add(iconP2 = new CharIcon(dad.icon));
 		iconP2.y = healthBar.y - (iconP2.height * 0.5);
 
 		updateIconPositions();
 
-		hudGroup.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, '', 16));
+		hud.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, '', 16));
 		scoreTxt.font = Paths.font('vcr.ttf');
 		scoreTxt.alignment = CENTER;
 		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
@@ -291,10 +291,10 @@ class PlayState extends MusicState {
 		scoreTxt.screenCenter(X);
 		updateScoreTxt();
 
-		hudGroup.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
-		hudGroup.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
+		hud.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
+		hud.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
 
-		hudGroup.add(botplayTxt = new FlxText(0, downscroll ? FlxG.height - 115 : 85, FlxG.width - 800, 'BOTPLAY', 32));
+		hud.add(botplayTxt = new FlxText(0, downscroll ? FlxG.height - 115 : 85, FlxG.width - 800, 'BOTPLAY', 32));
 		botplayTxt.font = Paths.font('vcr.ttf');
 		botplayTxt.alignment = CENTER;
 		botplayTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
@@ -303,7 +303,7 @@ class PlayState extends MusicState {
 		botplayTxt.visible = botplay;
 		botplayTxt.screenCenter(X);
 
-		hudGroup.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
+		hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
 		judgeCounter.font = Paths.font('vcr.ttf');
 		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
 		judgeCounter.borderColor = FlxColor.BLACK;
@@ -311,7 +311,7 @@ class PlayState extends MusicState {
 		updateJudgeCounter();
 		judgeCounter.screenCenter(Y);
 
-		hudGroup.add(countdown = new Countdown());
+		hud.add(countdown = new Countdown());
 		countdown.screenCenter();
 		countdown.onStart = function() Conductor.self.active = true;
 		countdown.onFinish = function() {
