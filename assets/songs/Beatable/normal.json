@@ -12190,7 +12190,7 @@
 		"player3": "ycbu_gf",
 		"splashSkin": "noteSplashes",
 		"song": "Beatable",
-		"needsVoices": false,
+		"needsVoices": true,
 		"arrowSkin": "",
 		"validScore": true,
 		"stage": "nesbeat",
