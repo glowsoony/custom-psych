@@ -25,8 +25,8 @@ class MusicState extends FlxState {
 	}
 
 	public static function switchState(nextState:FlxState = null) {
-		if(nextState == null) nextState = FlxG.state;
-		if(nextState == FlxG.state) {
+		nextState ??= FlxG.state;
+		if (nextState == FlxG.state) {
 			resetState();
 			return;
 		}
@@ -58,8 +58,6 @@ class MusicState extends FlxState {
 	}
 
 	public function stepHit(step:Int):Void {}
-
 	public function beatHit(beat:Int):Void {}
-
 	public function measureHit(measure:Int):Void {}
 }

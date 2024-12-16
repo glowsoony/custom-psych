@@ -429,11 +429,6 @@ class FlxGame extends Sprite
 			return;
 		#end
 
-		#if flash
-		if (_lostFocus)
-			return; // Don't run this function twice (bug in standalone flash player)
-		#end
-
 		_lostFocus = true;
 		FlxG.signals.focusLost.dispatch();
 		_state.onFocusLost();

@@ -536,12 +536,12 @@ class Interaction extends Window
 	public function findItemsWithinState(items:Array<FlxBasic>, state:FlxState, area:FlxRect):Void
 	{
 		findItemsWithinArea(items, state.members, area);
-		if (state.substate != null)
-			findItemsWithinSubstate(items, state.substate, area);
+		if (state.subState != null)
+			findItemsWithinSubstate(items, state.subState, area);
 	}
 
-	public function findItemsWithinSubstate(items:Array<FlxBasic>, substate:FlxSubState, area:FlxRect):Void {
-		findItemsWithinArea(items, substate.members, area);
+	public function findItemsWithinSubstate(items:Array<FlxBasic>, subState:FlxSubState, area:FlxRect):Void {
+		findItemsWithinArea(items, subState.members, area);
 	}
 
 	/**

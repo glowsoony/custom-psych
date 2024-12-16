@@ -786,7 +786,7 @@ class PlayState extends MusicState {
 		FlxTween.globalManager.forEach(function(twn:FlxTween) if (!twn.finished) twn.active = false);
 
 		var menu:PauseMenu = new PauseMenu(songName, Difficulty.current, 0);
-		openSubstate(menu);
+		openSubState(menu);
 		menu.camera = camOther;
 	}
 
@@ -883,7 +883,7 @@ class PlayState extends MusicState {
 	}
 
 	override function destroy() {
-		resetSubstate();
+		closeSubState();
 		camGame.setFilters([]);
 
 		Application.current.window.onKeyDown.remove(keyPressed);

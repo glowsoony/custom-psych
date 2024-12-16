@@ -112,7 +112,7 @@ class Paths {
 
 	// images
 	public static function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
-		allowGPU = Settings.data.cacheOnGPU ? allowGPU : false;
+		allowGPU = Settings.data.gpuCaching ? allowGPU : false;
 
 		key = Language.getFileTranslation(key, subFolder);
 		if (key.lastIndexOf('.') < 0) key += '.$IMAGE_EXT';
