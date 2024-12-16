@@ -32,6 +32,8 @@ class OptionsState extends MusicState
 			case 'Language':
 				openSubstate(new options.LanguageSubState());
 		}
+
+		persistentUpdate = false;
 	}
 
 	var selectorLeft:Alphabet;

@@ -127,6 +127,7 @@ class BaseOptionsMenu extends FlxSubState
 		}
 
 		if (Controls.justPressed('back')) {
+			parent.persistentUpdate = true;
 			close();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}

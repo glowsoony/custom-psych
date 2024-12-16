@@ -528,8 +528,9 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function updateCameraScale(elapsed:Float):Void {
-		camGame.zoom = FlxMath.lerp(1, camGame.zoom, Math.exp(-elapsed * 6 * playbackRate));
-		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 6 * playbackRate));
+		final scalingMult:Float = Math.exp(-elapsed * 6 * playbackRate);
+		camGame.zoom = FlxMath.lerp(1, camGame.zoom, scalingMult);
+		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
 	}
 
 	dynamic function updateIconPositions():Void {
