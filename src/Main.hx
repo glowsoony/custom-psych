@@ -51,7 +51,7 @@ class Main extends Sprite {
 		Lib.current.stage.window.setIcon(Image.fromFile("icon.png"));
 		#end
 
-		//Settings.load();
+		Settings.load();
 
 		var game:FlxGame = new FlxGame(InitState, 0, 0, 60, true);
 

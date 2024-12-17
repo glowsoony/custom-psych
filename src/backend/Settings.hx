@@ -93,9 +93,11 @@ class Settings {
 	public static function load() {
 		FlxG.save.bind('funkin', Util.getSavePath());
 
-		for (key in Reflect.fields(data))
-			if (key != 'gameplaySettings' && Reflect.hasField(FlxG.save.data, key))
-				Reflect.setField(data, key, Reflect.field(FlxG.save.data, key));
+		final fields:Array<String> = Type.getInstanceFields(SaveVariables);
+		for (i in Reflect.fields(FlxG.save.data)) {
+			if (i == 'gameplaySettings' || !fields.contains(i)) continue;
+			Reflect.setField(data, i, Reflect.field(FlxG.save.data, i));
+		}
 
 		if (FlxG.save.data.framerate == null) {
 			final refreshRate:Int = FlxG.stage.application.window.displayMode.refreshRate;
