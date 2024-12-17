@@ -14,8 +14,15 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		));
 
 		addOption(new Option(
-			'Centered Notes',
+			'Opponent Notes',
 			'Whether to have the opponent\'s notes on screen or not.\nIs ignored if "Centered Notes" is enabled.',
+			'opponentNotes',
+			BOOL
+		));
+
+		addOption(new Option(
+			'Centered Notes',
+			'Centers the player\'s notes to the middle of the screen.',
 			'centeredNotes',
 			BOOL
 		));
