@@ -25,8 +25,6 @@ class FPSCounter extends Sprite {
 	static function get_gcMemoryInBytes():Float {
 		#if cpp
 		return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
-		#elseif hl
-		return hl.Gc.stats().currentMemory;
 		#else
 		return openfl.system.System.totalMemory;
 		#end
