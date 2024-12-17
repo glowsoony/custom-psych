@@ -82,7 +82,7 @@ class OptionsState extends MusicState
 			FlxG.sound.play(Paths.sound('cancel'));
 			if (onPlayState) {
 				MusicState.switchState(new PlayState());
-				FlxG.sound.music.volume = 0;
+				Conductor.inst.volume = 0;
 			} else MusicState.switchState(new MainMenuState());
 		} else if (Controls.justPressed('accept')) openSelectedSubstate(options[curSelected]);
 	}
