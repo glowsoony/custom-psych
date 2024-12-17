@@ -312,6 +312,7 @@ class PlayState extends MusicState {
 		hud.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, '', 16));
 		scoreTxt.font = Paths.font('vcr.ttf');
 		scoreTxt.alignment = CENTER;
+		scoreTxt.alpha = Settings.data.scoreAlpha;
 		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
 		scoreTxt.borderColor = FlxColor.BLACK;
 		scoreTxt.borderSize = 1.25;
