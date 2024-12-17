@@ -213,10 +213,10 @@ class PlayState extends MusicState {
 		moveCamera();
 
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
-		camHUD.bgColor.alphaFloat = 1 - (Settings.data.stageBrightness * 0.01);
+		camHUD.bgColor.alphaFloat = 1 - (Settings.data.gameVisibility * 0.01);
 
 		// to prevent more lag when you can't even see the game camera
-		if (Settings.data.stageBrightness <= 0) {
+		if (Settings.data.gameVisibility <= 0) {
 			camGame.visible = false;
 			camHUD.bgColor.alphaFloat = 0;
 		}
@@ -251,6 +251,30 @@ class PlayState extends MusicState {
 		add(hud = new FlxSpriteGroup());
 		hud.cameras = [camHUD];
 
+		loadHUD();
+
+		hud.add(countdown = new Countdown());
+		countdown.screenCenter();
+		countdown.onStart = function() Conductor.self.active = true;
+		countdown.onFinish = function() {
+			Conductor.play();
+			updateTime = true;
+		}
+
+		// set up any other stuff we might need
+		Application.current.window.onKeyDown.add(keyPressed);
+		Application.current.window.onKeyUp.add(keyReleased);
+
+		Conductor.time -= Conductor.crotchet * 5;
+		countdown.start();
+
+		FlxG.mouse.visible = false;
+	}
+
+	function loadHUD():Void {
+		if (hud == null) return;
+		hud.clear();
+
 		hud.add(timeBar = new Bar(0, downscroll ? FlxG.height - 30 : 15, 'timeBar', function() return songPercent, 0, 1));
 		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
 		timeBar.screenCenter(X);
@@ -270,14 +294,17 @@ class PlayState extends MusicState {
 		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
 
 		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
+		healthBar.alpha = Settings.data.healthBarAlpha;
 		healthBar.setColors(dad.healthColor, bf.healthColor);
 		healthBar.screenCenter(X);
 		healthBar.leftToRight = false;
 
 		hud.add(iconP1 = new CharIcon(bf.icon, true));
+		iconP1.alpha = Settings.data.healthBarAlpha;
 		iconP1.y = healthBar.y - (iconP1.height * 0.5);
 
 		hud.add(iconP2 = new CharIcon(dad.icon));
+		iconP2.alpha = Settings.data.healthBarAlpha;
 		iconP2.y = healthBar.y - (iconP2.height * 0.5);
 
 		updateIconPositions();
@@ -303,30 +330,15 @@ class PlayState extends MusicState {
 		botplayTxt.visible = botplay;
 		botplayTxt.screenCenter(X);
 
-		hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
-		judgeCounter.font = Paths.font('vcr.ttf');
-		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
-		judgeCounter.borderColor = FlxColor.BLACK;
-		judgeCounter.borderSize = 1.25;
-		updateJudgeCounter();
-		judgeCounter.screenCenter(Y);
-
-		hud.add(countdown = new Countdown());
-		countdown.screenCenter();
-		countdown.onStart = function() Conductor.self.active = true;
-		countdown.onFinish = function() {
-			Conductor.play();
-			updateTime = true;
+		if (Settings.data.judgementCounter) {
+			hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
+			judgeCounter.font = Paths.font('vcr.ttf');
+			judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
+			judgeCounter.borderColor = FlxColor.BLACK;
+			judgeCounter.borderSize = 1.25;
+			updateJudgeCounter();
+			judgeCounter.screenCenter(Y);
 		}
-
-		// set up any other stuff we might need
-		Application.current.window.onKeyDown.add(keyPressed);
-		Application.current.window.onKeyUp.add(keyReleased);
-
-		Conductor.time -= Conductor.crotchet * 5;
-		countdown.start();
-
-		FlxG.mouse.visible = false;
 	}
 
 	function loadSong():Void {
@@ -528,6 +540,8 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function updateCameraScale(elapsed:Float):Void {
+		if (!Settings.data.cameraZooms) return;
+
 		final scalingMult:Float = Math.exp(-elapsed * 6 * playbackRate);
 		camGame.zoom = FlxMath.lerp(1, camGame.zoom, scalingMult);
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
@@ -737,6 +751,8 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function updateJudgeCounter() {
+		if (!Settings.data.judgementCounter) return;
+		
 		var sicks:Int = judgeData[0].hits;
 		var goods:Int = judgeData[1].hits;
 		var bads:Int = judgeData[2].hits;
@@ -746,8 +762,10 @@ class PlayState extends MusicState {
 	}
 
 	override function measureHit(measure:Int) {
-		camGame.zoom += 0.03;
-		camHUD.zoom += 0.015;
+		if (Settings.data.cameraZooms) {
+			camGame.zoom += 0.03;
+			camHUD.zoom += 0.015;
+		}
 
 		moveCamera(measure);
 	}

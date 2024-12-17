@@ -15,7 +15,7 @@ class MusicState extends FlxState {
 		Conductor.reset();
 		Paths.clearUnusedMemory();
 
-		if (!skipNextTransOut && Settings.data.transitions) openSubstate(new Transition(0.5, true));
+		if (!skipNextTransOut && Settings.data.transitions) openSubState(new Transition(0.5, true));
 		skipNextTransOut = false;
 
 		Conductor.onStep = stepHit;
@@ -46,7 +46,7 @@ class MusicState extends FlxState {
 	public static function startTransition(?nextState:FlxState) {
 		if (nextState == null) nextState = FlxG.state;
 
-		FlxG.state.openSubstate(new Transition(0.5, false));
+		FlxG.state.openSubState(new Transition(0.5, false));
 		Transition.finishCallback = function() {
 			if (nextState == FlxG.state) FlxG.resetState();
 			else FlxG.switchState(nextState);

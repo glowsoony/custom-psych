@@ -30,7 +30,7 @@ class ComboNums extends FlxTypedSpriteGroup<Number> {
 			num.updateHitbox();
 			num.setPosition(x + ((num.frameWidth * i) * scale.x), y);
 			num.velocity.set(-FlxG.random.int(0, 10), -FlxG.random.int(140, 175));
-			num.alpha = 1;
+			num.alpha = Settings.data.comboAlpha;
 
 			FlxTween.cancelTweensOf(num);
 			FlxTween.tween(num, {alpha: 0}, 0.2, {

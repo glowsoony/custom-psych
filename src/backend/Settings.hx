@@ -4,68 +4,76 @@ import flixel.util.FlxSave;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
 
-// Add a variable here and it will get automatically saved
-@:structInit 
+@:structInit
+@:publicFields
 class SaveVariables {
-	public var scrollDirection:String = 'Up';
-	public var centeredNotes:Bool = false;
-	public var opponentNotes:Bool = true;
-	public var fpsCounter:Bool = true;
-	public var flashingLights:Bool = true;
-	public var autoPause:Bool = true;
-	public var antialiasing:Bool = true;
-	public var noteSkin:String = 'Default';
-	public var splashSkin:String = 'Psych';
-	public var splashAlpha:Float = 0.6;
-	public var lowQuality:Bool = false;
-	public var shaders:Bool = true;
-	public var cacheOnGPU:Bool = false;
-	public var framerate:Int = 60;
-	public var camZooms:Bool = true;
-	public var transitions:Bool = false;
-	public var noteOffset:Int = 0;
+	// for readability/backwards compatability
+	var downscroll(get, never):Bool;
+	function get_downscroll():Bool return scrollDirection.toLowerCase() == 'down';
 
-	public var fullscreen:Bool = false;
-	public var volume:Float = 1;
+	// gameplay
+	var scrollDirection:String = 'Up';
+	var centeredNotes:Bool = false;
+	var opponentNotes:Bool = true;
+	var ghostTapping:Bool = true;
+	var sickHitWindow:Int = 45;
+	var goodHitWindow:Int = 90;
+	var badHitWindow:Int = 135;
+	var shitHitWindow:Int = 180;
+	var hitsoundVolume:Float = 0;
+	var canReset:Bool = true;
+	// these count as gameplay
+	// but are in the "resync" menu
+	// as they require more than simple numbers in a settings menu
+	var visualOffset:Int = 0;
+	var globalOffset:Int = 0;
 
-	public var stageBrightness:Int = 100;
+	// graphics (that affect performance)
+	var antialiasing:Bool = true;
+	var reducedQuality:Bool = false;
+	var shaders:Bool = true;
+	var gpuCaching:Bool = false;
+	var fullscreen:Bool = false;
 
-	public var ghostTapping:Bool = true;
-	public var timeBarType:String = 'Time Left';
-	public var scoreZoom:Bool = true;
-	public var resetButton:Bool = true;
-	public var healthBarAlpha:Float = 1;
-	public var hitsoundVolume:Float = 0;
-	public var pauseMusic:String = 'Tea Time';
-	public var checkForUpdates:Bool = true;
-	public var gameplaySettings:Map<String, Dynamic> = [
+	// visuals (that don't affect performance)
+
+	// these also count as visuals
+	// but these are in a different menu
+	var comboPosition:Array<Float> = [300, 300];
+	var judgePosition:Array<Float> = [300, 200];
+
+	var flashingLights:Bool = true;
+	var noteSkin:String = 'Default';
+	var gameVisibility:Int = 100;
+	var cameraZooms:Bool = true;
+	var judgementAlpha:Float = 1;
+	var judgementCounter:Bool = false;
+	var comboAlpha:Float = 1;
+	var healthBarAlpha:Float = 1;
+	var scoreAlpha:Float = 1;
+	var language:String = 'en-US';
+	var fpsCounter:Bool = true;
+	var transitions:Bool = true;
+	var framerate:Int = 60;
+
+	// miscellaneous
+	var discordRPC:Bool = true;
+	var autoPause:Bool = true;
+	var pauseMusic:String = 'Tea Time';
+	var gameplaySettings:Map<String, Dynamic> = [
 		'scrollSpeed' => 1.0,
-		'scrollType' => 'Multiplicative', 
-		'playbackRate' => 1.0,
+		'scrollType' => 'Multiplied',
 		'healthGain' => 1.0,
 		'healthLoss' => 1.0,
-		'instakill' => false,
-		'practice' => false,
-		'botplay' => false,
 
+		'playbackRate' => 1.0,
+		'instakill' => false,
+		'noFail' => false,
+		'botplay' => false,
 		'mirroredNotes' => false,
 		'randomizedNotes' => false,
 		'sustains' => true
 	];
-
-	public var comboPosition:Array<Float> = [300, 300];
-	public var judgePosition:Array<Float> = [300, 200];
-	public var ratingOffset:Float = 0.0;
-
-	public var sickHitWindow:Int = 45;
-	public var goodHitWindow:Int = 90;
-	public var badHitWindow:Int = 135;
-	public var shitHitWindow:Int = 180;
-
-	public var guitarHeroSustains:Bool = true;
-	public var discordRPC:Bool = true;
-	public var loadingScreen:Bool = true;
-	public var language:String = 'en-US';
 }
 
 class Settings {
@@ -73,8 +81,10 @@ class Settings {
 	public static var data:SaveVariables = default_data;
 
 	public static function save() {
-		for (key in Reflect.fields(data))
+		for (key in Reflect.fields(data)) {
+			if (key == 'downscroll') continue;
 			Reflect.setField(FlxG.save.data, key, Reflect.field(data, key));
+		}
 
 		FlxG.save.flush();
 	}

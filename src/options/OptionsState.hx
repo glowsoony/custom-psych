@@ -6,7 +6,6 @@ class OptionsState extends MusicState
 {
 	var options:Array<String> = [
 		'Controls',
-		'Adjust Delay and Combo',
 		'Graphics',
 		'Visuals',
 		'Gameplay'
@@ -24,12 +23,9 @@ class OptionsState extends MusicState
 			case 'Graphics':
 				openSubState(new options.GraphicsSettingsSubState());
 			case 'Visuals':
-				openSubState(new options.VisualsSettingsSubState());
+				openSubState(new options.VisualSettingsSubState());
 			case 'Gameplay':
-			case 'Adjust Delay and Combo':
-				MusicState.switchState(new options.NoteOffsetState());
-			case 'Language':
-				openSubState(new options.LanguageSubState());
+				openSubState(new options.GameplaySettingsSubState());
 		}
 
 		persistentUpdate = false;
@@ -47,12 +43,10 @@ class OptionsState extends MusicState
 		bg.antialiasing = Settings.data.antialiasing;
 		bg.color = 0xFFea71fd;
 		bg.updateHitbox();
-
 		bg.screenCenter();
 		add(bg);
 
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
+		add(grpOptions = new FlxTypedGroup<Alphabet>());
 
 		for (num => option in options)
 		{
@@ -73,7 +67,6 @@ class OptionsState extends MusicState
 
 	override function closeSubState() {
 		super.closeSubState();
-		Settings.save();
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence("Options Menu", null);
 		#end
@@ -86,7 +79,7 @@ class OptionsState extends MusicState
 		if (upJustPressed || Controls.justPressed('ui_down')) changeSelection(upJustPressed ? -1 : 1);
 
 		if (Controls.justPressed('back')) {
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('cancel'));
 			if (onPlayState) {
 				MusicState.switchState(new PlayState());
 				FlxG.sound.music.volume = 0;
@@ -94,28 +87,25 @@ class OptionsState extends MusicState
 		} else if (Controls.justPressed('accept')) openSelectedSubstate(options[curSelected]);
 	}
 	
-	function changeSelection(change:Int = 0)
-	{
+	function changeSelection(change:Int = 0) {
 		curSelected = FlxMath.wrap(curSelected + change, 0, options.length - 1);
 
-		for (num => item in grpOptions.members)
-		{
+		for (num => item in grpOptions.members) {
 			item.targetY = num - curSelected;
 			item.alpha = 0.6;
-			if (item.targetY == 0)
-			{
-				item.alpha = 1;
-				selectorLeft.x = item.x - 63;
-				selectorLeft.y = item.y;
-				selectorRight.x = item.x + item.width + 15;
-				selectorRight.y = item.y;
-			}
+			if (item.targetY != 0) continue;
+
+			item.alpha = 1;
+			selectorLeft.x = item.x - 63;
+			selectorLeft.y = item.y;
+			selectorRight.x = item.x + item.width + 15;
+			selectorRight.y = item.y;
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('scroll'));
 	}
 
 	override function destroy() {
-		Settings.load();
+		Settings.save();
 		super.destroy();
 	}
 }

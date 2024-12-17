@@ -1,85 +1,45 @@
 package options;
 
 class GraphicsSettingsSubState extends BaseOptionsMenu {
-	var antialiasingOption:Int;
-	var boyfriend:FlxSprite;
-	public function new()
-	{
+	public function new() {
 		title = Language.getPhrase('graphics_menu', 'Graphics Settings');
 		rpcTitle = 'Graphics Settings Menu'; //for Discord Rich Presence
 
-		boyfriend = new FlxSprite(840, 170);
-		boyfriend.frames = Paths.sparrowAtlas('characters/bf');
-		boyfriend.animation.addByPrefix('idle', 'BF idle dance', 24, true);
-		boyfriend.animation.play('idle');
-		boyfriend.setGraphicSize(Std.int(boyfriend.width * 0.75));
-		boyfriend.updateHitbox();
-		boyfriend.visible = false;
-
-		//I'd suggest using "Low Quality" as an example for making your own option since it is the simplest here
-		var option:Option = new Option('Low Quality', //Name
-			'If checked, disables some background details,\ndecreases loading times and improves performance.', //Description
-			'lowQuality', //Save data variable name
-			BOOL); //Variable type
-		addOption(option);
-
-		var option:Option = new Option('Anti-Aliasing',
-			'If unchecked, disables anti-aliasing, increases performance\nat the cost of sharper visuals.',
+		addOption(new Option(
+			'Anti-aliasing',
+			'Enables smoothing on sprites, so lines look less blocky.\nWill cause smaller sprites to appear blurry.',
 			'antialiasing',
-			BOOL);
-		option.onChange = onChangeAntiAliasing; //Changing onChange is only needed if you want to make a special interaction after it changes the value
-		addOption(option);
-		antialiasingOption = optionsArray.length-1;
+			BOOL
+		));
 
-		var option:Option = new Option('Shaders', //Name
-			"If unchecked, disables shaders.\nIt's used for some visual effects, and also CPU intensive for weaker PCs.", //Description
+		addOption(new Option(
+			'Reduced Quality',
+			'Has certain objects not spawn in/animated to save on performance.',
+			'reducedQuality',
+			BOOL
+		));
+
+		addOption(new Option(
+			'Shaders',
+			'Used for visual effects, and also CPU/GPU intensive for weaker PCs.',
 			'shaders',
-			BOOL);
-		addOption(option);
+			BOOL
+		));
 
-		var option:Option = new Option('GPU Caching', //Name
-			"If checked, allows the GPU to be used for caching textures, decreasing RAM usage.\nDon't turn this on if you have a shitty Graphics Card.", //Description
-			'cacheOnGPU',
-			BOOL);
-		addOption(option);
+		addOption(new Option(
+			'GPU Caching',
+			'Allows the GPU to be used for caching textures, decreasing RAM usage.\nDon\'t turn this on if you have a shitty graphics card.',
+			'gpuCaching',
+			BOOL
+		));
 
-		#if !html5 //Apparently other framerates isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
-		var option:Option = new Option('Framerate',
-			"Pretty self explanatory, isn't it?",
-			'framerate',
-			INT);
-		addOption(option);
-
-		final refreshRate:Int = FlxG.stage.application.window.displayMode.refreshRate;
-		option.minValue = 60;
-		option.maxValue = 240;
-		option.defaultValue = Std.int(FlxMath.bound(refreshRate, option.minValue, option.maxValue));
-		option.displayFormat = '%v FPS';
-		option.onChange = onChangeFramerate;
-		#end
+		addOption(new Option(
+			'Fullscreen',
+			'Occupies the monitor\'s entire screen with the game.',
+			'fullscreen',
+			BOOL
+		));
 
 		super();
-		insert(1, boyfriend);
-	}
-
-	function onChangeAntiAliasing()
-	{
-		for (sprite in members)
-		{
-			var sprite:FlxSprite = cast sprite;
-			if(sprite != null && (sprite is FlxSprite) && !(sprite is FlxText)) {
-				sprite.antialiasing = Settings.data.antialiasing;
-			}
-		}
-	}
-
-	function onChangeFramerate() {
-		FlxG.drawFramerate = FlxG.updateFramerate = Settings.data.framerate;
-	}
-
-	override function changeSelection(change:Int = 0)
-	{
-		super.changeSelection(change);
-		boyfriend.visible = (antialiasingOption == curSelected);
 	}
 }

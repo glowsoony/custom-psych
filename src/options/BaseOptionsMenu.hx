@@ -10,8 +10,7 @@ import objects.AttachedText;
 import options.Option;
 import backend.InputFormatter;
 
-class BaseOptionsMenu extends FlxSubState
-{
+class BaseOptionsMenu extends FlxSubState {
 	private var curOption:Option = null;
 	private var curSelected:Int = 0;
 	private var optionsArray:Array<Option>;
@@ -27,36 +26,29 @@ class BaseOptionsMenu extends FlxSubState
 	public var rpcTitle:String;
 
 	public var bg:FlxSprite;
-	public function new()
-	{
+	public function new() {
 		super();
 
-		if(title == null) title = 'Options';
-		if(rpcTitle == null) rpcTitle = 'Options Menu';
+		title ??= 'Options';
+		rpcTitle ??= 'Options Menu';
 		
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence(rpcTitle, null);
 		#end
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menus/desatBG'));
+		add(bg = new FlxSprite().loadGraphic(Paths.image('menus/desatBG')));
 		bg.color = 0xFFea71fd;
 		bg.screenCenter();
 		bg.antialiasing = Settings.data.antialiasing;
-		add(bg);
 
 		// avoids lagspikes while scrolling through menus!
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
+		add(grpOptions = new FlxTypedGroup<Alphabet>());
 
-		grpTexts = new FlxTypedGroup<AttachedText>();
-		add(grpTexts);
+		add(grpTexts = new FlxTypedGroup<AttachedText>());
+		add(checkboxGroup = new FlxTypedGroup<CheckboxThingie>());
 
-		checkboxGroup = new FlxTypedGroup<CheckboxThingie>();
-		add(checkboxGroup);
-
-		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
+		add(descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK));
 		descBox.alpha = 0.6;
-		add(descBox);
 
 		var titleText:Alphabet = new Alphabet(75, 45, title, BOLD);
 		titleText.updateScale(0.6, 0.6);
@@ -99,7 +91,7 @@ class BaseOptionsMenu extends FlxSubState
 	}
 
 	public function addOption(option:Option) {
-		if(optionsArray == null || optionsArray.length < 1) optionsArray = [];
+		optionsArray ??= []; // ??????????
 		optionsArray.push(option);
 		return option;
 	}
@@ -129,14 +121,14 @@ class BaseOptionsMenu extends FlxSubState
 		if (Controls.justPressed('back')) {
 			parent.persistentUpdate = true;
 			close();
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('cancel'));
 		}
 
 		if (nextAccept <= 0) {
 			switch(curOption.type) {
 				case BOOL:
 					if (Controls.justPressed('accept')) {
-						FlxG.sound.play(Paths.sound('scrollMenu'));
+						FlxG.sound.play(Paths.sound('scroll'));
 						curOption.setValue((curOption.getValue() == true) ? false : true);
 						curOption.change();
 						reloadCheckboxes();
@@ -162,7 +154,7 @@ class BaseOptionsMenu extends FlxSubState
 						bindingKey = true;
 						holdingEsc = 0;
 						Controls.toggleVolumeKeys(false);
-						FlxG.sound.play(Paths.sound('scrollMenu'));
+						FlxG.sound.play(Paths.sound('scroll'));
 					}
 
 				default:
@@ -207,13 +199,12 @@ class BaseOptionsMenu extends FlxSubState
 		
 										curOption.curOption = num;
 										curOption.setValue(curOption.options[num]);
-										//trace(curOption.options[num]);
 
 									default:
 								}
 								updateTextFrom(curOption);
 								curOption.change();
-								FlxG.sound.play(Paths.sound('scrollMenu'));
+								FlxG.sound.play(Paths.sound('scroll'));
 							}
 							else if(curOption.type != STRING)
 							{
@@ -241,7 +232,7 @@ class BaseOptionsMenu extends FlxSubState
 					}
 					else if (Controls.released('ui_left') || Controls.released('ui_right'))
 					{
-						if (holdTime > 0.5) FlxG.sound.play(Paths.sound('scrollMenu'));
+						if (holdTime > 0.5) FlxG.sound.play(Paths.sound('scroll'));
 						holdTime = 0;
 					}
 			}
@@ -263,7 +254,7 @@ class BaseOptionsMenu extends FlxSubState
 					updateBind(leOption);
 				}
 				leOption.change();
-				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxG.sound.play(Paths.sound('cancel'));
 				reloadCheckboxes();
 			}
 		}
@@ -280,7 +271,7 @@ class BaseOptionsMenu extends FlxSubState
 			holdingEsc += elapsed;
 			if(holdingEsc > 0.5)
 			{
-				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxG.sound.play(Paths.sound('cancel'));
 				closeBinding();
 			}
 		}
@@ -292,7 +283,7 @@ class BaseOptionsMenu extends FlxSubState
 				if (!Controls.controllerMode) curOption.keys.keyboard = NONE;
 				else curOption.keys.gamepad = NONE;
 				updateBind(!Controls.controllerMode ? InputFormatter.getKeyName(NONE) : InputFormatter.getGamepadName(NONE));
-				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxG.sound.play(Paths.sound('cancel'));
 				closeBinding();
 			}
 		}
@@ -369,7 +360,7 @@ class BaseOptionsMenu extends FlxSubState
 					key = InputFormatter.getGamepadName(FlxGamepadInputID.fromString(curOption.keys.gamepad));
 				}
 				updateBind(key);
-				FlxG.sound.play(Paths.sound('confirmMenu'));
+				FlxG.sound.play(Paths.sound('confirm'));
 				closeBinding();
 			}
 		}
@@ -476,7 +467,7 @@ class BaseOptionsMenu extends FlxSubState
 		descBox.updateHitbox();
 
 		curOption = optionsArray[curSelected]; //shorter lol
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('scroll'));
 	}
 
 	function reloadCheckboxes()

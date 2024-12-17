@@ -17,7 +17,7 @@ class GameplayChangersSubstate extends FlxSubState {
 	function get_curOption() return optionsArray[curSelected]; //shorter lol
 
 	function getOptions() {
-		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', STRING, 'multiplicative', ["multiplicative", "constant"]);
+		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', STRING, 'multiplied', ["multiplied", "constant"]);
 		optionsArray.push(goption);
 
 		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollspeed', FLOAT, 1);

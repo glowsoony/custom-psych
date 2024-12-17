@@ -1,124 +1,99 @@
 package options;
 
-class GameplaySettingsSubState extends BaseOptionsMenu
-{
-	public function new()
-	{
+class GameplaySettingsSubState extends BaseOptionsMenu {
+	public function new() {
 		title = Language.getPhrase('gameplay_menu', 'Gameplay Settings');
-		rpcTitle = 'Gameplay Settings Menu'; //for Discord Rich Presence
+		rpcTitle = 'Gameplay Settings Menu';
 
-		//I'd suggest using "Downscroll" as an example for making your own option since it is the simplest here
-		var option:Option = new Option('Downscroll', //Name
-			'If checked, notes go Down instead of Up, simple enough.', //Description
-			'downScroll', //Save data variable name
-			BOOL); //Variable type
-		addOption(option);
+		addOption(new Option(
+			'Scroll Direction:',
+			'Which way the notes will scroll.',
+			'scrollDirection',
+			STRING,
+			['Up', 'Down']
+		));
 
-		var option:Option = new Option('Middlescroll',
-			'If checked, your notes get centered.',
-			'middleScroll',
-			BOOL);
-		addOption(option);
+		addOption(new Option(
+			'Centered Notes',
+			'Whether to have the opponent\'s notes on screen or not.\nIs ignored if "Centered Notes" is enabled.',
+			'centeredNotes',
+			BOOL
+		));
 
-		var option:Option = new Option('Opponent Notes',
-			'If unchecked, opponent notes get hidden.',
-			'opponentStrums',
-			BOOL);
-		addOption(option);
-
-		var option:Option = new Option('Ghost Tapping',
-			"If checked, you won't get misses from pressing keys\nwhile there are no notes able to be hit.",
+		addOption(new Option(
+			'Ghost Tapping',
+			'write the description for this later because im dum lol lmao',
 			'ghostTapping',
-			BOOL);
-		addOption(option);
-		
-		var option:Option = new Option('Auto Pause',
-			"If checked, the game automatically pauses if the screen isn't on focus.",
-			'autoPause',
-			BOOL);
-		addOption(option);
-		option.onChange = onChangeAutoPause;
+			BOOL
+		));
 
-		var option:Option = new Option('Disable Reset Button',
-			"If checked, pressing Reset won't do anything.",
-			'noReset',
-			BOOL);
-		addOption(option);
+		var sickHitWindow:Option = new Option(
+			'"Sick!" Hit Window:',
+			'The timing for the "Sick!" judgement\'s hit window (in milliseconds).',
+			'sickHitWindow',
+			INT
+		);
+		sickHitWindow.displayFormat = '%vms';
+		sickHitWindow.scrollSpeed = 15;
+		sickHitWindow.minValue = 10;
+		sickHitWindow.maxValue = 45;
+		addOption(sickHitWindow);
 
-		var option:Option = new Option('Hitsound Volume',
-			'Funny notes does \"Tick!\" when you hit them.',
+		var goodHitWindow:Option = new Option(
+			'"Good" Hit Window:',
+			'The timing for the "Good" judgement\'s hit window (in milliseconds).',
+			'goodHitWindow',
+			INT
+		);
+		goodHitWindow.displayFormat = '%vms';
+		goodHitWindow.scrollSpeed = 15;
+		goodHitWindow.minValue = 11;
+		goodHitWindow.maxValue = 90;
+		addOption(goodHitWindow);
+
+		var badHitWindow:Option = new Option(
+			'"Bad" Hit Window:',
+			'The timing for the "Bad" judgement\'s hit window (in milliseconds).',
+			'sickHitWindow',
+			INT
+		);
+		badHitWindow.displayFormat = '%vms';
+		badHitWindow.scrollSpeed = 15;
+		badHitWindow.minValue = 12;
+		badHitWindow.maxValue = 135;
+		addOption(badHitWindow);
+
+		var shitHitWindow:Option = new Option(
+			'"Shit" Hit Window:',
+			'The timing for the "Shit" judgement\'s hit window (in milliseconds).',
+			'goodHitWindow',
+			INT
+		);
+		shitHitWindow.displayFormat = '%vms';
+		shitHitWindow.scrollSpeed = 15;
+		shitHitWindow.minValue = 13;
+		shitHitWindow.maxValue = 180;
+		addOption(shitHitWindow);
+
+		var hitsoundVolume:Option = new Option(
+			'Hitsound Volume:',
+			'write the description for this later because im dum lol lmao',
 			'hitsoundVolume',
 			PERCENT);
-		addOption(option);
-		option.scrollSpeed = 1.6;
-		option.minValue = 0.0;
-		option.maxValue = 1;
-		option.changeValue = 0.1;
-		option.decimals = 1;
-		option.onChange = onChangeHitsoundVolume;
+		hitsoundVolume.scrollSpeed = 1.6;
+		hitsoundVolume.minValue = 0.0;
+		hitsoundVolume.maxValue = 1;
+		hitsoundVolume.changeValue = 0.1;
+		hitsoundVolume.decimals = 1;
+		addOption(hitsoundVolume);
 
-		var option:Option = new Option('Rating Offset',
-			'Changes how late/early you have to hit for a "Sick!"\nHigher values mean you have to hit later.',
-			'ratingOffset',
-			INT);
-		option.displayFormat = '%vms';
-		option.scrollSpeed = 20;
-		option.minValue = -30;
-		option.maxValue = 30;
-		addOption(option);
-
-		var option:Option = new Option('Sick! Hit Window',
-			'Changes the amount of time you have\nfor hitting a "Sick!" in milliseconds.',
-			'sickWindow',
-			INT);
-		option.displayFormat = '%vms';
-		option.scrollSpeed = 15;
-		option.minValue = 15;
-		option.maxValue = 45;
-		addOption(option);
-
-		var option:Option = new Option('Good Hit Window',
-			'Changes the amount of time you have\nfor hitting a "Good" in milliseconds.',
-			'goodWindow',
-			INT);
-		option.displayFormat = '%vms';
-		option.scrollSpeed = 30;
-		option.minValue = 15;
-		option.maxValue = 90;
-		addOption(option);
-
-		var option:Option = new Option('Bad Hit Window',
-			'Changes the amount of time you have\nfor hitting a "Bad" in milliseconds.',
-			'badWindow',
-			INT);
-		option.displayFormat = '%vms';
-		option.scrollSpeed = 60;
-		option.minValue = 15;
-		option.maxValue = 135;
-		addOption(option);
-
-		var option:Option = new Option('Safe Frames',
-			'Changes how many frames you have for\nhitting a note earlier or late.',
-			'safeFrames',
-			FLOAT);
-		option.scrollSpeed = 5;
-		option.minValue = 2;
-		option.maxValue = 10;
-		option.changeValue = 0.1;
-		addOption(option);
-
-		var option:Option = new Option('Sustains as One Note',
-			"If checked, Hold Notes can't be pressed if you miss,\nand count as a single Hit/Miss.\nUncheck this if you prefer the old Input System.",
-			'guitarHeroSustains',
-			BOOL);
-		addOption(option);
+		addOption(new Option(
+			'Reset Button',
+			'Press "RESET" in-game to automatically die.',
+			'canReset',
+			BOOL
+		));
 
 		super();
 	}
-
-	function onChangeHitsoundVolume()
-		FlxG.sound.play(Paths.sound('hitsound'), Settings.data.hitsoundVolume);
-
-	function onChangeAutoPause()
-		FlxG.autoPause = Settings.data.autoPause;
 }

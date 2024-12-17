@@ -27,7 +27,7 @@ class JudgementSpr extends FunkinSprite {
 			animation.frameIndex = Judgement.getIDFromName(currentName = judgeName);
 		}
 
-		alpha = 1;
+		alpha = Settings.data.judgementAlpha;
 		velocity.set(-FlxG.random.int(0, 10), -FlxG.random.int(140, 175));
 
 		FlxTween.cancelTweensOf(this);
