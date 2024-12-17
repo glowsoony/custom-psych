@@ -1,5 +1,7 @@
 package substates;
 
+import options.OptionsState;
+
 class PauseMenu extends flixel.FlxSubState {
 	var options:Array<String> = ['Resume', 'Restart', 'Options', 'Exit to Menu'];
 	var optionGrp:FlxTypedSpriteGroup<Alphabet>;
@@ -93,16 +95,19 @@ class PauseMenu extends flixel.FlxSubState {
 					destroyMusic();
 					Conductor.resume();
 					FlxG.mouse.visible = false;
+					parent.persistentUpdate = true;
 					close();
+					
 					
 				case 'Restart': 
 					destroyMusic();
 					FlxG.mouse.visible = false;
 					MusicState.resetState();
+					parent.persistentUpdate = true;
 					
-/*				case 'Options': 
-					OptionsMenu.goToPlayState = true;
-					MusicState.switchState(new OptionsMenu());*/
+				case 'Options': 
+					OptionsState.onPlayState = true;
+					MusicState.switchState(new OptionsState());
 
 				case 'Exit to Menu': 
 					destroyMusic();
@@ -120,7 +125,6 @@ class PauseMenu extends flixel.FlxSubState {
 	override function close() {
 		FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if (!tmr.finished) tmr.active = true);
 		FlxTween.globalManager.forEach(function(twn:FlxTween) if (!twn.finished) twn.active = true);
-		parent.persistentUpdate = true;
 
 		PlayState.self.paused = false;
 

@@ -279,6 +279,12 @@ class PlayState extends MusicState {
 		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
 		timeBar.screenCenter(X);
 
+		// to make it fancy
+		// if you want it the generic psych way
+		// (black and white)
+		// then just take this long ass line out
+		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
+
 		hud.add(timeTxt = new FlxText(0, 0, timeBar.width, '$songName - 0:00', 16));
 		timeTxt.font = Paths.font('vcr.ttf');
 		timeTxt.alignment = CENTER;
@@ -286,12 +292,6 @@ class PlayState extends MusicState {
 		timeTxt.borderColor = FlxColor.BLACK;
 		timeTxt.borderSize = 1.25;
 		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
-
-		// to make it fancy
-		// if you want it the generic psych way
-		// (black and white)
-		// then just take this long ass line out
-		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
 
 		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
 		healthBar.alpha = Settings.data.healthBarAlpha;
