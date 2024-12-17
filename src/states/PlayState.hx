@@ -190,7 +190,7 @@ class PlayState extends MusicState {
 
 		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
 			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
-			case 'Multiplicative': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
+			case 'Multiplied': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
 			default: song.speed;
 		}
 

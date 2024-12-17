@@ -17,7 +17,7 @@ class GameplayChangersSubstate extends FlxSubState {
 	function get_curOption() return optionsArray[curSelected]; //shorter lol
 
 	function getOptions() {
-		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrollType', STRING, 'multiplied', ["multiplied", "constant"]);
+		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrollType', STRING, 'Multiplied', ["Multiplied", "Constant"]);
 		optionsArray.push(goption);
 
 		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollSpeed', FLOAT, 1);
@@ -25,7 +25,7 @@ class GameplayChangersSubstate extends FlxSubState {
 		option.minValue = 0.35;
 		option.changeValue = 0.05;
 		option.decimals = 2;
-		if (goption.getValue() != "constant") {
+		if (goption.getValue() != "Constant") {
 			option.displayFormat = '%vX';
 			option.maxValue = 3;
 		} else {
@@ -197,7 +197,7 @@ class GameplayChangersSubstate extends FlxSubState {
 									if (curOption.name == "Scroll Type") {
 										var oOption:GameplayOption = getOptionByName("Scroll Speed");
 										if (oOption != null) {
-											if (curOption.getValue() == "constant") {
+											if (curOption.getValue() == "Constant") {
 												oOption.displayFormat = "%v";
 												oOption.maxValue = 6;
 											} else {
