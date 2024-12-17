@@ -142,6 +142,11 @@ class FreeplayState extends MusicState {
 			}
 		}
 
+		if (FlxG.keys.justPressed.CONTROL) {
+			persistentUpdate = false;
+			openSubState(new GameplayChangersSubstate());
+		}
+
 		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
 	}
 

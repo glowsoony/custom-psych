@@ -17,10 +17,10 @@ class GameplayChangersSubstate extends FlxSubState {
 	function get_curOption() return optionsArray[curSelected]; //shorter lol
 
 	function getOptions() {
-		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', STRING, 'multiplied', ["multiplied", "constant"]);
+		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrollType', STRING, 'multiplied', ["multiplied", "constant"]);
 		optionsArray.push(goption);
 
-		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollspeed', FLOAT, 1);
+		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollSpeed', FLOAT, 1);
 		option.scrollSpeed = 2.0;
 		option.minValue = 0.35;
 		option.changeValue = 0.05;
@@ -35,7 +35,7 @@ class GameplayChangersSubstate extends FlxSubState {
 		optionsArray.push(option);
 
 		#if FLX_PITCH
-		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', FLOAT, 1);
+		var option:GameplayOption = new GameplayOption('Playback Rate', 'playbackRate', FLOAT, 1);
 		option.scrollSpeed = 1;
 		option.minValue = 0.5;
 		option.maxValue = 3.0;
@@ -62,8 +62,11 @@ class GameplayChangersSubstate extends FlxSubState {
 		optionsArray.push(option);
 
 		optionsArray.push(new GameplayOption('Instakill on Miss', 'instakill', BOOL, false));
-		optionsArray.push(new GameplayOption('Practice Mode', 'practice', BOOL, false));
+		optionsArray.push(new GameplayOption('No Fail', 'noFail', BOOL, false));
 		optionsArray.push(new GameplayOption('Botplay', 'botplay', BOOL, false));
+		optionsArray.push(new GameplayOption('Sustains', 'sustains', BOOL, true));
+		optionsArray.push(new GameplayOption('Mirrored Notes', 'mirroredNotes', BOOL, false));
+		optionsArray.push(new GameplayOption('Randomized Notes', 'randomizedNotes', BOOL, false));
 	}
 
 	public function getOptionByName(name:String)
@@ -86,14 +89,9 @@ class GameplayChangersSubstate extends FlxSubState {
 		add(bg);
 
 		// avoids lagspikes while scrolling through menus!
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
-
-		grpTexts = new FlxTypedGroup<AttachedText>();
-		add(grpTexts);
-
-		checkboxGroup = new FlxTypedGroup<CheckboxThingie>();
-		add(checkboxGroup);
+		add(grpOptions = new FlxTypedGroup<Alphabet>());
+		add(grpTexts = new FlxTypedGroup<AttachedText>());
+		add(checkboxGroup = new FlxTypedGroup<CheckboxThingie>());
 		
 		getOptions();
 
@@ -130,25 +128,29 @@ class GameplayChangersSubstate extends FlxSubState {
 		reloadCheckboxes();
 	}
 
+	override function close() {
+		parent.persistentUpdate = true;
+		super.close();
+	}
+
 	var nextAccept:Int = 5;
 	var holdTime:Float = 0;
 	var holdValue:Float = 0;
-	override function update(elapsed:Float)
-	{
+	override function update(elapsed:Float) {
 		final justPressedDown:Bool = Controls.justPressed('ui_down');
 		if (justPressedDown || Controls.justPressed('ui_up')) changeSelection(justPressedDown ? 1 : -1);
 
 		if (Controls.justPressed('back')) {
 			close();
 			Settings.save();
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('cancel'));
 		}
 
 		if (nextAccept <= 0) {
 			var usesCheckbox:Bool = curOption.type == BOOL;
 			if (usesCheckbox) {
 				if (Controls.justPressed('accept')) {
-					FlxG.sound.play(Paths.sound('scrollMenu'));
+					FlxG.sound.play(Paths.sound('scroll'));
 					curOption.setValue((curOption.getValue() == true) ? false : true);
 					curOption.change();
 					reloadCheckboxes();
@@ -212,7 +214,7 @@ class GameplayChangersSubstate extends FlxSubState {
 
 							updateTextFrom(curOption);
 							curOption.change();
-							FlxG.sound.play(Paths.sound('scrollMenu'));
+							FlxG.sound.play(Paths.sound('scroll'));
 						} else if (curOption.type != STRING) {
 							holdValue = Math.max(curOption.minValue, Math.min(curOption.maxValue, holdValue + curOption.scrollSpeed * elapsed * (leftJustPressed ? -1 : 1)));
 
@@ -239,69 +241,62 @@ class GameplayChangersSubstate extends FlxSubState {
 				for (i in 0...optionsArray.length) {
 					var leOption:GameplayOption = optionsArray[i];
 					leOption.setValue(leOption.defaultValue);
-					if(leOption.type != BOOL)
-					{
+					if(leOption.type != BOOL) {
 						if(leOption.type == STRING)
 							leOption.curOption = leOption.options.indexOf(leOption.getValue());
 
 						updateTextFrom(leOption);
 					}
 
-					if(leOption.name == 'Scroll Speed')
-					{
+					if (leOption.name == 'Scroll Speed') {
 						leOption.displayFormat = "%vX";
 						leOption.maxValue = 3;
-						if(leOption.getValue() > 3)
+						if (leOption.getValue() > 3)
 							leOption.setValue(3);
 
 						updateTextFrom(leOption);
 					}
 					leOption.change();
 				}
-				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxG.sound.play(Paths.sound('cancel'));
 				reloadCheckboxes();
 			}
 		}
 
-		if(nextAccept > 0) {
-			nextAccept -= 1;
-		}
+		if (nextAccept > 0) nextAccept -= 1;
 		super.update(elapsed);
 	}
 
 	function updateTextFrom(option:GameplayOption) {
 		var text:String = option.displayFormat;
 		var val:Dynamic = option.getValue();
-		if(option.type == PERCENT) val *= 100;
+		if (option.type == PERCENT) val *= 100;
 		var def:Dynamic = option.defaultValue;
 		option.text = text.replace('%v', val).replace('%d', def);
 	}
 
-	function clearHold()
-	{
-		if(holdTime > 0.5)
-			FlxG.sound.play(Paths.sound('scrollMenu'));
+	function clearHold() {
+		if (holdTime > 0.5)
+			FlxG.sound.play(Paths.sound('scroll'));
 
 		holdTime = 0;
 	}
 	
-	function changeSelection(change:Int = 0)
-	{
+	function changeSelection(change:Int = 0) {
 		curSelected = FlxMath.wrap(curSelected + change, 0, optionsArray.length - 1);
-		for (num => item in grpOptions.members)
-		{
+		for (num => item in grpOptions.members)	{
 			item.targetY = num - curSelected;
 			item.alpha = 0.6;
 			if (item.targetY == 0)
 				item.alpha = 1;
 		}
-		for (text in grpTexts)
-		{
+
+		for (text in grpTexts) {
 			text.alpha = 0.6;
 			if(text.ID == curSelected)
 				text.alpha = 1;
 		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('scroll'));
 	}
 
 	function reloadCheckboxes() {
@@ -311,8 +306,7 @@ class GameplayChangersSubstate extends FlxSubState {
 	}
 }
 
-class GameplayOption
-{
+class GameplayOption {
 	private var child:Alphabet;
 	public var text(get, set):String;
 	public var onChange:Void->Void = null; //Pressed enter (on Bool type options) or pressed/held left/right (on other types)
@@ -334,8 +328,7 @@ class GameplayOption
 	public var displayFormat:String = '%v'; //How String/Float/Percent/Int values are shown, %v = Current value, %d = Default value
 	public var name:String = 'Unknown';
 
-	public function new(name:String, variable:String, type:OptionType, defaultValue:Dynamic = 'null variable value', ?options:Array<String> = null)
-	{
+	public function new(name:String, variable:String, type:OptionType, defaultValue:Dynamic = 'null variable value', ?options:Array<String> = null) {
 		_name = name;
 		this.name = Language.getPhrase('setting_$name', name);
 		this.variable = variable;
@@ -343,10 +336,8 @@ class GameplayOption
 		this.defaultValue = defaultValue;
 		this.options = options;
 
-		if(defaultValue == 'null variable value')
-		{
-			switch(type)
-			{
+		if (defaultValue == 'null variable value') {
+			switch(type) {
 				case BOOL:
 					defaultValue = false;
 				case INT, FLOAT:
@@ -362,11 +353,10 @@ class GameplayOption
 			}
 		}
 
-		if(getValue() == null)
+		if (getValue() == null)
 			setValue(defaultValue);
 
-		switch(type)
-		{
+		switch (type) {
 			case STRING:
 				var num:Int = options.indexOf(getValue());
 				if(num > -1)
@@ -384,10 +374,9 @@ class GameplayOption
 		}
 	}
 
-	public function change()
-	{
+	public function change() {
 		//nothing lol
-		if(onChange != null)
+		if (onChange != null)
 			onChange();
 	}
 
@@ -405,10 +394,8 @@ class GameplayOption
 	private function get_text()
 		return _text;
 
-	private function set_text(newValue:String = '')
-	{
-		if(child != null)
-		{
+	private function set_text(newValue:String = '') {
+		if (child != null) {
 			_text = newValue;
 			child.text = Language.getPhrase('setting_$_name-$_text', _text);
 			return _text;
