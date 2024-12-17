@@ -22,6 +22,7 @@ class SaveVariables {
 	var shitHitWindow:Int = 180;
 	var hitsoundVolume:Float = 0;
 	var canReset:Bool = true;
+	var mechanics:Bool = true;
 	// these count as gameplay
 	// but are in the "resync" menu
 	// as they require more than simple numbers in a settings menu

@@ -27,6 +27,13 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 			BOOL
 		));
 
+		addOption(new Option(
+			'Mechanics',
+			'Enables mechanics for specific songs.\n(gremlin/signs from expurgation, saws from termination, etc)',
+			'mechanics',
+			BOOL
+		));
+
 		var sickHitWindow:Option = new Option(
 			'"Sick!" Hit Window:',
 			'The timing for the "Sick!" judgement\'s hit window (in milliseconds).',
