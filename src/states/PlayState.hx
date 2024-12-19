@@ -303,11 +303,10 @@ class PlayState extends MusicState {
 		timeTxt.borderSize = 1.25;
 		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
 
-		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', null, 0, 100));
+		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
 		healthBar.alpha = Settings.data.healthBarAlpha;
 		healthBar.setColors(dad.healthColor, bf.healthColor);
 		healthBar.screenCenter(X);
-		healthBar.active = false;
 		healthBar.leftToRight = false;
 
 		hud.add(iconP1 = new CharIcon(bf.icon, true));
