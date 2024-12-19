@@ -77,7 +77,17 @@ class PlayState extends MusicState {
 
 	var health(default, set):Float = 50;
 	function set_health(value:Float):Float {
-		return health = FlxMath.bound(value, 0, 100);
+		value = FlxMath.bound(value, 0, 100);
+
+		// update health bar
+		health = value;
+		var newPercent:Float = FlxMath.remapToRange(FlxMath.bound(health, healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
+		healthBar.percent = newPercent;
+
+		iconP1.animation.curAnim.curFrame = newPercent < 20 ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP2.animation.curAnim.curFrame = newPercent > 80 ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+
+		return health = value;
 	}
 
 	var playbackRate(default, set):Float = 1;
@@ -293,10 +303,11 @@ class PlayState extends MusicState {
 		timeTxt.borderSize = 1.25;
 		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
 
-		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
+		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', null, 0, 100));
 		healthBar.alpha = Settings.data.healthBarAlpha;
 		healthBar.setColors(dad.healthColor, bf.healthColor);
 		healthBar.screenCenter(X);
+		healthBar.active = false;
 		healthBar.leftToRight = false;
 
 		hud.add(iconP1 = new CharIcon(bf.icon, true));
