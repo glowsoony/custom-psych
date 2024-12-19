@@ -21,7 +21,7 @@ class JudgementSpr extends FunkinSprite {
 	
 	public var currentName:String = '';
 	public function display(judgeName:String) {
-		if (Settings.judgementAlpha <= 0) return;
+		if (Settings.data.judgementAlpha <= 0) return;
 		
 		setPosition(originalPos.x, originalPos.y);
 
