@@ -8,7 +8,8 @@ class OptionsState extends MusicState
 		'Controls',
 		'Graphics',
 		'Visuals',
-		'Gameplay'
+		'Gameplay',
+		'Calibrate Offset'
 		#if TRANSLATIONS_ALLOWED , 'Language' #end
 	];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -26,6 +27,8 @@ class OptionsState extends MusicState
 				openSubState(new options.VisualSettingsSubState());
 			case 'Gameplay':
 				openSubState(new options.GameplaySettingsSubState());
+			case 'Calibrate Offset':
+				MusicState.switchState(new options.CalibrateOffsetState());
 		}
 
 		persistentUpdate = false;

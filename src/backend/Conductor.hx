@@ -92,7 +92,7 @@ class Conductor extends flixel.FlxBasic {
 		if (inst.time == _lastTime) _resyncTimer += addition;
 		else _resyncTimer = 0;
 
-		time = (inst.time + _resyncTimer) + offset;
+		time = (inst.time + _resyncTimer) - offset;
 		_lastTime = inst.time;
 	}
 
