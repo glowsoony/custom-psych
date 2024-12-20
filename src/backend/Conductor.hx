@@ -16,12 +16,15 @@ class Conductor extends flixel.FlxBasic {
 	public static var bpm(default, set):Float = 120.0;
 	public static var crotchet:Float = (60 / bpm) * 1000;
 	public static var stepCrotchet:Float = crotchet * 0.25;
-	public static var offset:Float = 0.0;
+
+	public static var audioOffset:Float = 0.0;
+	public static var songOffset:Float = 0.0;
 
 	public static var rate(default, set):Float = 1.0;
 	public static var volume(default, set):Float = 1.0;
 
 	public static var time:Float = 0.0;
+	static var rawTime:Float;
 	static var _lastTime:Float = 0.0;
 
 	static var _resyncTimer:Float = 0.0;
@@ -55,7 +58,9 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	public static function reset() {
+		rawTime = 0.0;
 		time = 0.0;
+		songOffset = 0.0;
 		step = 0;
 		beat = 0;
 		measure = 0;
@@ -92,7 +97,7 @@ class Conductor extends flixel.FlxBasic {
 		if (inst.time == _lastTime) _resyncTimer += addition;
 		else _resyncTimer = 0;
 
-		time = (inst.time + _resyncTimer) - offset;
+		time = (inst.time + _resyncTimer) - songOffset;
 		_lastTime = inst.time;
 	}
 

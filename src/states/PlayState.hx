@@ -181,6 +181,8 @@ class PlayState extends MusicState {
 
 		Conductor.stop();
 
+		Settings.data.noteOffset = 82;
+
 		if (storyMode) songID = songList[currentLevel];
 
 		// precache the pause menu music
@@ -275,7 +277,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		Conductor.time -= Conductor.crotchet * 5;
+		Conductor.time -= (Conductor.crotchet * 5) + Conductor.audioOffset;
 		countdown.start();
 
 		FlxG.mouse.visible = false;
@@ -597,7 +599,7 @@ class PlayState extends MusicState {
 
 	// ai note hitting
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
-		if (!note.canHit || note.time >= Conductor.time) return;
+		if (!note.canHit || note.time + Settings.data.noteOffset >= Conductor.time) return;
 
 		final noteFunc = note.player ? noteHit : opponentNoteHit;
 
@@ -689,7 +691,7 @@ class PlayState extends MusicState {
 		// cuz judgement based is super boring :sob:
 		if (!note.breakOnHit) score += Math.floor(500 - Math.abs(note.hitTime));
 		for (id => judge in Judgement.list) {
-			if (Math.abs(note.hitTime) >= judge.timing) continue;
+			if (Math.abs(note.hitTime) >= judge.timing + Settings.data.noteOffset) continue;
 
 			if (judge.breakCombo || note.breakOnHit) {
 				comboNumbers.display(combo = 0);

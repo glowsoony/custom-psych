@@ -41,6 +41,19 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 			BOOL
 		));
 
+		var noteOffset:Option = new Option(
+			'Note Offset:',
+			'Shifts the notes by a certain amount, to make them more synced to the song.',
+			'noteOffset',
+			FLOAT
+		);
+		noteOffset.displayFormat = '%vms';
+		noteOffset.scrollSpeed = 15;
+		noteOffset.changeValue = 0.1;
+		noteOffset.minValue = 0.0;
+		noteOffset.maxValue = 300.0;
+		addOption(noteOffset);
+
 		var sickHitWindow:Option = new Option(
 			'"Sick!" Hit Window:',
 			'The timing for the "Sick!" judgement\'s hit window (in milliseconds).',

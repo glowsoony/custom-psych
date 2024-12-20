@@ -49,14 +49,13 @@ class Note extends FlxSprite {
 	public var canHit:Bool = true;
 	public var inHitRange(get, never):Bool;
 	function get_inHitRange():Bool {
-		//return (time < Conductor.time + (166 * earlyHitMult) && (time > Conductor.time - (166 * lateHitMult)));
-		return (time < Conductor.time + (Judgement.maxHitWindow * earlyHitMult) && 
-		(time > Conductor.time - (Judgement.maxHitWindow * lateHitMult)));
+		return time - Settings.data.noteOffset < (Conductor.time + (Judgement.maxHitWindow * earlyHitMult)) && 
+		time + Settings.data.noteOffset > (Conductor.time - (Judgement.maxHitWindow * lateHitMult));
 	}
 
 	public var tooLate(get, never):Bool;
 	function get_tooLate():Bool {
-		return hitTime < -(166 + 25);
+		return hitTime < -((Judgement.maxHitWindow + 25)) - Settings.data.noteOffset;
 	}
 
 	public var hittable(get, never):Bool;
@@ -195,7 +194,7 @@ class Note extends FlxSprite {
 	}
 
 	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
-		distance = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
+		distance = ((hitTime + Settings.data.noteOffset) * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
 		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;

@@ -41,7 +41,7 @@ class CalibrateOffsetState extends MusicState {
 		super.update(elapsed);
 		if (Controls.justPressed('back')) {
 			MusicState.switchState(new options.OptionsState());
-			Conductor.offset = avgDeviation;
+			Conductor.audioOffset = Settings.data.audioOffset = avgDeviation;
 			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'));
 			Conductor.bpm = 102;
 			Conductor.inst.play();
