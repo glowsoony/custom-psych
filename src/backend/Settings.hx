@@ -73,7 +73,8 @@ class SaveVariables {
 		'botplay' => false,
 		'mirroredNotes' => false,
 		'randomizedNotes' => false,
-		'sustains' => true
+		'sustains' => true,
+		'blind' => false
 	];
 }
 

@@ -65,6 +65,7 @@ class GameplayChangersSubstate extends FlxSubState {
 		optionsArray.push(new GameplayOption('No Fail', 'noFail', BOOL, false));
 		optionsArray.push(new GameplayOption('Botplay', 'botplay', BOOL, false));
 		optionsArray.push(new GameplayOption('Sustains', 'sustains', BOOL, true));
+		optionsArray.push(new GameplayOption('Blind', 'blind', BOOL, false));
 		optionsArray.push(new GameplayOption('Mirrored Notes', 'mirroredNotes', BOOL, false));
 		optionsArray.push(new GameplayOption('Randomized Notes', 'randomizedNotes', BOOL, false));
 	}

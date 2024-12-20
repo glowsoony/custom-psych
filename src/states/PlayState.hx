@@ -244,6 +244,9 @@ class PlayState extends MusicState {
 		playerStrums.cameras = [camHUD];
 		opponentStrums.cameras = [camHUD];
 
+		add(notes = new FlxTypedSpriteGroup<Note>());
+		notes.cameras = [camHUD];
+
 		if (Settings.data.centeredNotes) {
 			playerStrums.screenCenter(X);
 			opponentStrums.alpha = 0;
@@ -251,8 +254,16 @@ class PlayState extends MusicState {
 
 		if (!Settings.data.opponentNotes) opponentStrums.alpha = 0;
 
-		add(notes = new FlxTypedSpriteGroup<Note>());
-		notes.cameras = [camHUD];
+		if (Settings.data.gameplaySettings['blind']) {
+			notes.alpha = 0;
+			opponentStrums.alpha = 0;
+			playerStrums.alpha = 0;
+
+			// just to make sure some note types don't work around alpha stuff
+			notes.visible = false;
+			opponentStrums.visible = false;
+			playerStrums.visible = false;
+		}
 
 		// characters
 		add(gf = new Character(350, 225, 'gf', false));
