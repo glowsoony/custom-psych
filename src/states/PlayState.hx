@@ -277,7 +277,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		Conductor.time -= (Conductor.crotchet * 5) + Conductor.audioOffset;
+		Conductor.time -= (Conductor.crotchet * 5) + Conductor.songOffset;
 		countdown.start();
 
 		FlxG.mouse.visible = false;
@@ -364,6 +364,7 @@ class PlayState extends MusicState {
 
 		Conductor.setBPMChanges(song);
 		Conductor.bpm = song.bpm;
+		Conductor.songOffset = song.offset;
 		songName = song.song;
 
 		// load inst

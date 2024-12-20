@@ -81,6 +81,7 @@ class Song {
 			bpm: 120,
 			needsVoices: false,
 			speed: 1.0,
+			offset: 0,
 
 			player1: 'bf',
 			player2: 'bf',
