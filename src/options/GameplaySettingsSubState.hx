@@ -58,52 +58,48 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 			'"Sick!" Hit Window:',
 			'The timing for the "Sick!" judgement\'s hit window (in milliseconds).',
 			'sickHitWindow',
-			FLOAT
+			INT
 		);
 		sickHitWindow.displayFormat = '%vms';
-		sickHitWindow.changeValue = 0.1;
 		sickHitWindow.scrollSpeed = 15;
-		sickHitWindow.minValue = 10.0;
-		sickHitWindow.maxValue = 45.0;
+		sickHitWindow.minValue = 10;
+		sickHitWindow.maxValue = 45;
 		addOption(sickHitWindow);
 
 		var goodHitWindow:Option = new Option(
 			'"Good" Hit Window:',
 			'The timing for the "Good" judgement\'s hit window (in milliseconds).',
 			'goodHitWindow',
-			FLOAT
+			INT
 		);
 		goodHitWindow.displayFormat = '%vms';
 		goodHitWindow.scrollSpeed = 15;
-		goodHitWindow.changeValue = 0.1;
-		goodHitWindow.minValue = 11.0;
-		goodHitWindow.maxValue = 90.0;
+		goodHitWindow.minValue = 11;
+		goodHitWindow.maxValue = 90;
 		addOption(goodHitWindow);
 
 		var badHitWindow:Option = new Option(
 			'"Bad" Hit Window:',
 			'The timing for the "Bad" judgement\'s hit window (in milliseconds).',
 			'sickHitWindow',
-			FLOAT
+			INT
 		);
 		badHitWindow.displayFormat = '%vms';
-		badHitWindow.changeValue = 0.1;
 		badHitWindow.scrollSpeed = 15;
-		badHitWindow.minValue = 12.0;
-		badHitWindow.maxValue = 135.0;
+		badHitWindow.minValue = 12;
+		badHitWindow.maxValue = 135;
 		addOption(badHitWindow);
 
 		var shitHitWindow:Option = new Option(
 			'"Shit" Hit Window:',
 			'The timing for the "Shit" judgement\'s hit window (in milliseconds).',
 			'goodHitWindow',
-			FLOAT
+			INT
 		);
 		shitHitWindow.displayFormat = '%vms';
-		shitHitWindow.changeValue = 0.1;
 		shitHitWindow.scrollSpeed = 15;
-		shitHitWindow.minValue = 13.0;
-		shitHitWindow.maxValue = 180.0;
+		shitHitWindow.minValue = 13;
+		shitHitWindow.maxValue = 180;
 		addOption(shitHitWindow);
 
 		var hitsoundVolume:Option = new Option(

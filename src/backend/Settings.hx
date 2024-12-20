@@ -16,10 +16,10 @@ class SaveVariables {
 	var centeredNotes:Bool = false;
 	var opponentNotes:Bool = true;
 	var ghostTapping:Bool = true;
-	var sickHitWindow:Float = 45.0;
-	var goodHitWindow:Float = 90.0;
-	var badHitWindow:Float = 135.0;
-	var shitHitWindow:Float = 180.0;
+	var sickHitWindow:Int = 45;
+	var goodHitWindow:Int = 90;
+	var badHitWindow:Int = 135;
+	var shitHitWindow:Int = 180;
 	var hitsoundVolume:Float = 0;
 	var canReset:Bool = true;
 	var mechanics:Bool = true;
