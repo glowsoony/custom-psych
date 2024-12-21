@@ -517,18 +517,6 @@ class PlayState extends MusicState {
 		else camGame.followLerp = 0.04 * 1 * playbackRate;
 	}
 
-/*			var curTime:Float = Math.max(0, Conductor.songPosition - ClientPrefs.data.noteOffset);
-			songPercent = (curTime / songLength);
-
-			var songCalc:Float = (songLength - curTime);
-			if(ClientPrefs.data.timeBarType == 'Time Elapsed') songCalc = curTime;
-
-			var secondsTotal:Int = Math.floor(songCalc / 1000);
-			if(secondsTotal < 0) secondsTotal = 0;
-
-			if(ClientPrefs.data.timeBarType != 'Song Name')
-				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);*/
-
 	var _lastSeconds:Int = -1;
 	dynamic function updateTimeBar() {
 		if (paused || !updateTime) return;

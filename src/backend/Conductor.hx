@@ -24,7 +24,6 @@ class Conductor extends flixel.FlxBasic {
 	public static var volume(default, set):Float = 1.0;
 
 	public static var time:Float = 0.0;
-	static var rawTime:Float;
 	static var _lastTime:Float = 0.0;
 
 	static var _resyncTimer:Float = 0.0;
@@ -58,7 +57,6 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	public static function reset() {
-		rawTime = 0.0;
 		time = 0.0;
 		songOffset = 0.0;
 		step = 0;
