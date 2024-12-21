@@ -81,7 +81,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		var badHitWindow:Option = new Option(
 			'"Bad" Hit Window:',
 			'The timing for the "Bad" judgement\'s hit window (in milliseconds).',
-			'sickHitWindow',
+			'badHitWindow',
 			INT
 		);
 		badHitWindow.displayFormat = '%vms';
@@ -93,7 +93,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		var shitHitWindow:Option = new Option(
 			'"Shit" Hit Window:',
 			'The timing for the "Shit" judgement\'s hit window (in milliseconds).',
-			'goodHitWindow',
+			'shitHitWindow',
 			INT
 		);
 		shitHitWindow.displayFormat = '%vms';

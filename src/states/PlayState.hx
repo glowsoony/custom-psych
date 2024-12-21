@@ -181,8 +181,6 @@ class PlayState extends MusicState {
 
 		Conductor.stop();
 
-		Settings.data.noteOffset = 82;
-
 		if (storyMode) songID = songList[currentLevel];
 
 		// precache the pause menu music
