@@ -46,6 +46,12 @@
 			icon: 'dad',
 			color: 0xFF000000,
 			difficulties: ['normal']
+		},
+		{
+			name: 'Sword Art Online Alicization Opening 1 LiSA - ADAMAS',
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['normal']
 		}
 	],
 

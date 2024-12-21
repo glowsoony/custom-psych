@@ -49,7 +49,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		);
 		noteOffset.displayFormat = '%vms';
 		noteOffset.scrollSpeed = 15;
-		noteOffset.changeValue = 0.1;
+		noteOffset.changeValue = 1;
 		noteOffset.minValue = 0.0;
 		noteOffset.maxValue = 300.0;
 		addOption(noteOffset);
@@ -114,6 +114,19 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		hitsoundVolume.decimals = 1;
 		addOption(hitsoundVolume);
 
+		var strumlineSize:Option = new Option(
+			'Strumline Size:',
+			'How big the strumlines will be. Can help on bigger monitors if the notes are too big.',
+			'strumlineSize',
+			PERCENT);
+		strumlineSize.scrollSpeed = 1.6;
+		strumlineSize.minValue = 0.0;
+		strumlineSize.maxValue = 1;
+		strumlineSize.changeValue = 0.1;
+		strumlineSize.decimals = 1;
+		strumlineSize.onChange = onChangeStrumlineSize;
+		addOption(strumlineSize);
+
 		addOption(new Option(
 			'Reset Button',
 			'Press "RESET" in-game to automatically die.',
@@ -123,4 +136,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 
 		super();
 	}
+
+	function onChangeStrumlineSize() objects.Strumline.size = Settings.data.strumlineSize;
 }

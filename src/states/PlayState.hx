@@ -238,8 +238,8 @@ class PlayState extends MusicState {
 
 		// set up strumlines and the note group
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
-		add(playerStrums = new Strumline(750, strumlineYPos, !botplay));
-		add(opponentStrums = new Strumline(100, strumlineYPos));
+		add(playerStrums = new Strumline(950, strumlineYPos, !botplay));
+		add(opponentStrums = new Strumline(320, strumlineYPos));
 
 		playerStrums.cameras = [camHUD];
 		opponentStrums.cameras = [camHUD];

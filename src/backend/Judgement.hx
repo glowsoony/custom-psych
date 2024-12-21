@@ -8,7 +8,7 @@ class Judgement {
 		{name: 'sick', timing: Settings.data.sickHitWindow, accuracy: 100, health: 2.5},
 		{name: 'good', timing: Settings.data.goodHitWindow, accuracy: 85, health: 1},
 		{name: 'bad', timing: Settings.data.badHitWindow, accuracy: 60, health: -2.5},
-		{name: 'shit', timing: Settings.data.shitHitWindow, accuracy: 40, health: -4}
+		{name: 'shit', timing: Settings.data.shitHitWindow, accuracy: 40, health: -4, breakCombo: true}
 	];
 
 	public static var maxHitWindow(get, never):Float;

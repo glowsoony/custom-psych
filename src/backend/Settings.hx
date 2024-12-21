@@ -56,6 +56,7 @@ class SaveVariables {
 	var fpsCounter:Bool = true;
 	var transitions:Bool = true;
 	var framerate:Int = 60;
+	var strumlineSize:Float = 0.7;
 
 	// miscellaneous
 	var discordRPC:Bool = true;
@@ -111,6 +112,7 @@ class Settings {
 		}
 
 		Conductor.audioOffset = data.audioOffset;
+		objects.Strumline.size = data.strumlineSize;
 
 		#if DISCORD_ALLOWED DiscordClient.check(); #end
 	}
