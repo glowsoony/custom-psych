@@ -57,6 +57,7 @@ class SaveVariables {
 	var transitions:Bool = true;
 	var framerate:Int = 60;
 	var strumlineSize:Float = 0.7;
+	var timeBarType:String = 'Disabled';
 
 	// miscellaneous
 	var discordRPC:Bool = true;

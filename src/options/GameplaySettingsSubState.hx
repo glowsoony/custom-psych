@@ -122,7 +122,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		strumlineSize.scrollSpeed = 1.6;
 		strumlineSize.minValue = 0.0;
 		strumlineSize.maxValue = 1;
-		strumlineSize.changeValue = 0.1;
+		strumlineSize.changeValue = 0.05;
 		strumlineSize.decimals = 1;
 		strumlineSize.onChange = onChangeStrumlineSize;
 		addOption(strumlineSize);

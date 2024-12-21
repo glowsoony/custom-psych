@@ -316,6 +316,10 @@ class PlayState extends MusicState {
 		timeTxt.borderSize = 1.25;
 		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
 
+		updateTime = Settings.data.timeBarType != 'Disabled';
+		timeBar.visible = Settings.data.timeBarType != 'Disabled';
+		timeTxt.visible = Settings.data.timeBarType != 'Disabled';
+
 		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
 		healthBar.alpha = Settings.data.healthBarAlpha;
 		healthBar.setColors(dad.healthColor, bf.healthColor);
@@ -354,15 +358,14 @@ class PlayState extends MusicState {
 		botplayTxt.visible = botplay;
 		botplayTxt.screenCenter(X);
 
-		if (Settings.data.judgementCounter) {
-			hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
-			judgeCounter.font = Paths.font('vcr.ttf');
-			judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
-			judgeCounter.borderColor = FlxColor.BLACK;
-			judgeCounter.borderSize = 1.25;
-			updateJudgeCounter();
-			judgeCounter.screenCenter(Y);
-		}
+		hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
+		judgeCounter.font = Paths.font('vcr.ttf');
+		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
+		judgeCounter.borderColor = FlxColor.BLACK;
+		judgeCounter.borderSize = 1.25;
+		updateJudgeCounter();
+		judgeCounter.screenCenter(Y);
+		judgeCounter.visible = Settings.data.judgementCounter;
 	}
 
 	function loadSong():Void {
@@ -514,6 +517,18 @@ class PlayState extends MusicState {
 		else camGame.followLerp = 0.04 * 1 * playbackRate;
 	}
 
+/*			var curTime:Float = Math.max(0, Conductor.songPosition - ClientPrefs.data.noteOffset);
+			songPercent = (curTime / songLength);
+
+			var songCalc:Float = (songLength - curTime);
+			if(ClientPrefs.data.timeBarType == 'Time Elapsed') songCalc = curTime;
+
+			var secondsTotal:Int = Math.floor(songCalc / 1000);
+			if(secondsTotal < 0) secondsTotal = 0;
+
+			if(ClientPrefs.data.timeBarType != 'Song Name')
+				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);*/
+
 	var _lastSeconds:Int = -1;
 	dynamic function updateTimeBar() {
 		if (paused || !updateTime) return;
@@ -521,12 +536,18 @@ class PlayState extends MusicState {
 		var curTime:Float = Math.max(0, Conductor.time / Conductor.rate);
 		songPercent = (curTime / (songLength / Conductor.rate));
 
-		var seconds:Int = Math.floor(curTime * 0.001);
+		var songCalc:Float = (songLength - curTime);
+		if (Settings.data.timeBarType == 'Time Elapsed') songCalc = curTime;
+
+		var seconds:Int = Math.floor(songCalc * 0.001);
 		if (seconds < 0) seconds = 0;
 
-		if (seconds < _lastSeconds) return;
+		if (seconds == _lastSeconds) return;
 
-		timeTxt.text = '$songName - ${FlxStringUtil.formatTime(seconds, false)}';
+		var textToShow:String = '$songName';
+		if (Settings.data.timeBarType != 'Song Name') textToShow += ' - ${FlxStringUtil.formatTime(seconds, false)}';
+
+		timeTxt.text = textToShow;
 		_lastSeconds = seconds;
 	}
 

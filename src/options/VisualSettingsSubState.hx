@@ -21,6 +21,14 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 			BOOL
 		));
 
+		addOption(new Option(
+			'Time Bar Type:',
+			'What kind of time bar should be displayed in-game?',
+			'timeBarType',
+			STRING,
+			['Time Elapsed', 'Time Left', 'Song Name', 'Disabled']
+		));
+
 		var gameVisibility:Option = new Option(
 			'Game Visibility:',
 			'How transparent the HUD camera is.\nCan make it easier to read notes for people that have bad eyesight.',
@@ -128,6 +136,8 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 		fpsCounter.changeValue = 1;
 		fpsCounter.onChange = onChangeFPSCounter;
 		addOption(fpsCounter);
+
+
 
 		super();
 	}
