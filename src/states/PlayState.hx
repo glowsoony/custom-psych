@@ -276,7 +276,7 @@ class PlayState extends MusicState {
 
 		hud.add(countdown = new Countdown());
 		countdown.screenCenter();
-		countdown.onStart = function() Conductor.self.active = true;
+		countdown.onStart = function() Conductor.playing = true;
 		countdown.onFinish = function() {
 			Conductor.play();
 			updateTime = true;

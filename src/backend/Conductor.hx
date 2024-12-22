@@ -26,12 +26,14 @@ class Conductor extends flixel.FlxBasic {
 	public static var time:Float = 0.0;
 	public static var rawTime:Float = 0.0;
 	static var _lastTime:Float = 0.0;
-
 	static var _resyncTimer:Float = 0.0;
 
 	public static var bpmChanges:Array<BPMChange> = [];
-
-	public static var self:Conductor;
+	static var _bpmChange:BPMChange = {
+		beat: 0,
+		time: 0,
+		bpm: bpm
+	};
 
 	public static var inst(default, set):FlxSound;
 	
@@ -52,7 +54,6 @@ class Conductor extends flixel.FlxBasic {
 	public function new() {
 		super();
 		vocals = new FlxSoundGroup(2);
-		self = this;
 		visible = false;
 		reset();
 	}
@@ -68,6 +69,8 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	override function update(elapsed:Float) {
+		if (!playing) return;
+
 		var oldStep:Int = step;
 		var oldBeat:Int = beat;
 		var oldMeasure:Int = measure;
@@ -120,28 +123,28 @@ class Conductor extends flixel.FlxBasic {
 		playing = true;
 		inst.play();
 		vocals.play();
-		self.active = true;
+		playing = true;
 	}
 
 	public static function stop() {
 		playing = false;
 		inst.stop();
 		vocals.stop();
-		self.active = false;
+		playing = false;
 	}
 
 	public static function pause() {
 		playing = false;
 		inst.pause();
 		vocals.pause();
-		self.active = false;
+		playing = false;
 	}
 
 	public static function resume() {
 		playing = true;
 		inst.resume();
 		vocals.resume();
-		self.active = true;
+		playing = true;
 	}
 
 	public static function set_bpm(value:Float):Float {
@@ -211,7 +214,7 @@ class Conductor extends flixel.FlxBasic {
 		var lastChange:BPMChange = {
 			beat: 0,
 			time: 0,
-			bpm: bpm,
+			bpm: bpm
 		};
 
 		if (bpmChanges.length == 0) return lastChange;
