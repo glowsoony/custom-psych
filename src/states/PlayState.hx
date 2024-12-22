@@ -621,7 +621,7 @@ class PlayState extends MusicState {
 
 	// ai note hitting
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
-		if (!note.canHit || note.time + Settings.data.noteOffset >= Conductor.rawTime) return;
+		if (!note.canHit || note.time >= Conductor.rawTime) return;
 
 		final noteFunc = note.player ? noteHit : opponentNoteHit;
 
@@ -713,7 +713,7 @@ class PlayState extends MusicState {
 		// cuz judgement based is super boring :sob:
 		if (!note.breakOnHit) score += Math.floor(500 - Math.abs(note.hitTime));
 		for (id => judge in Judgement.list) {
-			if (Math.abs(note.hitTime) >= judge.timing + Settings.data.noteOffset) continue;
+			if (Math.abs(note.hitTime) >= judge.timing) continue;
 
 			if (judge.breakCombo || note.breakOnHit) {
 				comboNumbers.display(combo = 0);

@@ -50,7 +50,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		noteOffset.displayFormat = '%vms';
 		noteOffset.scrollSpeed = 15;
 		noteOffset.changeValue = 1;
-		noteOffset.minValue = 0.0;
+		noteOffset.minValue = -300.0;
 		noteOffset.maxValue = 300.0;
 		addOption(noteOffset);
 
