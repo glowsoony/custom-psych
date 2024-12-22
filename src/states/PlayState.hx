@@ -286,7 +286,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		Conductor.time -= (Conductor.crotchet * 5) + Conductor.songOffset;
+		Conductor.rawTime -= (Conductor.crotchet * 5) + Conductor.songOffset;
 		countdown.start();
 
 		FlxG.mouse.visible = false;
@@ -519,7 +519,7 @@ class PlayState extends MusicState {
 	dynamic function updateTimeBar() {
 		if (paused || !updateTime) return;
 
-		var curTime:Float = Math.max(0, Conductor.time / Conductor.rate);
+		var curTime:Float = Math.max(0, Conductor.rawTime / Conductor.rate);
 		songPercent = (curTime / (songLength / Conductor.rate));
 
 		var songCalc:Float = (songLength - curTime);
@@ -564,7 +564,7 @@ class PlayState extends MusicState {
 				noteMiss(note);
 			}
 
-			if (note.time < Conductor.time - 300) {
+			if (note.time < Conductor.rawTime - 300) {
 				notes.remove(note);
 				note.destroy();
 			}
@@ -618,7 +618,7 @@ class PlayState extends MusicState {
 
 	// ai note hitting
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
-		if (!note.canHit || note.time + Settings.data.noteOffset >= Conductor.time) return;
+		if (!note.canHit || note.time + Settings.data.noteOffset >= Conductor.rawTime) return;
 
 		final noteFunc = note.player ? noteHit : opponentNoteHit;
 
@@ -654,7 +654,7 @@ class PlayState extends MusicState {
 		if (!parent.canHit || parent.missed) return;
 
 		var heldKey:Bool = keysHeld[parent.lane];
-		var tooLate:Bool = (parent.wasHit ? note.time < Conductor.time : parent.tooLate);
+		var tooLate:Bool = (parent.wasHit ? note.time < Conductor.rawTime : parent.tooLate);
 		var isTail:Bool = note.animation.curAnim.name == 'holdend';
 
 		if (!heldKey) {
@@ -675,7 +675,7 @@ class PlayState extends MusicState {
 
 		note.clipToStrum(strum);
 
-		if (note.time <= Conductor.time && !note.wasHit) note.wasHit = true;
+		if (note.time <= Conductor.rawTime && !note.wasHit) note.wasHit = true;
 		else return;
 		
 		strum.playAnim('notePressed');
