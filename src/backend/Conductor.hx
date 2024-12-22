@@ -29,11 +29,6 @@ class Conductor extends flixel.FlxBasic {
 	static var _resyncTimer:Float = 0.0;
 
 	public static var bpmChanges:Array<BPMChange> = [];
-	static var _bpmChange:BPMChange = {
-		beat: 0,
-		time: 0,
-		bpm: bpm
-	};
 
 	public static var inst(default, set):FlxSound;
 	
