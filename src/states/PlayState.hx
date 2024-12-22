@@ -419,6 +419,9 @@ class PlayState extends MusicState {
 		var randomizedLanes:Array<Int> = [];
 		for (i in 0...Strumline.keyCount) randomizedLanes.push(FlxG.random.int(0, Strumline.keyCount - 1, randomizedLanes));
 		for (i => note in parsedNotes) {
+			// thanks shubs /s
+			if (note.lane < 0) continue;
+
 			// dumbest way of doing it but whatever lmao
 			if (Settings.data.gameplaySettings['mirroredNotes']) {
 				if (note.lane == 0) note.lane = 3;
