@@ -42,6 +42,10 @@ class Conductor extends flixel.FlxBasic {
 	public static var beat:Int = 0;
 	public static var measure:Int = 0;
 
+	static var _prevStep:Int = -1;
+	static var _prevBeat:Int = -1;
+	static var _prevMeasure:Int = -1;
+
 	public static dynamic function onStep(value:Int) {}
 	public static dynamic function onBeat(value:Int) {}
 	public static dynamic function onMeasure(value:Int) {}
@@ -66,23 +70,13 @@ class Conductor extends flixel.FlxBasic {
 	override function update(elapsed:Float) {
 		if (!playing) return;
 
-		var oldStep:Int = step;
-		var oldBeat:Int = beat;
-		var oldMeasure:Int = measure;
+		_prevStep = step;
+		_prevBeat = beat;
+		_prevMeasure = measure;
 
 		syncTime(elapsed);
 		syncVocals();
-
-		var bpmChange:BPMChange = getBPMChangeFromMS(rawTime);
-		if (bpmChange.bpm != bpm) bpm = bpmChange.bpm;
-
-		var curBeat:Int = bpmChange.beat + Math.floor((rawTime - bpmChange.time) / crotchet);
-		var curStep:Int = Math.floor(curBeat * 4);
-		var curMeasure:Int = Math.floor(curBeat * 0.25);
-
-		if (oldStep != curStep) onStep(step = curStep);
-		if (oldBeat != curBeat) onBeat(beat = curBeat);
-		if (oldMeasure != curMeasure) onMeasure(measure = curMeasure);
+		syncBeats();
 	}
 
 	public static dynamic function syncTime(delta:Float):Void {
@@ -112,6 +106,19 @@ class Conductor extends flixel.FlxBasic {
 			final vocalDT:Float = Math.abs(vocal.time - instTime);
 			vocal.time = vocalDT >= vocalResyncDiff ? instTime : vocal.time;
 		}
+	}
+
+	public static dynamic function syncBeats() {
+		var bpmChange:BPMChange = getBPMChangeFromMS(rawTime);
+		if (bpmChange.bpm != bpm) bpm = bpmChange.bpm;
+
+		var curBeat:Int = bpmChange.beat + Math.floor((rawTime - bpmChange.time) / crotchet);
+		var curStep:Int = Math.floor(curBeat * 4);
+		var curMeasure:Int = Math.floor(curBeat * 0.25);
+
+		if (_prevStep != curStep) onStep(step = curStep);
+		if (_prevBeat != curBeat) onBeat(beat = curBeat);
+		if (_prevMeasure != curMeasure) onMeasure(measure = curMeasure);
 	}
 
 	public static function play() {
@@ -242,11 +249,9 @@ class Conductor extends flixel.FlxBasic {
 
 			final sectionBeats:Int = getSectionBeats(section);
 			curBeats += sectionBeats;
-			curTime += (calculateCrotchet(curBPM)) * sectionBeats;
+			curTime += calculateCrotchet(curBPM) * sectionBeats;
 		}
 	}
 
-	inline static function getSectionBeats(section:Section):Int {
-		return section?.sectionBeats ?? 4;
-	}
+	inline static function getSectionBeats(section:Section):Int return section?.sectionBeats ?? 4;
 }
