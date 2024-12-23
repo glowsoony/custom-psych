@@ -762,7 +762,7 @@ class PlayState extends MusicState {
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
 		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
 
-		updateAccuracy();
+		accuracy = updateAccuracy();
 		grade = updateGrade();
 		clearType = updateClearType();
 		updateScoreTxt();
