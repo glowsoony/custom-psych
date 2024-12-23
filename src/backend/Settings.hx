@@ -23,10 +23,6 @@ class SaveVariables {
 	var hitsoundVolume:Float = 0;
 	var canReset:Bool = true;
 	var mechanics:Bool = true;
-	// this counts as gameplay
-	// but are in the "resync" menu
-	// as it requires more than simple numbers in a settings menu
-	var audioOffset:Float = 0;
 	var noteOffset:Float = 0;
 
 	// graphics (that affect performance)
@@ -111,8 +107,6 @@ class Settings {
 			final map:Map<String, Dynamic> = FlxG.save.data.gameplaySettings;
 			for (name => value in map) data.gameplaySettings.set(name, value);
 		}
-
-		Conductor.audioOffset = data.audioOffset;
 		objects.Strumline.size = data.strumlineSize;
 
 		#if DISCORD_ALLOWED DiscordClient.check(); #end

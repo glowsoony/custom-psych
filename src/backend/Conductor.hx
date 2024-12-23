@@ -16,8 +16,7 @@ class Conductor extends flixel.FlxBasic {
 	public static var bpm(default, set):Float = 120.0;
 	public static var crotchet:Float = (60 / bpm) * 1000;
 	public static var stepCrotchet:Float = crotchet * 0.25;
-
-	public static var audioOffset:Float = 0.0;
+	
 	public static var songOffset:Float = 0.0;
 
 	public static var rate(default, set):Float = 1.0;
