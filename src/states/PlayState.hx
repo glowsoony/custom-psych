@@ -763,6 +763,8 @@ class PlayState extends MusicState {
 		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
 
 		updateAccuracy();
+		grade = updateGrade();
+		clearType = updateClearType();
 		updateScoreTxt();
 	}
 
