@@ -46,9 +46,7 @@ class Note extends FlxSprite {
 	public var nextNote:Note;
 
 	public var hitTime(get, never):Float;
-	function get_hitTime():Float {
-		return time - Conductor.rawTime;
-	}
+	function get_hitTime():Float return time - Conductor.rawTime;
 
 	public var canHit:Bool = true;
 	public var inHitRange(get, never):Bool;
@@ -197,7 +195,7 @@ class Note extends FlxSprite {
 	}
 
 	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
-		distance = ((time - Conductor.time) * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
+		distance = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
 		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;
