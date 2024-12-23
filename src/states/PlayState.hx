@@ -191,7 +191,7 @@ class PlayState extends MusicState {
 		// set up gameplay settings
 		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
-		downscroll = Settings.data.scrollDirection == 'Down';
+		downscroll = Settings.data.downscroll;
 
 		clearType = updateClearType();
 		grade = updateGrade();
