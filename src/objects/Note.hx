@@ -196,7 +196,7 @@ class Note extends FlxSprite {
 
 	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
 		distance = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
-		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
+		distance *= Settings.data.downscroll ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;
 		if (copyAlpha) alpha = strum.alpha * multAlpha;
@@ -204,7 +204,7 @@ class Note extends FlxSprite {
 		if (copyX) x = strum.x + correctionOffset.x;
 		if (copyY) {
 			y = strum.y + correctionOffset.y + distance;
-			if (Settings.data.scrollDirection == 'Down' && isSustain) {
+			if (Settings.data.downscroll && isSustain) {
 				y -= height - ((frameWidth * Strumline.size) * 0.5);
 			}
 		}
