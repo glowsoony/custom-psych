@@ -443,7 +443,7 @@ class PlayState extends MusicState {
 				// CLEAR ANY POSSIBLE GHOST NOTES
 				for (evilNote in unspawnedNotes) {
 					var matches:Bool = (note.lane == evilNote.lane && note.player == evilNote.player);
-					if (matches && Math.abs(note.time - evilNote.time) < 2.0) {
+					if (matches && Math.abs(note.time - evilNote.time) < 1) {
 						evilNote.destroy();
 						unspawnedNotes.remove(evilNote);
 					}
@@ -563,7 +563,7 @@ class PlayState extends MusicState {
 				else if (note.isSustain) sustainInputs(strum, note);
 			} else checkNoteHitWithAI(strum, note);
 
-			if (note.player && !note.missed && !note.isSustain && note.tooLate) {
+			if (!botplay && note.player && !note.missed && !note.isSustain && note.tooLate) {
 				noteMiss(note);
 			}
 
