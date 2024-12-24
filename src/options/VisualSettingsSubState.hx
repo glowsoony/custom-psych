@@ -96,14 +96,7 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 			'cameraZooms',
 			BOOL
 		));
-
-		addOption(new Option(
-			'FPS Counter',
-			'Whether the FPS counter is visible or not.',
-			'fpsCounter',
-			BOOL
-		));
-
+		
 		addOption(new Option(
 			'Transitions',
 			'Whether transitions between states will appear or not.\nCan make going through menus faster if disabled.',
@@ -136,8 +129,6 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 		fpsCounter.changeValue = 1;
 		fpsCounter.onChange = onChangeFPSCounter;
 		addOption(fpsCounter);
-
-
 
 		super();
 	}

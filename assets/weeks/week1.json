@@ -45,31 +45,66 @@
 			name: 'Silly Billy',
 			icon: 'dad',
 			color: 0xFF000000,
-			difficulties: ['normal']
 		},
 		{
 			name: 'Sword Art Online Alicization Opening 1 LiSA - ADAMAS',
 			icon: 'dad',
 			color: 0xFF000000,
-			difficulties: ['normal']
 		},
 		{
 			name: 'Cyber Inductance',
 			icon: 'dad',
 			color: 0xFF000000,
-			difficulties: ['normal']
 		},
 		{
 			name: 'Shinto',
 			icon: 'dad',
 			color: 0xFF000000,
-			difficulties: ['normal']
 		},
 		{
 			name: 'Shitno',
 			icon: 'dad',
 			color: 0xFF000000,
-			difficulties: ['normal']
+		},
+		{
+			name: '8-28-63',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
+			name: 'Algebra',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
+			name: 'Brimstone (Old)',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
+			name: '115',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
+			name: 'Undefeatable',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
+			name: 'Cherry Bomb',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
+			name: 'Gamebreaker',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
+			name: 'Game Over',
+			icon: 'dad',
+			color: 0xFF000000,
 		}
 	],
 

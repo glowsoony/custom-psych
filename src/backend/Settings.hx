@@ -20,7 +20,6 @@ class SaveVariables {
 	var goodHitWindow:Int = 90;
 	var badHitWindow:Int = 135;
 	var shitHitWindow:Int = 180;
-	var hitsoundVolume:Float = 0;
 	var canReset:Bool = true;
 	var mechanics:Bool = true;
 	var noteOffset:Float = 0;

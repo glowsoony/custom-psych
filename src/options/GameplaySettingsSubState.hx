@@ -102,18 +102,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		shitHitWindow.maxValue = 180;
 		addOption(shitHitWindow);
 
-		var hitsoundVolume:Option = new Option(
-			'Hitsound Volume:',
-			'write the description for this later because im dum lol lmao',
-			'hitsoundVolume',
-			PERCENT);
-		hitsoundVolume.scrollSpeed = 1.6;
-		hitsoundVolume.minValue = 0.0;
-		hitsoundVolume.maxValue = 1;
-		hitsoundVolume.changeValue = 0.1;
-		hitsoundVolume.decimals = 1;
-		addOption(hitsoundVolume);
-
 		var strumlineSize:Option = new Option(
 			'Strumline Size:',
 			'How big the strumlines will be. Can help on bigger monitors if the notes are too big.',

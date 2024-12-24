@@ -173,6 +173,8 @@ class PlayState extends MusicState {
 		'note_right'
 	];
 
+	var hitsound:FlxSound;
+
 	override function create() {
 		Language.reloadPhrases();
 
@@ -195,6 +197,8 @@ class PlayState extends MusicState {
 
 		clearType = updateClearType();
 		grade = updateGrade();
+
+		hitsound = FlxG.sound.load(Paths.sound('hitsound'));
 
 		loadSong();
 
