@@ -171,12 +171,13 @@ class Paths {
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
 		if (!FileSystem.exists(key)) {
-			return beepIfNull ? flixel.system.FlxAssets.getSound('flixel/sounds/beep') : null;
-		}
-		if (!localTrackedAssets.contains(key)) localTrackedAssets.push(key);
+			if (beepIfNull) file = flixel.system.FlxAssets.getSound('flixel/sounds/beep');
+		} else {
+			if (!localTrackedAssets.contains(key)) localTrackedAssets.push(key);
 
-		file = Sound.fromFile(key);
-		cachedAssets.set(key, file);
+			file = Sound.fromFile(key);
+			cachedAssets.set(key, file);
+		}
 
 		return file;
 	}

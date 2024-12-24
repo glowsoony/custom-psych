@@ -447,7 +447,7 @@ class PlayState extends MusicState {
 				// CLEAR ANY POSSIBLE GHOST NOTES
 				for (evilNote in unspawnedNotes) {
 					var matches:Bool = (note.lane == evilNote.lane && note.player == evilNote.player);
-					if (matches && Math.abs(note.time - evilNote.time) < 1) {
+					if (matches && Math.abs(note.time - evilNote.time) == 0.0) {
 						evilNote.destroy();
 						unspawnedNotes.remove(evilNote);
 					}
