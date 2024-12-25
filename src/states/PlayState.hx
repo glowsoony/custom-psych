@@ -903,19 +903,16 @@ class PlayState extends MusicState {
 
 	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
 	inline function keyPressed(key:KeyCode, _):Void {
-		// don't run the function at all if you have botplay enabled
 		if (botplay) return;
 
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
 		if (dir == -1 || keysHeld[dir] || paused) return;
+		keysHeld[dir] = true;
 
-		var strum:StrumNote = playerStrums.members[dir];
 		final sortedNotes:Array<Note> = notes.members.filter(function(note:Note):Bool {
 			if (note == null) return false;
 			return note.hittable && note.lane == dir && note.player && !note.isSustain;
 		});
-
-		keysHeld[dir] = true;
 
 		if (sortedNotes.length == 0) {
 			strum.playAnim('pressed');
@@ -931,12 +928,10 @@ class PlayState extends MusicState {
 	}
 
 	inline function keyReleased(key:KeyCode, _):Void {
-		// don't run the function at all if you have botplay enabled
 		if (botplay) return;
 
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
 		if (dir == -1) return;
-
 		keysHeld[dir] = false;
 		playerStrums.members[dir].playAnim('default');
 	}
