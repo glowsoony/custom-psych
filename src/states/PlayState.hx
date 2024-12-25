@@ -526,13 +526,13 @@ class PlayState extends MusicState {
 	dynamic function updateTimeBar() {
 		if (paused || !updateTime) return;
 
-		var curTime:Float = Math.max(0, Conductor.rawTime / Conductor.rate);
-		songPercent = (curTime / (songLength / Conductor.rate));
+		var curTime:Float = Math.max(0, Conductor.rawTime);
+		songPercent = (curTime / songLength);
 
 		var songCalc:Float = (songLength - curTime);
 		if (Settings.data.timeBarType == 'Time Elapsed') songCalc = curTime;
 
-		var seconds:Int = Math.floor(songCalc * 0.001);
+		var seconds:Int = Math.floor((songCalc / playbackRate) * 0.001);
 		if (seconds < 0) seconds = 0;
 
 		if (seconds == _lastSeconds) return;
