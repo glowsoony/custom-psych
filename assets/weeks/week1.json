@@ -363,7 +363,13 @@
 			name: 'Zavodila',
 			icon: 'dad',
 			color: 0xFF000000,
-		}
+		},
+		{
+			name: 'Quaoar',
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['Maniac']
+		},
 	],
  
 	name: 'Daddy Dearest',
