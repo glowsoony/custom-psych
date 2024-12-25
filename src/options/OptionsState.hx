@@ -109,6 +109,7 @@ class OptionsState extends MusicState
 
 	override function destroy() {
 		Settings.save();
+		Controls.save();
 		super.destroy();
 	}
 }
