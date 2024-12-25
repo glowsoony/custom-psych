@@ -79,6 +79,8 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	public static dynamic function syncTime(delta:Float):Void {
+		if (!playing) return;
+		
 		final addition:Float = (delta * 1000) * rate;
 		if (inst == null || !inst.playing) {
 			time = rawTime += addition;
@@ -95,7 +97,7 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	public static dynamic function syncVocals() {
-		if (inst == null || !inst.playing) return;
+		if (!playing || inst == null || !inst.playing) return;
 
 		final instTime:Float = inst.time;
 
@@ -103,7 +105,8 @@ class Conductor extends flixel.FlxBasic {
 			if (vocal == null || !vocal.playing || vocal.length < instTime) continue;
 
 			final vocalDT:Float = Math.abs(vocal.time - instTime);
-			vocal.time = vocalDT >= vocalResyncDiff ? instTime : vocal.time;
+			if (vocalDT <= vocalResyncDiff) continue;
+			vocal.time = instTime;
 		}
 	}
 
