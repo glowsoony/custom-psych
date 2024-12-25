@@ -538,6 +538,7 @@ class PlayState extends MusicState {
 		if (seconds == _lastSeconds) return;
 
 		var textToShow:String = '$songName';
+		if (playbackRate != 1) textToShow += ' (${playbackRate}x)';
 		if (Settings.data.timeBarType != 'Song Name') textToShow += ' - ${FlxStringUtil.formatTime(seconds, false)}';
 
 		timeTxt.text = textToShow;
