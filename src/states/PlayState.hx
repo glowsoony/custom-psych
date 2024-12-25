@@ -915,7 +915,7 @@ class PlayState extends MusicState {
 		});
 
 		if (sortedNotes.length == 0) {
-			strum.playAnim('pressed');
+			playerStrums.members[dir].playAnim('pressed');
 			return;
 		} 
 
