@@ -675,6 +675,7 @@ class PlayState extends MusicState {
 				}
 
 				noteMiss(parent);
+				totalNotesPlayed += Util.wife3HoldDropWeight;
 				parent.missed = true;
 			}
 
@@ -719,7 +720,8 @@ class PlayState extends MusicState {
 		}
 	
 		if (!note.breakOnHit) {
-			totalNotesPlayed += judge.accuracy;
+			totalNotesPlayed += Util.wife3(note.rawHitTime, 1);
+			totalNotesHit += 2;
 			health += judge.health;
 			// pbot1-ish scoring system
 			// cuz judgement based is boring :sob:
@@ -727,6 +729,7 @@ class PlayState extends MusicState {
 			judge.hits++;
 			combo++;
 		} else {
+			totalNotesPlayed += Util.wife3MineWeight;
 			score -= 20;
 			health -= 6;
 			combo = 0;
@@ -738,7 +741,6 @@ class PlayState extends MusicState {
 			comboBreaks++;
 		}
 		
-		totalNotesHit++;
 		accuracy = updateAccuracy();
 		grade = updateGrade();
 		clearType = updateClearType();
@@ -769,6 +771,11 @@ class PlayState extends MusicState {
 		for (piece in note.pieces) {
 			if (piece == null || !piece.exists || !piece.alive) continue;
 			piece.multAlpha = 0.25;
+		}
+
+		if (!note.isSustain) {
+			totalNotesPlayed += Util.wife3MissWeight;
+			totalNotesHit += 2;
 		}
 
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
@@ -859,7 +866,7 @@ class PlayState extends MusicState {
 
 	// in case someone wants to make their own accuracy calc
 	dynamic function updateAccuracy():Float {
-		return totalNotesPlayed / (totalNotesHit + comboBreaks);
+		return (totalNotesPlayed / totalNotesHit) * 100;
 	}
 
 	dynamic function updateClearType():String {

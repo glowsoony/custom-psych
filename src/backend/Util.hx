@@ -151,4 +151,45 @@ class Util {
 		return 'Unknown';
 		#end
 	}
+
+	// wife3 calc stuff
+	// you can ignore all of this
+
+    public static final wife3MissWeight:Float = -5.5;
+    public static final wife3MineWeight:Float = -7;
+    public static final wife3HoldDropWeight:Float = -4.5;
+    
+    static inline final a1:Float = 0.254829592;
+    static inline final a2:Float = -0.284496736;
+    static inline final a3:Float = 1.421413741;
+    static inline final a4:Float = -1.453152027;
+    static inline final a5:Float = 1.061405429;
+    static inline final p:Float = 0.3275911;
+
+    public static function werwerwerwerf(x:Float):Float {
+        var neg = x < 0;
+        x = Math.abs(x);
+        var t = 1 / (1 + p * x);
+        var y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+        return neg ? -y : y;
+    }
+
+    public static var timeScale:Float = 1;
+    public static function wife3(noteDiff:Float, ?ts:Float):Float { // https://github.com/etternagame/etterna/blob/0a7bd768cffd6f39a3d84d76964097e43011ce33/src/RageUtil/Utils/RageUtil.h
+        ts ??= timeScale;
+        if(ts > 1) ts = 1;
+        var jPow:Float = 0.75;
+        var maxPoints:Float = 2.0;
+        var ridic:Float = 5 * ts;
+        var shit_weight:Float = 200;
+        var absDiff = Math.abs(noteDiff);
+        var zero:Float = 65 * Math.pow(ts, jPow);
+        var dev:Float = 22.7 * Math.pow(ts, jPow);
+
+        if (absDiff <= ridic) return maxPoints;
+        else if (absDiff <= zero) return maxPoints * werwerwerwerf((zero - absDiff) / dev);
+        else if (absDiff <= shit_weight) return (absDiff - zero) * wife3MissWeight / (shit_weight - zero);
+
+        return wife3MissWeight;
+    }
 }
