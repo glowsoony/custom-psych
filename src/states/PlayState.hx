@@ -625,7 +625,7 @@ class PlayState extends MusicState {
 
 	// ai note hitting
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
-		if (!note.canHit || note.time >= Conductor.rawTime) return;
+		if (!note.canHit || note.ignore || note.breakOnHit || note.time >= Conductor.rawTime) return;
 
 		final noteFunc = note.player ? noteHit : opponentNoteHit;
 
