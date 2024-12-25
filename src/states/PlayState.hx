@@ -547,7 +547,7 @@ class PlayState extends MusicState {
 	dynamic function spawnNotes() {
 		while (noteSpawnIndex < unspawnedNotes.length) {
 			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
-			if (noteToSpawn.hitTime > noteSpawnDelay) break;
+			if (noteToSpawn.rawHitTime > noteSpawnDelay) break;
 
 			notes.add(noteToSpawn);
 			noteToSpawn.spawned = true;
@@ -641,7 +641,7 @@ class PlayState extends MusicState {
 		}
 
 		// normal notes
-		strum.playAnim('notePressed');
+		
 		note.wasHit = true;
 		noteFunc(note);
 		note.destroy();
@@ -651,6 +651,7 @@ class PlayState extends MusicState {
 	dynamic function opponentNoteHit(note:Note) {
 		if (song.needsVoices && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
+		opponentStrums.members[note.lane].playAnim('notePressed');
 		dad.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 	}
 
@@ -690,63 +691,70 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function noteHit(note:Note) {
-		if (song.needsVoices) Conductor.mainVocals.volume = 1;
+		final strum:StrumNote = playerStrums.members[note.lane];
+
+		note.wasHit = true;
 
 		if (botplay) {
+			strum.playAnim('notePressed');
 			bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 			if (note.isSustain) return;
 
-			final judge:Judgement = Judgement.list[0];
+			final judge:Judgement = Judgement.min;
 
 			health += judge.health;
 			judgeSpr.display(judge.name);
 			judge.hits++;
-			combo++;
-			comboNumbers.display(combo);
+			comboNumbers.display(++combo);
 			updateJudgeCounter();
 			
 			return;
 		}
 
-		playerStrums.members[note.lane].playAnim('notePressed');
-		note.wasHit = true;
-
-		totalNotesHit++;
-		
-		// pbot1 scoring system
-		// cuz judgement based is super boring :sob:
-		if (!note.breakOnHit) score += Math.floor(500 - Math.abs(note.hitTime));
-		for (id => judge in Judgement.list) {
-			if (Math.abs(note.hitTime) >= judge.timing) continue;
-
-			if (judge.breakCombo || note.breakOnHit) {
-				comboNumbers.display(combo = 0);
-				comboBreaks++;
-			}
-
-			if (note.breakOnHit) {
-				score -= 20;
-				health -= 6;
-			} else {
-				totalNotesPlayed += judge.accuracy;
-				health += judge.health;
-				judgeSpr.display(judge.name);
-				judge.hits++;
-			}
-
+		var judge:Judgement = Judgement.max;
+		for (_ => possibleJudge in Judgement.list) {
+			if (Math.abs(note.rawHitTime) >= possibleJudge.timing) continue;
+			judge = possibleJudge;
 			break;
 		}
-
-		combo++;
-		comboNumbers.display(combo);
-		updateJudgeCounter();
-
-		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
-
+	
+		if (!note.breakOnHit) {
+			totalNotesPlayed += judge.accuracy;
+			health += judge.health;
+			// pbot1-ish scoring system
+			// cuz judgement based is boring :sob:
+			score += Math.floor(500 - Math.abs(note.rawHitTime));
+			judge.hits++;
+			combo++;
+		} else {
+			score -= 20;
+			health -= 6;
+			combo = 0;
+			comboBreaks++;
+		}
+	
+		if (judge.breakCombo) {
+			combo = 0;
+			comboBreaks++;
+		}
+		
+		totalNotesHit++;
 		accuracy = updateAccuracy();
 		grade = updateGrade();
 		clearType = updateClearType();
+
+		strum.playAnim('notePressed');
+		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 		updateScoreTxt();
+		updateJudgeCounter();
+		if (song.needsVoices) Conductor.mainVocals.volume = 1;
+
+		if (!note.breakOnHit) {
+			judgeSpr.display(judge.name);
+			comboNumbers.display(combo);
+		}
+
+		judge = null;
 	}
 
 	dynamic function noteMiss(note:Note) {
