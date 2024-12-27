@@ -52,7 +52,7 @@ class Paths {
 		if (!dumpExclusions.contains(key)) dumpExclusions.push(key);
 	}
 
-	public static function destroyAsset(key:String, ?asset:CachedAsset) {
+	public static dynamic function destroyAsset(key:String, ?asset:CachedAsset) {
 		if (asset == null) {
 			asset = cachedAssets[key];
 			if (asset == null) return;
@@ -84,7 +84,7 @@ class Paths {
 	}
 
 	// deload unused assets from memory
-	public static function clearUnusedMemory() {
+	public static dynamic function clearUnusedMemory() {
 		for (key => asset in cachedAssets) {
 			if (localTrackedAssets.contains(key) || dumpExclusions.contains(key)) continue;	
 			destroyAsset(key, asset);
@@ -94,7 +94,7 @@ class Paths {
 	}
 
 	// clear all assets from memory
-	public static function clearStoredMemory() {
+	public static dynamic function clearStoredMemory() {
 		for (key => asset in cachedAssets) {
 			if (dumpExclusions.contains(key)) continue;
 			destroyAsset(key, asset);
@@ -111,7 +111,7 @@ class Paths {
 	}
 
 	// images
-	public static function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
+	public static dynamic function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
 		allowGPU = Settings.data.gpuCaching ? allowGPU : false;
 
 		key = Language.getFileTranslation(key, subFolder);
@@ -124,7 +124,7 @@ class Paths {
 		return cacheBitmap(key, BitmapData.fromFile(key), allowGPU);
 	}
 
-	public static function cacheBitmap(key:String, bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic {
+	public static dynamic function cacheBitmap(key:String, bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic {
 		if (allowGPU && bitmap.image != null) {
 			@:privateAccess
 			if (bitmap.__texture == null) {
@@ -163,7 +163,7 @@ class Paths {
 		return File.getContent(path);
 	}
 
-	public static function audio(key:String, ?subFolder:String, ?beepIfNull:Bool = true):Sound {
+	public static dynamic function audio(key:String, ?subFolder:String, ?beepIfNull:Bool = true):Sound {
 		key = Language.getFileTranslation(key, subFolder);
 		if (key.lastIndexOf('.') < 0) key += '.$SOUND_EXT';
 
@@ -183,24 +183,24 @@ class Paths {
 	}
 
 	// shortcut for `Paths.audio('m', 'music');
-	public static function music(key:String, ?subFolder:String = 'music', ?beepIfNull:Bool = true) {
+	public static dynamic function music(key:String, ?subFolder:String = 'music', ?beepIfNull:Bool = true) {
 		return audio(key, subFolder, beepIfNull);
 	}
 
 	// shortcut for `Paths.audio('m', 'sounds');
-	public static function sound(key:String, ?subFolder:String = 'sounds', ?beepIfNull:Bool = true) {
+	public static dynamic function sound(key:String, ?subFolder:String = 'sounds', ?beepIfNull:Bool = true) {
 		return audio(key, subFolder, beepIfNull);
 	}
 
-	public static function font(path:String, ?subFolder:String = 'fonts'):String {
+	public static dynamic function font(path:String, ?subFolder:String = 'fonts'):String {
 		return get(path, subFolder);
 	}
 
-	public static function text(path:String, ?subFolder:String = 'data'):String {
+	public static dynamic function text(path:String, ?subFolder:String = 'data'):String {
 		return get(path, subFolder);
 	}
 
-	static public function getMultiAtlas(keys:Array<String>, ?subFolder:String = null):FlxAtlasFrames {
+	public static dynamic function getMultiAtlas(keys:Array<String>, ?subFolder:String = null):FlxAtlasFrames {
 		var parentFrames:FlxAtlasFrames = cast Paths.sparrowAtlas(keys[0].trim());
 		if (keys.length < 1) return parentFrames;
 
@@ -215,21 +215,21 @@ class Paths {
 		return parentFrames;
 	}
 
-	public static function sparrowAtlas(path:String, ?subFolder:String = 'images'):FlxFramesCollection {
+	public static dynamic function sparrowAtlas(path:String, ?subFolder:String = 'images'):FlxFramesCollection {
 		final dataFile:String = get('$path.xml', subFolder);
 		if (!FileSystem.exists(dataFile)) return null;
 
 		return FlxAtlasFrames.fromSparrow(image(path, subFolder), File.getContent(dataFile));
 	}
 
-	public static function packerAtlas(path:String, ?subFolder:String = 'images'):FlxFramesCollection {
+	public static dynamic function packerAtlas(path:String, ?subFolder:String = 'images'):FlxFramesCollection {
 		final dataFile:String = get('$path.txt', subFolder);
 		if (!FileSystem.exists(dataFile)) return null;
 
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(path, subFolder), File.getContent(dataFile));
 	}
 
-	public static function asepriteAtlas(path:String, ?subFolder:String = 'images'):FlxFramesCollection {
+	public static dynamic function asepriteAtlas(path:String, ?subFolder:String = 'images'):FlxFramesCollection {
 		final dataFile:String = get('$path.json', subFolder);
 		if (!FileSystem.exists(dataFile)) return null;
 
