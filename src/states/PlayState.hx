@@ -118,6 +118,8 @@ class PlayState extends MusicState {
 
 	var botplayTxtSine:Float = 0.0;
 
+	var cameraSpeed:Float = 1;
+
 	var combo:Int = 0;
 	var comboBreaks:Int = 0;
 	var score:Int = 0;
@@ -279,8 +281,10 @@ class PlayState extends MusicState {
 			*/
 		}
 
+		cameraSpeed = stage.cameraSpeed;
+
 		camGame.follow(camFollow, LOCKON, 0);
-		camGame.zoom = 1;
+		camGame.zoom = stage.zoom;
 		camGame.snapToTarget();
 
 		// characters
@@ -544,8 +548,7 @@ class PlayState extends MusicState {
 
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
-		if (paused) camGame.followLerp = 0;
-		else camGame.followLerp = 0.04 * 1 * playbackRate;
+		camGame.followLerp = paused ? 0 : (0.04 * cameraSpeed * playbackRate);
 	}
 
 	var _lastSeconds:Int = -1;
