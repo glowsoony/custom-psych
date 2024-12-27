@@ -110,7 +110,7 @@ class TitleState extends MusicState {
 		add(ngSpr);
 
 		Conductor.bpm = bpm;
-		Conductor.self.active = true;
+		Conductor.playing = true;
 		if (seenIntro) {
 			skipIntro();
 			return;

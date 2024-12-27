@@ -77,7 +77,17 @@ class PlayState extends MusicState {
 
 	var health(default, set):Float = 50;
 	function set_health(value:Float):Float {
-		return health = FlxMath.bound(value, 0, 100);
+		value = FlxMath.bound(value, 0, 100);
+
+		// update health bar
+		health = value;
+		var newPercent:Float = FlxMath.remapToRange(FlxMath.bound(health, healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
+		healthBar.percent = newPercent;
+
+		iconP1.animation.curAnim.curFrame = newPercent < 20 ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP2.animation.curAnim.curFrame = newPercent > 80 ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+
+		return health = value;
 	}
 
 	var playbackRate(default, set):Float = 1;
@@ -163,6 +173,8 @@ class PlayState extends MusicState {
 		'note_right'
 	];
 
+	var hitsound:FlxSound;
+
 	override function create() {
 		Language.reloadPhrases();
 
@@ -181,16 +193,18 @@ class PlayState extends MusicState {
 		// set up gameplay settings
 		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
-		downscroll = Settings.data.scrollDirection == 'Down';
+		downscroll = Settings.data.downscroll;
 
 		clearType = updateClearType();
 		grade = updateGrade();
+
+		hitsound = FlxG.sound.load(Paths.sound('hitsound'));
 
 		loadSong();
 
 		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
 			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
-			case 'Multiplicative': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
+			case 'Multiplied': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
 			default: song.speed;
 		}
 
@@ -226,11 +240,14 @@ class PlayState extends MusicState {
 
 		// set up strumlines and the note group
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
-		add(playerStrums = new Strumline(750, strumlineYPos, !botplay));
-		add(opponentStrums = new Strumline(100, strumlineYPos));
+		add(playerStrums = new Strumline(950, strumlineYPos, !botplay));
+		add(opponentStrums = new Strumline(320, strumlineYPos));
 
 		playerStrums.cameras = [camHUD];
 		opponentStrums.cameras = [camHUD];
+
+		add(notes = new FlxTypedSpriteGroup<Note>());
+		notes.cameras = [camHUD];
 
 		if (Settings.data.centeredNotes) {
 			playerStrums.screenCenter(X);
@@ -239,8 +256,16 @@ class PlayState extends MusicState {
 
 		if (!Settings.data.opponentNotes) opponentStrums.alpha = 0;
 
-		add(notes = new FlxTypedSpriteGroup<Note>());
-		notes.cameras = [camHUD];
+		if (Settings.data.gameplaySettings['blind']) {
+			notes.alpha = 0;
+			opponentStrums.alpha = 0;
+			playerStrums.alpha = 0;
+
+			// just to make sure some note types don't work around alpha stuff
+			notes.visible = false;
+			opponentStrums.visible = false;
+			playerStrums.visible = false;
+		}
 
 		// characters
 		add(gf = new Character(350, 225, 'gf', false));
@@ -255,7 +280,7 @@ class PlayState extends MusicState {
 
 		hud.add(countdown = new Countdown());
 		countdown.screenCenter();
-		countdown.onStart = function() Conductor.self.active = true;
+		countdown.onStart = function() Conductor.playing = true;
 		countdown.onFinish = function() {
 			Conductor.play();
 			updateTime = true;
@@ -265,7 +290,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		Conductor.time -= Conductor.crotchet * 5;
+		Conductor.rawTime -= (Conductor.crotchet * 5) + Conductor.songOffset;
 		countdown.start();
 
 		FlxG.mouse.visible = false;
@@ -292,6 +317,10 @@ class PlayState extends MusicState {
 		timeTxt.borderColor = FlxColor.BLACK;
 		timeTxt.borderSize = 1.25;
 		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
+
+		updateTime = Settings.data.timeBarType != 'Disabled';
+		timeBar.visible = Settings.data.timeBarType != 'Disabled';
+		timeTxt.visible = Settings.data.timeBarType != 'Disabled';
 
 		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
 		healthBar.alpha = Settings.data.healthBarAlpha;
@@ -331,15 +360,14 @@ class PlayState extends MusicState {
 		botplayTxt.visible = botplay;
 		botplayTxt.screenCenter(X);
 
-		if (Settings.data.judgementCounter) {
-			hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
-			judgeCounter.font = Paths.font('vcr.ttf');
-			judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
-			judgeCounter.borderColor = FlxColor.BLACK;
-			judgeCounter.borderSize = 1.25;
-			updateJudgeCounter();
-			judgeCounter.screenCenter(Y);
-		}
+		hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
+		judgeCounter.font = Paths.font('vcr.ttf');
+		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
+		judgeCounter.borderColor = FlxColor.BLACK;
+		judgeCounter.borderSize = 1.25;
+		updateJudgeCounter();
+		judgeCounter.screenCenter(Y);
+		judgeCounter.visible = Settings.data.judgementCounter;
 	}
 
 	function loadSong():Void {
@@ -352,6 +380,7 @@ class PlayState extends MusicState {
 
 		Conductor.setBPMChanges(song);
 		Conductor.bpm = song.bpm;
+		Conductor.songOffset = song.offset;
 		songName = song.song;
 
 		// load inst
@@ -394,6 +423,9 @@ class PlayState extends MusicState {
 		var randomizedLanes:Array<Int> = [];
 		for (i in 0...Strumline.keyCount) randomizedLanes.push(FlxG.random.int(0, Strumline.keyCount - 1, randomizedLanes));
 		for (i => note in parsedNotes) {
+			// thanks shubs /s
+			if (note.lane < 0) continue;
+
 			// dumbest way of doing it but whatever lmao
 			if (Settings.data.gameplaySettings['mirroredNotes']) {
 				if (note.lane == 0) note.lane = 3;
@@ -415,7 +447,7 @@ class PlayState extends MusicState {
 				// CLEAR ANY POSSIBLE GHOST NOTES
 				for (evilNote in unspawnedNotes) {
 					var matches:Bool = (note.lane == evilNote.lane && note.player == evilNote.player);
-					if (matches && Math.abs(note.time - evilNote.time) < 2.0) {
+					if (matches && Math.abs(note.time - evilNote.time) == 0.0) {
 						evilNote.destroy();
 						unspawnedNotes.remove(evilNote);
 					}
@@ -494,22 +526,29 @@ class PlayState extends MusicState {
 	dynamic function updateTimeBar() {
 		if (paused || !updateTime) return;
 
-		var curTime:Float = Math.max(0, Conductor.time / Conductor.rate);
-		songPercent = (curTime / (songLength / Conductor.rate));
+		var curTime:Float = Math.max(0, Conductor.rawTime);
+		songPercent = (curTime / songLength);
 
-		var seconds:Int = Math.floor(curTime * 0.001);
+		var songCalc:Float = (songLength - curTime);
+		if (Settings.data.timeBarType == 'Time Elapsed') songCalc = curTime;
+
+		var seconds:Int = Math.floor((songCalc / playbackRate) * 0.001);
 		if (seconds < 0) seconds = 0;
 
-		if (seconds < _lastSeconds) return;
+		if (seconds == _lastSeconds) return;
 
-		timeTxt.text = '$songName - ${FlxStringUtil.formatTime(seconds, false)}';
+		var textToShow:String = '$songName';
+		if (playbackRate != 1) textToShow += ' (${playbackRate}x)';
+		if (Settings.data.timeBarType != 'Song Name') textToShow += ' - ${FlxStringUtil.formatTime(seconds, false)}';
+
+		timeTxt.text = textToShow;
 		_lastSeconds = seconds;
 	}
 
 	dynamic function spawnNotes() {
 		while (noteSpawnIndex < unspawnedNotes.length) {
 			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
-			if (noteToSpawn.hitTime > noteSpawnDelay) break;
+			if (noteToSpawn.rawHitTime > noteSpawnDelay) break;
 
 			notes.add(noteToSpawn);
 			noteToSpawn.spawned = true;
@@ -529,11 +568,11 @@ class PlayState extends MusicState {
 				else if (note.isSustain) sustainInputs(strum, note);
 			} else checkNoteHitWithAI(strum, note);
 
-			if (note.player && !note.missed && !note.isSustain && note.tooLate) {
+			if (!botplay && note.player && !note.missed && !note.isSustain && note.tooLate) {
 				noteMiss(note);
 			}
 
-			if (note.time < Conductor.time - 300) {
+			if (note.time < Conductor.rawTime - 300) {
 				notes.remove(note);
 				note.destroy();
 			}
@@ -587,7 +626,7 @@ class PlayState extends MusicState {
 
 	// ai note hitting
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
-		if (!note.canHit || note.time >= Conductor.time) return;
+		if (!note.canHit || note.ignore || note.breakOnHit || note.time >= Conductor.rawTime) return;
 
 		final noteFunc = note.player ? noteHit : opponentNoteHit;
 
@@ -603,7 +642,7 @@ class PlayState extends MusicState {
 		}
 
 		// normal notes
-		strum.playAnim('notePressed');
+		
 		note.wasHit = true;
 		noteFunc(note);
 		note.destroy();
@@ -613,6 +652,7 @@ class PlayState extends MusicState {
 	dynamic function opponentNoteHit(note:Note) {
 		if (song.needsVoices && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
+		opponentStrums.members[note.lane].playAnim('notePressed');
 		dad.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 	}
 
@@ -623,7 +663,7 @@ class PlayState extends MusicState {
 		if (!parent.canHit || parent.missed) return;
 
 		var heldKey:Bool = keysHeld[parent.lane];
-		var tooLate:Bool = (parent.wasHit ? note.time < Conductor.time : parent.tooLate);
+		var tooLate:Bool = (parent.wasHit ? note.time < Conductor.rawTime : parent.tooLate);
 		var isTail:Bool = note.animation.curAnim.name == 'holdend';
 
 		if (!heldKey) {
@@ -644,7 +684,7 @@ class PlayState extends MusicState {
 
 		note.clipToStrum(strum);
 
-		if (note.time <= Conductor.time && !note.wasHit) note.wasHit = true;
+		if (note.time <= Conductor.rawTime && !note.wasHit) note.wasHit = true;
 		else return;
 		
 		strum.playAnim('notePressed');
@@ -652,63 +692,70 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function noteHit(note:Note) {
-		if (song.needsVoices) Conductor.mainVocals.volume = 1;
+		final strum:StrumNote = playerStrums.members[note.lane];
+
+		note.wasHit = true;
 
 		if (botplay) {
+			strum.playAnim('notePressed');
 			bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 			if (note.isSustain) return;
 
-			final judge:Judgement = Judgement.list[0];
+			final judge:Judgement = Judgement.min;
 
 			health += judge.health;
 			judgeSpr.display(judge.name);
 			judge.hits++;
-			combo++;
-			comboNumbers.display(combo);
+			comboNumbers.display(++combo);
 			updateJudgeCounter();
 			
 			return;
 		}
 
-		playerStrums.members[note.lane].playAnim('notePressed');
-		note.wasHit = true;
-
-		totalNotesHit++;
-		
-		// pbot1 scoring system
-		// cuz judgement based is super boring :sob:
-		if (!note.breakOnHit) score += Math.floor(500 - Math.abs(note.hitTime));
-		for (id => judge in Judgement.list) {
-			if (Math.abs(note.hitTime) >= judge.timing) continue;
-
-			if (judge.breakCombo || note.breakOnHit) {
-				comboNumbers.display(combo = 0);
-				comboBreaks++;
-			}
-
-			if (note.breakOnHit) {
-				score -= 20;
-				health -= 6;
-			} else {
-				totalNotesPlayed += judge.accuracy;
-				health += judge.health;
-				judgeSpr.display(judge.name);
-				judge.hits++;
-			}
-
+		var judge:Judgement = Judgement.max;
+		for (_ => possibleJudge in Judgement.list) {
+			if (Math.abs(note.rawHitTime) >= possibleJudge.timing) continue;
+			judge = possibleJudge;
 			break;
 		}
-
-		combo++;
-		comboNumbers.display(combo);
-		updateJudgeCounter();
-
-		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
-
+	
+		if (!note.breakOnHit) {
+			totalNotesPlayed += judge.accuracy;
+			health += judge.health;
+			// pbot1-ish scoring system
+			// cuz judgement based is boring :sob:
+			score += Math.floor(500 - Math.abs(note.rawHitTime));
+			judge.hits++;
+			combo++;
+		} else {
+			score -= 20;
+			health -= 6;
+			combo = 0;
+			comboBreaks++;
+		}
+	
+		if (judge.breakCombo) {
+			combo = 0;
+			comboBreaks++;
+		}
+		
+		totalNotesHit++;
 		accuracy = updateAccuracy();
 		grade = updateGrade();
 		clearType = updateClearType();
+
+		strum.playAnim('notePressed');
+		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 		updateScoreTxt();
+		updateJudgeCounter();
+		if (song.needsVoices) Conductor.mainVocals.volume = 1;
+
+		if (!note.breakOnHit) {
+			judgeSpr.display(judge.name);
+			comboNumbers.display(combo);
+		}
+
+		judge = null;
 	}
 
 	dynamic function noteMiss(note:Note) {
@@ -728,7 +775,9 @@ class PlayState extends MusicState {
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
 		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
 
-		updateAccuracy();
+		accuracy = updateAccuracy();
+		grade = updateGrade();
+		clearType = updateClearType();
 		updateScoreTxt();
 	}
 
@@ -863,22 +912,19 @@ class PlayState extends MusicState {
 
 	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
 	inline function keyPressed(key:KeyCode, _):Void {
-		// don't run the function at all if you have botplay enabled
 		if (botplay) return;
 
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
 		if (dir == -1 || keysHeld[dir] || paused) return;
+		keysHeld[dir] = true;
 
-		var strum:StrumNote = playerStrums.members[dir];
 		final sortedNotes:Array<Note> = notes.members.filter(function(note:Note):Bool {
 			if (note == null) return false;
 			return note.hittable && note.lane == dir && note.player && !note.isSustain;
 		});
 
-		keysHeld[dir] = true;
-
 		if (sortedNotes.length == 0) {
-			strum.playAnim('pressed');
+			playerStrums.members[dir].playAnim('pressed');
 			return;
 		} 
 
@@ -891,12 +937,10 @@ class PlayState extends MusicState {
 	}
 
 	inline function keyReleased(key:KeyCode, _):Void {
-		// don't run the function at all if you have botplay enabled
 		if (botplay) return;
 
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
 		if (dir == -1) return;
-
 		keysHeld[dir] = false;
 		playerStrums.members[dir].playAnim('default');
 	}

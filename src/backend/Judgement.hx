@@ -8,14 +8,20 @@ class Judgement {
 		{name: 'sick', timing: Settings.data.sickHitWindow, accuracy: 100, health: 2.5},
 		{name: 'good', timing: Settings.data.goodHitWindow, accuracy: 85, health: 1},
 		{name: 'bad', timing: Settings.data.badHitWindow, accuracy: 60, health: -2.5},
-		{name: 'shit', timing: Settings.data.shitHitWindow, accuracy: 40, health: -4}
+		{name: 'shit', timing: Settings.data.shitHitWindow, accuracy: 40, health: -4, breakCombo: true}
 	];
 
+	public static var max(get, never):Judgement;
+	static function get_max():Judgement return list[list.length - 1];
+
 	public static var maxHitWindow(get, never):Float;
-	static function get_maxHitWindow():Float return list[list.length - 1].timing;
+	static function get_maxHitWindow():Float return max.timing;
+
+	public static var min(get, never):Judgement;
+	static function get_min():Judgement return list[0];
 
 	public static var minHitWindow(get, never):Float;
-	static function get_minHitWindow():Float return list[0].timing;
+	static function get_minHitWindow():Float return min.timing;
 
 	public var name:String;
 	public var timing:Float;
@@ -26,7 +32,7 @@ class Judgement {
 	public var hits:Int = 0;
 
 	public static function getFromName(name:String):Judgement {
-		var value:Judgement = null;
+		var value:Judgement = max;
 		for (i in 0...list.length) {
 			if (list[i].name == name) {
 				value = list[i];
@@ -48,7 +54,7 @@ class Judgement {
 
 		return value;
 	}
-
+	
 	inline public static function resetHits():Void {
 		for (judge in list) judge.hits = 0;
 	}

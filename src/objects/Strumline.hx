@@ -2,7 +2,7 @@ package objects;
 
 class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 	public static final keyCount:Int = 4;
-	public static final size:Float = 0.7;
+	public static var size:Float = Settings.data.strumlineSize;
 	public var skin(default, set):String;
 	public static inline var default_skin:String = 'noteSkins/default';
 	function set_skin(value:String):String {
@@ -13,9 +13,14 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 	public var player:Bool;
 
 	public function new(?x:Float, ?y:Float, ?player:Bool = false, ?skin:String) {
+		this.moves = false;
 		this.player = player;
 		super(x, y);
 		this.skin = skin ?? Settings.data.noteSkin;
+
+		// center the strumline on the x position we gave it
+		// instead of basing the x position on the left side of the x axis
+		this.x = x - (width * 0.5);
 	}
 
 	public function regenerate() {

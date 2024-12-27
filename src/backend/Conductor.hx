@@ -16,19 +16,18 @@ class Conductor extends flixel.FlxBasic {
 	public static var bpm(default, set):Float = 120.0;
 	public static var crotchet:Float = (60 / bpm) * 1000;
 	public static var stepCrotchet:Float = crotchet * 0.25;
-	public static var offset:Float = 0.0;
+	
+	public static var songOffset:Float = 0.0;
 
 	public static var rate(default, set):Float = 1.0;
 	public static var volume(default, set):Float = 1.0;
 
 	public static var time:Float = 0.0;
+	public static var rawTime:Float = 0.0;
 	static var _lastTime:Float = 0.0;
-
 	static var _resyncTimer:Float = 0.0;
 
 	public static var bpmChanges:Array<BPMChange> = [];
-
-	public static var self:Conductor;
 
 	public static var inst(default, set):FlxSound;
 	
@@ -42,6 +41,10 @@ class Conductor extends flixel.FlxBasic {
 	public static var beat:Int = 0;
 	public static var measure:Int = 0;
 
+	static var _prevStep:Int = -1;
+	static var _prevBeat:Int = -1;
+	static var _prevMeasure:Int = -1;
+
 	public static dynamic function onStep(value:Int) {}
 	public static dynamic function onBeat(value:Int) {}
 	public static dynamic function onMeasure(value:Int) {}
@@ -49,13 +52,14 @@ class Conductor extends flixel.FlxBasic {
 	public function new() {
 		super();
 		vocals = new FlxSoundGroup(2);
-		self = this;
 		visible = false;
 		reset();
 	}
 
 	public static function reset() {
 		time = 0.0;
+		rawTime = 0.0;
+		songOffset = 0.0;
 		step = 0;
 		beat = 0;
 		measure = 0;
@@ -63,41 +67,37 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	override function update(elapsed:Float) {
-		var oldStep:Int = step;
-		var oldBeat:Int = beat;
-		var oldMeasure:Int = measure;
+		if (!playing) return;
+
+		_prevStep = step;
+		_prevBeat = beat;
+		_prevMeasure = measure;
 
 		syncTime(elapsed);
 		syncVocals();
-
-		var bpmChange:BPMChange = getBPMChangeFromMS(time);
-		if (bpmChange.bpm != bpm) bpm = bpmChange.bpm;
-
-		var curBeat:Int = bpmChange.beat + Math.floor((time - bpmChange.time) / crotchet);
-		var curStep:Int = Math.floor(curBeat * 4);
-		var curMeasure:Int = Math.floor(curBeat * 0.25);
-
-		if (oldStep != curStep) onStep(step = curStep);
-		if (oldBeat != curBeat) onBeat(beat = curBeat);
-		if (oldMeasure != curMeasure) onMeasure(measure = curMeasure);
+		syncBeats();
 	}
 
 	public static dynamic function syncTime(delta:Float):Void {
+		if (!playing) return;
+		
 		final addition:Float = (delta * 1000) * rate;
 		if (inst == null || !inst.playing) {
-			time += addition;
+			time = rawTime += addition;
 			return;
 		}
+
+		rawTime = inst.time - songOffset;
 
 		if (inst.time == _lastTime) _resyncTimer += addition;
 		else _resyncTimer = 0;
 
-		time = (inst.time + _resyncTimer) + offset;
+		time = rawTime + _resyncTimer;
 		_lastTime = inst.time;
 	}
 
 	public static dynamic function syncVocals() {
-		if (inst == null || !inst.playing) return;
+		if (!playing || inst == null || !inst.playing) return;
 
 		final instTime:Float = inst.time;
 
@@ -105,36 +105,50 @@ class Conductor extends flixel.FlxBasic {
 			if (vocal == null || !vocal.playing || vocal.length < instTime) continue;
 
 			final vocalDT:Float = Math.abs(vocal.time - instTime);
-			vocal.time = vocalDT >= vocalResyncDiff ? instTime : vocal.time;
+			if (vocalDT <= vocalResyncDiff) continue;
+			vocal.time = instTime;
 		}
+	}
+
+	public static dynamic function syncBeats() {
+		var bpmChange:BPMChange = getBPMChangeFromMS(rawTime);
+		if (bpmChange.bpm != bpm) bpm = bpmChange.bpm;
+
+		var curBeat:Int = bpmChange.beat + Math.floor((rawTime - bpmChange.time) / crotchet);
+		var curStep:Int = Math.floor(curBeat * 4);
+		var curMeasure:Int = Math.floor(curBeat * 0.25);
+
+		if (_prevStep != curStep) onStep(step = curStep);
+		if (_prevBeat != curBeat) onBeat(beat = curBeat);
+		if (_prevMeasure != curMeasure) onMeasure(measure = curMeasure);
 	}
 
 	public static function play() {
 		playing = true;
 		inst.play();
 		vocals.play();
-		self.active = true;
+		playing = true;
 	}
 
 	public static function stop() {
 		playing = false;
 		inst.stop();
 		vocals.stop();
-		self.active = false;
+		playing = false;
 	}
 
 	public static function pause() {
 		playing = false;
 		inst.pause();
 		vocals.pause();
-		self.active = false;
+		playing = false;
 	}
 
 	public static function resume() {
 		playing = true;
 		inst.resume();
 		vocals.resume();
-		self.active = true;
+		playing = true;
 	}
 
 	public static function set_bpm(value:Float):Float {
@@ -204,7 +218,7 @@ class Conductor extends flixel.FlxBasic {
 		var lastChange:BPMChange = {
 			beat: 0,
 			time: 0,
-			bpm: bpm,
+			bpm: bpm
 		};
 
 		if (bpmChanges.length == 0) return lastChange;
@@ -237,11 +251,9 @@ class Conductor extends flixel.FlxBasic {
 
 			final sectionBeats:Int = getSectionBeats(section);
 			curBeats += sectionBeats;
-			curTime += (calculateCrotchet(curBPM)) * sectionBeats;
+			curTime += calculateCrotchet(curBPM) * sectionBeats;
 		}
 	}
 
-	inline static function getSectionBeats(section:Section):Int {
-		return section?.sectionBeats ?? 4;
-	}
+	inline static function getSectionBeats(section:Section):Int return section?.sectionBeats ?? 4;
 }

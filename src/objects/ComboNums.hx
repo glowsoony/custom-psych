@@ -11,6 +11,8 @@ class ComboNums extends FlxTypedSpriteGroup<Number> {
 	}
 
 	public function display(comboNum:Int) {
+		if (Settings.data.comboAlpha <= 0) return;
+
 		final comboStr:String = '$comboNum'.lpad('0', default_startingDigits);
 
 		// remove any excess numbers

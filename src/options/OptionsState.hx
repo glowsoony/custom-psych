@@ -8,7 +8,8 @@ class OptionsState extends MusicState
 		'Controls',
 		'Graphics',
 		'Visuals',
-		'Gameplay'
+		'Gameplay',
+		'Calibrate Offset'
 		#if TRANSLATIONS_ALLOWED , 'Language' #end
 	];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -26,6 +27,8 @@ class OptionsState extends MusicState
 				openSubState(new options.VisualSettingsSubState());
 			case 'Gameplay':
 				openSubState(new options.GameplaySettingsSubState());
+			case 'Calibrate Offset':
+				MusicState.switchState(new options.CalibrateOffsetState());
 		}
 
 		persistentUpdate = false;
@@ -82,7 +85,7 @@ class OptionsState extends MusicState
 			FlxG.sound.play(Paths.sound('cancel'));
 			if (onPlayState) {
 				MusicState.switchState(new PlayState());
-				FlxG.sound.music.volume = 0;
+				Conductor.inst.volume = 0;
 			} else MusicState.switchState(new MainMenuState());
 		} else if (Controls.justPressed('accept')) openSelectedSubstate(options[curSelected]);
 	}
@@ -106,6 +109,7 @@ class OptionsState extends MusicState
 
 	override function destroy() {
 		Settings.save();
+		Controls.save();
 		super.destroy();
 	}
 }

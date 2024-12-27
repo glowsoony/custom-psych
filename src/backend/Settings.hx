@@ -20,14 +20,9 @@ class SaveVariables {
 	var goodHitWindow:Int = 90;
 	var badHitWindow:Int = 135;
 	var shitHitWindow:Int = 180;
-	var hitsoundVolume:Float = 0;
 	var canReset:Bool = true;
 	var mechanics:Bool = true;
-	// these count as gameplay
-	// but are in the "resync" menu
-	// as they require more than simple numbers in a settings menu
-	var visualOffset:Int = 0;
-	var globalOffset:Int = 0;
+	var noteOffset:Float = 0;
 
 	// graphics (that affect performance)
 	var antialiasing:Bool = true;
@@ -56,6 +51,8 @@ class SaveVariables {
 	var fpsCounter:Bool = true;
 	var transitions:Bool = true;
 	var framerate:Int = 60;
+	var strumlineSize:Float = 0.7;
+	var timeBarType:String = 'Disabled';
 
 	// miscellaneous
 	var discordRPC:Bool = true;
@@ -73,7 +70,8 @@ class SaveVariables {
 		'botplay' => false,
 		'mirroredNotes' => false,
 		'randomizedNotes' => false,
-		'sustains' => true
+		'sustains' => true,
+		'blind' => false
 	];
 }
 
@@ -108,6 +106,7 @@ class Settings {
 			final map:Map<String, Dynamic> = FlxG.save.data.gameplaySettings;
 			for (name => value in map) data.gameplaySettings.set(name, value);
 		}
+		objects.Strumline.size = data.strumlineSize;
 
 		#if DISCORD_ALLOWED DiscordClient.check(); #end
 	}

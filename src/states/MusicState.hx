@@ -21,7 +21,7 @@ class MusicState extends FlxState {
 		Conductor.onStep = stepHit;
 		Conductor.onBeat = beatHit;
 		Conductor.onMeasure = measureHit;
-		Conductor.self.active = false;
+		Conductor.playing = false;
 	}
 
 	public static function switchState(nextState:FlxState = null) {

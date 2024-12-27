@@ -33,7 +33,11 @@ class Note extends FlxSprite {
 
 	public var extraData:Map<String, Dynamic> = [];
 
-	public var time:Float = 0;
+	public var time(get, never):Float;
+	function get_time():Float return rawTime + Settings.data.noteOffset;
+
+	public var rawTime:Float = 0;
+
 	public var lane:Int = 0;
 	public var speed:Float = 1.0;
 	public var player:Bool = false;
@@ -41,31 +45,30 @@ class Note extends FlxSprite {
 	public var prevNote:Note;
 	public var nextNote:Note;
 
+	public var rawHitTime(get, never):Float;
+	function get_rawHitTime():Float return time - Conductor.rawTime;
+
 	public var hitTime(get, never):Float;
-	function get_hitTime():Float {
-		return time - Conductor.time;
-	}
+	function get_hitTime():Float return time - Conductor.time;
 
 	public var canHit:Bool = true;
 	public var inHitRange(get, never):Bool;
 	function get_inHitRange():Bool {
-		//return (time < Conductor.time + (166 * earlyHitMult) && (time > Conductor.time - (166 * lateHitMult)));
-		return (time < Conductor.time + (Judgement.maxHitWindow * earlyHitMult) && 
-		(time > Conductor.time - (Judgement.maxHitWindow * lateHitMult)));
+		return time < (Conductor.rawTime + (Judgement.maxHitWindow * earlyHitMult)) && 
+		time > (Conductor.rawTime - (Judgement.maxHitWindow * lateHitMult));
 	}
 
 	public var tooLate(get, never):Bool;
 	function get_tooLate():Bool {
-		return hitTime < -(166 + 25);
+		return rawHitTime < -((Judgement.maxHitWindow + 25));
 	}
 
 	public var hittable(get, never):Bool;
 	function get_hittable():Bool {
 		if (animation == null || animation.curAnim == null) return false;
-
-		final notEnd:Bool = animation.curAnim.name != 'holdend';
+		
 		final notDestroyed:Bool = exists && alive;
-		return notDestroyed && notEnd && inHitRange && canHit && !missed;
+		return notDestroyed && inHitRange && canHit && !missed;
 	}
 
 	public var lateHitMult:Float = 1;
@@ -94,7 +97,6 @@ class Note extends FlxSprite {
 	function set_type(value:String):String {
 		switch (value) {
 			case 'Hurt Note':
-				
 				texture = 'hurtNote';
 				ignore = true;
 				breakOnHit = true;
@@ -142,7 +144,7 @@ class Note extends FlxSprite {
 		isSustain = sustainNote;
 		this.moves = false;
 
-		this.time = data.time;
+		this.rawTime = data.time;
 		this.lane = data.lane;
 		this.player = data.player;
 		this.speed = data.speed;
@@ -196,7 +198,7 @@ class Note extends FlxSprite {
 
 	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
 		distance = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
-		distance *= Settings.data.scrollDirection == 'Down' ? -1 : 1;
+		distance *= Settings.data.downscroll ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;
 		if (copyAlpha) alpha = strum.alpha * multAlpha;
@@ -204,7 +206,7 @@ class Note extends FlxSprite {
 		if (copyX) x = strum.x + correctionOffset.x;
 		if (copyY) {
 			y = strum.y + correctionOffset.y + distance;
-			if (Settings.data.scrollDirection == 'Down' && isSustain) {
+			if (Settings.data.downscroll && isSustain) {
 				y -= height - ((frameWidth * Strumline.size) * 0.5);
 			}
 		}
