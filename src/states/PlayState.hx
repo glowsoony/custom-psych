@@ -474,42 +474,47 @@ class PlayState extends MusicState {
 			if (i != 0) {
 				// CLEAR ANY POSSIBLE GHOST NOTES
 				for (evilNote in unspawnedNotes) {
+					if (evilNote.isSustain) continue;
+					
 					var matches:Bool = (note.lane == evilNote.lane && note.player == evilNote.player);
-					if (matches && Math.abs(note.time - evilNote.time) == 0.0) {
-						evilNote.destroy();
-						unspawnedNotes.remove(evilNote);
-					}
+					if (!matches || Math.abs(note.time - evilNote.rawTime) > 2.0) continue;
+
+					evilNote.destroy();
+					unspawnedNotes.remove(evilNote);
 				}
 			}
 
 			var swagNote:Note = new Note(note);
 			unspawnedNotes.push(swagNote);
 
-			var curStepCrochet:Float = (60 / daBPM) * 1000 * 0.25;
-			final roundSus:Int = Math.round(swagNote.sustainLength / curStepCrochet);
-			if (roundSus > 0) {
-				for (susNote in 0...roundSus) {
-					oldNote = unspawnedNotes[unspawnedNotes.length - 1];
+			var curStepCrotchet:Float = (60 / daBPM) * 1000 * 0.25;
+			final roundSus:Int = Math.round(swagNote.sustainLength / curStepCrotchet);
+			if (roundSus < 0) {
+				oldNote = swagNote;
+				continue;
+			}
 
-					var sustainNote:Note = new Note({
-						time: note.time + (curStepCrochet * susNote),
-						lane: note.lane,
-						length: note.length,
-						type: note.type,
-						player: note.player,
-						speed: note.speed
-					},  true, oldNote);
-					sustainNote.parent = swagNote;
-					sustainNote.correctionOffset.y = downscroll ? 0 : swagNote.height * 0.5;
-					unspawnedNotes.push(sustainNote);
-					swagNote.pieces.push(sustainNote);
+			for (susNote in 0...roundSus) {
+				oldNote = unspawnedNotes[unspawnedNotes.length - 1];
 
-					if (oldNote.isSustain) {
-						oldNote.scale.y *= 44 / oldNote.frameHeight;
-						oldNote.scale.y /= playbackRate;
-						oldNote.resizeByRatio(curStepCrochet / Conductor.stepCrotchet);
-					}
-				}
+				var sustainNote:Note = new Note({
+					time: note.time + (curStepCrotchet * susNote),
+					lane: note.lane,
+					length: note.length,
+					type: note.type,
+					player: note.player,
+					speed: note.speed
+				},  true, oldNote);
+				sustainNote.parent = swagNote;
+				sustainNote.correctionOffset.y = downscroll ? 0 : swagNote.height * 0.5;
+				unspawnedNotes.push(sustainNote);
+				swagNote.pieces.push(sustainNote);
+
+				if (!oldNote.isSustain) continue;
+
+				oldNote.scale.y *= 44 / oldNote.frameHeight;
+				oldNote.scale.y /= playbackRate;
+				oldNote.resizeByRatio(curStepCrotchet / Conductor.stepCrotchet);
 			}
 
 			oldNote = swagNote;
