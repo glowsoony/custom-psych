@@ -1,14 +1,8 @@
 {
+	directory: 'week1',
 	zoom: 0.9,
 
-	player: [0, 0],
-	spectator: [0, 0],
-	enemy: [0, 0],
-
-	isSpectatorVisible: true,
-
-	cameraSpeed: 1,
-	playerCamera: [0, 0],
-	spectatorCamera: [0, 0],
-	enemyCamera: [0, 0]
+	playerPos: [770, 450],
+	spectatorPos: [400, 130],
+	opponentPos: [100, 100]
 }

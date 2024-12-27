@@ -7,6 +7,7 @@ import lime.app.Application;
 import flixel.util.FlxSort;
 
 import objects.*;
+import stages.*;
 import objects.Note.NoteData;
 import objects.Strumline.StrumNote;
 
@@ -30,6 +31,7 @@ class PlayState extends MusicState {
 	public static var currentLevel:Int = 0;
 
 	var songName:String;
+	var stageName:String;
 	var noteSpawnIndex:Int = 0;
 	var noteSpawnDelay:Float = 1500;
 
@@ -128,9 +130,11 @@ class PlayState extends MusicState {
 	var updateTime:Bool = false;
 
 	// objects
-	var bf:Character;
-	var dad:Character;
-	var gf:Character;
+	var stage:Stage;
+
+	public var bf:Character;
+	public var dad:Character;
+	public var gf:Character;
 
 	var camFollow:FlxObject;
 	static var prevCamFollow:FlxObject;
@@ -173,8 +177,6 @@ class PlayState extends MusicState {
 		'note_right'
 	];
 
-	var hitsound:FlxSound;
-
 	override function create() {
 		Language.reloadPhrases();
 
@@ -198,8 +200,6 @@ class PlayState extends MusicState {
 		clearType = updateClearType();
 		grade = updateGrade();
 
-		hitsound = FlxG.sound.load(Paths.sound('hitsound'));
-
 		loadSong();
 
 		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
@@ -216,12 +216,7 @@ class PlayState extends MusicState {
 			camFollow = prevCamFollow;
 			prevCamFollow = null;
 		}
-		camFollow.setPosition(0, 0);
 		add(camFollow);
-		
-		camGame.follow(camFollow, LOCKON, 0);
-		camGame.zoom = 1;
-		camGame.snapToTarget();
 
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 		moveCamera();
@@ -267,10 +262,35 @@ class PlayState extends MusicState {
 			playerStrums.visible = false;
 		}
 
+		stage = switch stageName {
+			case 'stage': new StageWeek1();
+			case _: new Stage(stageName);
+/*			
+			case 'spooky': new Spooky();
+			case 'philly': new Philly();
+			case 'limo': new Limo();
+			case 'mall': new Mall();
+			case 'mallEvil': new MallEvil();
+			case 'school': new School();
+			case 'schoolEvil': new SchoolEvil();
+			case 'tank': new Tank();
+			case 'phillyStreets': new PhillyStreets();
+			case 'phillyBlazin': new PhillyBlazin();
+			*/
+		}
+
+		camGame.follow(camFollow, LOCKON, 0);
+		camGame.zoom = 1;
+		camGame.snapToTarget();
+
 		// characters
-		add(gf = new Character(350, 225, 'gf', false));
-		add(dad = new Character(100, 225, '', false));
-		add(bf = new Character(750, 225));
+		add(gf = new Character(stage.spectator.x, stage.spectator.y, 'gf', false));
+		gf.visible = stage.isSpectatorVisible;
+
+		add(dad = new Character(stage.opponent.x, stage.opponent.y, '', false));
+		add(bf = new Character(stage.player.x, stage.player.y));
+
+		stage.create();
 
 		// set up hud elements
 		add(hud = new FlxSpriteGroup());
@@ -371,17 +391,19 @@ class PlayState extends MusicState {
 	}
 
 	function loadSong():Void {
+		// load chart
 		try {
 			song = Song.load('songs/$songID/${Difficulty.format()}.json');
 		} catch (e:haxe.Exception) {
-			trace('"$songID (${Difficulty.current})" failed to load: $e');
-			return;
+			Sys.println('The chart "$songID (${Difficulty.current})" failed to load: $e');
+			song = Song.createDummyFile();
 		}
 
 		Conductor.setBPMChanges(song);
 		Conductor.bpm = song.bpm;
 		Conductor.songOffset = song.offset;
 		songName = song.song;
+		stageName = song.stage;
 
 		// load inst
 		try {
@@ -390,6 +412,8 @@ class PlayState extends MusicState {
 		} catch (e:Dynamic) {
 			Sys.println('Instrumental failed to load: $e');
 		}
+
+		songLength = Conductor.inst.length;
 
 		// load vocals
 		try {
@@ -402,9 +426,9 @@ class PlayState extends MusicState {
 				Conductor.mainVocals = FlxG.sound.load(mainFile);
 				if (opponentFile != null) Conductor.opponentVocals = FlxG.sound.load(opponentFile);
 			}
-		} catch (e:Dynamic) Sys.println('Vocals failed to load: $e');
-
-		songLength = Conductor.inst.length;
+		} catch (e:Dynamic) {
+			Sys.println('Vocals failed to load: $e');
+		}
 
 		loadNotes(songID);
 	}
@@ -508,6 +532,8 @@ class PlayState extends MusicState {
 		updateIconScales(elapsed);
 		updateIconPositions();
 		updateTimeBar();
+
+		stage.update(elapsed);
 
 		if (FlxG.keys.justPressed.F8) botplay = !botplay;
 
@@ -952,6 +978,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.remove(keyPressed);
 		Application.current.window.onKeyUp.remove(keyReleased);
 
+		stage.destroy();
 		Judgement.resetHits();
 
 		Conductor.rate = 1;
