@@ -29,7 +29,7 @@ typedef Track = {
 class WeekData {
 	public static var list:Array<WeekFile> = [];
 
-	public static function createDummy():WeekFile {
+	public static function createDummyFile():WeekFile {
 		return {
 			songs: [{
 				name: 'Tutorial', 
@@ -69,7 +69,7 @@ class WeekData {
 	}
 
 	public static function getFile(path:String):WeekFile {
-		var file:WeekFile = createDummy();
+		var file:WeekFile = createDummyFile();
 		if (!FileSystem.exists(path)) return file;
 		
 		var data = Json5.parse(File.getContent(path));

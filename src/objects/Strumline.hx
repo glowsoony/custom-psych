@@ -46,9 +46,9 @@ class StrumNote extends FunkinSprite {
 
 		animation.finishCallback = _ -> {
 			active = false;
-			if (!parent.player && animation.curAnim.name == 'notePressed') {
-				playAnim('default');
-			}
+			
+			if (parent.player || animation.curAnim.name != 'notePressed') return;
+			playAnim('default');
 		}
 
 
@@ -58,8 +58,8 @@ class StrumNote extends FunkinSprite {
 		final formattedSkin:String = parent.skin.trim().toLowerCase().replace(' ', '-');
 		frames = Paths.sparrowAtlas('noteSkins/$formattedSkin');
 		animation.addByPrefix('default', 'arrow${anim.toUpperCase()}', 24);
-		animation.addByPrefix('pressed', '$anim press', 24, false);
-		animation.addByPrefix('notePressed', '$anim confirm', 24, false);
+		animation.addByPrefix('pressed', '$anim press', 48, false);
+		animation.addByPrefix('notePressed', '$anim confirm', 48, false);
 
 		playAnim('default');
 	}

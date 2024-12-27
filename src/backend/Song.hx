@@ -37,7 +37,7 @@ typedef Section = {
 }
 
 class Song {
-	static function createDummy():Chart {
+	public static function createDummyFile():Chart {
 		return {
 			song: 'Unknown',
 			notes: [{
@@ -63,7 +63,7 @@ class Song {
 	}
 
 	public static function load(path:String):Chart {
-		var file:Chart = createDummy();
+		var file:Chart = createDummyFile();
 		var data = Json.parse(Paths.getFileContent(path)).song;
 		for (property in Reflect.fields(data)) {
 			if (!Reflect.hasField(file, property)) continue;
