@@ -1,6 +1,13 @@
 package options.types;
 
-class BaseOption {
+/**
+ * Base Class to make option types
+ *
+ * T is the type of the option
+ *
+ * VT is the type of value used to change the option
+ */
+class BaseOption<T:Any, VT:Any> {
     /**
      * Option Name in the options menu
     **/
@@ -19,7 +26,7 @@ class BaseOption {
     /**
      * Its (current) value
     **/
-    public var value:Any = null;
+    public var value:T = null;
 
     /**
      * How the value gets displayed in the options menu
@@ -35,7 +42,7 @@ class BaseOption {
     /**
      * Contains the original value of the option (used for when pressing R while hovering over it)
     **/
-    var defaultValue:Any = null;
+    var defaultValue:T = null;
 
     /**
      * @param name          Option Name in the options menu
@@ -52,14 +59,9 @@ class BaseOption {
         canChange = this.defaultValue != null;
     }
 
-    public function change(value:Any) {
-        var prev = value;
-        this.value = value;
-        onChange(prev);
-    }
-
+    public dynamic function change(value:VT) {}
     public dynamic function onHover() {}
-    public dynamic function onChange(previousValue:Any) {}
+    public dynamic function onChange(previousValue:T) {}
 
     public inline function getDefaultValue()
         return defaultValue;

@@ -122,10 +122,9 @@ class MainMenuState extends MusicState {
 						MusicState.switchState(new CreditsState());
 
 					case 'options':
-						if (!FlxG.keys.pressed.SHIFT) {
-							OptionsState.onPlayState = false;
+						if (!FlxG.keys.pressed.SHIFT)
 							MusicState.switchState(new OptionsState());
-						} else
+						else
 							MusicState.switchState(new options.NewOptionsMenu());
 						
 				}
