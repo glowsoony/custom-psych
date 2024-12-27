@@ -219,7 +219,7 @@ class Note extends FlxSprite {
 		// why would you wanna cliprect normal notes lmao
 		if (!isSustain || !canHit) return;
 		
-		final downscroll:Bool = Settings.data.scrollDirection == 'Down';
+		final downscroll:Bool = Settings.data.downscroll;
 		var swagRect:FlxRect = clipRect ?? FlxRect.get(0, 0, frameWidth, frameHeight);
 		var center:Float = strum.y + (strum.height * 0.5);
 		if (downscroll) {

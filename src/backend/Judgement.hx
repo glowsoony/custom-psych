@@ -1,7 +1,5 @@
 package backend;
 
-import flixel.math.FlxPoint;
-
 @:structInit
 class Judgement {
 	public static var list:Array<Judgement> = [
