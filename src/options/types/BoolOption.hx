@@ -18,8 +18,8 @@ class BoolOption extends BaseOption<Bool, Bool>
 
 	private function _change(next:Bool):Void
 	{
-        var prev:Bool = this.value;
-        this.value = next;
+		var prev:Bool = this.value;
+		this.value = next;
 		onChange(prev);
 	}
 }

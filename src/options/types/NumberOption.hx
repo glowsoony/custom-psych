@@ -25,13 +25,13 @@ class NumberOption extends BaseOption<Float, Float>
 	 * @param description   Descriptor for what the option does
 	 * @param preference    Name of the preference it modifies (in backend.Settings)
 	 * @param minimum       Minimum value the option can reach
-     * @param maximum       Maximum value the option can reach
+	 * @param maximum       Maximum value the option can reach
 	**/
 	public function new(name:String, ?description:String, ?preference:String, ?minimum:Float = 0.0, maximum:Float = 1.0)
 	{
 		super(name, description, preference);
 		this.minimum = minimum;
-        this.maximum = maximum;
+		this.maximum = maximum;
 		this.change = _change;
 	}
 
@@ -40,11 +40,11 @@ class NumberOption extends BaseOption<Float, Float>
 	private function _change(next:Float):Void
 	{
 		var prev:Float = this.value;
-        this.value = this.scrollSpeed * next;
-        if (this.value < minimum)
-            this.value = maximum;
-        if (this.value > maximum)
-            this.value = minimum;
+		this.value = this.scrollSpeed * next;
+		if (this.value < minimum)
+			this.value = maximum;
+		if (this.value > maximum)
+			this.value = minimum;
 		onChange(prev);
 	}
 }
