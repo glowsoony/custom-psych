@@ -131,6 +131,8 @@ class PlayState extends MusicState {
 	public var paused:Bool = false;
 	var updateTime:Bool = false;
 
+	var ghostNoteDetection:Bool = true;
+
 	// objects
 	var stage:Stage;
 
@@ -471,7 +473,7 @@ class PlayState extends MusicState {
 
 			var daBPM:Float = Conductor.getBPMChangeFromMS(note.time).bpm;
 
-			if (i != 0) {
+			if (i != 0 && ghostNoteDetection) {
 				// CLEAR ANY POSSIBLE GHOST NOTES
 				for (evilNote in unspawnedNotes) {
 					if (evilNote.isSustain) continue;

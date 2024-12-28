@@ -82,9 +82,9 @@ class Song {
 				notes.push({
 					time: Math.max(0, note[0]),
 					lane: Std.int(note[1] % 4),
-					player: note[1] > 3 ? !section.mustHitSection : section.mustHitSection,
 					length: note[2],
-					type: (note[3] is String ? note[3] : Note.defaultTypes[note[3]]) ?? ''
+					type: (note[3] is String ? note[3] : Note.defaultTypes[note[3]]) ?? '',
+					player: note[1] > 3 ? !section.mustHitSection : section.mustHitSection
 				});
 			}
 		}
