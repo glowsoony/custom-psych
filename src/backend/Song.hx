@@ -84,8 +84,7 @@ class Song {
 					lane: Std.int(note[1] % 4),
 					player: note[1] > 3 ? !section.mustHitSection : section.mustHitSection,
 					length: note[2],
-					type: (note[3] is String ? note[3] : Note.defaultTypes[note[3]]) ?? '',
-					speed: chart.speed
+					type: (note[3] is String ? note[3] : Note.defaultTypes[note[3]]) ?? ''
 				});
 			}
 		}

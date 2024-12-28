@@ -475,7 +475,7 @@ class PlayState extends MusicState {
 				// CLEAR ANY POSSIBLE GHOST NOTES
 				for (evilNote in unspawnedNotes) {
 					if (evilNote.isSustain) continue;
-					
+
 					var matches:Bool = (note.lane == evilNote.lane && note.player == evilNote.player);
 					if (!matches || Math.abs(note.time - evilNote.rawTime) > 2.0) continue;
 
@@ -502,9 +502,8 @@ class PlayState extends MusicState {
 					lane: note.lane,
 					length: note.length,
 					type: note.type,
-					player: note.player,
-					speed: note.speed
-				},  true, oldNote);
+					player: note.player
+				}, true, oldNote);
 				sustainNote.parent = swagNote;
 				sustainNote.correctionOffset.y = downscroll ? 0 : swagNote.height * 0.5;
 				unspawnedNotes.push(sustainNote);
