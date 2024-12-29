@@ -133,7 +133,7 @@ class FreeplayState extends MusicState {
 			if (Paths.exists(path)) {
 				PlayState.songID = songID;
 				Difficulty.list = curDiffs;
-				Difficulty.current = diff;
+				Difficulty.current = curDiffName;
 				MusicState.switchState(new PlayState());
 			} else {
 				persistentUpdate = false;
