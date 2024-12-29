@@ -1,5 +1,6 @@
 package scripting;
 
+#if (SCRIPTING_ALLOWED && LUA_ALLOWED)
 import llua.Lua.Lua_helper;
 import llua.LuaL;
 import llua.State;
@@ -126,3 +127,21 @@ class LuaBackend {
 		disposed = true;
 	}
 }
+#else 
+class LuaBackend {
+	public var file(default, null):Dynamic;
+	public var active:Bool = true;
+	public var disposed:Bool = false;
+	public var path:String = '';
+
+	public var executed(default, null):Bool = false;
+
+	public function new(_, ?_) {}
+	public function execute() {}
+	public function set(_, _, ?_):Dynamic return null;
+	public function get(_):Dynamic return null;
+	public function call(_, ?_):Dynamic return null;
+	public function getErrorMessage(_):String return null;
+	public function close() {}
+}
+#end
