@@ -15,6 +15,8 @@ import objects.Alphabet;
 import objects.FunkinSprite;
 import states.MusicState;
 import states.PlayState;
+import scripting.ScriptHandler;
+import scripting.*;
 
 // flixel specific
 import flixel.*;

@@ -10,6 +10,9 @@
 	<define name="DISCORD_ALLOWED" />
 	<define name="TRANSLATIONS_ALLOWED" />
 	<define name="PSYCH_WATERMARKS"/> 
+	<define name="HSCRIPT_ALLOWED" />
+	<define name="LUA_ALLOWED" />
+	<define name="SCRIPTING_ALLOWED" />
 
 	<!-- DISABLE THIS IF ISSUES ARE FOUND -->
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>
@@ -37,7 +40,6 @@
 	<haxelib name="hxjson5" />
 
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
-	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED" version="1.1.0"/>
 	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" version="1.9.2"/>
 	<haxelib name="hxdiscord_rpc" version="1.2.4" if="DISCORD_ALLOWED"/>
 	<haxelib name="hscript-iris" if="SCRIPTING_ALLOWED"/>
@@ -100,6 +102,7 @@
 	<haxedef name="macos" if="macos"/>
 
 	<define name="IRIS_DEBUG"/>
+	<define name="hscriptPos"/>
 
 	<assets path='icons/iconOG.png' rename='icon.png' if="linux || mac" />
 	
