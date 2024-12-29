@@ -23,6 +23,8 @@ class HScript extends Iris implements IScript {
 		set('Util', Util);
 		set('Paths', Paths);
 		set('ScriptHandler', ScriptHandler);
+		set('PlayState', PlayState);
+		set('game', PlayState.self);
 	}
 	
 	override function call(func:String, ?args:Array<Dynamic>):IrisCall {

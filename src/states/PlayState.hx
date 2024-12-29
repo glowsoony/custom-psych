@@ -204,7 +204,10 @@ class PlayState extends MusicState {
 		clearType = updateClearType();
 		grade = updateGrade();
 
+		ScriptHandler.loadFromDir('assets/scripts');
+
 		loadSong();
+		ScriptHandler.loadFromDir('assets/songs/$songID');
 
 		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
 			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
@@ -282,6 +285,7 @@ class PlayState extends MusicState {
 			case 'phillyBlazin': new PhillyBlazin();
 			*/
 		}
+		//ScriptHandler.loadFile('assets/stages/$stageName');
 
 		cameraSpeed = stage.cameraSpeed;
 
@@ -306,10 +310,14 @@ class PlayState extends MusicState {
 
 		hud.add(countdown = new Countdown());
 		countdown.screenCenter();
-		countdown.onStart = function() Conductor.playing = true;
+		countdown.onStart = function() {
+			Conductor.playing = true;
+			ScriptHandler.call('countdownStarted');
+		}
 		countdown.onFinish = function() {
 			Conductor.play();
 			updateTime = true;
+			ScriptHandler.call('onSongStart');
 		}
 
 		// set up any other stuff we might need
@@ -320,6 +328,8 @@ class PlayState extends MusicState {
 		countdown.start();
 
 		FlxG.mouse.visible = false;
+
+		ScriptHandler.call('create');
 	}
 
 	function loadHUD():Void {
@@ -534,6 +544,7 @@ class PlayState extends MusicState {
 
 	var canPause:Bool = true;
 	override function update(elapsed:Float):Void {
+		ScriptHandler.call('update', [elapsed]);
 		super.update(elapsed);
 
 		spawnNotes();
@@ -555,6 +566,8 @@ class PlayState extends MusicState {
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
 		camGame.followLerp = paused ? 0 : (0.04 * cameraSpeed * playbackRate);
+
+		ScriptHandler.call('updatePost', [elapsed]);
 	}
 
 	var _lastSeconds:Int = -1;
@@ -584,6 +597,8 @@ class PlayState extends MusicState {
 		while (noteSpawnIndex < unspawnedNotes.length) {
 			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
 			if (noteToSpawn.rawHitTime > noteSpawnDelay) break;
+
+			ScriptHandler.call('noteSpawned', [noteToSpawn]);
 
 			notes.add(noteToSpawn);
 			noteToSpawn.spawned = true;
@@ -638,6 +653,8 @@ class PlayState extends MusicState {
 	}
 
 	public function endSong():Void {
+		ScriptHandler.call('endSong');
+
 		Conductor.stop();
 		Conductor.vocals.destroy();
 		canPause = false;
@@ -685,6 +702,7 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function opponentNoteHit(note:Note) {
+		ScriptHandler.call('opponentNoteHit', [note]);
 		if (song.needsVoices && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
 		opponentStrums.members[note.lane].playAnim('notePressed');
@@ -727,6 +745,8 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function noteHit(note:Note) {
+		ScriptHandler.call('noteHit', [note]);
+
 		final strum:StrumNote = playerStrums.members[note.lane];
 
 		note.wasHit = true;
@@ -795,6 +815,8 @@ class PlayState extends MusicState {
 
 	dynamic function noteMiss(note:Note) {
 		if (note.ignore) return;
+
+		ScriptHandler.call('noteMiss', [note]);
 		
 		comboBreaks++;
 		combo = 0;
@@ -981,6 +1003,7 @@ class PlayState extends MusicState {
 	}
 
 	override function destroy() {
+		ScriptHandler.call('destroy');
 		closeSubState();
 		camGame.setFilters([]);
 
@@ -992,6 +1015,8 @@ class PlayState extends MusicState {
 
 		Conductor.rate = 1;
 		FlxG.animationTimeScale = 1;
+
+		ScriptHandler.clear();
 
 		self = null;
 		super.destroy();

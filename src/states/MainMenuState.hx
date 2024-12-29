@@ -67,9 +67,6 @@ class MainMenuState extends MusicState {
 
 		FlxG.camera.follow(camFollow, null, 0.15);
 		FlxG.mouse.visible = true;
-
-		ScriptHandler.loadFromDir('assets/scripts');
-		ScriptHandler.call('create', [2]);
 	}
 
 	var alreadyPressedEnter:Bool = false;
