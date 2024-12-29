@@ -839,6 +839,7 @@ class PlayState extends MusicState {
 	}
 
 	override function beatHit(beat:Int) {
+		ScriptHandler.call('beatHit', [beat]);
 		iconP1.scale.set(1.2, 1.2);
 		iconP1.updateHitbox();
 
@@ -868,7 +869,13 @@ class PlayState extends MusicState {
 		judgeCounter.text = 'Sicks: $sicks\nGoods: $goods\nBads: $bads\nShits: $shits';
 	}
 
+	override function stepHit(step:Int) {
+		ScriptHandler.call('stepHit', [step]);
+	}
+
 	override function measureHit(measure:Int) {
+		ScriptHandler.call('measureHit', [measure]);
+
 		if (Settings.data.cameraZooms) {
 			camGame.zoom += 0.03;
 			camHUD.zoom += 0.015;
