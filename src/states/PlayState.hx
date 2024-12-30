@@ -716,7 +716,7 @@ class PlayState extends MusicState {
 		if (!parent.canHit || parent.missed) return;
 
 		var heldKey:Bool = keysHeld[parent.lane];
-		var tooLate:Bool = (parent.wasHit ? note.time < Conductor.rawTime : parent.tooLate);
+		var tooLate:Bool = (parent.wasHit ? note.rawTime < Conductor.rawTime : parent.tooLate);
 		var isTail:Bool = note.animation.curAnim.name == 'holdend';
 
 		if (!heldKey) {
@@ -759,7 +759,7 @@ class PlayState extends MusicState {
 			final judge:Judgement = Judgement.min;
 
 			health += judge.health;
-			judgeSpr.display(judge.name);
+			judgeSpr.display(note.rawHitTime);
 			judge.hits++;
 			comboNumbers.display(++combo);
 			updateJudgeCounter();
@@ -767,12 +767,7 @@ class PlayState extends MusicState {
 			return;
 		}
 
-		var judge:Judgement = Judgement.max;
-		for (_ => possibleJudge in Judgement.list) {
-			if (Math.abs(note.rawHitTime) >= possibleJudge.timing) continue;
-			judge = possibleJudge;
-			break;
-		}
+		var judge:Judgement = Judgement.getFromTiming(note.rawHitTime);
 	
 		if (!note.breakOnHit) {
 			totalNotesPlayed += judge.accuracy;
@@ -806,7 +801,7 @@ class PlayState extends MusicState {
 		if (song.needsVoices) Conductor.mainVocals.volume = 1;
 
 		if (!note.breakOnHit) {
-			judgeSpr.display(judge.name);
+			judgeSpr.display(note.rawHitTime);
 			comboNumbers.display(combo);
 		}
 

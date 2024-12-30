@@ -144,6 +144,11 @@
 			color: 0xFF000000,
 		},
 		{
+			name: 'Comatose',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
 			name: 'Casanova',
 			icon: 'dad',
 			color: 0xFF000000,
@@ -177,6 +182,11 @@
 		},
 		{
 			name: 'Detected',
+			icon: 'dad',
+			color: 0xFF000000
+		},
+		{
+			name: 'Double Kill',
 			icon: 'dad',
 			color: 0xFF000000
 		},

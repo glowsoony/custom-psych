@@ -19,15 +19,12 @@ class JudgementSpr extends FunkinSprite {
 		updateHitbox();
 	}
 	
-	public var currentName:String = '';
-	public function display(judgeName:String) {
+	public function display(timing:Float) {
 		if (Settings.data.judgementAlpha <= 0) return;
 		
 		setPosition(originalPos.x, originalPos.y);
 
-		if (judgeName != currentName) {
-			animation.frameIndex = Judgement.getIDFromName(currentName = judgeName);
-		}
+		animation.frameIndex = Judgement.getIDFromTiming(timing);
 
 		alpha = Settings.data.judgementAlpha;
 		velocity.set(-FlxG.random.int(0, 10), -FlxG.random.int(140, 175));

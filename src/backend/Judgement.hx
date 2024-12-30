@@ -29,28 +29,28 @@ class Judgement {
 
 	public var hits:Int = 0;
 
-	public static function getFromName(name:String):Judgement {
-		var value:Judgement = max;
+	public static function getIDFromTiming(noteDev:Float):Int {
+		var value:Int = list.length - 1;
+
 		for (i in 0...list.length) {
-			if (list[i].name == name) {
-				value = list[i];
-				break;
-			}
+			if (Math.abs(noteDev) >= list[i].timing) continue;
+			value = i;
+			break;
 		}
 
 		return value;
 	}
 
-	public static function getIDFromName(name:String):Int {
-		var value:Int = -1;
-		for (i in 0...list.length) {
-			if (list[i].name == name) {
-				value = i;
-				break;
-			}
+	public static function getFromTiming(noteDev:Float):Judgement {
+		var judge:Judgement = max;
+
+		for (possibleJudge in list) {
+			if (Math.abs(noteDev) >= possibleJudge.timing) continue;
+			judge = possibleJudge;
+			break;
 		}
 
-		return value;
+		return judge;
 	}
 	
 	inline public static function resetHits():Void {
