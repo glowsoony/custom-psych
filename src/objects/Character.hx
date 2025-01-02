@@ -33,6 +33,7 @@ class Character extends FunkinSprite {
 	public var icon:String = '';
 	public var cameraOffset:FlxPoint = FlxPoint.get(0, 0);
 	public var dancer:Bool = false;
+	public var autoIdle:Bool = true;
 
 	var _file:CharacterFile;
 
@@ -86,10 +87,12 @@ class Character extends FunkinSprite {
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (!dancing) {
-			_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
-			if (_singTimer <= 0.0) dance(true);
-		}
+		if (!autoIdle) return;
+
+		if (dancing) return;
+
+		_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
+		if (_singTimer <= 0.0) dance(true);
 	}
 
 	var animIndex:Int = 0;

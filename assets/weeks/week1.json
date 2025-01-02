@@ -191,6 +191,12 @@
 			color: 0xFF000000
 		},
 		{
+			name: 'GHOST',
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['Maniac']
+		},
+		{
 			name: 'Devilsknife',
 			icon: 'dad',
 			color: 0xFF000000

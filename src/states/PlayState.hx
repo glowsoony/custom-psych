@@ -14,10 +14,10 @@ import objects.Strumline.StrumNote;
 import backend.Judgement;
 
 import flixel.util.FlxGradient;
-import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxStringUtil;
 
 import substates.PauseMenu;
+import substates.GameOverSubstate;
 
 class PlayState extends MusicState {
 	public static var self:PlayState;
@@ -546,6 +546,16 @@ class PlayState extends MusicState {
 	override function update(elapsed:Float):Void {
 		ScriptHandler.call('update', [elapsed]);
 		super.update(elapsed);
+
+		if (health <= 0) {
+			persistentUpdate = false;
+			camGame.visible = false;
+			camHUD.visible = false;
+
+			var gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
+			gameOverSubstate.cameras = [camOther];
+			openSubState(gameOverSubstate);
+		}
 
 		spawnNotes();
 		updateNotes();
