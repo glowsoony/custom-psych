@@ -59,7 +59,8 @@ class PlayState extends MusicState {
 		return botplay = value;
 	}
 
-	var downscroll:Bool; 
+	var downscroll:Bool;
+	var noFail:Bool;
 
 	var clearType:String;
 	var grade:String;
@@ -199,6 +200,7 @@ class PlayState extends MusicState {
 		// set up gameplay settings
 		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
+		noFail = Settings.data.gameplaySettings['noFail'];
 		downscroll = Settings.data.downscroll;
 
 		clearType = updateClearType();
@@ -547,7 +549,7 @@ class PlayState extends MusicState {
 		ScriptHandler.call('update', [elapsed]);
 		super.update(elapsed);
 
-		if (health <= 0) {
+		if (health <= 0 && !noFail) {
 			persistentUpdate = false;
 			camGame.visible = false;
 			camHUD.visible = false;
