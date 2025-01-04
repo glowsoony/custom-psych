@@ -23,6 +23,7 @@ class SaveVariables {
 	var canReset:Bool = true;
 	var mechanics:Bool = true;
 	var noteOffset:Float = 0;
+	var pauseType:String = 'Unlimited';
 
 	// graphics (that affect performance)
 	var antialiasing:Bool = true;
@@ -53,7 +54,6 @@ class SaveVariables {
 	var framerate:Int = 60;
 	var strumlineSize:Float = 0.7;
 	var timeBarType:String = 'Disabled';
-	var pauseType:String = 'Unlimited';
 
 	// miscellaneous
 	var discordRPC:Bool = true;

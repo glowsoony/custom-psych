@@ -1,6 +1,7 @@
 package substates;
 
 import objects.Character;
+import states.*;
 
 class GameOverSubstate extends FlxSubState {
 	static inline var default_loopMusic:String = 'game over';
@@ -49,9 +50,8 @@ class GameOverSubstate extends FlxSubState {
 
 		var camFollow:FlxObject = new FlxObject(0, 0, 1, 1);
 		camFollow.setPosition(_character.getGraphicMidpoint().x + _character.cameraOffset.x, _character.getGraphicMidpoint().y + _character.cameraOffset.y);
-		FlxG.camera.focusOn(FlxPoint.get(camera.scroll.x + (camera.width * 0.5), camera.scroll.y + (camera.height * 0.5)));
-		FlxG.camera.follow(camFollow, LOCKON, 0.01);
-		add(camFollow);
+		camera.follow(camFollow, LOCKON, 0.04);
+		//add(camFollow);
 
 		FlxG.sound.play(Paths.sound(initSFX));
 	}
@@ -74,9 +74,23 @@ class GameOverSubstate extends FlxSubState {
 		}
 
 		if (Controls.justPressed('accept')) skip();
+		if (Controls.justPressed('back') && !_skipped) {
+			Difficulty.reset();
+			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
+			Conductor.play();
+
+			if (PlayState.storyMode) {
+				MusicState.switchState(new StoryMenuState());
+				PlayState.songList = [];
+				PlayState.storyMode = false;
+				PlayState.currentLevel = 0;
+			} else MusicState.switchState(new FreeplayState());
+		}
 	}
 
 	function skip():Void {
+		if (_skipped) return;
+
 		_skipped = true;
 		_looping = false;
 		_music.stop();
@@ -84,7 +98,7 @@ class GameOverSubstate extends FlxSubState {
 		_character.playAnim('confirm');
 
 		new FlxTimer().start(0.7, function(_) {
-			FlxG.camera.fade(FlxColor.BLACK, 2, false, function() MusicState.resetState());
+			camera.fade(FlxColor.BLACK, 2, false, function() MusicState.resetState());
 		});
 	}
 

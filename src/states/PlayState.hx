@@ -61,6 +61,7 @@ class PlayState extends MusicState {
 
 	var downscroll:Bool;
 	var noFail:Bool;
+	var canReset:Bool;
 
 	var clearType:String;
 	var grade:String;
@@ -201,6 +202,7 @@ class PlayState extends MusicState {
 		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
 		noFail = Settings.data.gameplaySettings['noFail'];
+		canReset = Settings.data.canReset;
 		downscroll = Settings.data.downscroll;
 
 		clearType = updateClearType();
@@ -569,7 +571,7 @@ class PlayState extends MusicState {
 		ScriptHandler.call('update', [elapsed]);
 		super.update(elapsed);
 
-		if (health <= 0 && !noFail) die();
+		if ((Controls.justPressed('reset') && canReset) || (health <= 0 && !noFail)) die();
 
 		spawnNotes();
 		updateNotes();
@@ -705,6 +707,8 @@ class PlayState extends MusicState {
 		persistentUpdate = false;
 		camGame.visible = false;
 		camHUD.visible = false;
+
+		countdown.stop();
 
 		var gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
 		gameOverSubstate.cameras = [camOther];
