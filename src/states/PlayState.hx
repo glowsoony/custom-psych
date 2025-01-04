@@ -426,7 +426,26 @@ class PlayState extends MusicState {
 		// load inst
 		try {
 			Conductor.inst = FlxG.sound.load(Paths.audio('songs/$songID/Inst'));
-			Conductor.inst.onComplete = endSong;
+			Conductor.inst.onComplete = function() {
+				endSong();
+				if (Settings.data.gameplaySettings['botplay']) return;
+				Scores.set({
+					songID: songID,
+					difficulty: Difficulty.current,
+
+					score: score,
+					accuracy: accuracy,
+					clearType: clearType,
+
+					playbackRate: Settings.data.gameplaySettings['playbackRate'],
+					noFail: Settings.data.gameplaySettings['noFail'],
+					randomizedNotes: Settings.data.gameplaySettings['randomizedNotes'],
+					mirroredNotes: Settings.data.gameplaySettings['mirroredNotes'],
+					sustains: Settings.data.gameplaySettings['sustains']
+				});
+
+				Scores.save();
+			}
 		} catch (e:Dynamic) {
 			Sys.println('Instrumental failed to load: $e');
 		}

@@ -62,8 +62,6 @@ class SaveVariables {
 	var gameplaySettings:Map<String, Dynamic> = [
 		'scrollSpeed' => 1.0,
 		'scrollType' => 'Multiplied',
-		'healthGain' => 1.0,
-		'healthLoss' => 1.0,
 
 		'playbackRate' => 1.0,
 		'instakill' => false,

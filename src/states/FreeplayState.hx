@@ -150,6 +150,16 @@ class FreeplayState extends MusicState {
 		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
 	}
 
+	// regenerate the current score
+	// to accomodate possible modifier changes
+	override function closeSubState():Void {
+		super.closeSubState();
+
+		var play:PlayData = Scores.get(songList[curSelected].name, curDiffName);
+		intendedScore = play.score;
+		intendedAccuracy = play.accuracy;
+	}
+
 	function songControls(elapsed:Float) {
 		if (songList.length == 1) return;
 
@@ -229,8 +239,9 @@ class FreeplayState extends MusicState {
 		var displayDiff:String = curDiffName.toUpperCase();
 		difficultyText.text = curDiffs.length == 1 ? displayDiff : '< $displayDiff >';
 
-		intendedScore = FlxG.random.int(0, 500000);
-		intendedAccuracy = FlxG.random.float(0, 100);
+		var play:PlayData = Scores.get(songList[curSelected].name, curDiffName);
+		intendedScore = play.score;
+		intendedAccuracy = play.accuracy;
 
 		positionStats();
 	}
