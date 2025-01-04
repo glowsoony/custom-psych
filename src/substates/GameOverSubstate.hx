@@ -39,6 +39,9 @@ class GameOverSubstate extends FlxSubState {
 	
 	override function create():Void {
 		Conductor.stop();
+
+		Conductor.rate = FlxG.animationTimeScale = 1;
+
 		_music = FlxG.sound.load(Paths.music(loopMusic), 1, true);
 		_crotchet = (60 / bpm) * 1000;
 
