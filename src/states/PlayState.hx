@@ -568,15 +568,7 @@ class PlayState extends MusicState {
 		ScriptHandler.call('update', [elapsed]);
 		super.update(elapsed);
 
-		if (health <= 0 && !noFail) {
-			persistentUpdate = false;
-			camGame.visible = false;
-			camHUD.visible = false;
-
-			var gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
-			gameOverSubstate.cameras = [camOther];
-			openSubState(gameOverSubstate);
-		}
+		if (health <= 0 && !noFail) die();
 
 		spawnNotes();
 		updateNotes();
@@ -705,6 +697,17 @@ class PlayState extends MusicState {
 			storyMode = false;
 			currentLevel = 0;
 		} else prevCamFollow = camFollow;
+	}
+
+	// you die
+	function die() {
+		persistentUpdate = false;
+		camGame.visible = false;
+		camHUD.visible = false;
+
+		var gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
+		gameOverSubstate.cameras = [camOther];
+		openSubState(gameOverSubstate);
 	}
 
 	// ai note hitting
@@ -841,6 +844,8 @@ class PlayState extends MusicState {
 
 	dynamic function noteMiss(note:Note) {
 		if (note.ignore) return;
+
+		if (Settings.data.gameplaySettings['instakill']) die();
 
 		ScriptHandler.call('noteMiss', [note]);
 		
@@ -997,7 +1002,13 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function updateScoreTxt():Void {
-		scoreTxt.text = 'Score: $score | Combo Breaks: $comboBreaks | Accuracy: ${Util.truncateFloat(accuracy, 2)}% [$clearType | $grade]';
+		var textToShow:String = '';
+		textToShow += 'Score: $score';
+		if (!Settings.data.gameplaySettings['instakill']) textToShow += ' | Combo Breaks: $comboBreaks';
+		textToShow += ' | Accuracy: ${Util.truncateFloat(accuracy, 2)}%';
+		textToShow += ' [$clearType | $grade]';
+
+		scoreTxt.text = textToShow;
 	}
 
 	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
