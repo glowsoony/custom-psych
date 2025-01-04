@@ -53,6 +53,7 @@ class SaveVariables {
 	var framerate:Int = 60;
 	var strumlineSize:Float = 0.7;
 	var timeBarType:String = 'Disabled';
+	var pauseType:String = 'Unlimited';
 
 	// miscellaneous
 	var discordRPC:Bool = true;

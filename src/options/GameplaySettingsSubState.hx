@@ -14,6 +14,14 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		));
 
 		addOption(new Option(
+			'Pausing:',
+			'Unlimited: Can pause as much as you like, similar to Base FNF and StepMania.\nLimited: Can only pause a certain amount of times, similar to Osu! and Quaver.\nDisabled: Prevents you from pausing at all, like Etterna.',
+			'pauseType',
+			STRING,
+			['Unlimited', 'Limited', 'Disabled']
+		));
+
+		addOption(new Option(
 			'Opponent Notes',
 			'Whether to have the opponent\'s notes on screen or not.\nIs ignored if "Centered Notes" is enabled.',
 			'opponentNotes',

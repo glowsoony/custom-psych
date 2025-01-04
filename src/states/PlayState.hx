@@ -1034,5 +1034,7 @@ class PlayState extends MusicState {
 
 		self = null;
 		super.destroy();
+
+		PauseMenu.openCount = 0;
 	}
 }
