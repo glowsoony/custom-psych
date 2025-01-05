@@ -852,12 +852,16 @@ class PlayState extends MusicState {
 
 		if (Settings.data.gameplaySettings['instakill']) die();
 
-		ScriptHandler.call('noteMiss', [note]);
-		
 		comboBreaks++;
 		combo = 0;
 		score -= 20;
 		health -= 6;
+
+		accuracy = updateAccuracy();
+		grade = updateGrade();
+		clearType = updateClearType();
+
+		ScriptHandler.call('noteMiss', [note]);
 
 		note.missed = true;
 		for (piece in note.pieces) {
@@ -868,9 +872,6 @@ class PlayState extends MusicState {
 		if (song.needsVoices) Conductor.mainVocals.volume = 0;
 		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
 
-		accuracy = updateAccuracy();
-		grade = updateGrade();
-		clearType = updateClearType();
 		updateScoreTxt();
 	}
 
@@ -1031,6 +1032,14 @@ class PlayState extends MusicState {
 
 		if (sortedNotes.length == 0) {
 			playerStrums.members[dir].playAnim('pressed');
+			ScriptHandler.call('ghostTap', [dir]);
+			if (Settings.data.ghostTapping) return;
+			score -= 20;
+			health -= 6;
+
+			accuracy = updateAccuracy();
+			grade = updateGrade();
+			updateScoreTxt();
 			return;
 		} 
 
