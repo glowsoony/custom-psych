@@ -333,6 +333,8 @@ class PlayState extends MusicState {
 
 		FlxG.mouse.visible = false;
 
+		DiscordClient.changePresence(songName, storyMode ? 'Story Mode' : 'Freeplay', dad.icon, true);
+
 		ScriptHandler.call('create');
 	}
 

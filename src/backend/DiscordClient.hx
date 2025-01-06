@@ -71,7 +71,7 @@ class DiscordClient {
 						Discord.RunCallbacks();
 					}
 
-					// Wait 1 second until the next loop...
+					// Wait 2 seconds until the next loop...
 					Sys.sleep(2.0);
 				}
 			});
@@ -80,16 +80,16 @@ class DiscordClient {
 	}
 
 	public static function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float, largeImageKey:String = 'icon') {
-		var startTimestamp:Float = 0;
-		if (hasStartTimestamp) startTimestamp = Date.now().getTime();
+		var startTimestamp:Float = hasStartTimestamp ? Date.now().getTime() : 0;
 		if (endTimestamp > 0) endTimestamp = startTimestamp + endTimestamp;
 
 		presence.state = state;
 		presence.details = details;
 		presence.smallImageKey = smallImageKey;
 		presence.largeImageKey = largeImageKey;
-		presence.largeImageText = 'Engine Version: ${Main.psychEngineVersion}';
-		// Obtained times are in milliseconds so they are divided so Discord can use it
+		presence.largeImageText = 'Version: ${Main.psychEngineVersion}';
+		// obtained times are in milliseconds
+		// we convert them into seconds so that discord can show them properly
 		presence.startTimestamp = Std.int(startTimestamp * 0.001);
 		presence.endTimestamp = Std.int(endTimestamp * 0.001);
 		updatePresence();

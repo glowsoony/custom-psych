@@ -30,7 +30,7 @@ class MainMenuState extends MusicState {
 		persistentUpdate = true;
 
 		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("In the Menus", null);
+		DiscordClient.changePresence();
 		#end
 
 		add(camFollow = new FlxObject(FlxG.width * 0.5, 0, 1, 1));

@@ -94,6 +94,10 @@ class StoryMenuState extends MusicState {
 		add(rightArrow);
 
 		changeWeek();
+
+		#if DISCORD_ALLOWED
+		DiscordClient.changePresence('Selecting a Week', 'Story Mode');
+		#end
 	}
 
 	function changeWeek(?change:Int = 0) {

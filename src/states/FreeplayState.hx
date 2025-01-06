@@ -47,7 +47,7 @@ class FreeplayState extends MusicState {
 		WeekData.reload();
 
 		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("In the Menus", null);
+		DiscordClient.changePresence('Selecting a Song', 'Freeplay');
 		#end
 
 		for (week in WeekData.list) {
