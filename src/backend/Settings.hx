@@ -80,7 +80,8 @@ class Settings {
 
 	public static function save() {
 		for (key in Reflect.fields(data)) {
-			if (key == 'downscroll') continue;
+			// ignores variables with getters
+			if (Reflect.hasField(data, 'get_$key')) continue;
 			Reflect.setField(FlxG.save.data, key, Reflect.field(data, key));
 		}
 
@@ -93,7 +94,9 @@ class Settings {
 		final fields:Array<String> = Type.getInstanceFields(SaveVariables);
 		for (i in Reflect.fields(FlxG.save.data)) {
 			if (i == 'gameplaySettings' || !fields.contains(i)) continue;
-			Reflect.setField(data, i, Reflect.field(FlxG.save.data, i));
+
+			if (Reflect.hasField(data, 'set_$i')) Reflect.setProperty(data, i, Reflect.field(FlxG.save.data, i));
+			else Reflect.setField(data, i, Reflect.field(FlxG.save.data, i));
 		}
 
 		if (FlxG.save.data.framerate == null) {
