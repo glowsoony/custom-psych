@@ -376,6 +376,11 @@
 			color: 0xFF000000,
 		},
 		{
+			name: 'Twiddlefinger',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
 			name: 'Zavodila',
 			icon: 'dad',
 			color: 0xFF000000,
