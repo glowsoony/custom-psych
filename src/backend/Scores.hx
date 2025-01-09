@@ -69,10 +69,15 @@ class Scores {
 			return;
 		}
 
-		var oldPlay:PlayData = filteredList[0];
-		if (oldPlay.accuracy >= data.accuracy) return;
+		var oldPlay:PlayData = list[list.indexOf(filteredList[0])];
 
-		list[list.indexOf(oldPlay)] = data;
+		if (oldPlay.accuracy < data.accuracy) {
+			oldPlay.accuracy = data.accuracy;
+		}
+
+		if (oldPlay.score < data.score) {
+			oldPlay.score = data.score;
+		}
 	}
 
 	public static function filter(plays:Array<PlayData>, songID:String, difficulty:String):Array<PlayData> {

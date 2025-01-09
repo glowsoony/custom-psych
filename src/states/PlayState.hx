@@ -76,7 +76,7 @@ class PlayState extends MusicState {
 		["Bruh", 0.5],
 		["Bad", 0.4],
 		["Shit", 0.2],
-		["You Suck!", 0],
+		["You Suck!", 0]
 	];
 
 	var health(default, set):Float = 50;
@@ -85,11 +85,10 @@ class PlayState extends MusicState {
 
 		// update health bar
 		health = value;
-		var newPercent:Float = FlxMath.remapToRange(FlxMath.bound(health, healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
-		healthBar.percent = newPercent;
+		healthBar.percent = FlxMath.remapToRange(FlxMath.bound(health, healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
 
-		iconP1.animation.curAnim.curFrame = newPercent < 20 ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP2.animation.curAnim.curFrame = newPercent > 80 ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP1.animation.curAnim.curFrame = healthBar.percent < 20 ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
+		iconP2.animation.curAnim.curFrame = healthBar.percent > 80 ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
 
 		return health = value;
 	}
