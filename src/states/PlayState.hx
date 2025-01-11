@@ -841,7 +841,7 @@ class PlayState extends MusicState {
 		if (song.needsVoices) Conductor.mainVocals.volume = 1;
 
 		if (!note.breakOnHit) {
-			judgeSpr.display(note.rawHitTime);
+			judgeSpr.display(adjustedHitTime);
 			comboNumbers.display(combo);
 		}
 
