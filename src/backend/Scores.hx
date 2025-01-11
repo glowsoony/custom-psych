@@ -11,7 +11,6 @@ class PlayData {
 	// play data
 	public var score:Int;
 	public var accuracy:Float;
-	public var clearType:String;
 
 	// modifiers
 	public var playbackRate:Float;
@@ -48,7 +47,6 @@ class Scores {
 				difficulty: difficulty,
 				score: 0,
 				accuracy: 0.0,
-				clearType: 'N/A',
 
 				playbackRate: 1.0,
 				noFail: false,

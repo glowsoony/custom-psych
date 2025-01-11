@@ -437,7 +437,6 @@ class PlayState extends MusicState {
 
 						score: score,
 						accuracy: accuracy,
-						clearType: clearType,
 
 						playbackRate: Settings.data.gameplaySettings['playbackRate'],
 						noFail: Settings.data.gameplaySettings['noFail'],
@@ -756,7 +755,7 @@ class PlayState extends MusicState {
 		if (!parent.canHit || parent.missed) return;
 
 		var heldKey:Bool = keysHeld[parent.lane];
-		var tooLate:Bool = (parent.wasHit ? note.rawTime < Conductor.rawTime : parent.tooLate);
+		var tooLate:Bool = (parent.wasHit ? note.time < (Conductor.rawTime / Conductor.rate) : parent.tooLate);
 		var isTail:Bool = note.animation.curAnim.name == 'holdend';
 
 		if (!heldKey) {
@@ -777,7 +776,7 @@ class PlayState extends MusicState {
 
 		note.clipToStrum(strum);
 
-		if (note.time <= Conductor.rawTime && !note.wasHit) note.wasHit = true;
+		if (note.time <= (Conductor.rawTime / Conductor.rate) && !note.wasHit) note.wasHit = true;
 		else return;
 		
 		strum.playAnim('notePressed');
@@ -799,7 +798,7 @@ class PlayState extends MusicState {
 			final judge:Judgement = Judgement.min;
 
 			health += judge.health;
-			judgeSpr.display(note.rawHitTime);
+			judgeSpr.display(0);
 			judge.hits++;
 			comboNumbers.display(++combo);
 			updateJudgeCounter();
@@ -807,14 +806,15 @@ class PlayState extends MusicState {
 			return;
 		}
 
-		var judge:Judgement = Judgement.getFromTiming(note.rawHitTime);
+		final adjustedHitTime:Float = note.rawHitTime / playbackRate;
+		var judge:Judgement = Judgement.getFromTiming(adjustedHitTime);
 	
 		if (!note.breakOnHit) {
 			totalNotesPlayed += judge.accuracy;
 			health += judge.health;
 			// pbot1-ish scoring system
 			// cuz judgement based is boring :sob:
-			score += Math.floor(500 - Math.abs(note.rawHitTime));
+			score += Math.floor(500 - Math.abs(adjustedHitTime));
 			judge.hits++;
 			combo++;
 		} else {

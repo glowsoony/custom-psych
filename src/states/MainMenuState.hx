@@ -119,8 +119,8 @@ class MainMenuState extends MusicState {
 						MusicState.switchState(new AchievementsMenuState());
 					#end
 
-					case 'credits':
-						MusicState.switchState(new CreditsState());
+/*					case 'credits':
+						MusicState.switchState(new CreditsState());*/
 
 					case 'options':
 						OptionsState.onPlayState = false;
