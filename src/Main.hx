@@ -95,6 +95,9 @@ class Main extends Sprite {
 
 	#if CRASH_HANDLER
 	function onCrash(e:UncaughtErrorEvent):Void {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+
 		var errMsg:String = '${e.error}\n\n';
 		var date:String = '${Date.now()}'.replace(":", "'");
 
