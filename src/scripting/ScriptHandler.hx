@@ -1,6 +1,5 @@
 package scripting;
 
-#if SCRIPTING_ALLOWED
 interface IScript {
 	public var active:Bool;
 	public var disposed:Bool;
@@ -82,4 +81,3 @@ class ScriptHandler {
 		while (list.length > 0) list.pop().close();
 	}
 }
-#end

@@ -1,6 +1,6 @@
 package scripting;
 
-#if (SCRIPTING_ALLOWED && LUA_ALLOWED)
+#if LUA_ALLOWED
 import llua.Lua.Lua_helper;
 import llua.LuaL;
 import llua.State;

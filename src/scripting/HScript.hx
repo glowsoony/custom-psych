@@ -1,6 +1,6 @@
 package scripting;
 
-#if (SCRIPTING_ALLOWED && HSCRIPT_ALLOWED)
+#if HSCRIPT_ALLOWED
 import crowplexus.iris.Iris;
 import crowplexus.iris.IrisConfig;
 
