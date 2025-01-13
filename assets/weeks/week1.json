@@ -31,6 +31,17 @@
 			color: 0xFF000000,
 		},
 		{
+			name: 'MC MENTAL AT HIS BEST',
+			icon: 'dad',
+			color: 0xFF000000,
+			difficulties: ['Normal', 'Hard']
+		},
+		{
+			name: 'Game Time',
+			icon: 'dad',
+			color: 0xFF000000,
+		},
+		{
 			name: 'Little Man 2',
 			icon: 'dad',
 			color: 0xFF000000,
