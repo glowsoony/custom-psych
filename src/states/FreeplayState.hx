@@ -164,6 +164,12 @@ class FreeplayState extends MusicState {
 		var play:PlayData = Scores.get(songList[curSelected].id, curDiffName);
 		intendedScore = play.score;
 		intendedAccuracy = play.accuracy;
+
+		Sys.println('current modifiers just in case you forget somehow:');
+		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains']) {
+			Sys.println('$i: ${Settings.data.gameplaySettings[i]}');
+		}
+		Sys.println('');
 	}
 
 	function songControls(elapsed:Float) {

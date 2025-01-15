@@ -62,6 +62,12 @@ class Scores {
 	public static function set(data:PlayData):Void {
 		var filteredList:Array<PlayData> = filter(list, data.songID, data.difficulty);
 
+		Sys.println('current modifiers for "${data.songID} - ${data.difficulty}":');
+		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains']) {
+			Sys.println('$i: ${Settings.data.gameplaySettings[i]}');
+		}
+		Sys.println('');
+
 		if (filteredList.length == 0) {
 			list.push(data);
 			return;
