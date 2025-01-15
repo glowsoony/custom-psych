@@ -6,13 +6,11 @@ import flixel.addons.display.FlxGridOverlay;
 import objects.AttachedSprite;
 
 import flixel.input.keyboard.FlxKey;
-import flixel.input.gamepad.FlxGamepad;
-import flixel.input.gamepad.FlxGamepadInputID;
-import flixel.input.gamepad.FlxGamepadManager;
 
 class ControlsSubState extends FlxSubState
 {
-	var curSelected:Int = 0;
+	static var defaultKey:String = 'Reset to Default Keys';
+/*	var curSelected:Int = 0;
 	var curAlt:Bool = false;
 
 	//Show on gamepad - Display name - Save file key - Rebind display name
@@ -45,7 +43,6 @@ class ControlsSubState extends FlxSubState
 	];
 	var curOptions:Array<Int>;
 	var curOptionsValid:Array<Int>;
-	static var defaultKey:String = 'Reset to Default Keys';
 
 	var bg:FlxSprite;
 	var grpDisplay:FlxTypedGroup<Alphabet>;
@@ -54,7 +51,6 @@ class ControlsSubState extends FlxSubState
 	var grpBinds:FlxTypedGroup<Alphabet>;
 	var selectSpr:AttachedSprite;
 
-	var gamepadColor:FlxColor = 0xfffd7194;
 	var keyboardColor:FlxColor = 0xff7192fd;
 	var onKeyboardMode:Bool = true;
 	
@@ -288,7 +284,7 @@ class ControlsSubState extends FlxSubState
 			{
 				if(options[curOptions[curSelected]][1] != defaultKey)
 				{
-					bindingBlack = new FlxSprite().makeGraphic(1, 1, /*FlxColor.BLACK*/ FlxColor.WHITE);
+					bindingBlack = new FlxSprite().makeGraphic(1, 1, /*FlxColor.BLACKFlxColor.WHITE);
 					bindingBlack.scale.set(FlxG.width, FlxG.height);
 					bindingBlack.updateHitbox();
 					bindingBlack.alpha = 0;
@@ -499,5 +495,5 @@ class ControlsSubState extends FlxSubState
 		}
 		selectSpr.sprTracker = grpBlacks.members[Math.floor(curSelected * 2) + (curAlt ? 1 : 0)];
 		selectSpr.visible = (selectSpr.sprTracker != null);
-	}
+	}*/
 }
