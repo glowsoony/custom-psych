@@ -13,7 +13,7 @@ import flixel.util.FlxDestroyUtil;
 import openfl.utils.Assets;
 
 class FreeplayState extends MusicState {
-	var songList:Array<Track> = [];
+	var songList:Array<SongMeta> = [];
 	var difficultyList:Array<Array<String>> = [];
 
 	static var curSelected:Int = 0;
@@ -45,6 +45,7 @@ class FreeplayState extends MusicState {
 	override function create() {
 		persistentUpdate = true;
 		WeekData.reload();
+		Mods.loadTop();
 
 		#if DISCORD_ALLOWED
 		DiscordClient.changePresence('Selecting a Song', 'Freeplay');
@@ -52,7 +53,12 @@ class FreeplayState extends MusicState {
 
 		for (week in WeekData.list) {
 			for (song in week.songs) {
-				songList.push(song);
+				songList.push({
+					id: song.name,
+					colour: song.color,
+					folder: week.folder,
+					icon: song.icon
+				});
 
 				var diffs:Array<String> = song.difficulties;
 				if (song.difficulties == null || song.difficulties.length == 0) diffs = Difficulty.loadFromWeek(week);
@@ -63,13 +69,13 @@ class FreeplayState extends MusicState {
 		add(bg = new FlxSprite().loadGraphic(Paths.image('menus/desatBG')));
 		bg.antialiasing = Settings.data.antialiasing;
 		bg.screenCenter();
-		bg.color = intendedColour = songList[curSelected].color;
+		bg.color = intendedColour = songList[curSelected].colour;
 
 		add(grpSongs = new FlxTypedSpriteGroup<Alphabet>());
 		add(grpIcons = new FlxTypedSpriteGroup<CharIcon>());
 
 		for (index => song in songList) {
-			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, song.name));
+			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, song.id));
 			alphabet.visible = alphabet.active = false;
 			alphabet.targetY = index;
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
@@ -127,7 +133,7 @@ class FreeplayState extends MusicState {
 		super.update(elapsed);
 
 		if (Controls.justPressed('accept')) {
-			final songID:String = songList[curSelected].name;
+			final songID:String = songList[curSelected].id;
 			final diff:String = Difficulty.format(curDiffName);
 			final path:String = 'songs/$songID/$diff.json';
 			if (Paths.exists(path)) {
@@ -155,7 +161,7 @@ class FreeplayState extends MusicState {
 	override function closeSubState():Void {
 		super.closeSubState();
 
-		var play:PlayData = Scores.get(songList[curSelected].name, curDiffName);
+		var play:PlayData = Scores.get(songList[curSelected].id, curDiffName);
 		intendedScore = play.score;
 		intendedAccuracy = play.accuracy;
 	}
@@ -218,7 +224,7 @@ class FreeplayState extends MusicState {
 			grpIcons.members[num].alpha = num == curSelected ? 1 : 0.6;
 		}
 
-		var newColour:Int = songList[curSelected].color;
+		var newColour:Int = songList[curSelected].colour;
 		if (newColour != intendedColour) {
 			intendedColour = newColour;
 			FlxTween.cancelTweensOf(bg);
@@ -239,7 +245,7 @@ class FreeplayState extends MusicState {
 		var displayDiff:String = curDiffName.toUpperCase();
 		difficultyText.text = curDiffs.length == 1 ? displayDiff : '< $displayDiff >';
 
-		var play:PlayData = Scores.get(songList[curSelected].name, curDiffName);
+		var play:PlayData = Scores.get(songList[curSelected].id, curDiffName);
 		intendedScore = play.score;
 		intendedAccuracy = play.accuracy;
 
@@ -273,4 +279,11 @@ class FreeplayState extends MusicState {
 			_lastVisibles.push(i);
 		}
 	}	
+}
+
+typedef SongMeta = {
+	var id:String;
+	var icon:String;
+	var colour:FlxColor;
+	var folder:String;
 }

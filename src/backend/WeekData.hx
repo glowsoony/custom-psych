@@ -16,6 +16,7 @@ typedef WeekFile = {
 	var difficulties:Array<String>;
 
 	var ?fileName:String;
+	var ?folder:String;
 }
 
 // synonym for "Song" because Song.hx already exists lmao
@@ -45,9 +46,7 @@ class WeekData {
 			hiddenUntilUnlocked: false,
 			hideStoryMode: false,
 			hideFreeplay: false,
-			difficulties: Difficulty.default_list,
-
-			fileName: ''
+			difficulties: Difficulty.default_list
 		}
 	}
 
@@ -62,6 +61,9 @@ class WeekData {
 
 				var file:WeekFile = getFile('$path/$week');
 				file.fileName = week.replace('.json', '');
+				file.folder = path.substring('mods/'.length, path.length - 1);
+
+				trace(file.folder);
 
 				list.push(file);
 			}

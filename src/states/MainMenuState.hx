@@ -109,10 +109,10 @@ class MainMenuState extends MusicState {
 					case 'freeplay':
 						MusicState.switchState(new FreeplayState());
 
-					#if MODS_ALLOWED
+	/*				#if MODS_ALLOWED
 					case 'mods':
 						MusicState.switchState(new ModsMenuState());
-					#end
+					#end*/
 
 					#if AWARDS_ALLOWED
 					case 'awards':

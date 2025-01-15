@@ -114,15 +114,6 @@ class DiscordClient {
 		}
 		return newID;
 	}
-
-	#if MODS_ALLOWED
-	public static function loadModRPC() {
-		var pack:Dynamic = Mods.getPack();
-		if (pack != null && pack.discordRPC != null && pack.discordRPC != clientID) {
-			clientID = pack.discordRPC;
-		}
-	}
-	#end
 }
 
 @:allow(backend.DiscordClient)
@@ -241,10 +232,6 @@ class DiscordClient {
 	public static function changePresence(?_, ?_, ?_, ?_, ?_, ?_) {}
 	public static function updatePresence() {}
 	public static function resetClientID() {}
-
-	#if MODS_ALLOWED
-	public static function loadModRPC() {}
-	#end
 }
 
 private final class DiscordPresence {

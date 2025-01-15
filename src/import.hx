@@ -9,6 +9,7 @@ import backend.Settings;
 import backend.Language;
 import backend.Paths;
 import backend.Scores;
+import backend.Mods;
 import backend.Song;
 import backend.Difficulty;
 import objects.Alphabet;

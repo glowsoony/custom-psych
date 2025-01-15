@@ -11,6 +11,7 @@
 	<define name="PSYCH_WATERMARKS"/> 
 	<define name="HSCRIPT_ALLOWED" />
 	<define name="LUA_ALLOWED" />
+	<define name="MODS_ALLOWED" />
 
 	<!-- DISABLE THIS IF ISSUES ARE FOUND -->
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>

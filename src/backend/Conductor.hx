@@ -123,32 +123,28 @@ class Conductor extends flixel.FlxBasic {
 		if (_prevMeasure != curMeasure) onMeasure(measure = curMeasure);
 	}
 
-	public static function play() {
-		playing = true;
-		inst.play();
-		vocals.play();
-		playing = true;
-	}
-
 	public static function stop() {
 		playing = false;
 		inst.stop();
 		vocals.stop();
-		playing = false;
+	}
+
+	public static function play() {
+		playing = true;
+		inst.play();
+		vocals.play();
 	}
 
 	public static function pause() {
 		playing = false;
 		inst.pause();
 		vocals.pause();
-		playing = false;
 	}
 
 	public static function resume() {
 		playing = true;
 		inst.resume();
 		vocals.resume();
-		playing = true;
 	}
 
 	public static function set_bpm(value:Float):Float {
