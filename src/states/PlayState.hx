@@ -54,6 +54,15 @@ class PlayState extends MusicState {
 
 	public var botplay(default, set):Bool = false;
 	function set_botplay(value:Bool):Bool {
+		// prevents players from just having botplay on the entire time
+		// and then turning it off at the last note
+		// and saving the play
+
+		// although this can easily be bypassed in a script
+		// so i don't think it matters much
+		// but it'll stop most people
+		if (value) disqualified = true;
+
 		if (playerStrums != null) playerStrums.player = !value;
 		if (botplayTxt != null) botplayTxt.visible = value;
 		return botplay = value;
@@ -62,6 +71,7 @@ class PlayState extends MusicState {
 	var downscroll:Bool;
 	var noFail:Bool;
 	var canReset:Bool;
+	var disqualified:Bool = false;
 
 	var clearType:String;
 	var grade:String;
@@ -430,7 +440,7 @@ class PlayState extends MusicState {
 		try {
 			Conductor.inst = FlxG.sound.load(Paths.audio('songs/$songID/Inst'));
 			Conductor.inst.onComplete = function() {
-				if (!Settings.data.gameplaySettings['botplay']) {
+				if (!disqualified) {
 					Scores.set({
 						songID: songID,
 						difficulty: Difficulty.current,
