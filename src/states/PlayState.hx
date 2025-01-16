@@ -54,9 +54,6 @@ class PlayState extends MusicState {
 
 	public var botplay(default, set):Bool = false;
 	function set_botplay(value:Bool):Bool {
-		// prevents players from just having botplay on the entire time
-		// and then turning it off at the last note
-		// and saving the play
 
 		// although this can easily be bypassed in a script
 		// so i don't think it matters much
@@ -71,6 +68,8 @@ class PlayState extends MusicState {
 	var downscroll:Bool;
 	var noFail:Bool;
 	var canReset:Bool;
+
+	@:unreflective
 	var disqualified:Bool = false;
 
 	var clearType:String;
