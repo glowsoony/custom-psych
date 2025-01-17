@@ -14,9 +14,9 @@ class ScriptHandler {
 	public static var list:Array<IScript> = [];
 
 	public static function loadFromDir(dir:String, ?subFolders:Bool = false):Void {
-		if (!FileSystem.exists(dir)) return;
+		if (!Paths.exists(dir)) return;
 		
-		for (file in FileSystem.readDirectory(dir)) {
+		for (file in FileSystem.readDirectory(Paths.get(dir))) {
 			final absPath:String = '$dir/$file';
 			if (FileSystem.isDirectory(absPath) && subFolders) {
 				loadFromDir(absPath, subFolders);
@@ -28,6 +28,7 @@ class ScriptHandler {
 	}
 
 	public static function loadFile(dir:String):IScript {
+		dir = Paths.get(dir);
 		if (!FileSystem.exists(dir)) return null;
 
 		switch haxe.io.Path.extension(dir) {

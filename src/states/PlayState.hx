@@ -215,10 +215,10 @@ class PlayState extends MusicState {
 		clearType = updateClearType();
 		grade = updateGrade();
 
-		ScriptHandler.loadFromDir('assets/scripts');
+		ScriptHandler.loadFromDir('scripts');
 
 		loadSong();
-		ScriptHandler.loadFromDir('assets/songs/$songID');
+		ScriptHandler.loadFromDir('songs/$songID');
 
 		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
 			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
