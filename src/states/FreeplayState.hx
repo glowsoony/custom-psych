@@ -140,6 +140,7 @@ class FreeplayState extends MusicState {
 				PlayState.songID = songID;
 				Difficulty.list = curDiffs;
 				Difficulty.current = curDiffName;
+				Mods.current = songList[curSelected].folder;
 				MusicState.switchState(new PlayState());
 			} else {
 				persistentUpdate = false;

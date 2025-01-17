@@ -105,17 +105,36 @@ class Paths {
 	}
 
 	public static function get(path:String, ?subFolder:String):String {
-		if (subFolder == null || subFolder.length == 0) return 'assets/$path';
+		if (subFolder != null && subFolder.length != 0) {
+			path = '$subFolder/$path';
+		}
 
-		return 'assets/$subFolder/$path';
+		// start by checking the currently played mod
+		var mainDirectory:String = Mods.current;
+
+		// if there are any other mods active
+		// and the file doesn't exist in the currently played mod
+		// check the first mod in the list
+		if (Mods.list.length > 1 && !FileSystem.exists('$mainDirectory/$path')) {
+			mainDirectory = 'mods/${Mods.getActive()[0].id}';
+		}
+
+		// if the file STILL doesn't exist
+		// fallback to assets
+		if (!FileSystem.exists('$mainDirectory/$path')) {
+			mainDirectory = 'assets';
+		}
+
+		return '$mainDirectory/$path';
 	}
 
 	// images
 	public static dynamic function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
 		allowGPU = Settings.data.gpuCaching ? allowGPU : false;
 
-		key = Language.getFileTranslation(key, subFolder);
 		if (key.lastIndexOf('.') < 0) key += '.$IMAGE_EXT';
+		key = Language.getFileTranslation(key, subFolder);
+		
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
 		if (!FileSystem.exists(key)) return null;
@@ -164,14 +183,15 @@ class Paths {
 	}
 
 	public static dynamic function audio(key:String, ?subFolder:String, ?beepIfNull:Bool = true):Sound {
-		key = Language.getFileTranslation(key, subFolder);
 		if (key.lastIndexOf('.') < 0) key += '.$SOUND_EXT';
+		key = Language.getFileTranslation(key, subFolder);
 
 		var file:Sound = null;
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
 		if (!FileSystem.exists(key)) {
 			if (beepIfNull) file = flixel.system.FlxAssets.getSound('flixel/sounds/beep');
+			Sys.println('could not find sound file: $key');
 		} else {
 			if (!localTrackedAssets.contains(key)) localTrackedAssets.push(key);
 

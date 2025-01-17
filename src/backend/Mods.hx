@@ -54,7 +54,7 @@ class Mods {
 	public static function reload():Void {
 		list.resize(0);
 
-		if (!FileSystem.exists('modList.txt')) {
+		if (!FileSystem.exists('modsList.txt')) {
 			var lines:Array<String> = FileSystem.readDirectory('mods');
 			for (i in 0...lines.length) {
 				if (!FileSystem.isDirectory('mods/${lines[i]}')) continue;

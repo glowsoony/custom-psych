@@ -703,6 +703,7 @@ class PlayState extends MusicState {
 			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
 			Conductor.play();
 			Difficulty.reset();
+			Mods.current = '';
 			MusicState.switchState(storyMode ? new StoryMenuState() : new FreeplayState());
 			songList = [];
 			storyMode = false;
