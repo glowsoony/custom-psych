@@ -40,6 +40,9 @@ class Conductor extends flixel.FlxBasic {
 	public static var step:Int = 0;
 	public static var beat:Int = 0;
 	public static var measure:Int = 0;
+	static var _fStep:Float;
+	static var _fBeat:Float;
+	static var _fMeasure:Float;
 
 	static var _prevStep:Int = -1;
 	static var _prevBeat:Int = -1;
@@ -63,6 +66,9 @@ class Conductor extends flixel.FlxBasic {
 		step = 0;
 		beat = 0;
 		measure = 0;
+		_fStep = 0;
+		_fBeat = 0;
+		_fMeasure = 0;
 		bpmChanges = [];
 	}
 
@@ -114,13 +120,17 @@ class Conductor extends flixel.FlxBasic {
 		var bpmChange:BPMChange = getBPMChangeFromMS(rawTime);
 		if (bpmChange.bpm != bpm) bpm = bpmChange.bpm;
 
-		var curBeat:Int = bpmChange.beat + Math.floor((rawTime - bpmChange.time) / crotchet);
-		var curStep:Int = Math.floor(curBeat * 4);
-		var curMeasure:Int = Math.floor(curBeat * 0.25);
+		_fBeat = bpmChange.beat + ((rawTime - bpmChange.time) / crotchet);
+		_fStep = _fBeat * 4;
+		_fMeasure = _fBeat * 0.25;
 
-		if (_prevStep != curStep) onStep(step = curStep);
-		if (_prevBeat != curBeat) onBeat(beat = curBeat);
-		if (_prevMeasure != curMeasure) onMeasure(measure = curMeasure);
+		var nextStep:Int = Math.floor(_fStep);
+		var nextBeat:Int = Math.floor(_fBeat);
+		var nextMeasure:Int = Math.floor(_fMeasure);
+
+		if (step != nextStep) onStep(step = nextStep);
+		if (beat != nextBeat) onBeat(beat = nextBeat);
+		if (measure != nextMeasure) onStep(measure = nextMeasure);
 	}
 
 	public static function stop() {
