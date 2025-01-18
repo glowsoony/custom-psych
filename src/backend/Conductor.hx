@@ -130,7 +130,7 @@ class Conductor extends flixel.FlxBasic {
 
 		if (step != nextStep) onStep(step = nextStep);
 		if (beat != nextBeat) onBeat(beat = nextBeat);
-		if (measure != nextMeasure) onStep(measure = nextMeasure);
+		if (measure != nextMeasure) onMeasure(measure = nextMeasure);
 	}
 
 	public static function stop() {
