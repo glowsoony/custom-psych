@@ -1,0 +1,28 @@
+{
+	songs: [
+		{
+			name: 'Spookeez',
+			icon: 'kids',
+			color: 0xFF223344,
+		},
+		{
+			name: 'South',
+			icon: 'kids',
+			color: 0xFF223344,
+		},
+		{
+			name: 'Monster',
+			icon: 'monster',
+			color: 0xFF223344,
+		},
+	],
+
+	name: 'Spooky Kids',
+	weekBefore: 'week1',
+	background: 'stage',
+	characters: ['kids', 'gf', 'bf'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}

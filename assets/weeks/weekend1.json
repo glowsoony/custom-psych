@@ -1,0 +1,33 @@
+{
+	songs: [
+		{
+			name: 'Darnell',
+			icon: 'darnell',
+			color: 0xFF413CAE,
+		},
+		{
+			name: 'Lit Up',
+			icon: 'darnell',
+			color: 0xFF413CAE,
+		},
+		{
+			name: '2hot',
+			icon: 'darnell',
+			color: 0xFF413CAE,
+		},
+		{
+			name: "Blazin'",
+			icon: 'darnell',
+			color: 0xFF413CAE
+		},
+	],
+
+	name: 'Due Debts',
+	weekBefore: 'week7',
+	background: 'stage',
+	characters: ['darnell', 'nene', 'pico'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}

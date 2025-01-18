@@ -1,0 +1,28 @@
+{
+	songs: [
+		{
+			name: 'Satin Panties',
+			icon: 'mom',
+			color: 0xFFFC96D7,
+		},
+		{
+			name: 'High',
+			icon: 'mom',
+			color: 0xFFFC96D7,
+		},
+		{
+			name: 'MILF',
+			icon: 'mom',
+			color: 0xFFFC96D7,
+		},
+	],
+
+	name: 'Mommy Mearest',
+	weekBefore: 'week3',
+	background: 'stage',
+	characters: ['mom', 'gf', 'bf'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}

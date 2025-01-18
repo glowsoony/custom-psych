@@ -1,0 +1,28 @@
+{
+	songs: [
+		{
+			name: 'Bopeebo',
+			icon: 'dad',
+			color: 0xFF9271FD,
+		},
+		{
+			name: 'Fresh',
+			icon: 'dad',
+			color: 0xFF9271FD,
+		},
+		{
+			name: 'Dad Battle',
+			icon: 'dad',
+			color: 0xFF9271FD,
+		},
+	],
+
+	name: 'Daddy Dearest',
+	weekBefore: 'tutorial',
+	background: 'stage',
+	characters: ['dad', 'gf', 'bf'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}

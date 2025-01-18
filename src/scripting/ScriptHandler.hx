@@ -39,6 +39,7 @@ class ScriptHandler {
 				script.execute();
 
 				return script;
+
 			case "hx", "hxs", "hxc": 
 				var script:HScript = new HScript(dir);
 

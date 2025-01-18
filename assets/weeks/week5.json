@@ -1,0 +1,28 @@
+{
+	songs: [
+		{
+			name: 'Cocoa',
+			icon: 'parents',
+			color: 0xFFA0D1FF,
+		},
+		{
+			name: 'Eggnog',
+			icon: 'parents',
+			color: 0xFFA0D1FF,
+		},
+		{
+			name: 'Winter Horrorland',
+			icon: 'monster',
+			color: 0xFFA0D1FF,
+		},
+	],
+
+	name: '',
+	weekBefore: 'week4',
+	background: 'stage',
+	characters: ['parents', 'gf', 'bf'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}
