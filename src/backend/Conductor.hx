@@ -48,9 +48,9 @@ class Conductor extends flixel.FlxBasic {
 	static var _prevBeat:Int = -1;
 	static var _prevMeasure:Int = -1;
 
-	public static dynamic function onStep(value:Int) {}
-	public static dynamic function onBeat(value:Int) {}
-	public static dynamic function onMeasure(value:Int) {}
+	public static dynamic function onStep(value:Int):Void {}
+	public static dynamic function onBeat(value:Int):Void {}
+	public static dynamic function onMeasure(value:Int):Void {}
 
 	public function new() {
 		super();
@@ -60,15 +60,13 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	public static function reset() {
-		time = 0.0;
-		rawTime = 0.0;
+		playing = false;
+		time = rawTime = 0.0;
+		_fStep = step = 0;
+		_fBeat = beat = 0;
+		_fMeasure = measure = 0;
+
 		songOffset = 0.0;
-		step = 0;
-		beat = 0;
-		measure = 0;
-		_fStep = 0;
-		_fBeat = 0;
-		_fMeasure = 0;
 		bpmChanges = [];
 	}
 

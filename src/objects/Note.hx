@@ -182,7 +182,9 @@ class Note extends FlxSprite {
 		path ??= '';
 
 		if (path.length == 0) {
-			path = PlayState.song != null ? PlayState.song.arrowSkin : '';
+			if (PlayState.song == null || PlayState.song.arrowSkin.length == 0) {
+				path = 'noteSkins/${Settings.data.noteSkin.toLowerCase().replace(' ', '-')}';
+			} else path = PlayState.song.arrowSkin;
 		}
 
 		if (!Paths.exists('images/$path.png')) path = Strumline.default_skin;

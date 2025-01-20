@@ -4,7 +4,7 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 	public static final keyCount:Int = 4;
 	public static var size:Float = Settings.data.strumlineSize;
 	public var skin(default, set):String;
-	public static inline var default_skin:String = 'noteSkins/default';
+	public static inline var default_skin:String = 'noteSkins/funkin';
 	function set_skin(value:String):String {
 		skin = value;
 		regenerate();

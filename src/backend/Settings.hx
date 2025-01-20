@@ -40,7 +40,7 @@ class SaveVariables {
 	var judgePosition:Array<Float> = [300, 200];
 
 	var flashingLights:Bool = true;
-	var noteSkin:String = 'Default';
+	var noteSkin:String = 'Funkin';
 	var gameVisibility:Int = 100;
 	var cameraZooms:Bool = true;
 	var judgementAlpha:Float = 1;
