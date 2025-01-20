@@ -37,7 +37,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 
 		addOption(new Option(
 			'Ghost Tapping',
-			'write the description for this later because im dum lol lmao',
+			'Whether you get punished or not for pressing a key that has no hittable notes.',
 			'ghostTapping',
 			BOOL
 		));
