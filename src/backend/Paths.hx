@@ -115,7 +115,7 @@ class Paths {
 		// if there are any other mods active
 		// and the file doesn't exist in the currently played mod
 		// check the first mod in the list
-		if (Mods.list.length > 1 && !FileSystem.exists('$mainDirectory/$path')) {
+		if (Mods.list.length > 0 && !FileSystem.exists('$mainDirectory/$path')) {
 			mainDirectory = 'mods/${Mods.getActive()[0].id}';
 		}
 
