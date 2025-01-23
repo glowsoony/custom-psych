@@ -3352,7 +3352,7 @@
 		],
 		"validScore": true,
 		"bpm": 180,
-		"needsVoices": true,
+		"needsVoices": false,
 		"song": "Blazin'"
 	}
 }

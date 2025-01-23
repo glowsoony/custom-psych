@@ -183,7 +183,7 @@ class Note extends FlxSprite {
 
 		if (path.length == 0) {
 			if (PlayState.song == null || PlayState.song.arrowSkin.length == 0) {
-				path = 'noteSkins/${Settings.data.noteSkin.toLowerCase().replace(' ', '-')}';
+				path = 'noteSkins/${Util.format(Settings.data.noteSkin)}';
 			} else path = PlayState.song.arrowSkin;
 		}
 

@@ -308,8 +308,8 @@ class PlayState extends MusicState {
 		add(gf = new Character(stage.spectator.x, stage.spectator.y, 'gf', false));
 		gf.visible = stage.isSpectatorVisible;
 
-		add(dad = new Character(stage.opponent.x, stage.opponent.y, '', false));
-		add(bf = new Character(stage.player.x, stage.player.y));
+		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.player2, false));
+		add(bf = new Character(stage.player.x, stage.player.y, song.player1));
 
 		stage.create();
 
@@ -726,7 +726,7 @@ class PlayState extends MusicState {
 
 	// ai note hitting
 	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
-		if (!note.canHit || note.ignore || note.breakOnHit || note.time >= Conductor.rawTime) return;
+		if (!note.canHit || note.ignore || note.breakOnHit || note.time > Conductor.rawTime) return;
 
 		final noteFunc = note.player ? noteHit : opponentNoteHit;
 

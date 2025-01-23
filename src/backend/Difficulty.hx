@@ -9,9 +9,9 @@ class Difficulty {
 	public static var list:Array<String> = default_list;
 	public static var current:String = default_current;
 
+	// just a `Util.format` wrapper for `Difficulty.current`
 	inline public static function format(?name:String):String {
-		name ??= current;
-		return name.trim().toLowerCase().replace(' ', '-');
+		return Util.format(name ?? current);
 	}
 
 	public static function loadFromWeek(week:WeekFile):Array<String> {

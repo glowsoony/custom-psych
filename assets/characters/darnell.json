@@ -1,0 +1,86 @@
+{
+	animations: [
+		{
+			name: 'idle',
+			id: 'BF idle dance', 
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [0, 0]
+		},
+		{
+			name: 'singLEFT',
+			id: 'BF NOTE LEFT0',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [11, -7]
+		},
+		{
+			name: 'singDOWN',
+			id: 'BF NOTE DOWN0',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-13, -52]
+		},
+		{
+			name: 'singUP',
+			id: 'BF NOTE UP0',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-41, 28]
+		},
+		{
+			name: 'singRIGHT',
+			id: 'BF NOTE RIGHT0',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-45, -6]
+		},
+		{
+			name: 'missLEFT',
+			id: 'BF NOTE LEFT MISS',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [8, 18]
+		},
+		{
+			name: 'missDOWN',
+			id: 'BF NOTE DOWN MISS',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-13, -22]
+		},
+		{
+			name: 'missUP',
+			id: 'BF NOTE UP MISS',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-38, 24]
+		},
+		{
+			name: 'missRIGHT',
+			id: 'BF NOTE RIGHT MISS',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-40, 21]
+		}
+	],
+
+	antialiasing: true,
+	singDuration: 4,
+	scale: [1, 1],
+	healthColor: 0xFF735EB0,
+	sheets: 'characters/bf',
+	icon: 'darnell',
+	cameraOffset: [100, -100],
+	
+	flipX: true
+}

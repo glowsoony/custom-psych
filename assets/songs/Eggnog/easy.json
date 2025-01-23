@@ -2,7 +2,7 @@
 	"song": {
 		"speed": 1.4,
 		"player1": "bf-christmas",
-		"player2": "parents-christmas",
+		"player2": "parents",
 		"notes": [
 			{
 				"lengthInSteps": 16,
