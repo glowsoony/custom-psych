@@ -40,7 +40,7 @@ class Stage {
 	public var isSpectatorVisible:Bool = true;
 
 	public function new(name:String) {
-		_file = getFile('assets/stages/$name.json');
+		_file = getFile('stages/$name.json');
 
 		player.set(_file.playerPos[0], _file.playerPos[1]);
 		spectator.set(_file.spectatorPos[0], _file.spectatorPos[1]);
@@ -157,9 +157,9 @@ class Stage {
 
 	public static function getFile(path:String):StageFile {
 		var file:StageFile = createDummyFile();
-		if (!FileSystem.exists(path)) return file;
+		if (!Paths.exists(path)) return file;
 		
-		var data = Json5.parse(File.getContent(path));
+		var data = Json5.parse(Paths.getFileContent(path));
 		for (property in Reflect.fields(data)) {
 			if (!Reflect.hasField(file, property)) continue;
 			Reflect.setField(file, property, Reflect.field(data, property));
