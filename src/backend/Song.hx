@@ -57,7 +57,7 @@ class Song {
 
 			player1: 'bf',
 			player2: 'bf',
-			gfVersion: 'bf',
+			gfVersion: 'gf',
 			stage: 'stage'
 		}
 	}

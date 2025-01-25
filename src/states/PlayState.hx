@@ -985,10 +985,11 @@ class PlayState extends MusicState {
 
 		if (comboBreaks == 0) {
 			if (bads > 0 || shits > 0) type = 'FC';
-			else if (goods == 1) type = 'BF';
-			else if (goods >= 2) type = 'SDG';
-			else if (goods >= 10) type = 'GFC';
-			else if (sicks > 0) type = 'PFC';
+			else if (goods > 0) {
+				if (goods == 1) type = 'BF';
+				else if (goods <= 9) type = 'SDG';
+				else if (goods >= 10) type = 'GFC';
+			} else type = 'PFC';
 		} else {
 			if (comboBreaks == 1) type = 'MF';
 			else if (comboBreaks <= 9) type = 'SDCB';
