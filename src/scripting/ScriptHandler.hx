@@ -40,7 +40,7 @@ class ScriptHandler {
 
 				return script;
 
-			case "hx", "hxs", "hxc": 
+			case "hx": 
 				var script:HScript = new HScript(dir);
 
 				list.push(script);

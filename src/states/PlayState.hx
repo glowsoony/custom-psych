@@ -296,7 +296,8 @@ class PlayState extends MusicState {
 			case 'phillyBlazin': new PhillyBlazin();
 			*/
 		}
-		//ScriptHandler.loadFile('assets/stages/$stageName');
+		ScriptHandler.loadFile('assets/stages/$stageName.lua');
+		ScriptHandler.loadFile('assets/stages/$stageName.hx');
 
 		cameraSpeed = stage.cameraSpeed;
 
@@ -932,7 +933,7 @@ class PlayState extends MusicState {
 	}
 
 	public function moveCamera(?measure:Int = 0) {
-		if (measure < 0) measure = 0;
+		measure = Math.floor(Math.max(0, measure));
 		if (song.notes[measure] == null) return;
 
 		if (gf != null && song.notes[measure].gfSection) {
