@@ -239,6 +239,9 @@ class PlayState extends MusicState {
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 		moveCamera();
 
+		camGame.follow(camFollow, LOCKON, 0);
+		camGame.snapToTarget();
+
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
 		camHUD.bgColor.alphaFloat = 1 - (Settings.data.gameVisibility * 0.01);
 
@@ -300,13 +303,10 @@ class PlayState extends MusicState {
 		ScriptHandler.loadFile('stages/$stageName.hx');
 
 		cameraSpeed = stage.cameraSpeed;
-
-		camGame.follow(camFollow, LOCKON, 0);
-		camGame.zoom = stage.zoom;
-		camGame.snapToTarget();
+		camGame.zoom = defaultCamZoom = stage.zoom;
 
 		// characters
-		add(gf = new Character(stage.spectator.x, stage.spectator.y, 'gf', false));
+		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.gfVersion, false));
 		gf.visible = stage.isSpectatorVisible;
 
 		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.player2, false));
@@ -668,7 +668,7 @@ class PlayState extends MusicState {
 		if (!Settings.data.cameraZooms) return;
 
 		final scalingMult:Float = Math.exp(-elapsed * 6 * playbackRate);
-		camGame.zoom = FlxMath.lerp(1, camGame.zoom, scalingMult);
+		camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, scalingMult);
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
 	}
 

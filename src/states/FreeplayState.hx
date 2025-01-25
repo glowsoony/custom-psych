@@ -81,6 +81,9 @@ class FreeplayState extends MusicState {
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
 			alphabet.snapToPosition();
 
+			// otherwise the icons won't load properly
+			Mods.current = song.folder;
+
 			var icon:CharIcon = new CharIcon(song.icon);
 			icon.visible = icon.active = false;
 			grpIcons.add(icon);
@@ -230,6 +233,8 @@ class FreeplayState extends MusicState {
 			item.alpha = num == curSelected ? 1 : 0.6;
 			grpIcons.members[num].alpha = num == curSelected ? 1 : 0.6;
 		}
+
+		Mods.current = songList[curSelected].folder; // sigh
 
 		var newColour:Int = songList[curSelected].colour;
 		if (newColour != intendedColour) {

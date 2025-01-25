@@ -99,9 +99,9 @@ class Stage {
 	// functions copy pasted from Paths.hx
 	// to support stage directories
 	// like `assets/week2/...` `assets/week4/...` etc
-	final function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
+	final function image(key:String, ?subFolder:String = 'images'):FlxGraphic {
 		subFolder = redirectSubFolder(subFolder);
-		return Paths.image(key, subFolder, allowGPU);
+		return Paths.image(key, subFolder);
 	}
 
 	final function audio(key:String, ?subFolder:String, ?beepIfNull:Bool = true):Sound {

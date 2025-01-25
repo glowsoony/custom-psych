@@ -2,25 +2,24 @@ package objects;
 
 import flixel.graphics.FlxGraphic;
 
-
 class CharIcon extends FunkinSprite {
 	public var name:String;
 	public var player(default, set):Bool;
 
 	var iconOffsets:Array<Float> = [0, 0];
 
-	public function new(name:String, ?player:Bool = false, ?allowGPU:Bool = true) {
+	public function new(name:String, ?player:Bool = false) {
 		super(x, y);
 		change(name);
 		this.player = player;
 	}
 
-	function change(value:String, ?allowGPU:Bool = true):String {
+	function change(value:String):String {
 		if (!Paths.exists('images/icons/$value.png')) value = 'face';
-		var graphic = Paths.image('icons/$value', allowGPU);
+		var graphic:FlxGraphic = Paths.image('icons/$value');
 		var size:Float = Math.round(graphic.width / graphic.height);
 
-		loadGraphic(Paths.image('icons/$value'), true, 150, 150);
+		loadGraphic(graphic, true, 150, 150);
 		animation.add(value, [for (i in 0...frames.frames.length) i], 0, false);
 		animation.play(value);
 

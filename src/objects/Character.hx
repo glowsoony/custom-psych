@@ -42,7 +42,10 @@ class Character extends FunkinSprite {
 		super(x, y);
 
 		var path:String = Paths.get('characters/$name.json');
-		if (!FileSystem.exists(path)) name = default_name;
+		if (!FileSystem.exists(path)) {
+			trace('character path "$path" doesn\'t exist');
+			name = default_name;
+		}
 		path = Paths.get('characters/$name.json');
 
 		_file = getFile(path);

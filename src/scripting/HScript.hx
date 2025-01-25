@@ -17,6 +17,7 @@ class HScript extends Iris implements IScript {
 			ScriptHandler.list.remove(this);
 		});
 
+
 		set('Settings', Settings);
 		set('FlxG', FlxG);
 		set('Controls', Controls);
@@ -24,7 +25,12 @@ class HScript extends Iris implements IScript {
 		set('Paths', Paths);
 		set('ScriptHandler', ScriptHandler);
 		set('PlayState', PlayState);
+		set('FlxSprite', FlxSprite);
 		set('game', PlayState.self);
+
+		set('addBehindObject', function(obj:FlxBasic, target:FlxBasic):FlxBasic {
+			return PlayState.self.insert(PlayState.self.members.indexOf(target), obj);
+		});
 	}
 	
 	override function call(func:String, ?args:Array<Dynamic>):IrisCall {
