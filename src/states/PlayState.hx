@@ -989,7 +989,7 @@ class PlayState extends MusicState {
 				if (goods == 1) type = 'BF';
 				else if (goods <= 9) type = 'SDG';
 				else if (goods >= 10) type = 'GFC';
-			} else type = 'PFC';
+			} else if (sicks > 0) type = 'PFC';
 		} else {
 			if (comboBreaks == 1) type = 'MF';
 			else if (comboBreaks <= 9) type = 'SDCB';

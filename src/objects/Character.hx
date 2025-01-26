@@ -89,10 +89,7 @@ class Character extends FunkinSprite {
 	var _singTimer:Float = 0.0;
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-
-		if (!autoIdle) return;
-
-		if (dancing) return;
+		if (!autoIdle || dancing) return;
 
 		_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
 		if (_singTimer <= 0.0) dance(true);
