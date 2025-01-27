@@ -309,6 +309,11 @@ class PlayState extends MusicState {
 		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.gfVersion, false));
 		gf.visible = stage.isSpectatorVisible;
 
+		// fix for the camera starting off in the stratosphere
+		camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
+		camFollow.x += gf.cameraOffset.x;
+		camFollow.y += gf.cameraOffset.y;
+
 		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.player2, false));
 		add(bf = new Character(stage.player.x, stage.player.y, song.player1));
 
@@ -336,7 +341,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		Conductor.rawTime -= (Conductor.crotchet * 5) + Conductor.songOffset;
+		Conductor.rawTime -= (Conductor.crotchet * 5);
 		countdown.start();
 
 		FlxG.mouse.visible = false;
@@ -743,7 +748,6 @@ class PlayState extends MusicState {
 		}
 
 		// normal notes
-		
 		note.wasHit = true;
 		noteFunc(note);
 		note.destroy();
@@ -773,6 +777,7 @@ class PlayState extends MusicState {
 				// ignore tails completely
 				if (isTail && parent.wasHit) {
 					note.destroy();
+					trace('why does this not destroy the tail ???? i don\'t miss it but it doesn\'t get destroyed');
 					notes.remove(note);
 					return;
 				}
@@ -888,6 +893,9 @@ class PlayState extends MusicState {
 
 	override function beatHit(beat:Int) {
 		ScriptHandler.call('beatHit', [beat]);
+
+		countdown.beat(beat);
+
 		iconP1.scale.set(1.2, 1.2);
 		iconP1.updateHitbox();
 

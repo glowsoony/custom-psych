@@ -6,10 +6,18 @@ class Countdown extends FunkinSprite {
 	public dynamic function onStart():Void {}
 	public dynamic function onTick(tick:Int):Void {
 		switch (tick) {
-			case 4: FlxG.sound.play(Paths.sound('intro3'));
-			case 3: FlxG.sound.play(Paths.sound('intro2'));
-			case 2: FlxG.sound.play(Paths.sound('intro1'));
-			case 1: FlxG.sound.play(Paths.sound('introGo'));
+			case 4: 
+				FlxG.sound.play(Paths.sound('intro3'));
+				animation.frameIndex = 0;
+			case 3: 
+				FlxG.sound.play(Paths.sound('intro2'));
+				animation.frameIndex = 1;
+			case 2: 
+				FlxG.sound.play(Paths.sound('intro1'));
+				animation.frameIndex = 2;
+			case 1: 
+				FlxG.sound.play(Paths.sound('introGo'));
+				animation.frameIndex = 3;
 		}
 	}
 	public dynamic function onFinish():Void {}
@@ -27,6 +35,7 @@ class Countdown extends FunkinSprite {
 
 		alpha = 0;
 		active = true;
+		_lastTick = ticks;
 	}
 
 	public function start():Void {
@@ -35,25 +44,27 @@ class Countdown extends FunkinSprite {
 		finished = false;
 		active = true;
 		onStart();
-
-		timer = new FlxTimer().start((Conductor.crotchet * 0.001) / Conductor.rate, function(_) {
-			onTick(timer.loopsLeft);
-
-			if (timer.loopsLeft > 0) {
-				animation.frameIndex++;
-				alpha = 1;
-			} else {
-				finished = true;
-				active = false;
-				alpha = 0;
-				onFinish();
-			}
-		}, ticks + 1);
 	}
 
+	var _lastTick:Int;
 	override function update(elapsed:Float):Void {
 		if (finished) return;
 		alpha -= elapsed / (Conductor.crotchet * 0.001);
+	}
+
+	public function beat(curBeat:Int) {
+		if (finished || curBeat < -ticks) return;
+
+		_lastTick = Math.floor(Math.abs(curBeat));
+		onTick(_lastTick);
+		alpha = 1;
+
+		if (_lastTick == 0) {
+			finished = true;
+			active = false;
+			alpha = 0;
+			onFinish();
+		}
 	}
 
 	public function stop():Void {
