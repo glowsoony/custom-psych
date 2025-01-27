@@ -240,7 +240,7 @@ class PlayState extends MusicState {
 		moveCamera();
 
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
-		camHUD.bgColor.alphaFloat = 1 - (Settings.data.gameVisibility * 0.01);
+		camHUD.bgColor.alphaFloat = 1 - (Settings.data.gameVisibility / 100);
 
 		// to prevent more lag when you can't even see the game camera
 		if (Settings.data.gameVisibility <= 0) {
@@ -516,7 +516,6 @@ class PlayState extends MusicState {
 			// instead of randomizing every note's lane individually
 			// because chords were buggy asf lmao
 			if (Settings.data.gameplaySettings['randomizedNotes']) note.lane = randomizedLanes[note.lane];
-
 			if (!Settings.data.gameplaySettings['sustains']) note.length = 0;
 
 			var daBPM:Float = Conductor.getBPMChangeFromMS(note.time).bpm;

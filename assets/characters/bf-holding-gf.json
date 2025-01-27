@@ -1,0 +1,102 @@
+{
+	animations: [
+		{
+			name: 'idle',
+			id: 'BF idle dance w gf', 
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [0, 0]
+		},
+		{
+			name: 'singLEFT',
+			id: 'sing left',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [10, 2]
+		},
+		{
+			name: 'singDOWN',
+			id: 'sing down',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-16, -12]
+		},
+		{
+			name: 'singUP',
+			id: 'sing up',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-43, 9]
+		},
+		{
+			name: 'singRIGHT',
+			id: 'sing right',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-45, 20]
+		},
+		{
+			name: 'missLEFT',
+			id: 'miss left',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [6, 2]
+		},
+		{
+			name: 'missDOWN',
+			id: 'miss down',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-6, -13]
+		},
+		{
+			name: 'missUP',
+			id: 'miss up',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-35, 3]
+		},
+		{
+			name: 'missRIGHT',
+			id: 'miss right',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [-35, 32]
+		},
+		{
+			name: 'hey',
+			id: 'BF hey w gf',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [4, 90]
+		},
+		{
+			name: 'catch',
+			id: 'BF catches GF',
+			indices: [],
+			framerate: 24,
+			looped: true,
+			offsets: [4, 90]
+		}
+	],
+
+	antialiasing: true,
+	singDuration: 4,
+	scale: [1, 1],
+	healthColor: 0xFF31B0D1,
+	sheets: 'characters/bfAndGF',
+	icon: 'bf',
+	cameraOffset: [100, -100],
+	
+	flipX: true
+}

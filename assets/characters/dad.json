@@ -2,7 +2,7 @@
 	animations: [
 		{
 			name: 'idle',
-			id: 'BF idle dance', 
+			id: 'idle', 
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -10,7 +10,7 @@
 		},
 		{
 			name: 'singLEFT',
-			id: 'BF NOTE LEFT0',
+			id: 'singLEFT',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -18,7 +18,7 @@
 		},
 		{
 			name: 'singDOWN',
-			id: 'BF NOTE DOWN0',
+			id: 'singDOWN',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -26,7 +26,7 @@
 		},
 		{
 			name: 'singUP',
-			id: 'BF NOTE UP0',
+			id: 'singUP',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -34,43 +34,11 @@
 		},
 		{
 			name: 'singRIGHT',
-			id: 'BF NOTE RIGHT0',
+			id: 'singRIGHT',
 			indices: [],
 			framerate: 24,
 			looped: false,
 			offsets: [-45, -6]
-		},
-		{
-			name: 'missLEFT',
-			id: 'BF NOTE LEFT MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [8, 18]
-		},
-		{
-			name: 'missDOWN',
-			id: 'BF NOTE DOWN MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-13, -22]
-		},
-		{
-			name: 'missUP',
-			id: 'BF NOTE UP MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-38, 24]
-		},
-		{
-			name: 'missRIGHT',
-			id: 'BF NOTE RIGHT MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-40, 21]
 		}
 	],
 
@@ -78,9 +46,9 @@
 	singDuration: 4,
 	scale: [1, 1],
 	healthColor: 0xFFAF66CE,
-	sheets: 'characters/bf',
+	sheets: 'characters/daddyDearest',
 	icon: 'dad',
 	cameraOffset: [100, -100],
 	
-	flipX: true
+	flipX: false
 }
