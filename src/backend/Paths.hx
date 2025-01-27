@@ -203,16 +203,17 @@ class Paths {
 		return get(path, subFolder);
 	}
 
-	public static dynamic function getMultiAtlas(keys:Array<String>, ?subFolder:String = null):FlxAtlasFrames {
-		var parentFrames:FlxAtlasFrames = cast Paths.sparrowAtlas(keys[0].trim());
+	public static dynamic function multiAtlas(keys:Array<String>, ?subFolder:String = null):FlxAtlasFrames {
+		var parentFrames:FlxAtlasFrames = cast sparrowAtlas(keys[0].trim());
 		if (keys.length < 1) return parentFrames;
 
 		var original:FlxAtlasFrames = parentFrames;
 		parentFrames = new FlxAtlasFrames(parentFrames.parent);
 		parentFrames.addAtlas(original, true);
 		for (i in 1...keys.length) {
-			var extraFrames:FlxAtlasFrames = cast Paths.sparrowAtlas(keys[i].trim(), subFolder);
-			if (extraFrames != null) parentFrames.addAtlas(extraFrames, true);
+			var extraFrames:FlxAtlasFrames = cast sparrowAtlas(keys[i].trim(), subFolder);
+			if (extraFrames == null) continue;
+			parentFrames.addAtlas(extraFrames, true);
 		}
 
 		return parentFrames;

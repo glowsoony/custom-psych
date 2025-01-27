@@ -29,7 +29,7 @@ class Character extends FunkinSprite {
 	public var singDuration:Float = 4;
 	public var danceInterval:Int = 2;
 	public var healthColor:Int = 0xFFA1A1A1;
-	public var sheets:String;
+	public var sheets:Array<String> = [];
 	public var icon:String = '';
 	public var cameraOffset:FlxPoint = FlxPoint.get(0, 0);
 	public var dancer:Bool = false;
@@ -53,16 +53,13 @@ class Character extends FunkinSprite {
 		this.name = name;
 		this.singDuration = _file.singDuration;
 		this.healthColor = _file.healthColor;
-		this.sheets = _file.sheets;
+		this.sheets = _file.sheets.split(',');
 		this.icon = _file.icon;
 		this.danceInterval = _file.danceInterval;
 		this.cameraOffset.set(_file.cameraOffset[0], _file.cameraOffset[1]);
-		flipX = (_file.flipX != player);
+		flipX = _file.flipX != player;
 
-		scale.set(_file.scale[0], _file.scale[1]);
-		updateHitbox();
-
-		frames = Paths.sparrowAtlas(sheets);
+		frames = Paths.multiAtlas(this.sheets);
 		for (anim in _file.animations) {
 			if (anim.indices.length == 0) {
 				animation.addByPrefix(anim.name, anim.id, anim.framerate, anim.looped);
@@ -72,6 +69,9 @@ class Character extends FunkinSprite {
 
 			offsetMap.set(anim.name, anim.offsets);
 		}
+
+		scale.set(_file.scale[0], _file.scale[1]);
+		updateHitbox();
 
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
 			danceList = ['danceLeft', 'danceRight'];
