@@ -239,9 +239,6 @@ class PlayState extends MusicState {
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 		moveCamera();
 
-		camGame.follow(camFollow, LOCKON, 0);
-		camGame.snapToTarget();
-
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
 		camHUD.bgColor.alphaFloat = 1 - (Settings.data.gameVisibility * 0.01);
 
@@ -314,6 +311,9 @@ class PlayState extends MusicState {
 		camFollow.x += gf.cameraOffset.x;
 		camFollow.y += gf.cameraOffset.y;
 
+		camGame.follow(camFollow, LOCKON, 0);
+		camGame.snapToTarget();
+
 		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.player2, false));
 		add(bf = new Character(stage.player.x, stage.player.y, song.player1));
 
@@ -341,7 +341,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		Conductor.rawTime -= (Conductor.crotchet * 5);
+		Conductor.rawTime -= (Conductor.crotchet * 5) + Conductor.songOffset;
 		countdown.start();
 
 		FlxG.mouse.visible = false;

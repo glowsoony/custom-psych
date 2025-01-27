@@ -91,13 +91,12 @@ class Conductor extends flixel.FlxBasic {
 			return;
 		}
 
-		rawTime = inst.time - songOffset;
-
 		if (inst.time == _lastTime) _resyncTimer += addition;
 		else _resyncTimer = 0;
-
-		time = rawTime + _resyncTimer;
 		_lastTime = inst.time;
+
+		rawTime = inst.time - songOffset;
+		time = rawTime + _resyncTimer;
 	}
 
 	public static dynamic function syncVocals() {
