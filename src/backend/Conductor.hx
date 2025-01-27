@@ -85,9 +85,9 @@ class Conductor extends flixel.FlxBasic {
 	public static dynamic function syncTime(delta:Float):Void {
 		if (!playing) return;
 		
-		final addition:Float = (delta * 1000) * rate;
+		final addition:Float = delta * 1000;
 		if (inst == null || !inst.playing) {
-			time = rawTime += addition;
+			time = rawTime += addition * rate;
 			return;
 		}
 
@@ -120,7 +120,7 @@ class Conductor extends flixel.FlxBasic {
 
 		_fBeat = bpmChange.beat + ((rawTime - bpmChange.time) / crotchet);
 		_fStep = _fBeat * 4;
-		_fMeasure = _fBeat * 0.25;
+		_fMeasure = _fBeat / 4;
 
 		var nextStep:Int = Math.floor(_fStep);
 		var nextBeat:Int = Math.floor(_fBeat);
@@ -243,13 +243,13 @@ class Conductor extends flixel.FlxBasic {
 		var curBeats:Int = 0;
 		var curTime:Float = 0.0;
 
-		for (_ => section in song.notes) {
+		for (section in song.notes) {
 			if (section.changeBPM && section.bpm != curBPM) {
 				curBPM = section.bpm;
 				bpmChanges.push({
 					beat: curBeats,
 					time: curTime,
-					bpm: curBPM,
+					bpm: curBPM
 				});
 			}
 

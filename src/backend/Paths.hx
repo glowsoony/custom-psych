@@ -130,37 +130,19 @@ class Paths {
 	}
 
 	// images
-	public static dynamic function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
-		allowGPU = Settings.data.gpuCaching ? allowGPU : false;
-
+	public static dynamic function image(key:String, ?subFolder:String = 'images'):FlxGraphic {
 		if (key.lastIndexOf('.') < 0) key += '.$IMAGE_EXT';
 		key = Language.getFileTranslation(key, subFolder);
-		
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
 		if (!FileSystem.exists(key)) return null;
 		if (!localTrackedAssets.contains(key)) localTrackedAssets.push(key);
 
-		return cacheBitmap(key, BitmapData.fromFile(key), allowGPU);
+		return cacheBitmap(key, BitmapData.fromFile(key));
 	}
 
-	public static dynamic function cacheBitmap(key:String, bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic {
-		if (allowGPU && bitmap.image != null) {
-			@:privateAccess
-			if (bitmap.__texture == null) {
-				bitmap.image.premultiplied = true;
-				bitmap.getTexture(FlxG.stage.context3D);
-			}
-	
-			bitmap.getSurface();
-			bitmap.disposeImage();
-			bitmap.image.data = null;
-
-			@:privateAccess {
-				bitmap.image = null;
-				bitmap.readable = true;
-			}
-		}
+	public static dynamic function cacheBitmap(key:String, bitmap:BitmapData):FlxGraphic {
+		bitmap.disposeImage();
 
 		final graph:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, key);
 		graph.persist = true;
