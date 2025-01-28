@@ -1,0 +1,9 @@
+name: Bug
+description: If a bug/glitch was found somewhere in the game while playing/modding.
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "test"
+    validations:
+      required: false
