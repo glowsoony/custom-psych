@@ -11,7 +11,7 @@ class PsychUICheckBox extends FlxSpriteGroup {
 	public var checked(default, set):Bool = false;
 	public dynamic function onClick():Void {}
 
-	public function new(x:Float, y:Float, label:String, ?textWid:Int = 100, ?callback:Void->Void) {
+	public function new(x:Float, y:Float, label:String, ?textWid:Int = 100, ?callback:Void -> Void) {
 		super(x, y);
 
 		box = new FlxSprite();
@@ -22,7 +22,7 @@ class PsychUICheckBox extends FlxSpriteGroup {
 		text.y += box.height / 2 - text.height / 2;
 		add(text);
 
-		this.onClick = callback;
+		if (callback != null) this.onClick = callback;
 	}
 
 	public function boxGraphic() {

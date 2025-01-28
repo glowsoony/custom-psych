@@ -132,6 +132,8 @@ class MainMenuState extends MusicState {
 
 		if (Controls.justPressed('back')) MusicState.switchState(new TitleState());
 
+		if (FlxG.keys.justPressed.SEVEN) MusicState.switchState(new states.editors.CharacterEditorState());
+
 		super.update(elapsed);
 	}
 
