@@ -25,7 +25,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	var icon:CharIcon;
 
 	var anims(get, never):Array<CharacterAnim>;
-	var get_anims():Array<CharacterAnim> return character.animationList;
+	function get_anims():Array<CharacterAnim> return character.animationList;
 
 	var animsTxt:FlxText;
 	var curAnim = 0;
