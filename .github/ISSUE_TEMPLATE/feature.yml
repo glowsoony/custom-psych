@@ -1,0 +1,9 @@
+name: Feature
+description: Suggest a feature/change to be added to the game.
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "test"
+    validations:
+      required: false
