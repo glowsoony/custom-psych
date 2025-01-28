@@ -14,7 +14,7 @@ class CharIcon extends FunkinSprite {
 		this.player = player;
 	}
 
-	function change(value:String):String {
+	public function change(value:String):String {
 		if (!Paths.exists('images/icons/$value.png')) value = 'face';
 		var graphic:FlxGraphic = Paths.image('icons/$value');
 		var size:Float = Math.round(graphic.width / graphic.height);

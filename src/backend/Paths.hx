@@ -142,7 +142,7 @@ class Paths {
 	}
 
 	public static dynamic function cacheBitmap(key:String, bitmap:BitmapData):FlxGraphic {
-		bitmap.disposeImage();
+		//bitmap.disposeImage();
 
 		final graph:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, key);
 		graph.persist = true;

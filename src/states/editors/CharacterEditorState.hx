@@ -1,9 +1,11 @@
 package states.editors;
 
 import backend.ui.*;
+import objects.Bar;
+import objects.Character;
+import objects.CharIcon;
 
-class CharacterEditorState extends MusicState {
-
+class CharacterEditorState extends MusicState implements PsychUIEventHandler.PsychUIEvent {
     override function create():Void {
         super.create();
         Conductor.stop();
@@ -14,6 +16,9 @@ class CharacterEditorState extends MusicState {
 
 		makeUI();
     }
+
+	var healthBar:Bar;
+	var icon:CharIcon;
 
 	var UI_box:PsychUIBox;
 	var UI_characterbox:PsychUIBox;
@@ -26,6 +31,14 @@ class CharacterEditorState extends MusicState {
 
 		add(UI_characterbox);
 		add(UI_box);
+
+		healthBar = new Bar(30, FlxG.height - 75);
+		healthBar.scrollFactor.set();
+		add(healthBar);
+
+		icon = new CharIcon('face');
+		icon.y = FlxG.height - 150;
+		add(icon);
 	
 		addGhostUI();
 		addSettingsUI();
@@ -34,6 +47,16 @@ class CharacterEditorState extends MusicState {
 
 		UI_box.selectedName = 'Settings';
 		UI_characterbox.selectedName = 'Character';
+
+		var tipText:FlxText = new FlxText(FlxG.width - 300, FlxG.height - 24, 300, "Press F1 for Help", 20);
+		tipText.setFormat(null, 16, FlxColor.WHITE, RIGHT, OUTLINE_FAST, FlxColor.BLACK);
+		tipText.borderColor = FlxColor.BLACK;
+		tipText.scrollFactor.set();
+		tipText.borderSize = 1;
+		tipText.active = false;
+		add(tipText);
+
+		updateHealthBar();
 	}
 
 	var ghostAlpha:Float = 0.6;
@@ -153,10 +176,14 @@ var imageInputText:PsychUIInputText;
 		});
 
 		var decideIconColor:PsychUIButton = new PsychUIButton(reloadImage.x, reloadImage.y + 30, "Get Icon Colour", function() {
+			var newColor:FlxColor = Util.dominantColor(icon);
 
+			trace(newColor.toHexString());
+			healthColorInputText.text = newColor.toHexString();
+			updateHealthBar();
 		});
 
-		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 36, 75, 'piss', 8);
+		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 36, 75, icon.name, 8);
 
 		vocalsInputText = new PsychUIInputText(15, healthIconInputText.y + 35, 75, '', 8);
 
@@ -202,11 +229,26 @@ var imageInputText:PsychUIInputText;
 		tab_group.add(positionCameraXStepper);
 		tab_group.add(positionCameraYStepper);
 		tab_group.add(healthColorInputText);
-/*		tab_group.add(healthColorStepperR);
-		tab_group.add(healthColorStepperG);
-		tab_group.add(healthColorStepperB);*/
 		tab_group.add(saveCharacterButton);
 	}
+
+	function updateHealthBar() {
+		if (healthBar == null) return;
+		healthBar.leftBar.color = healthBar.rightBar.color = Std.parseInt(healthColorInputText.text);
+	}
+
+	public function UIEvent(id:String, sender:Dynamic) {
+		if (id == PsychUIInputText.CHANGE_EVENT) {
+			if (sender == healthColorInputText) {
+				updateHealthBar();
+			}
+
+			if (sender == healthIconInputText) {
+				icon.change(healthIconInputText.text);
+			}
+		}	
+	}
+
 
     override function update(elapsed:Float):Void {
         super.update(elapsed);
