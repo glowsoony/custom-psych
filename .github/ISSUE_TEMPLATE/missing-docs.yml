@@ -4,6 +4,6 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: "Where?"
+      label: "test"
     validations:
-      required: true
+      required: false
