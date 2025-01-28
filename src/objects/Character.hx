@@ -35,6 +35,8 @@ class Character extends FunkinSprite {
 	public var dancer:Bool = false;
 	public var autoIdle:Bool = true;
 
+	public var animationList:Array<CharacterAnim> = [];
+
 	var _file:CharacterFile;
 
 	public function new(?x:Float, ?y:Float, ?name:String, ?player:Bool = true) {
@@ -60,6 +62,8 @@ class Character extends FunkinSprite {
 		flipX = _file.flipX != player;
 
 		frames = Paths.multiAtlas(this.sheets);
+
+		animationList.resize(0);
 		for (anim in _file.animations) {
 			if (anim.indices.length == 0) {
 				animation.addByPrefix(anim.name, anim.id, anim.framerate, anim.looped);
@@ -68,6 +72,8 @@ class Character extends FunkinSprite {
 			}
 
 			offsetMap.set(anim.name, anim.offsets);
+
+			animationList.push(anim);
 		}
 
 		scale.set(_file.scale, _file.scale);
