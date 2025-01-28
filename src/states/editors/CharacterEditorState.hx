@@ -95,7 +95,7 @@ var animationDropDown:PsychUIDropDownMenu;
 		animationNameInputText = new PsychUIInputText(animationInputText.x, animationInputText.y + 35, 150, '', 8);
 		animationIndicesInputText = new PsychUIInputText(animationNameInputText.x, animationNameInputText.y + 40, 250, '', 8);
 		animationFramerate = new PsychUINumericStepper(animationInputText.x + 170, animationInputText.y, 1, 24, 0, 240, 0);
-		animationLoopCheckBox = new PsychUICheckBox(animationNameInputText.x + 170, animationNameInputText.y - 1, "Should it Loop?", 100);
+		animationLoopCheckBox = new PsychUICheckBox(animationNameInputText.x + 170, animationNameInputText.y - 1, "Looped", 100);
 
 		animationDropDown = new PsychUIDropDownMenu(15, animationInputText.y - 55, [''], function(selectedAnimation:Int, pressed:String) {
 
@@ -112,7 +112,7 @@ var animationDropDown:PsychUIDropDownMenu;
 		tab_group.add(new FlxText(animationDropDown.x, animationDropDown.y - 18, 100, 'Animations:'));
 		tab_group.add(new FlxText(animationInputText.x, animationInputText.y - 18, 100, 'Animation name:'));
 		tab_group.add(new FlxText(animationFramerate.x, animationFramerate.y - 18, 100, 'Framerate:'));
-		tab_group.add(new FlxText(animationNameInputText.x, animationNameInputText.y - 18, 150, 'Animation Symbol Name/Tag:'));
+		tab_group.add(new FlxText(animationNameInputText.x, animationNameInputText.y - 18, 150, 'Animation ID:'));
 		tab_group.add(new FlxText(animationIndicesInputText.x, animationIndicesInputText.y - 18, 170, 'ADVANCED - Animation Indices:'));
 
 		tab_group.add(animationInputText);
@@ -152,11 +152,11 @@ var imageInputText:PsychUIInputText;
 
 		});
 
-		var decideIconColor:PsychUIButton = new PsychUIButton(reloadImage.x, reloadImage.y + 30, "Get Icon Color", function() {
+		var decideIconColor:PsychUIButton = new PsychUIButton(reloadImage.x, reloadImage.y + 30, "Get Icon Colour", function() {
 
 		});
 
-		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 35, 75, 'piss', 8);
+		healthIconInputText = new PsychUIInputText(15, imageInputText.y + 36, 75, 'piss', 8);
 
 		vocalsInputText = new PsychUIInputText(15, healthIconInputText.y + 35, 75, '', 8);
 
@@ -182,16 +182,15 @@ var imageInputText:PsychUIInputText;
 
 		});
 
-		healthColorStepperR = new PsychUINumericStepper(singDurationStepper.x, saveCharacterButton.y, 20, 0, 0, 255, 0);
-		healthColorStepperG = new PsychUINumericStepper(singDurationStepper.x + 65, saveCharacterButton.y, 20, 0, 0, 255, 0);
-		healthColorStepperB = new PsychUINumericStepper(singDurationStepper.x + 130, saveCharacterButton.y, 20, 0, 0, 255, 0);
+		healthColorInputText = new PsychUIInputText(singDurationStepper.x, saveCharacterButton.y, 75, '0xFFFFFFFF', 8);
+		healthColorInputText.maxLength = 10;
 
-		tab_group.add(new FlxText(15, imageInputText.y - 18, 100, 'Image file name:'));
-		tab_group.add(new FlxText(15, healthIconInputText.y - 18, 100, 'Health icon name:'));
-		tab_group.add(new FlxText(15, singDurationStepper.y - 18, 120, 'Sing Animation length:'));
+		tab_group.add(new FlxText(15, imageInputText.y - 18, 100, 'Sheet(s):'));
+		tab_group.add(new FlxText(15, healthIconInputText.y - 18, 100, 'Icon Name:'));
+		tab_group.add(new FlxText(15, singDurationStepper.y - 18, 120, 'Sing Duration:'));
 		tab_group.add(new FlxText(15, scaleStepper.y - 18, 100, 'Scale:'));
-		tab_group.add(new FlxText(positionCameraXStepper.x, positionCameraXStepper.y - 18, 100, 'Camera X/Y:'));
-		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 18, 100, 'Health Colour:'));
+		tab_group.add(new FlxText(positionCameraXStepper.x, positionCameraXStepper.y - 18, 100, 'Camera X/Y Offset:'));
+		tab_group.add(new FlxText(healthColorInputText.x, healthColorInputText.y - 18, 100, 'Health Colour:'));
 		tab_group.add(imageInputText);
 		tab_group.add(reloadImage);
 		tab_group.add(decideIconColor);
@@ -202,9 +201,10 @@ var imageInputText:PsychUIInputText;
 		tab_group.add(antialiasingCheckBox);
 		tab_group.add(positionCameraXStepper);
 		tab_group.add(positionCameraYStepper);
-		tab_group.add(healthColorStepperR);
+		tab_group.add(healthColorInputText);
+/*		tab_group.add(healthColorStepperR);
 		tab_group.add(healthColorStepperG);
-		tab_group.add(healthColorStepperB);
+		tab_group.add(healthColorStepperB);*/
 		tab_group.add(saveCharacterButton);
 	}
 
