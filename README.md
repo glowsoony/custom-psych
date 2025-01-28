@@ -6,7 +6,7 @@ MacOS I'm not sure on, as I don't use Mac and not anyone that I know of uses it 
 
 Other platforms like Android/iOS and HTML5/Web are completely unsupported, as I don't find a use for something like this on there.
 
-To get started, either grab a build from [the releases page](https://github.com/Rudyrue/custom-psych/releases) or compile the engine yourself (refer to [BUILDING.md](https://github.com/Rudyrue/custom-psych/blob/main/BUILDING.md)).
+To get started, either grab a build from [the releases page](https://github.com/Rudyrue/custom-psych/releases), [actions](https://github.com/Rudyrue/custom-psych/actions), or compile the engine yourself (refer to [BUILDING.md](https://github.com/Rudyrue/custom-psych/blob/main/BUILDING.md)).
 
 # Credits
 ## (Ex-)Developers
