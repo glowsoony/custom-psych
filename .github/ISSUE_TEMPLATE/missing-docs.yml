@@ -1,2 +1,9 @@
 name: Missing Documentation
-description: "A comment might help somewhere that wasn't there prior, or maybe the wiki is documented wrong."
+description: If a comment somewhere is missing, or the wiki is documented wrong.
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Where?"
+    validations:
+      required: true
