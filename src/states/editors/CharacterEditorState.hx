@@ -24,6 +24,9 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	var healthBar:Bar;
 	var icon:CharIcon;
 
+	var anims(get, never):Array<CharacterAnim>;
+	var get_anims():Array<CharacterAnim> return character.animationList;
+
 	var animsTxt:FlxText;
 	var curAnim = 0;
 
@@ -326,22 +329,23 @@ var animationDropDown:PsychUIDropDownMenu;
 	}
 
 	public function UIEvent(id:String, sender:Dynamic) {
-		if (id == PsychUIInputText.CHANGE_EVENT) {
-			if (sender == healthColorInputText || sender == healthIconInputText) {
-				updateHealthBar();
-			}
+		switch id {
+			case PsychUIInputText.CHANGE_EVENT:
+				if (sender == healthColorInputText || sender == healthIconInputText) {
+					updateHealthBar();
+				}
 
-			if (sender == scaleStepper) character.scale.set(scaleStepper.value, scaleStepper.value);
-		} else if (id == PsychUINumericStepper.CHANGE_EVENT) {
-			if (sender == scaleStepper) {
-				character.scale.set(scaleStepper.value, scaleStepper.value);
-				character.updateHitbox();
-			}
+			case PsychUINumericStepper.CHANGE_EVENT:
+				if (sender == scaleStepper) {
+					character.scale.set(scaleStepper.value, scaleStepper.value);
+					character.updateHitbox();
+				}
+
+			case _:
 		}
 	}
 
 	inline function reloadAnimList() {
-		var anims:Array<CharacterAnim> = character.animationList;
 		if (anims.length > 0) character.playAnim(anims[0].name, true);
 		curAnim = 0;
 
@@ -414,6 +418,18 @@ var animationDropDown:PsychUIDropDownMenu;
 		} else if (FlxG.keys.pressed.Q && FlxG.camera.zoom > 0.1) {
 			FlxG.camera.zoom -= elapsed * FlxG.camera.zoom;
 			if (FlxG.camera.zoom < 0.1) FlxG.camera.zoom = 0.1;
+		}
+		var changedAnim:Bool = false;
+		if (anims.length > 1) {
+	    		if (FlxG.keys.justPressed.UP && (changedAnim = true)) curAnim--;
+			else if (FlxG.keys.justPressed.DOWN && (changedAnim = true)) curAnim++;
+
+			if (changedAnim) {
+				undoOffsets = null;
+				curAnim = FlxMath.wrap(curAnim, 0, anims.length-1);
+				character.playAnim(anims[curAnim].name, true);
+				updateText();
+			}
 		}
     }
 
