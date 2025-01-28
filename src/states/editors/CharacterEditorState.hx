@@ -425,7 +425,6 @@ var animationDropDown:PsychUIDropDownMenu;
 			else if (FlxG.keys.justPressed.DOWN && (changedAnim = true)) curAnim++;
 
 			if (changedAnim) {
-				undoOffsets = null;
 				curAnim = FlxMath.wrap(curAnim, 0, anims.length-1);
 				character.playAnim(anims[curAnim].name, true);
 				updateText();
