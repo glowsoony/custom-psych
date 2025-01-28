@@ -92,7 +92,7 @@
 
 	antialiasing: true,
 	singDuration: 4,
-	scale: [1, 1],
+	scale: 1,
 	healthColor: 0xFF31B0D1,
 	sheets: 'characters/bf',
 	icon: 'bf',

@@ -139,11 +139,12 @@ var imageInputText:PsychUIInputText;
 	var flipXCheckBox:PsychUICheckBox;
 	var antialiasingCheckBox:PsychUICheckBox;
 
+	var healthColorInputText:PsychUIInputText;
 	var healthColorStepperR:PsychUINumericStepper;
 	var healthColorStepperG:PsychUINumericStepper;
 	var healthColorStepperB:PsychUINumericStepper;
-	function addCharacterUI()
-	{
+
+	function addCharacterUI() {
 		var tab_group = UI_characterbox.getTab('Character').menu;
 
 		imageInputText = new PsychUIInputText(15, 30, 200, '', 8);
@@ -190,7 +191,7 @@ var imageInputText:PsychUIInputText;
 		tab_group.add(new FlxText(15, singDurationStepper.y - 18, 120, 'Sing Animation length:'));
 		tab_group.add(new FlxText(15, scaleStepper.y - 18, 100, 'Scale:'));
 		tab_group.add(new FlxText(positionCameraXStepper.x, positionCameraXStepper.y - 18, 100, 'Camera X/Y:'));
-		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 18, 100, 'Health Bar R/G/B:'));
+		tab_group.add(new FlxText(healthColorStepperR.x, healthColorStepperR.y - 18, 100, 'Health Colour:'));
 		tab_group.add(imageInputText);
 		tab_group.add(reloadImage);
 		tab_group.add(decideIconColor);

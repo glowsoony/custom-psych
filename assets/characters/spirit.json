@@ -76,9 +76,9 @@
 
 	antialiasing: true,
 	singDuration: 4,
-	scale: [1, 1],
+	scale: 6,
 	healthColor: 0xFFFF3C6E,
-	sheets: 'characters/bf',
+	sheets: 'characters/spirit',
 	icon: 'spirit',
 	cameraOffset: [100, -100],
 	

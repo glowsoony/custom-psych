@@ -76,7 +76,7 @@
 
 	antialiasing: true,
 	singDuration: 4,
-	scale: [1, 1],
+	scale: 1,
 	healthColor: 0xFF7BD6F6,
 	sheets: 'characters/bf',
 	icon: 'bf-pixel',

@@ -44,7 +44,7 @@
 
 	antialiasing: true,
 	singDuration: 4,
-	scale: [1, 1],
+	scale: 1,
 	healthColor: 0xFF735EB0,
 	sheets: 'characters/darnell',
 	icon: 'darnell',

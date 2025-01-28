@@ -4,7 +4,7 @@ typedef CharacterFile = {
 	var antialiasing:Bool;
 	var flipX:Bool;
 	var icon:String;
-	var scale:Array<Float>;
+	var scale:Float;
 	var singDuration:Float;
 	var healthColor:Int;
 	var sheets:String;
@@ -70,7 +70,7 @@ class Character extends FunkinSprite {
 			offsetMap.set(anim.name, anim.offsets);
 		}
 
-		scale.set(_file.scale[0], _file.scale[1]);
+		scale.set(_file.scale, _file.scale);
 		updateHitbox();
 
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
@@ -119,7 +119,7 @@ class Character extends FunkinSprite {
 			antialiasing: true,
 			flipX: false,
 			icon: 'face',
-			scale: [1, 1],
+			scale: 1,
 			singDuration: 4,
 			healthColor: 0xFFA1A1A1,
 			danceInterval: 2,
