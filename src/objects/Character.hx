@@ -28,7 +28,7 @@ class Character extends FunkinSprite {
 	public var name:String = default_name;
 	public var singDuration:Float = 4;
 	public var danceInterval:Int = 2;
-	public var healthColor:Int = 0xFFA1A1A1;
+	public var healthColor:FlxColor = 0xFFA1A1A1;
 	public var sheets:Array<String> = [];
 	public var icon:String = '';
 	public var cameraOffset:FlxPoint = FlxPoint.get(0, 0);

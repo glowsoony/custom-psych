@@ -44,7 +44,7 @@
 
 	antialiasing: true,
 	singDuration: 4,
-	scale: [1, 1],
+	scale: 1,
 	healthColor: 0xFFAF66CE,
 	sheets: 'characters/daddyDearest',
 	icon: 'dad',
