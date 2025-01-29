@@ -489,7 +489,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 		var anim:CharacterAnim = anims[curAnim];
 		if (changedOffset && anim != null && anim.offsets != null) {
-			var newOffsets:Array<Float> = [character.offset.x * (1 / character.scale.x), character.offset.y * (1 / character.scale.y)];
+			var newOffsets:Array<Float> = [character.offset.x, character.offset.y];
 			anim.offsets = newOffsets;
 			character.setOffset(anim.name, newOffsets);
 			updateText();
@@ -633,8 +633,6 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 			animations: character.animationList
 		};
 
-		// json5 pretty printing is fucked rn
-		// so im just gonna print as normal json until it's fixed
 		var dataStr:String = Json5.stringify(characterData, null, '\t');
 
 		if (dataStr.length > 0) {
