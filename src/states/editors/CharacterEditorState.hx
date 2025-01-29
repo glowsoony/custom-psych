@@ -489,7 +489,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 		var anim:CharacterAnim = anims[curAnim];
 		if (changedOffset && anim != null && anim.offsets != null) {
-			var newOffsets:Array<Float> [character.offset.x * (1 / character.scale.x), character.offset.y * (1 / character.scale.y)];
+			var newOffsets:Array<Float> = [character.offset.x * (1 / character.scale.x), character.offset.y * (1 / character.scale.y)];
 			anim.offsets = newOffsets;
 			character.setOffset(anim.name, newOffsets);
 			updateText();
