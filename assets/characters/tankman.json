@@ -1,70 +1,93 @@
 {
-	animations: [
+	"animations": [
 		{
-			name: 'idle',
-			id: 'Tankman Idle Dance 1', 
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [0, 0]
+			"offsets": [
+				0,
+				0
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "idle",
+			"id": "Tankman Idle Dance 1",
+			"indices": []
 		},
 		{
-			name: 'singLEFT',
-			id: 'Tankman Note Left 1',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [94, -29]
+			"offsets": [
+				87,
+				-13
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singLEFT",
+			"id": "Tankman Note Left 1",
+			"indices": []
 		},
 		{
-			name: 'singDOWN',
-			id: 'Tankman DOWN note 1',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [72, -102]
+			"offsets": [
+				85,
+				-110
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singDOWN",
+			"id": "Tankman DOWN note 1",
+			"indices": []
 		},
 		{
-			name: 'singUP',
-			id: 'Tankman UP note 1',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [24, 49]
+			"offsets": [
+				42,
+				49
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singUP",
+			"id": "Tankman UP note 1",
+			"indices": []
 		},
 		{
-			name: 'singRIGHT',
-			id: 'Tankman Right Note 1',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-23, -13]
+			"offsets": [
+				-16,
+				-28
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singRIGHT",
+			"id": "Tankman Right Note 1",
+			"indices": []
 		},
 		{
-			name: 'ugh',
-			id: 'TANKMAN UGH 1',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-13, -9]
+			"offsets": [
+				-16,
+				-9
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "ugh",
+			"id": "TANKMAN UGH 1",
+			"indices": []
 		},
 		{
-			name: 'pretty good',
-			id: 'PRETTY GOOD tankman 1',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [100, 16]
+			"offsets": [
+				2,
+				16
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "pretty good",
+			"id": "PRETTY GOOD tankman 1",
+			"indices": []
 		}
 	],
-
-	antialiasing: true,
-	singDuration: 4,
-	scale: 1,
-	healthColor: 0xFFFFFFFF,
-	sheets: 'characters/tankman',
-	icon: 'tankman',
-	cameraOffset: [100, -100],
-	
-	flipX: true
+	"healthColor": -1,
+	"singDuration": 4,
+	"flipX": true,
+	"sheets": "characters/tankman",
+	"danceInterval": 2,
+	"cameraOffset": [
+		100,
+		-100
+	],
+	"icon": "tankman",
+	"antialiasing": true,
+	"scale": 1
 }

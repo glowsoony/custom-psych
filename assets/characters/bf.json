@@ -98,5 +98,5 @@
 	icon: 'bf',
 	cameraOffset: [100, -100],
 	
-	flipX: true
+	flipX: false
 }
