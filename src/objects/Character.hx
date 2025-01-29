@@ -59,7 +59,7 @@ class Character extends FunkinSprite {
 		this.icon = _file.icon;
 		this.danceInterval = _file.danceInterval;
 		this.cameraOffset.set(_file.cameraOffset[0], _file.cameraOffset[1]);
-		flipX = _file.flipX != player;
+		flipX = _file.flipX;
 
 		frames = Paths.multiAtlas(this.sheets);
 
