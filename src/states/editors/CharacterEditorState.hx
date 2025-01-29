@@ -635,7 +635,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 		// json5 pretty printing is fucked rn
 		// so im just gonna print as normal json until it's fixed
-		var dataStr:String = Json.stringify(characterData, '\t');
+		var dataStr:String = Json5.stringify(characterData, null, '\t');
 
 		if (dataStr.length > 0) {
 			_file = new FileReference();
