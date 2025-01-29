@@ -27,7 +27,7 @@ import openfl.filters.BitmapFilter;
 
 using flixel.util.FlxColorTransformUtil;
 
-private typedef FlxDrawItem = #if FLX_DRAW_QUADS flixel.graphics.tile.FlxDrawQuadsItem; #else flixel.graphics.tile.FlxDrawTilesItem; #end
+private typedef FlxDrawItem = flixel.graphics.tile.FlxDrawQuadsItem;
 
 /**
  * The camera class is used to display the game's visuals.
@@ -126,12 +126,12 @@ class FlxCamera extends FlxBasic
 	public var targetOffset(default, null):FlxPoint = FlxPoint.get();
 
 	/**
-	 * Used to smoothly track the camera as it follows:
-	 * The percent of the distance to the follow `target` the camera moves per 1/60 sec.
-	 * Values are bounded between `0.0` and `60 / FlxG.updateFramerate` for consistency across framerates.
-	 * The maximum value means no camera easing. A value of `0` means the camera does not move.
+	 * The ratio of the distance to the follow `target` the camera moves per 1/60 sec.
+	 * Valid values range from `0.0` to `1.0`. `1.0` means the camera always snaps to its target
+	 * position. `0.5` means the camera always travels halfway to the target position, `0.0` means
+	 * the camera does not move. Generally, the lower the value, the more smooth.
 	 */
-	public var followLerp:Float = 60 / FlxG.updateFramerate;
+	public var followLerp:Float = 1.0;
 
 	/**
 	 * You can assign a "dead zone" to the camera in order to better control its movement.
@@ -1146,7 +1146,8 @@ class FlxCamera extends FlxBasic
 		// follow the target, if there is one
 		if (target != null)
 		{
-			updateFollow(elapsed);
+			updateFollow();
+			updateLerp(elapsed);
 		}
 
 		updateScroll();
@@ -1194,9 +1195,9 @@ class FlxCamera extends FlxBasic
 	 * Updates camera's scroll.
 	 * Called every frame by camera's `update()` method (if camera's `target` isn't `null`).
 	 */
-	public function updateFollow(elapsed:Float):Void
+	function updateFollow():Void
 	{
-				// Either follow the object closely,
+		// Either follow the object closely,
 		// or double check our deadzone and update accordingly.
 		if (deadzone == null)
 		{
@@ -1271,10 +1272,22 @@ class FlxCamera extends FlxBasic
 				_lastTargetPosition.y = target.y;
 			}
 		}
-
-		var mult:Float = 1 - Math.exp(-elapsed * followLerp / (1 / 60));
-		scroll.x += (_scrollTarget.x - scroll.x) * mult;
-		scroll.y += (_scrollTarget.y - scroll.y) * mult;
+	}
+	
+	function updateLerp(elapsed:Float)
+	{
+		final boundLerp = FlxMath.bound(followLerp, 0, 1);
+		// Adjust lerp based on the current frame rate so lerp is less framerate dependant
+		final adjustedLerp = 1.0 - Math.pow(1.0 - boundLerp, elapsed * 60);
+		if (adjustedLerp >= 1)
+		{
+			scroll.copyFrom(_scrollTarget); // no easing
+		}
+		else
+		{
+			scroll.x += (_scrollTarget.x - scroll.x) * adjustedLerp;
+			scroll.y += (_scrollTarget.y - scroll.y) * adjustedLerp;
+		}
 	}
 
 	function updateFlash(elapsed:Float):Void
@@ -1450,29 +1463,23 @@ class FlxCamera extends FlxBasic
 	/**
 	 * Tells this camera object what `FlxObject` to track.
 	 *
-	 * @param   Target   The object you want the camera to track. Set to `null` to not follow anything.
-	 * @param   Style    Leverage one of the existing "deadzone" presets. Default is `LOCKON`.
+	 * @param   target   The object you want the camera to track. Set to `null` to not follow anything.
+	 * @param   style    Leverage one of the existing "deadzone" presets. Default is `LOCKON`.
 	 *                   If you use a custom deadzone, ignore this parameter and
 	 *                   manually specify the deadzone after calling `follow()`.
-	 * @param   Lerp     How much lag the camera should have (can help smooth out the camera movement).
+	 * @param   lerp     How much lag the camera should have (can help smooth out the camera movement).
 	 */
-	public function follow(Target:FlxObject, ?Style:FlxCameraFollowStyle, ?Lerp:Float):Void
+	public function follow(target:FlxObject, style = LOCKON, lerp = 1.0):Void
 	{
-		if (Style == null)
-			Style = LOCKON;
-
-		if (Lerp == null)
-			Lerp = 60 / FlxG.updateFramerate;
-
-		style = Style;
-		target = Target;
-		followLerp = Lerp;
+		this.style = style;
+		this.target = target;
+		followLerp = lerp;
 		var helper:Float;
 		var w:Float = 0;
 		var h:Float = 0;
 		_lastTargetPosition = null;
 
-		switch (Style)
+		switch (style)
 		{
 			case LOCKON:
 				if (target != null)
@@ -1509,7 +1516,7 @@ class FlxCamera extends FlxBasic
 	 */
 	public function snapToTarget():Void
 	{
-		updateFollow(0);
+		updateFollow();
 		scroll.copyFrom(_scrollTarget);
 	}
 
