@@ -207,6 +207,8 @@ class Paths {
 		var parentFrames:FlxAtlasFrames = cast sparrowAtlas(keys[0].trim());
 		if (keys.length < 1) return parentFrames;
 
+		if (parentFrames == null) return null;
+
 		var original:FlxAtlasFrames = parentFrames;
 		parentFrames = new FlxAtlasFrames(parentFrames.parent);
 		parentFrames.addAtlas(original, true);
