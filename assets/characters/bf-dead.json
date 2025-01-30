@@ -28,7 +28,7 @@
 	antialiasing: true,
 	sheets: 'characters/bf-dead',
 	icon: 'face',
-	flipX: true,
+	flipX: false,
 	cameraOffset: [0, 0],
 	scale: 1
 }

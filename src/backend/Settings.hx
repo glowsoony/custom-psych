@@ -65,6 +65,7 @@ class SaveVariables {
 
 		'playbackRate' => 1.0,
 		'instakill' => false,
+		'onlySicks' => false,
 		'noFail' => false,
 		'botplay' => false,
 		'mirroredNotes' => false,

@@ -822,6 +822,8 @@ class PlayState extends MusicState {
 
 		final adjustedHitTime:Float = note.rawHitTime / playbackRate;
 		var judge:Judgement = Judgement.getFromTiming(adjustedHitTime);
+
+		if (Settings.data.gameplaySettings['onlySicks'] && judge.name != 'sick') die();
 	
 		if (!note.breakOnHit) {
 			totalNotesPlayed += judge.accuracy;
@@ -865,7 +867,7 @@ class PlayState extends MusicState {
 	dynamic function noteMiss(note:Note) {
 		if (note.ignore) return;
 
-		if (Settings.data.gameplaySettings['instakill']) die();
+		if (Settings.data.gameplaySettings['instakill'] || Settings.data.gameplaySettings['onlySicks']) die();
 
 		comboBreaks++;
 		combo = 0;

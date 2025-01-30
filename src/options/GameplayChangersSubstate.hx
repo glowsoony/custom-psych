@@ -46,6 +46,7 @@ class GameplayChangersSubstate extends FlxSubState {
 		#end
 
 		optionsArray.push(new GameplayOption('Instakill on Miss', 'instakill', BOOL, false));
+		optionsArray.push(new GameplayOption('PFC Or Die', 'onlySicks', BOOL, false));
 		optionsArray.push(new GameplayOption('No Fail', 'noFail', BOOL, false));
 		optionsArray.push(new GameplayOption('Botplay', 'botplay', BOOL, false));
 		optionsArray.push(new GameplayOption('Sustains', 'sustains', BOOL, true));
