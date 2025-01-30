@@ -1031,9 +1031,14 @@ class PlayState extends MusicState {
 	dynamic function updateScoreTxt():Void {
 		var textToShow:String = '';
 		textToShow += 'Score: $score';
-		if (!Settings.data.gameplaySettings['instakill']) textToShow += ' | Combo Breaks: $comboBreaks';
-		textToShow += ' | Accuracy: ${Util.truncateFloat(accuracy, 2)}%';
-		textToShow += ' [$clearType | $grade]';
+
+		if (!Settings.data.gameplaySettings['onlySicks']) {
+			if (!Settings.data.gameplaySettings['instakill']) 
+				textToShow += ' | Combo Breaks: $comboBreaks';
+
+			textToShow += ' | Accuracy: ${Util.truncateFloat(accuracy, 2)}%';
+			textToShow += ' [$clearType | $grade]';
+		}
 
 		scoreTxt.text = textToShow;
 	}
