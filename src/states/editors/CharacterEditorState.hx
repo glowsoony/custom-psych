@@ -195,6 +195,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		animationIndicesInputText = new PsychUIInputText(animationNameInputText.x, animationNameInputText.y + 40, 250, '', 8);
 		animationFramerate = new PsychUINumericStepper(animationInputText.x + 170, animationInputText.y, 1, 24, 0, 240, 0);
 		animationLoopCheckBox = new PsychUICheckBox(animationNameInputText.x + 170, animationNameInputText.y - 1, "Looped", 100);
+		animationLoopCheckBox.onClick = function() character.flipX = flipXCheckBox.checked;
 
 		animationDropDown = new PsychUIDropDownMenu(15, animationInputText.y - 55, [''], function(selectedAnimation:Int, pressed:String) {
 			var anim:CharacterAnim = anims[selectedAnimation];
@@ -258,7 +259,26 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		});
 
 		var removeButton:PsychUIButton = new PsychUIButton(180, animationIndicesInputText.y + 60, "Remove", function() {
+			for (anim in character.animationList) {
+				if (animationInputText.text != anim.name) continue;
 
+				var resetAnim:Bool = false;
+				if (character.animation.curAnim != null && anim.name == character.animation.curAnim.name) resetAnim = true;
+				if (character.offsetMap.exists(anim.name)) {
+					character.animation.remove(anim.name);
+					character.offsetMap.remove(anim.name);
+					character.animationList.remove(anim);
+				}
+
+				if (resetAnim && character.animationList.length > 0) {
+					curAnim = FlxMath.wrap(curAnim, 0, anims.length - 1);
+					character.playAnim(anims[curAnim].name, true);
+					updateText();
+				}
+				reloadAnimList();
+				trace('Removed animation: ' + animationInputText.text);
+				break;
+			}
 		});
 
 		tab_group.add(new FlxText(animationDropDown.x, animationDropDown.y - 18, 100, 'Animations:'));
@@ -538,7 +558,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	}
 
 	function reloadCharacterImage() {
-		var lastAnim:String = character.animation.curAnim.name;
+		var lastAnim:String = character.animation.curAnim != null ? character.animation.curAnim.name : '';
 		var oldAnims:Array<CharacterAnim> = character.animationList.copy();
 		character.color = FlxColor.WHITE;
 		character.alpha = 1;

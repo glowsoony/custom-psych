@@ -1,86 +1,71 @@
 {
 	animations: [
 		{
+			offsets: [
+				0,
+				0,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Pico Idle Dance',
 			name: 'idle',
-			id: 'BF idle dance', 
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [0, 0]
 		},
 		{
+			offsets: [
+				85,
+				-12,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Pico NOTE LEFT0',
 			name: 'singLEFT',
-			id: 'BF NOTE LEFT0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [11, -7]
 		},
 		{
+			offsets: [
+				102,
+				-86,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Pico Down Note0',
 			name: 'singDOWN',
-			id: 'BF NOTE DOWN0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-13, -52]
 		},
 		{
+			offsets: [
+				15,
+				26,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'pico Up note0',
 			name: 'singUP',
-			id: 'BF NOTE UP0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-41, 28]
 		},
 		{
+			offsets: [
+				-49,
+				1,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Pico Note Right0',
 			name: 'singRIGHT',
-			id: 'BF NOTE RIGHT0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-45, -6]
 		},
-		{
-			name: 'missLEFT',
-			id: 'BF NOTE LEFT MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [8, 18]
-		},
-		{
-			name: 'missDOWN',
-			id: 'BF NOTE DOWN MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-13, -22]
-		},
-		{
-			name: 'missUP',
-			id: 'BF NOTE UP MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-38, 24]
-		},
-		{
-			name: 'missRIGHT',
-			id: 'BF NOTE RIGHT MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-40, 21]
-		}
 	],
-
-	antialiasing: true,
+	healthColor: -4728747,
 	singDuration: 4,
-	scale: 1,
-	healthColor: 0xFFB7D855,
-	sheets: 'characters/bf',
+	flipX: false,
+	sheets: 'characters/pico',
+	danceInterval: 2,
+	cameraOffset: [
+		100,
+		-100,
+	],
 	icon: 'pico',
-	cameraOffset: [100, -100],
-	
-	flipX: true
+	antialiasing: true,
+	scale: 1,
 }
