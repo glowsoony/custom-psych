@@ -1,9 +1,10 @@
-name: Missing Documentation
-description: If a comment somewhere is missing, or the wiki is documented wrong.
+name: Missing/Incorrect Documentation
+description: If you'd like to report incorrect or missing docs.
+labels: [Documentation]
 body:
   - type: textarea
     id: description
     attributes:
-      label: "test"
+      label: "Where's the problem?"
     validations:
-      required: false
+      required: true

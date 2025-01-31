@@ -1,9 +1,10 @@
-name: Feature
-description: Suggest a feature/change to be added to the game.
+name: Suggestion
+description: If you'd like to suggest changing/adding something to the game.
+labels: [Suggestion]
 body:
   - type: textarea
     id: description
     attributes:
-      label: "test"
+      label: "What's your suggestion?"
     validations:
-      required: false
+      required: true
