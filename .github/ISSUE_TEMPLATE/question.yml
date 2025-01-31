@@ -1,5 +1,5 @@
 name: Question
-description: If you'd like to ask a question
+description: If you'd like to ask a question.
 labels: [Question]
 body:
   - type: textarea
