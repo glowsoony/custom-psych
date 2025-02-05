@@ -43,6 +43,8 @@ class Note extends FlxSprite {
 	public var prevNote:Note;
 	public var nextNote:Note;
 
+	public var judge:String = '';
+
 	public var rawHitTime(get, never):Float;
 	function get_rawHitTime():Float {
 		return time - Conductor.rawTime;

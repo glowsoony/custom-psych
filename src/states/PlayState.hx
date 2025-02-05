@@ -799,8 +799,6 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function noteHit(note:Note) {
-		ScriptHandler.call('noteHit', [note]);
-
 		final strum:StrumNote = playerStrums.members[note.lane];
 
 		note.wasHit = true;
@@ -823,6 +821,8 @@ class PlayState extends MusicState {
 
 		final adjustedHitTime:Float = note.rawHitTime / playbackRate;
 		var judge:Judgement = Judgement.getFromTiming(adjustedHitTime);
+
+		note.judge = judge.name;
 
 		if (Settings.data.gameplaySettings['onlySicks'] && judge.name != 'sick') die();
 	
@@ -863,6 +863,8 @@ class PlayState extends MusicState {
 		}
 
 		judge = null;
+
+		ScriptHandler.call('noteHit', [note]);
 	}
 
 	dynamic function noteMiss(note:Note) {
