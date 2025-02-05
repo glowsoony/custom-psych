@@ -72,8 +72,8 @@ i don't use linux lol
 
 # FAQ
 ## "I wanna use HMM, it's way easier!"
-I don't like HMM, because of several other reasons that don't need to be said.
-As a workaround, make a `.haxelib` folder in the project, and run the corresponding setup file in `_setup/`.
+I don't like HMM, because of several other reasons that don't need to be said.  
+As a workaround, make a `.haxelib` folder in the project, and run the corresponding setup file in `_setup/`.  
 It's basically the same thing.
 
 ## "It's taking a while, should I be worried?"
