@@ -21,9 +21,15 @@ class Mods {
 	public static var list:Array<ModData> = [];
 	public static var current:String = '';
 
-	public static function getActive():Array<ModData> {
+	public static function getActive(?type:String):Array<ModData> {
 		return [for (mod in list) {
 			if (!mod.enabled) continue;
+
+			switch (type.toLowerCase()) {
+				case 'global': if (!mod.global) continue;
+				case 'local': if (mod.global) continue;
+				case _: 
+			}
 			mod;
 		}];
 	}

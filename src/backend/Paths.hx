@@ -114,10 +114,23 @@ class Paths {
 
 		// if there are any other mods active
 		// and the file doesn't exist in the currently played mod
-		// check the first mod in the list
-		var mods:Array<ModData> = Mods.getActive();
+		// run through the mods
+
+		// first check global mods
+		var mods:Array<ModData> = Mods.getActive('global');
 		if (mods.length > 0 && !FileSystem.exists('$mainDirectory/$path')) {
-			mainDirectory = 'mods/${mods[0].id}';
+			for (mod in mods) {
+				mainDirectory = 'mods/${mod.id}';
+				if (FileSystem.exists('$mainDirectory/$path')) break;
+			}
+
+			// then check local mods
+			mods = Mods.getActive('local');
+
+			for (mod in mods) {
+				mainDirectory = 'mods/${mod.id}';
+				if (FileSystem.exists('$mainDirectory/$path')) break;
+			}
 		}
 
 		// if the file STILL doesn't exist

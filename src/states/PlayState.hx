@@ -1085,6 +1085,7 @@ class PlayState extends MusicState {
 
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
 		if (dir == -1) return;
+		
 		keysHeld[dir] = false;
 		playerStrums.members[dir].playAnim('default');
 	}
