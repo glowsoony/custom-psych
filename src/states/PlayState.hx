@@ -191,6 +191,7 @@ class PlayState extends MusicState {
 	];
 
 	override function create() {
+		
 		Language.reloadPhrases();
 
 		super.create();
@@ -199,6 +200,9 @@ class PlayState extends MusicState {
 		Conductor.stop();
 
 		if (storyMode) songID = songList[currentLevel];
+
+		Sys.println('');
+		trace('new song was loaded: $songID - ${Difficulty.current}');
 
 		// precache the pause menu music
 		// to prevent the pause menu freezing on first pause

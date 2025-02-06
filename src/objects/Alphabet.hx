@@ -71,8 +71,6 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetLine> {
 					}
 				}
 			}
-			
-			trace('Reloaded members successfully ($path)!');
 		} catch(e:Dynamic) trace('Error on loading alphabet data: $e');
 
 		if (!AlphabetGlyph.allGlyphs.exists('?')) {
