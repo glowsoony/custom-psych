@@ -12,6 +12,7 @@ import backend.Scores;
 import backend.Mods;
 import backend.Song;
 import backend.Difficulty;
+import backend.Meta;
 import objects.Alphabet;
 import objects.FunkinSprite;
 import states.MusicState;

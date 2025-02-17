@@ -138,7 +138,7 @@ class FreeplayState extends MusicState {
 		if (Controls.justPressed('accept')) {
 			final songID:String = songList[curSelected].id;
 			final diff:String = Difficulty.format(curDiffName);
-			final path:String = 'songs/$songID/$diff.json';
+			final path:String = 'songs/$songID/${Song.getFile(songID, diff)}';
 			if (Paths.exists(path)) {
 				PlayState.songID = songID;
 				Difficulty.list = curDiffs;

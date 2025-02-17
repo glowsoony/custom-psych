@@ -307,7 +307,7 @@ class PlayState extends MusicState {
 		camGame.zoom = defaultCamZoom = stage.zoom;
 
 		// characters
-		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.gfVersion, false));
+		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.meta.spectator, false));
 		gf.visible = stage.isSpectatorVisible;
 
 		// fix for the camera starting off in the stratosphere
@@ -318,8 +318,8 @@ class PlayState extends MusicState {
 		camGame.follow(camFollow, LOCKON, 0);
 		camGame.snapToTarget();
 
-		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.player2, false));
-		add(bf = new Character(stage.player.x, stage.player.y, song.player1));
+		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.meta.enemy, false));
+		add(bf = new Character(stage.player.x, stage.player.y, song.meta.player));
 
 		stage.create();
 
@@ -432,17 +432,18 @@ class PlayState extends MusicState {
 	function loadSong():Void {
 		// load chart
 		try {
-			song = Song.load('songs/$songID/${Difficulty.format()}.json');
+			song = Song.load(songID, Difficulty.format());
 		} catch (e:haxe.Exception) {
 			Sys.println('The chart "$songID (${Difficulty.current})" failed to load: $e');
 			song = Song.createDummyFile();
+			song.meta = Meta.load(songID);
 		}
 
-		Conductor.setBPMChanges(song);
+		Conductor.timingPoints = song.meta.timingPoints;
 		Conductor.bpm = song.bpm;
-		Conductor.songOffset = song.offset;
-		songName = song.song;
-		stageName = song.stage;
+		Conductor.songOffset = song.meta.offset;
+		songName = song.meta.songName;
+		stageName = song.meta.stage;
 
 		// load inst
 		try {
@@ -475,7 +476,7 @@ class PlayState extends MusicState {
 
 		// load vocals
 		try {
-			if (song.needsVoices) {
+			if (song.meta.hasVocals) {
 				var mainFile:Sound = Paths.audio('songs/$songID/Voices-Player', null, false);
 				var opponentFile:Sound = Paths.audio('songs/$songID/Voices-Opponent', null, false);
 
@@ -523,7 +524,7 @@ class PlayState extends MusicState {
 			note.lane = randomizedLanes[note.lane];
 			if (!Settings.data.gameplaySettings['sustains']) note.length = 0;
 
-			var daBPM:Float = Conductor.getBPMChangeFromMS(note.time).bpm;
+			var daBPM:Float = Conductor.getPointFromTime(note.time).bpm;
 
 			if (i != 0 && ghostNoteDetection) {
 				// CLEAR ANY POSSIBLE GHOST NOTES
@@ -760,7 +761,7 @@ class PlayState extends MusicState {
 
 	dynamic function opponentNoteHit(note:Note) {
 		ScriptHandler.call('opponentNoteHit', [note]);
-		if (song.needsVoices && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
+		if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
 		opponentStrums.members[note.lane].playAnim('notePressed');
 		dad.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
@@ -859,7 +860,7 @@ class PlayState extends MusicState {
 		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 		updateScoreTxt();
 		updateJudgeCounter();
-		if (song.needsVoices) Conductor.mainVocals.volume = 1;
+		if (song.meta.hasVocals) Conductor.mainVocals.volume = 1;
 
 		if (!note.breakOnHit) {
 			judgeSpr.display(adjustedHitTime);
@@ -893,7 +894,7 @@ class PlayState extends MusicState {
 			piece.multAlpha = 0.25;
 		}
 
-		if (song.needsVoices) Conductor.mainVocals.volume = 0;
+		if (song.meta.hasVocals) Conductor.mainVocals.volume = 0;
 		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
 
 		updateScoreTxt();

@@ -1,74 +1,84 @@
 package backend;
 
 import objects.Note;
+import backend.Meta;
+
+import moonchart.formats.OsuMania;
+import moonchart.formats.StepMania;
+import moonchart.formats.fnf.legacy.FNFLegacy;
+
+// just to make sure chart parsing doesn't kill itself
+typedef JsonChart = {
+	var notes:Array<Section>;
+	var ?events:Array<Dynamic>;
+	var bpm:Float;
+	var speed:Float;
+}
 
 typedef Chart = {
-	var song:String;
 	var notes:Array<Section>;
 	var events:Array<Dynamic>;
 	var bpm:Float;
-	var needsVoices:Bool;
 	var speed:Float;
-
-	var player1:String;
-	var player2:String;
-	var ?player3:String;
-	var gfVersion:String;
-	var stage:String;
-
-	var ?gameOverChar:String;
-	var ?gameOverSound:String;
-	var ?gameOverLoop:String;
-	var ?gameOverEnd:String;
-	var ?offset:Float;
-
-	var ?arrowSkin:String;
-	var ?splashSkin:String;
+	var ?meta:MetaFile;
 }
 
 typedef Section = {
 	var sectionNotes:Array<Dynamic>;
-	var sectionBeats:Int;
 	var mustHitSection:Bool;
 	var gfSection:Bool;
-	var bpm:Float;
-	var changeBPM:Bool;
 	var altAnim:Bool;
 }
 
 class Song {
 	public static function createDummyFile():Chart {
 		return {
-			song: 'Unknown',
 			notes: [{
 				sectionNotes: [],
-				sectionBeats: 4,
 				mustHitSection: false,
-				bpm: 0,
 				gfSection: false,
-				changeBPM: false,
 				altAnim: false
 			}],
 			events: [],
 			bpm: 120,
-			needsVoices: false,
 			speed: 1.0,
-			offset: 0,
-
-			player1: 'bf',
-			player2: 'bf',
-			gfVersion: 'gf',
-			stage: 'stage'
 		}
 	}
 
-	public static function load(path:String):Chart {
+	public static function loadFromPath(path:String):Chart {
 		var file:Chart = createDummyFile();
-		var data = Json.parse(Paths.getFileContent(path)).song;
-		for (property in Reflect.fields(data)) {
-			if (!Reflect.hasField(file, property)) continue;
-			Reflect.setField(file, property, Reflect.field(data, property));
+
+		path = Paths.get(path);
+		if (!FileSystem.exists(path)) return file;
+
+		var rawChart:JsonChart = switch haxe.io.Path.extension(path) {
+			case 'json':
+				cast Json.parse(File.getContent(path)).song;
+
+			case 'sm':
+				var fnf:FNFLegacy = new FNFLegacy();
+				fnf.bakedOffset = false;
+				cast fnf.fromFormat(new StepMania().fromFile(path)).data.song;
+
+			case 'osu':
+				var fnf:FNFLegacy = new FNFLegacy();
+				fnf.bakedOffset = false;
+				cast fnf.fromFormat(new OsuMania().fromFile(path)).data.song;
+
+			default: null;
 		}
+
+		for (property in Reflect.fields(rawChart)) {
+			if (!Reflect.hasField(file, property)) continue;
+			Reflect.setField(file, property, Reflect.field(rawChart, property));
+		}
+
+		return file;
+	}
+
+	public static function load(song:String, diff:String):Chart {
+		var file:Chart = loadFromPath('songs/$song/${getFile(song, diff)}');
+		file.meta = Meta.load(song);
 
 		return file;
 	}
@@ -91,5 +101,21 @@ class Song {
 
 		notes.sort((a, b) -> Std.int(a.time - b.time));
 		return notes;
+	}
+
+	static var formats:Array<String> = ['json', 'sm', 'osu'];
+	public static function getFile(song:String, diff:String) {
+		diff = Difficulty.format(diff);
+		var path:String = '$diff.${formats[0]}';
+
+		var files:Array<String> = FileSystem.readDirectory(Paths.get('songs/$song'));
+		for (format in formats) {
+			if (files.contains('$diff.$format')) { // shouldnt this be endsWith? or use haxe.io.Path.withoutDirectory
+				path = '$diff.$format';
+				break;
+			}
+		}
+
+		return path;
 	}
 }

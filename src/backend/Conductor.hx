@@ -3,10 +3,24 @@ package backend;
 import flixel.sound.FlxSoundGroup;
 import backend.Song;
 
-typedef BPMChange = {
-	var beat:Int;
-	var time:Float;
-	var bpm:Float;
+@:build(backend.macros.ClassJson.build())
+class TimingPoint {
+	public var time:Float = 0;
+	public var bpm:Float = 0.0;
+	public var beatsPerMeasure:Int = 4;
+
+	public var beat(get, never):Int;
+	function get_beat():Int {
+		return Math.floor((this.time * this.bpm) / 60.0);
+	}
+
+	public function new() {}
+
+	public static function createDummy(bpm:Float = 120.0):TimingPoint {
+		var point:TimingPoint = new TimingPoint();
+		point.bpm = bpm;
+		return point;
+	}
 }
 
 class Conductor extends flixel.FlxBasic {
@@ -27,7 +41,7 @@ class Conductor extends flixel.FlxBasic {
 	static var _lastTime:Float = 0.0;
 	static var _resyncTimer:Float = 0.0;
 
-	public static var bpmChanges:Array<BPMChange> = [];
+	public static var timingPoints:Array<TimingPoint> = [];
 
 	public static var inst(default, set):FlxSound;
 	
@@ -67,7 +81,7 @@ class Conductor extends flixel.FlxBasic {
 		_fMeasure = measure = 0;
 
 		songOffset = 0.0;
-		bpmChanges = [];
+		timingPoints.resize(0);
 	}
 
 	override function update(elapsed:Float) {
@@ -114,12 +128,12 @@ class Conductor extends flixel.FlxBasic {
 	}
 
 	public static dynamic function syncBeats() {
-		var bpmChange:BPMChange = getBPMChangeFromMS(rawTime);
-		if (bpmChange.bpm != bpm) bpm = bpmChange.bpm;
+		var point:TimingPoint = getPointFromTime(rawTime);
+		if (point.bpm >= 1 && point.bpm != bpm) bpm = point.bpm;
 
-		_fBeat = bpmChange.beat + ((rawTime - bpmChange.time) / crotchet);
+		_fBeat = point.beat + ((rawTime - point.time) / crotchet);
 		_fStep = _fBeat * 4;
-		_fMeasure = _fBeat / 4;
+		_fMeasure = _fBeat / point.beatsPerMeasure;
 
 		var nextStep:Int = Math.floor(_fStep);
 		var nextBeat:Int = Math.floor(_fBeat);
@@ -217,46 +231,16 @@ class Conductor extends flixel.FlxBasic {
 		return (60 / bpm) * 1000;
 	}
 
-	public static function getBPMChangeFromMS(time:Float):BPMChange {
-		var lastChange:BPMChange = {
-			beat: 0,
-			time: 0,
-			bpm: bpm
-		};
+	public static function getPointFromTime(time:Float):TimingPoint {
+		var lastPoint:TimingPoint = TimingPoint.createDummy(bpm);
 
-		if (bpmChanges.length == 0) return lastChange;
+		if (timingPoints.length == 0) return lastPoint;
 
-		for (i in 0...bpmChanges.length) {
-			final change:BPMChange = bpmChanges[i];
-			if (time >= change.time) lastChange = change;
+		for (i => point in timingPoints) {
+			if (time >= point.time) lastPoint = point;
 			else break;
 		}
 
-		return lastChange;
+		return lastPoint;
 	}
-
-	public static function setBPMChanges(song:Chart) {
-		bpmChanges = [];
-
-		var curBPM:Float = song.bpm;
-		var curBeats:Int = 0;
-		var curTime:Float = 0.0;
-
-		for (section in song.notes) {
-			if (section.changeBPM && section.bpm != curBPM) {
-				curBPM = section.bpm;
-				bpmChanges.push({
-					beat: curBeats,
-					time: curTime,
-					bpm: curBPM
-				});
-			}
-
-			final sectionBeats:Int = getSectionBeats(section);
-			curBeats += sectionBeats;
-			curTime += calculateCrotchet(curBPM) * sectionBeats;
-		}
-	}
-
-	inline static function getSectionBeats(section:Section):Int return section?.sectionBeats ?? 4;
 }

@@ -13,6 +13,7 @@
 	- HScript (Iris) 1.1.0 `haxelib install hscript-iris 1.1.0`
 	- hxJson5 `haxelib install hxjson5`
 	- hxDiscord_RPC 1.2.4 `haxelib install hxdiscord_rpc 1.2.4`
+	- Moonchart `haxelib git moonchart https://github.com/MaybeMaru/moonchart`
 	- hxVLC 1.9.2 `haxelib install hxvlc 1.9.2`
 	- hxcpp (GIT) `haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp 54af892be2ca4c63988c99c9c524431af6c6f036`
 	- FlxAnimate (GIT) `haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e`
