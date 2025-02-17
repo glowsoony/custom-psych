@@ -1,5 +1,7 @@
 package backend;
 
+// credits to neo for helping me cuz i had timing point issues
+// he also made the macro :thumbs:
 @:build(backend.macros.ClassJson.build())
 class MetaFile {
 	public var songName:String = 'Unknown';
