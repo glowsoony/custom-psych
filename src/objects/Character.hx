@@ -6,7 +6,7 @@ typedef CharacterFile = {
 	var icon:String;
 	var scale:Float;
 	var singDuration:Float;
-	var healthColor:Int;
+	var healthColor:FlxColor;
 	var sheets:String;
 	var cameraOffset:Array<Float>;
 	var danceInterval:Int;
@@ -35,9 +35,7 @@ class Character extends FunkinSprite {
 	public var dancer:Bool = false;
 	public var autoIdle:Bool = true;
 
-	public var animationList:Array<CharacterAnim> = [];
-
-	var _file:CharacterFile;
+	public var file:CharacterFile;
 
 	public function new(?x:Float, ?y:Float, ?name:String, ?player:Bool = true) {
 		name ??= default_name;
@@ -50,21 +48,20 @@ class Character extends FunkinSprite {
 		}
 		path = Paths.get('characters/$name.json');
 
-		_file = getFile(path);
+		file = getFile(path);
 
 		this.name = name;
-		this.singDuration = _file.singDuration;
-		this.healthColor = _file.healthColor;
-		this.sheets = _file.sheets.split(',');
-		this.icon = _file.icon;
-		this.danceInterval = _file.danceInterval;
-		this.cameraOffset.set(_file.cameraOffset[0], _file.cameraOffset[1]);
-		flipX = _file.flipX;
+		this.singDuration = file.singDuration;
+		this.healthColor = file.healthColor;
+		this.sheets = file.sheets.split(',');
+		this.icon = file.icon;
+		this.danceInterval = file.danceInterval;
+		this.cameraOffset.set(file.cameraOffset[0], file.cameraOffset[1]);
+		flipX = file.flipX;
 
 		frames = Paths.multiAtlas(this.sheets);
 
-		animationList.resize(0);
-		for (anim in _file.animations) {
+		for (anim in file.animations) {
 			if (anim.indices.length == 0) {
 				animation.addByPrefix(anim.name, anim.id, anim.framerate, anim.looped);
 			} else {
@@ -72,11 +69,9 @@ class Character extends FunkinSprite {
 			}
 
 			offsetMap.set(anim.name, anim.offsets);
-
-			animationList.push(anim);
 		}
 
-		scale.set(_file.scale, _file.scale);
+		scale.set(file.scale, file.scale);
 		updateHitbox();
 
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
@@ -120,7 +115,7 @@ class Character extends FunkinSprite {
 		}
 	}
 
-	static function createDummyFile():CharacterFile {
+	public static function createDummyFile():CharacterFile {
 		return {
 			antialiasing: true,
 			flipX: false,
@@ -132,14 +127,16 @@ class Character extends FunkinSprite {
 			sheets: 'characters/bf',
 			cameraOffset: [0, 0],
 
-			animations: [{
-				name: 'idle',
-				id: 'anim',
-				indices: [],
-				framerate: 24,
-				looped: false,
-				offsets: [0, 0]
-			}],
+			animations: [
+				{
+					name: 'name',
+					id: 'id',
+					indices: [],
+					framerate: 24,
+					looped: false,
+					offsets: [0, 0]
+				}
+			],
 		}
 	}
 

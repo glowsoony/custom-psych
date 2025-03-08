@@ -11,14 +11,12 @@ import moonchart.formats.fnf.legacy.FNFLegacy;
 typedef JsonChart = {
 	var notes:Array<Section>;
 	var ?events:Array<Dynamic>;
-	var bpm:Float;
 	var speed:Float;
 }
 
 typedef Chart = {
 	var notes:Array<Section>;
 	var events:Array<Dynamic>;
-	var bpm:Float;
 	var speed:Float;
 	var ?meta:MetaFile;
 }
@@ -40,7 +38,6 @@ class Song {
 				altAnim: false
 			}],
 			events: [],
-			bpm: 120,
 			speed: 1.0,
 		}
 	}
@@ -106,16 +103,19 @@ class Song {
 	static var formats:Array<String> = ['json', 'sm', 'osu'];
 	public static function getFile(song:String, diff:String) {
 		diff = Difficulty.format(diff);
-		var path:String = '$diff.${formats[0]}';
+		var file:String = '$diff.${formats[0]}';
+		var path:String = Paths.get('songs/$song');
 
-		var files:Array<String> = FileSystem.readDirectory(Paths.get('songs/$song'));
+		if (!FileSystem.exists(path)) return file;
+
+		var files:Array<String> = FileSystem.readDirectory(path);
 		for (format in formats) {
 			if (files.contains('$diff.$format')) { // shouldnt this be endsWith? or use haxe.io.Path.withoutDirectory
-				path = '$diff.$format';
+				file = '$diff.$format';
 				break;
 			}
 		}
 
-		return path;
+		return file;
 	}
 }

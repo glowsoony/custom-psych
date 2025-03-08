@@ -440,7 +440,6 @@ class PlayState extends MusicState {
 		}
 
 		Conductor.timingPoints = song.meta.timingPoints;
-		Conductor.bpm = song.bpm;
 		Conductor.songOffset = song.meta.offset;
 		songName = song.meta.songName;
 		stageName = song.meta.stage;
