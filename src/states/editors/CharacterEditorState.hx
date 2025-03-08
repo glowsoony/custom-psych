@@ -388,12 +388,10 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 					// because we don't know how long to run the loop for
 					if (Math.isNaN(max)) return;
 					for (i in min...max) indices.push(i);
-
-					return;
+				} else {
+					// use normal indices instead
+					for (i in animationIndicesInputText.text.split(',')) indices.push(Std.parseInt(i));
 				}
-				
-				// use normal indices instead
-				for (i in animationIndicesInputText.text.split(',')) indices.push(Std.parseInt(i));
 			}
 
 			var lastOffsets:Array<Float> = [0, 0];
