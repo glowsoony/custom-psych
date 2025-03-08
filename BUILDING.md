@@ -9,7 +9,6 @@
 	- Lime 8.1.2 `haxelib install lime 8.1.2`
 	- OpenFL 9.3.3 `haxelib install openfl 9.3.3`
 	- Flixel Addons 3.2.2 `haxelib install flixel-addons 3.2.2`
-	- Flixel Tools 1.5.1 `haxelib install flixel-tools 1.5.1`
 	- HScript (Iris) 1.1.0 `haxelib install hscript-iris 1.1.0`
 	- hxJson5 `haxelib install hxjson5`
 	- hxDiscord_RPC 1.2.4 `haxelib install hxdiscord_rpc 1.2.4`
