@@ -382,11 +382,11 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 					var fuck:Array<String> = indicesText.split('-');
 					var min:Int = Std.parseInt(fuck[0]);
 					var max:Int = Std.parseInt(fuck[1]) + 1;
-					if (Math.isNan(min)) min = 0; // in case the user didn't put it as a number
+					if (Math.isNaN(min)) min = 0; // in case the user didn't put it as a number
 
 					// if the max number wasn't a number then don't do anything
 					// because we don't know how long to run the loop for
-					if (Math.isNan(max)) return;
+					if (Math.isNaN(max)) return;
 					for (i in min...max) indices.push(i);
 
 					return;
