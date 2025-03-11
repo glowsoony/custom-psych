@@ -345,7 +345,7 @@ class PlayState extends MusicState {
 		Application.current.window.onKeyDown.add(keyPressed);
 		Application.current.window.onKeyUp.add(keyReleased);
 
-		Conductor.rawTime -= (Conductor.crotchet * 5) + Conductor.songOffset;
+		Conductor.rawTime = (Conductor.crotchet * -5) - Conductor.songOffset;
 		countdown.start();
 
 		FlxG.mouse.visible = false;
@@ -440,6 +440,7 @@ class PlayState extends MusicState {
 		}
 
 		Conductor.timingPoints = song.meta.timingPoints;
+		Conductor.bpm = Conductor.timingPoints[0].bpm;
 		Conductor.songOffset = song.meta.offset;
 		songName = song.meta.songName;
 		stageName = song.meta.stage;
@@ -901,8 +902,6 @@ class PlayState extends MusicState {
 
 	override function beatHit(beat:Int) {
 		ScriptHandler.call('beatHit', [beat]);
-
-		countdown.beat(beat);
 
 		iconP1.scale.set(1.2, 1.2);
 		iconP1.updateHitbox();

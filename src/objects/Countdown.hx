@@ -23,7 +23,6 @@ class Countdown extends FunkinSprite {
 	public dynamic function onFinish():Void {}
 
 	public var ticks:Int = 4;
-	public var timer:FlxTimer;
 	public var finished:Bool = true;
 
 	public function new(?x:Float, ?y:Float) {
@@ -34,13 +33,11 @@ class Countdown extends FunkinSprite {
 		animation.frameIndex = -1; // ????
 
 		alpha = 0;
-		active = true;
-		_lastTick = ticks;
+		active = false;
+		_lastTick = ticks + 1;
 	}
 
 	public function start():Void {
-		if (timer != null) stop();
-
 		finished = false;
 		active = true;
 		onStart();
@@ -50,16 +47,21 @@ class Countdown extends FunkinSprite {
 	override function update(elapsed:Float):Void {
 		if (finished) return;
 		alpha -= elapsed / (Conductor.crotchet * 0.001);
+
+		var nextTick:Int = Math.floor((Conductor.rawTime + Conductor.songOffset) / Conductor.calculateCrotchet(Conductor.bpm)) * -1;
+		if (nextTick < _lastTick) {
+			beat(nextTick);
+			_lastTick = nextTick;
+		}
 	}
 
-	public function beat(curBeat:Int) {
-		if (finished || curBeat < -ticks) return;
+	public function beat(curTick:Int) {
+		if (curTick > ticks) return;
 
-		_lastTick = Math.floor(Math.abs(curBeat));
-		onTick(_lastTick);
+		onTick(curTick);
 		alpha = 1;
 
-		if (_lastTick == 0) {
+		if (curTick <= 0) {
 			finished = true;
 			active = false;
 			alpha = 0;
@@ -68,7 +70,6 @@ class Countdown extends FunkinSprite {
 	}
 
 	public function stop():Void {
-		if (timer == null) return;
-		timer.cancel();
+		active = false;
 	}
 }

@@ -38,13 +38,17 @@ class Conductor extends flixel.FlxBasic {
 
     public static var timingPoints(default, set):Array<TimingPoint> = [];
     static function set_timingPoints(value:Array<TimingPoint>):Array<TimingPoint> {
-		if (value == null || value.length == 0) {
-			timingPoints.resize(0);
-			return [];
-		}
-
         var lastBPM:Float = 120;
         var lastBeatsPerMeasure:Int = 4;
+
+		if (value == null || value.length == 0) {
+			timingPoints.resize(1);
+			timingPoints[0] = new TimingPoint();
+			timingPoints[0].time = 0;
+			timingPoints[0].bpm = lastBPM;
+			timingPoints[0].beatsPerMeasure = lastBeatsPerMeasure;
+			return timingPoints;
+		}
 
         // so that the end-user doesn't have to specify a bpm/numerator every time they add a new point for smth else
         for (point in value) {
@@ -99,8 +103,7 @@ class Conductor extends flixel.FlxBasic {
         _fBeat = beat = 0;
         _fMeasure = measure = 0;
 
-		timingPoints.resize(1);
-		timingPoints[0] = TimingPoint.createDummy();
+		timingPoints = [];
 		beatsPerMeasure = 4;
 		bpm = 120;
 
@@ -150,34 +153,16 @@ class Conductor extends flixel.FlxBasic {
         }
     }
 
-    public static function getBeatFromPoint(timeAt:Float):Int {
-		var beatFromPoint:Int = 0;
-		var lastPointTime:Float = 0.0;
-		if (timingPoints.length <= 1) return beatFromPoint;
-
-		timeAt = Math.max(0, timeAt);
-        var curBPM:Float = timingPoints[0].bpm;
-
-        for (point in timingPoints) {
-			if (timeAt >= point.time) {
-				beatFromPoint += Math.floor((point.time - lastPointTime) / calculateCrotchet(curBPM));
-				lastPointTime = point.time;
-
-				if (point.bpm > 0 && point.bpm != curBPM) curBPM = point.bpm;
-			} else break;
-        }
-
-        return beatFromPoint;
-    }
-
     public static dynamic function syncBeats() {
-        var point:TimingPoint = getPointFromTime(rawTime);
+		var curTime:Float = Math.max(0, rawTime);
+
+        var point:TimingPoint = getPointFromTime(curTime + songOffset);
         if (point.bpm > 0 && point.bpm != bpm) bpm = point.bpm;
 
 		// beatsPerMeasure
 		if (point.beatsPerMeasure != beatsPerMeasure) beatsPerMeasure = point.beatsPerMeasure;
 
-        _fBeat = getBeatFromPoint(rawTime) + ((rawTime - point.time) / crotchet);
+        _fBeat = getBeatFromTime(curTime) + ((curTime - point.time) / crotchet);
         _fStep = _fBeat * 4;
         _fMeasure = _fBeat / beatsPerMeasure;
 
@@ -289,17 +274,37 @@ class Conductor extends flixel.FlxBasic {
         return (60 / bpm) * 1000;
     }
 
-    public static function getPointFromTime(time:Float):TimingPoint {
+    public static function getBeatFromTime(timeAt:Float):Float {
+		var beatFromTime:Float = 0;
+		var lastPointTime:Float = 0.0;
+		if (timingPoints.length <= 1) return beatFromTime;
+
+		timeAt = Math.max(0, timeAt);
+        var curBPM:Float = timingPoints[0].bpm;
+
+        for (point in timingPoints) {
+			if (timeAt >= point.time) {
+				beatFromTime += (point.time - lastPointTime) / calculateCrotchet(curBPM);
+				lastPointTime = point.time;
+
+				if (point.bpm > 0 && point.bpm != curBPM) curBPM = point.bpm;
+			} else break;
+        }
+
+        return beatFromTime;
+    }
+
+    public static function getPointFromTime(timeAt:Float):TimingPoint {
         var lastPoint:TimingPoint = TimingPoint.createDummy();
         if (timingPoints.length == 0) return lastPoint;
 
 		// to prevent running a for loop just for one object
 		if (timingPoints.length == 1) return timingPoints[0];
 
-		time = Math.max(0, time);
+		timeAt = Math.max(0, timeAt);
 
         for (i => point in timingPoints) {
-            if (time >= point.time) lastPoint = point;
+            if (timeAt >= point.time) lastPoint = point;
             else break;
         }
 
