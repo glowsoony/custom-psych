@@ -156,13 +156,13 @@ class Conductor extends flixel.FlxBasic {
     public static dynamic function syncBeats() {
 		var curTime:Float = Math.max(0, rawTime);
 
-        var point:TimingPoint = getPointFromTime(curTime + songOffset);
+        var point:TimingPoint = getPointFromTime(rawTime + songOffset);
         if (point.bpm > 0 && point.bpm != bpm) bpm = point.bpm;
 
 		// beatsPerMeasure
 		if (point.beatsPerMeasure != beatsPerMeasure) beatsPerMeasure = point.beatsPerMeasure;
 
-        _fBeat = getBeatFromTime(curTime) + ((curTime - point.time) / crotchet);
+        _fBeat = getBeatFromTime(rawTime + songOffset) + ((curTime - point.time) / crotchet);
         _fStep = _fBeat * 4;
         _fMeasure = _fBeat / beatsPerMeasure;
 
