@@ -40,15 +40,19 @@ class Countdown extends FunkinSprite {
 	public function start():Void {
 		finished = false;
 		active = true;
+		_time = (Conductor.crotchet * -(ticks + 1));
 		onStart();
 	}
 
 	var _lastTick:Int;
+	var _time:Float;
 	override function update(elapsed:Float):Void {
 		if (finished) return;
 		alpha -= elapsed / (Conductor.crotchet * 0.001);
 
-		var nextTick:Int = Math.floor((Conductor.rawTime + Conductor.songOffset) / Conductor.calculateCrotchet(Conductor.bpm)) * -1;
+		_time += (elapsed * 1000) * Conductor.rate;
+
+		var nextTick:Int = Math.floor(_time / Conductor.calculateCrotchet(Conductor.bpm)) * -1;
 		if (nextTick < _lastTick) {
 			beat(nextTick);
 			_lastTick = nextTick;
