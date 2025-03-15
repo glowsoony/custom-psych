@@ -111,7 +111,7 @@ class Main extends Sprite {
 		errMsg += '\nExtra Info:\n';
 		errMsg += 'Operating System: ${Util.getOperatingSystem()}\nTarget: ${Util.getTarget()}\n\n';
 
-		final defines:Map<String, Dynamic> = DefinesMacro.defines;
+		final defines:Map<String, Dynamic> = _external.CompilerDefines.list;
 		errMsg += 'Haxe: ${defines['haxe']}\nFlixel: ${defines['flixel']}\nOpenFL: ${defines['openfl']}\nLime: ${defines['lime']}';
 
 		if (!FileSystem.exists('./crash/')) FileSystem.createDirectory('./crash/');

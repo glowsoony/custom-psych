@@ -162,7 +162,7 @@ class Note extends FlxSprite {
 
 		if (isSustain) {
 			multAlpha = 0.6;
-			flipY = Settings.data.scrollDirection == 'Down';
+			flipY = Settings.data.downscroll;
 
 			correctionOffset.x += width * 0.5;
 			animation.play('holdend');

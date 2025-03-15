@@ -8,7 +8,7 @@ import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import flixel.util.FlxStringUtil;
 
-import external.memory.Memory;
+import _external.memory.Memory;
 
 class FPSCounter extends Sprite {
 	// the background for the counter

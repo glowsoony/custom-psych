@@ -1,13 +1,11 @@
 package backend;
 
-// credits to neo for helping me cuz i had timing point issues
-// he also made the macro :thumbs:
-@:build(backend.macros.ClassJson.build())
+@:structInit
 class MetaFile {
 	public var songName:String = 'Unknown';
 	public var composer:String = 'Unknown';
 	public var charter:Map<String, String> = [];
-	@:dyn public var timingPoints:Array<Conductor.TimingPoint> = [];
+	public var timingPoints:Array<Conductor.TimingPoint> = [];
 	public var offset:Float = 0.0;
 	public var hasVocals:Bool = true;
 
@@ -15,30 +13,33 @@ class MetaFile {
 	public var spectator:String = 'bf';
 	public var enemy:String = 'bf';
 	public var stage:String = 'stage';
+}
 
-	function new() {}
-
-	public static function createDummy():MetaFile {
-		return new MetaFile();
-	}
+typedef MetaTimingPoint = {
+	var time:Float;
+	var ?bpm:Float;
+	var ?beatsPerMeasure:Int;
 }
 
 class Meta {
 	public static function load(song:String):MetaFile {
-		var path:String = Paths.get('songs/$song/meta.json');
+		var path:String = 'assets/songs/$song/meta.json';
+		var file:MetaFile = {};
 
-		if (!FileSystem.exists(path)) return MetaFile.createDummy();
+		if (!FileSystem.exists(path)) return file;
+		var data = Json.parse(File.getContent(path));
 
-		var dyn = Json.parse(File.getContent(path));
-		var file:MetaFile = MetaFile.fromJson(dyn);
-
-/*		trace("Time points: " + file.timingPoints.length);
-		for (i=>point in file.timingPoints) {
-			trace(i);
-			trace(" - Time: " + point.time);
-			trace(" - BPM: " + point.bpm);
-			trace(" - beats per measure: " + point.beatsPerMeasure);
-		}*/
+		// have to do it this way
+		// otherwise haxe shits itself and starts printing insane numbers
+		// and that's no good /ref
+		var timingPoints:Array<MetaTimingPoint> = data.timingPoints;
+		for (point in timingPoints) {
+			file.timingPoints.push({
+				time: point.time,
+				bpm: point.bpm,
+				beatsPerMeasure: point.beatsPerMeasure
+			});
+		}
 
 		return file;
 	}

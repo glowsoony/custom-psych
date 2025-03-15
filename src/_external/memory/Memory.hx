@@ -1,4 +1,4 @@
-package external.memory;
+package _external.memory;
 
 #if cpp
 /**
@@ -6,7 +6,7 @@ package external.memory;
  * for the program.
  * @author Leather128 (Haxe Bindings) - David Robert Nadeau (Original C Header)
  */
-@:buildXml('<include name="../../../../src/external/memory/build.xml" />')
+@:buildXml('<include name="../../../../src/_external/memory/build.xml" />')
 @:include("Memory.h")
 extern class Memory {
 	/**
