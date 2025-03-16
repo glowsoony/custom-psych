@@ -1,22 +1,17 @@
 package;
 
 import backend.FPSCounter;
-
-import flixel.FlxGame;
-import flixel.FlxState;
 import openfl.display.Sprite;
 import openfl.display.StageScaleMode;
 import states.TitleState;
 
-import external.DefinesMacro;
-
 import lime.graphics.Image;
 
-//crash handler stuff
 #if CRASH_HANDLER
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
+import _external.CompilerDefines;
 #end
 
 import flixel.input.keyboard.FlxKey;
@@ -24,7 +19,7 @@ import openfl.Lib;
 import backend.DiscordClient;
 
 #if linux
-@:cppInclude('./external/gamemode_client.h')
+@:cppInclude('./_external/gamemode_client.h')
 @:cppFileCode('#define GAMEMODE_AUTO')
 #end
 

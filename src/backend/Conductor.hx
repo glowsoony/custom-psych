@@ -29,14 +29,15 @@ class Conductor extends flixel.FlxBasic {
     public static var rate(default, set):Float = 1.0;
     public static var volume(default, set):Float = 1.0;
 
-    public static var time:Float = 0.0;
+    public static var visualTime:Float = 0.0;
     public static var rawTime:Float = 0.0;
-    static var _lastTime:Float = 0.0;
-    static var _resyncTimer:Float = 0.0;
 
     public static var timingPoints(default, set):Array<TimingPoint> = [];
     static function set_timingPoints(value:Array<TimingPoint>):Array<TimingPoint> {
-        var lastPoint:TimingPoint = {};
+        var lastPoint:TimingPoint = {
+			bpm: 0,
+			beatsPerMeasure: 0
+		};
 
 		if (value == null || value.length == 0) {
 			timingPoints.resize(1);
@@ -48,7 +49,6 @@ class Conductor extends flixel.FlxBasic {
         for (point in value) {
             if (point.bpm <= 0) point.bpm = lastPoint.bpm;
             if (point.beatsPerMeasure <= 0) point.beatsPerMeasure = lastPoint.beatsPerMeasure;
-
             lastPoint = point;
         }
         timingPoints.resize(0);
@@ -91,7 +91,7 @@ class Conductor extends flixel.FlxBasic {
 
     public static function reset() {
         playing = false;
-        time = rawTime = 0.0;
+        visualTime = rawTime = 0.0;
         _fStep = step = 0;
         _fBeat = beat = 0;
         _fMeasure = measure = 0;
@@ -115,12 +115,14 @@ class Conductor extends flixel.FlxBasic {
         syncBeats();
     }
 
+    static var _lastTime:Float = 0.0;
+    static var _resyncTimer:Float = 0.0;
     public static dynamic function syncTime(delta:Float):Void {
         if (!playing) return;
         
         final addition:Float = delta * 1000;
         if (inst == null || !inst.playing) {
-            time = rawTime += addition * rate;
+            visualTime = rawTime += addition * rate;
             return;
         }
 
@@ -129,7 +131,7 @@ class Conductor extends flixel.FlxBasic {
         _lastTime = inst.time;
 
         rawTime = inst.time - songOffset;
-        time = rawTime + _resyncTimer;
+        visualTime = rawTime + _resyncTimer;
     }
 
     public static dynamic function syncVocals() {
@@ -149,13 +151,13 @@ class Conductor extends flixel.FlxBasic {
     public static dynamic function syncBeats() {
 		var curTime:Float = Math.max(0, rawTime);
 
-        var point:TimingPoint = getPointFromTime(rawTime + songOffset);
-        if (point.bpm > 0 && point.bpm != bpm) bpm = point.bpm;
+        var point:TimingPoint = getPointFromTime(rawTime);
+        if (point.bpm != bpm) bpm = point.bpm;
 
 		// beatsPerMeasure
 		if (point.beatsPerMeasure != beatsPerMeasure) beatsPerMeasure = point.beatsPerMeasure;
 
-        _fBeat = getBeatFromTime(rawTime + songOffset) + ((curTime - point.time) / crotchet);
+        _fBeat = getBeatFromTime(rawTime) + ((curTime - point.time) / crotchet);
         _fStep = _fBeat * 4;
         _fMeasure = _fBeat / beatsPerMeasure;
 
@@ -269,7 +271,7 @@ class Conductor extends flixel.FlxBasic {
 
     public static function getBeatFromTime(timeAt:Float):Float {
 		var beatFromTime:Float = 0;
-		var lastPointTime:Float = 0.0;
+		var lastPointTime:Float = songOffset;
 		if (timingPoints.length <= 1) return beatFromTime;
 
 		timeAt = Math.max(0, timeAt);
@@ -277,10 +279,10 @@ class Conductor extends flixel.FlxBasic {
 
         for (point in timingPoints) {
 			if (timeAt >= point.time) {
-				beatFromTime += (point.time - lastPointTime) / calculateCrotchet(curBPM);
-				lastPointTime = point.time;
+				beatFromTime += ((point.time - songOffset) - lastPointTime) / calculateCrotchet(curBPM);
+				lastPointTime = (point.time - songOffset);
 
-				if (point.bpm > 0 && point.bpm != curBPM) curBPM = point.bpm;
+				curBPM = point.bpm;
 			} else break;
         }
 
@@ -297,7 +299,7 @@ class Conductor extends flixel.FlxBasic {
 		timeAt = Math.max(0, timeAt);
 
         for (i => point in timingPoints) {
-            if (timeAt >= point.time) lastPoint = point;
+            if (timeAt >= point.time - songOffset) lastPoint = point;
             else break;
         }
 

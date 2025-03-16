@@ -23,11 +23,20 @@ typedef MetaTimingPoint = {
 
 class Meta {
 	public static function load(song:String):MetaFile {
-		var path:String = 'assets/songs/$song/meta.json';
+		var path:String = Paths.get('songs/$song/meta.json');
 		var file:MetaFile = {};
 
 		if (!FileSystem.exists(path)) return file;
 		var data = Json.parse(File.getContent(path));
+
+		for (property in Reflect.fields(data)) {
+			if (!Reflect.hasField(file, property)) continue;
+			if (property == 'charter' || property == 'timingPoints') continue;
+
+			Reflect.setField(file, property, Reflect.field(data, property));
+		}
+
+		for (diff in Reflect.fields(data.charter)) file.charter.set(diff, Reflect.field(data.charter, diff));
 
 		// have to do it this way
 		// otherwise haxe shits itself and starts printing insane numbers
