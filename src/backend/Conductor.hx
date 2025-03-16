@@ -41,7 +41,7 @@ class Conductor extends flixel.FlxBasic {
 
 		if (value == null || value.length == 0) {
 			timingPoints.resize(1);
-			timingPoints[0] = lastPoint;
+			timingPoints[0] = {};
 			return timingPoints;
 		}
 
