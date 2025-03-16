@@ -74,6 +74,9 @@ class Meta {
 			});
 		}
 
+		// in case this file wasn't cached
+		// we cache it so that it doesn't have to keep re-parsing over and over
+		_cache.set(song, file);
 		return file;
 	}
 }

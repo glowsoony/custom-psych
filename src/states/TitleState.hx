@@ -117,6 +117,9 @@ class TitleState extends MusicState {
 		Conductor.playing = true;
 		if (seenIntro) {
 			skipIntro();
+
+			// so that you doesn't have to restart the game every time
+			Meta.cacheFiles(true);
 			return;
 		}
 
