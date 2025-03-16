@@ -111,35 +111,34 @@ class Paths {
 
 		// start by checking the currently played mod
 		var mainDirectory:String = Mods.current;
+		var finalPath:String = '$mainDirectory/$path';
 
 		// if there are any other mods active
 		// and the file doesn't exist in the currently played mod
 		// run through the mods
+		if (FileSystem.exists(finalPath)) return finalPath;
 
 		// first check global mods
 		var mods:Array<ModData> = Mods.getActive('global');
-		if (mods.length > 0 && !FileSystem.exists('$mainDirectory/$path')) {
+		if (mods.length > 0) {
 			for (mod in mods) {
 				mainDirectory = 'mods/${mod.id}';
-				if (FileSystem.exists('$mainDirectory/$path')) break;
+				finalPath = '$mainDirectory/$path';
+				if (FileSystem.exists(finalPath)) return finalPath;
 			}
 
 			// then check local mods
 			mods = Mods.getActive('local');
-
 			for (mod in mods) {
 				mainDirectory = 'mods/${mod.id}';
-				if (FileSystem.exists('$mainDirectory/$path')) break;
+				finalPath = '$mainDirectory/$path';
+				if (FileSystem.exists(finalPath)) return finalPath;
 			}
 		}
 
 		// if the file STILL doesn't exist
 		// fallback to assets
-		if (!FileSystem.exists('$mainDirectory/$path')) {
-			mainDirectory = 'assets';
-		}
-
-		return '$mainDirectory/$path';
+		return 'assets/$path';
 	}
 
 	// images

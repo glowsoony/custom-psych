@@ -74,6 +74,8 @@ class Mods {
 			var mod:ModData = add(i[0]);
 			mod.enabled = i[1] == '1';
 		}
+
+		loadTop();
 	}
 
 	public static function createDummyFile():PackFile {

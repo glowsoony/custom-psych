@@ -22,17 +22,41 @@ typedef MetaTimingPoint = {
 }
 
 class Meta {
+	static var _cache:Map<String, MetaFile> = [];
+	public static function cacheFiles(?force:Bool = false):Void {
+		if (force) _cache.clear();
+
+		final directories:Array<String> = ['assets'];
+		for (mod in Mods.getActive()) directories.push('mods/${mod.id}');
+
+		for (path in directories) {
+			for (songFolder in FileSystem.readDirectory('$path/songs')) {
+				if (!FileSystem.exists('$path/songs/$songFolder/meta.json')) {
+					continue;
+				}
+
+				_cache.set(songFolder, load(songFolder));
+			}
+		}
+	}
+
 	public static function load(song:String):MetaFile {
+		if (_cache.exists(song)) return _cache[song];
+		
 		var path:String = Paths.get('songs/$song/meta.json');
 		var file:MetaFile = {};
 
+		// still keeping this check here
+		// in case the file isn't in the cache
+		// but the user wants to parse it anyways
 		if (!FileSystem.exists(path)) return file;
-		var data = Json.parse(File.getContent(path));
+		var data:Dynamic = Json.parse(File.getContent(path));
 
 		for (property in Reflect.fields(data)) {
-			if (!Reflect.hasField(file, property)) continue;
+			// ??????? ok i guess no `Reflect.hasField()` for you
+			if (!Reflect.fields(file).contains(property)) continue;
 			if (property == 'charter' || property == 'timingPoints') continue;
-
+			
 			Reflect.setField(file, property, Reflect.field(data, property));
 		}
 

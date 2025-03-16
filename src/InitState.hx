@@ -7,6 +7,7 @@ class InitState extends flixel.FlxState {
 		Scores.load();
 		
 		Mods.reload();
+		Meta.cacheFiles();
 
 		Language.reloadPhrases();
 

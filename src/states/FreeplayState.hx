@@ -75,7 +75,7 @@ class FreeplayState extends MusicState {
 		add(grpIcons = new FlxTypedSpriteGroup<CharIcon>());
 
 		for (index => song in songList) {
-			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, song.id));
+			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, Meta.load(song.id).songName));
 			alphabet.visible = alphabet.active = false;
 			alphabet.targetY = index;
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
