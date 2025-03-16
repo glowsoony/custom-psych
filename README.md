@@ -1,6 +1,8 @@
 # Custom Psych
 this fork aims to not only fit my needs for modding/playing fnf  
-but as a framework for upcoming mod/engine makers to look at for math/logic in rhythm games
+
+but as a framework for upcoming mod/engine makers to look at for math/logic in rhythm games  
+(this does not mean the project is 100% right either, i also make mistakes and have made a couple along the way (so please do not take whatever is in here as fact))
 
 i made this mainly because every engine i've tried either
 * doesn't fit my needs
