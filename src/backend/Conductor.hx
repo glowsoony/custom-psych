@@ -6,6 +6,9 @@ import backend.Song;
 @:structInit
 class TimingPoint {
 	public var time:Float = 0;
+	public var offsettedTime(get, never):Float;
+	function get_offsettedTime():Float return time - Conductor.songOffset;
+
 	public var bpm:Float = 120;
 	public var beatsPerMeasure:Int = 4;
 
@@ -151,13 +154,13 @@ class Conductor extends flixel.FlxBasic {
     public static dynamic function syncBeats() {
 		var curTime:Float = Math.max(0, rawTime);
 
-        var point:TimingPoint = getPointFromTime(rawTime);
+        var point:TimingPoint = getPointFromTime(curTime);
         if (point.bpm != bpm) bpm = point.bpm;
 
 		// beatsPerMeasure
 		if (point.beatsPerMeasure != beatsPerMeasure) beatsPerMeasure = point.beatsPerMeasure;
 
-        _fBeat = getBeatFromTime(rawTime) + ((curTime - point.time) / crotchet);
+        _fBeat = getBeatFromTime(curTime) + ((curTime - point.offsettedTime) / crotchet);
         _fStep = _fBeat * 4;
         _fMeasure = _fBeat / beatsPerMeasure;
 
@@ -271,16 +274,15 @@ class Conductor extends flixel.FlxBasic {
 
     public static function getBeatFromTime(timeAt:Float):Float {
 		var beatFromTime:Float = 0;
-		var lastPointTime:Float = songOffset;
+		var lastPointTime:Float = 0;
 		if (timingPoints.length <= 1) return beatFromTime;
 
-		timeAt = Math.max(0, timeAt);
         var curBPM:Float = timingPoints[0].bpm;
 
         for (point in timingPoints) {
-			if (timeAt >= point.time) {
-				beatFromTime += ((point.time - songOffset) - lastPointTime) / calculateCrotchet(curBPM);
-				lastPointTime = (point.time - songOffset);
+			if (timeAt >= point.offsettedTime) {
+				beatFromTime += (point.offsettedTime - lastPointTime) / calculateCrotchet(curBPM);
+				lastPointTime = point.offsettedTime;
 
 				curBPM = point.bpm;
 			} else break;
@@ -296,10 +298,8 @@ class Conductor extends flixel.FlxBasic {
 		// to prevent running a for loop just for one object
 		if (timingPoints.length == 1) return timingPoints[0];
 
-		timeAt = Math.max(0, timeAt);
-
         for (i => point in timingPoints) {
-            if (timeAt >= point.time - songOffset) lastPoint = point;
+            if (timeAt >= point.offsettedTime) lastPoint = point;
             else break;
         }
 
