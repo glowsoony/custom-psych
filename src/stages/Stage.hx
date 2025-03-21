@@ -4,6 +4,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.media.Sound;
+import backend.EventHandler.Event;
 
 typedef StageFile = {
 	var ?directory:String;
@@ -154,6 +155,9 @@ class Stage {
 	public function create():Void {}
 	public function update(elapsed:Float):Void {}
 	public function destroy():Void {}
+
+	public function eventPreloaded(event:Event):Void {}
+	public function eventTriggered(event:Event):Void {}
 
 	public static function getFile(path:String):StageFile {
 		var file:StageFile = createDummyFile();

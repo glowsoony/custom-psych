@@ -163,6 +163,8 @@ class PlayState extends MusicState {
 	var timeBar:Bar;
 	var timeTxt:FlxText;
 
+	var eventHandler:EventHandler;
+
 	var judgeSpr:JudgementSpr;
 	var comboNumbers:ComboNums;
 
@@ -222,6 +224,11 @@ class PlayState extends MusicState {
 		ScriptHandler.loadFromDir('scripts');
 
 		loadSong();
+
+		eventHandler = new EventHandler();
+		eventHandler.triggered = eventTriggered;
+		eventHandler.load(songID);
+
 		ScriptHandler.loadFromDir('songs/$songID');
 
 		scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
@@ -585,6 +592,11 @@ class PlayState extends MusicState {
 		oldNote = null;
 	}
 
+	function eventTriggered(event:Event):Void {
+		ScriptHandler.call('eventTriggered', [event.name, event.args]);
+		stage.eventTriggered(event);
+	}
+
 	var canPause:Bool = true;
 	override function update(elapsed:Float):Void {
 		ScriptHandler.call('update', [elapsed]);
@@ -599,6 +611,7 @@ class PlayState extends MusicState {
 		updateIconPositions();
 		updateTimeBar();
 
+		if (countdown.finished) eventHandler.update();
 		stage.update(elapsed);
 
 		if (FlxG.keys.justPressed.F8) botplay = !botplay;
