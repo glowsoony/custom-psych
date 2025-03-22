@@ -5,6 +5,7 @@ import backend.Meta;
 
 import moonchart.formats.OsuMania;
 import moonchart.formats.StepMania;
+import moonchart.formats.StepManiaShark;
 import moonchart.formats.fnf.legacy.FNFLegacy;
 
 // just to make sure chart parsing doesn't kill itself
@@ -56,6 +57,11 @@ class Song {
 				var fnf:FNFLegacy = new FNFLegacy();
 				fnf.bakedOffset = false;
 				cast fnf.fromFormat(new StepMania().fromFile(path)).data.song;
+
+			case 'ssc':
+				var fnf:FNFLegacy = new FNFLegacy();
+				fnf.bakedOffset = false;
+				cast fnf.fromFormat(new StepManiaShark().fromFile(path)).data.song;
 
 			case 'osu':
 				var fnf:FNFLegacy = new FNFLegacy();
