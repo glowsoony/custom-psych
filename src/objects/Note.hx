@@ -44,6 +44,7 @@ class Note extends FlxSprite {
 	public var nextNote:Note;
 
 	public var judge:String = '';
+	public var coyoteTimer:Float = 0.25;
 
 	public var rawHitTime(get, never):Float;
 	function get_rawHitTime():Float {

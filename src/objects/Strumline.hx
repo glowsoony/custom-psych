@@ -10,11 +10,11 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 		regenerate();
 		return value;
 	}
-	public var player:Bool;
+	public var ai:Bool;
 
 	public function new(?x:Float, ?y:Float, ?player:Bool = false, ?skin:String) {
 		this.moves = false;
-		this.player = player;
+		this.ai = !player;
 		super(x, y);
 		this.skin = skin ?? Settings.data.noteSkin;
 
@@ -38,6 +38,7 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 }
 
 class StrumNote extends FunkinSprite {
+	public var queueStatic:Bool = false;
 	var parent:Strumline;
 	public function new(parent:Strumline, lane:Int) {
 		super();
@@ -47,7 +48,7 @@ class StrumNote extends FunkinSprite {
 		animation.finishCallback = _ -> {
 			active = false;
 			
-			if (parent.player || animation.curAnim.name != 'notePressed') return;
+			if (!(parent.ai || queueStatic) || animation.curAnim.name != 'notePressed') return;
 			playAnim('default');
 		}
 

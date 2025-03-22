@@ -18,6 +18,7 @@ import flixel.util.FlxStringUtil;
 
 import substates.PauseMenu;
 import substates.GameOverSubstate;
+import backend.EventHandler;
 
 class PlayState extends MusicState {
 	public static var self:PlayState;
@@ -59,7 +60,7 @@ class PlayState extends MusicState {
 		// and saving the play
 		if (value) disqualified = true;
 
-		if (playerStrums != null) playerStrums.player = !value;
+		if (playerStrums != null) playerStrums.ai = value;
 		if (botplayTxt != null) botplayTxt.visible = value;
 		return botplay = value;
 	}
@@ -672,9 +673,9 @@ class PlayState extends MusicState {
 			note.followStrum(strum, scrollSpeed);
 
 			if (note.player) {
-				if (botplay) checkNoteHitWithAI(strum, note);
+				if (botplay) botplayInputs(strum, note);
 				else if (note.isSustain) sustainInputs(strum, note);
-			} else checkNoteHitWithAI(strum, note);
+			} else botplayInputs(strum, note);
 
 			if (!botplay && note.player && !note.missed && !note.isSustain && note.tooLate) {
 				noteMiss(note);
@@ -749,7 +750,7 @@ class PlayState extends MusicState {
 	}
 
 	// ai note hitting
-	dynamic function checkNoteHitWithAI(strum:StrumNote, note:Note):Void {
+	dynamic function botplayInputs(strum:StrumNote, note:Note):Void {
 		if (!note.canHit || note.ignore || note.breakOnHit || note.time > Conductor.rawTime) return;
 
 		final noteFunc = note.player ? noteHit : opponentNoteHit;
@@ -786,20 +787,14 @@ class PlayState extends MusicState {
 
 		if (!parent.canHit || parent.missed) return;
 
-		var heldKey:Bool = keysHeld[parent.lane];
-		var tooLate:Bool = (parent.wasHit ? note.time < (Conductor.rawTime / Conductor.rate) : parent.tooLate);
-		var isTail:Bool = note.animation.curAnim.name == 'holdend';
+		var playerHeld:Bool = keysHeld[note.lane] || parent.coyoteTimer > 0;
+		var tooLate:Bool = parent.wasHit ? note.time < Conductor.rawTime : parent.tooLate;
 
-		if (!heldKey) {
+		if (note.wasHit)
+			parent.coyoteTimer = keysHeld[note.lane] ? 0.25 : parent.coyoteTimer - FlxG.elapsed;
+
+		if (!playerHeld) {
 			if (tooLate && !note.wasHit) {
-				// ignore tails completely
-				if (isTail && parent.wasHit) {
-					note.destroy();
-					trace('why does this not destroy the tail ???? i don\'t miss it but it doesn\'t get destroyed');
-					notes.remove(note);
-					return;
-				}
-
 				noteMiss(parent);
 				parent.missed = true;
 			}
@@ -807,10 +802,13 @@ class PlayState extends MusicState {
 			return;
 		}
 
+		strum.queueStatic = !keysHeld[note.lane];
 		note.clipToStrum(strum);
 
-		if (note.time <= (Conductor.rawTime / Conductor.rate) && !note.wasHit) note.wasHit = true;
+		if (note.time <= Conductor.rawTime && !note.wasHit) note.wasHit = true;
 		else return;
+		
+		parent.coyoteTimer = 0.25;
 		
 		strum.playAnim('notePressed');
 		bf.playAnim('sing${Note.directions[parent.lane].toUpperCase()}');
