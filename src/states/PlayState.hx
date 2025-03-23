@@ -156,6 +156,8 @@ class PlayState extends MusicState {
 	var opponentStrums:Strumline;
 	var playerStrums:Strumline;
 
+	var noteSplashes:FlxTypedSpriteGroup<NoteSplash>;
+
 	var hud:FlxSpriteGroup;
 
 	var scoreTxt:FlxText;
@@ -273,6 +275,10 @@ class PlayState extends MusicState {
 
 		add(notes = new FlxTypedSpriteGroup<Note>());
 		notes.cameras = [camHUD];
+
+		add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
+		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
+		noteSplashes.cameras = [camHUD];
 
 		if (Settings.data.centeredNotes) {
 			playerStrums.screenCenter(X);
@@ -730,7 +736,7 @@ class PlayState extends MusicState {
 			Difficulty.reset();
 			Mods.current = '';
 			MusicState.switchState(storyMode ? new StoryMenuState() : new FreeplayState());
-			songList = [];
+			songList.resize(0);
 			storyMode = false;
 			currentLevel = 0;
 		} else prevCamFollow = camFollow;
@@ -869,6 +875,11 @@ class PlayState extends MusicState {
 
 		strum.playAnim('notePressed');
 		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+
+		if (Settings.data.noteSplashSkin != 'None' && judge.name == 'sick' && note.splashes) {
+			noteSplashes.members[note.lane].hit(strum);
+		}
+
 		updateScoreTxt();
 		updateJudgeCounter();
 		if (song.meta.hasVocals) Conductor.mainVocals.volume = 1;

@@ -93,6 +93,7 @@ class Note extends FlxSprite {
 
 	public var breakOnHit:Bool = false;
 	public var ignore:Bool = false;
+	public var splashes:Bool = true;
 
 	public var texture(default, set):String;
 	function set_texture(value:String):String {
