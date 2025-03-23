@@ -152,7 +152,7 @@ class Conductor extends flixel.FlxBasic {
     }
 
     public static dynamic function syncBeats() {
-		if (Conductor.rawTime < 0) return;
+		if (rawTime < 0) return;
 
         var point:TimingPoint = getPointFromTime(rawTime);
         if (point.bpm != bpm) bpm = point.bpm;
