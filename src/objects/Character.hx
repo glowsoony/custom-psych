@@ -58,6 +58,7 @@ class Character extends FunkinSprite {
 		this.danceInterval = file.danceInterval;
 		this.cameraOffset.set(file.cameraOffset[0], file.cameraOffset[1]);
 		flipX = file.flipX;
+		antialiasing = Settings.data.antialiasing && file.antialiasing;
 
 		frames = Paths.multiAtlas(this.sheets);
 
