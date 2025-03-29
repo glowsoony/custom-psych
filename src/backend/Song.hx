@@ -56,16 +56,19 @@ class Song {
 			case 'sm':
 				var fnf:FNFLegacy = new FNFLegacy();
 				fnf.bakedOffset = false;
+				fnf.offsetHolds = false;
 				cast fnf.fromFormat(new StepMania().fromFile(path)).data.song;
 
 			case 'ssc':
 				var fnf:FNFLegacy = new FNFLegacy();
 				fnf.bakedOffset = false;
+				fnf.offsetHolds = false;
 				cast fnf.fromFormat(new StepManiaShark().fromFile(path)).data.song;
 
 			case 'osu':
 				var fnf:FNFLegacy = new FNFLegacy();
 				fnf.bakedOffset = false;
+				fnf.offsetHolds = false;
 				cast fnf.fromFormat(new OsuMania().fromFile(path)).data.song;
 
 			default: null;
