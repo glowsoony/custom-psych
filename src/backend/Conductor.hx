@@ -37,16 +37,16 @@ class Conductor extends flixel.FlxBasic {
 
     public static var timingPoints(default, set):Array<TimingPoint> = [];
     static function set_timingPoints(value:Array<TimingPoint>):Array<TimingPoint> {
-        var lastPoint:TimingPoint = {
-			bpm: 0,
-			beatsPerMeasure: 0
-		};
-
 		if (value == null || value.length == 0) {
 			timingPoints.resize(1);
 			timingPoints[0] = {};
 			return timingPoints;
 		}
+
+        var lastPoint:TimingPoint = {
+			bpm: 0,
+			beatsPerMeasure: 0
+		};
 
         // so that the end-user doesn't have to specify a bpm/numerator every time they add a new point for smth else
         for (point in value) {
@@ -99,7 +99,7 @@ class Conductor extends flixel.FlxBasic {
         _fBeat = beat = 0;
         _fMeasure = measure = 0;
 
-		timingPoints = [];
+		timingPoints = null;
 		beatsPerMeasure = 4;
 		bpm = 120;
 
