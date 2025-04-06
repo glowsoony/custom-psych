@@ -571,7 +571,8 @@ class PlayState extends MusicState {
 					lane: note.lane,
 					length: note.length,
 					type: note.type,
-					player: note.player
+					player: note.player,
+					altAnim: note.altAnim
 				}, true, oldNote);
 				sustainNote.parent = swagNote;
 				sustainNote.correctionOffset.y = downscroll ? 0 : swagNote.height * 0.5;
@@ -874,7 +875,8 @@ class PlayState extends MusicState {
 		clearType = updateClearType();
 
 		strum.playAnim('notePressed');
-		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+
+		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
 
 		if (Settings.data.noteSplashSkin != 'None' && judge.name == 'sick' && note.splashes) {
 			noteSplashes.members[note.lane].hit(strum);

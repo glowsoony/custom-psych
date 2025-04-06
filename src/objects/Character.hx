@@ -82,8 +82,6 @@ class Character extends FunkinSprite {
 		}
 
 		animation.finishCallback = anim -> {
-			anim = '$anim$animSuffix';
-
 			if (!animation.exists('$anim-loop')) return;
 			playAnim('$anim-loop');
 		}
@@ -120,7 +118,7 @@ class Character extends FunkinSprite {
 	override function playAnim(name:String, ?forced:Bool = true) {
 		name = '$name$animSuffix';
 		super.playAnim(name, forced);
-		if ((name.startsWith('sing') || name.startsWith('miss')) && !name.contains('loop')) {
+		if ((name.startsWith('sing') || name.startsWith('miss')) && !name.contains('-loop')) {
 			_singTimer = singDuration * (Conductor.stepCrotchet * 0.15);
 		}
 	}

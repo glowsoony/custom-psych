@@ -11,6 +11,7 @@ typedef NoteData = {
 	var type:String;
 	var lane:Int;
 	var player:Bool;
+	var altAnim:Bool;
 }
 
 /**
@@ -45,6 +46,7 @@ class Note extends FlxSprite {
 
 	public var judge:String = '';
 	public var coyoteTimer:Float = 0.25;
+	public var animSuffix:String = '';
 
 	public var rawHitTime(get, never):Float;
 	function get_rawHitTime():Float {
@@ -157,6 +159,7 @@ class Note extends FlxSprite {
 		this.player = data.player;
 		this.type = data.type;
 		this.sustainLength = data.length;
+		this.animSuffix = data.altAnim ? '-alt' : '';
 
 		if (!isSustain && lane < colours.length) { // Doing this 'if' check to fix the warnings on Senpai songs
 			animation.play('default');
