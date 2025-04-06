@@ -26,6 +26,7 @@ typedef CharacterAnim = {
 class Character extends FunkinSprite {
 	public static inline var default_name:String = 'bf';
 	public var name:String = default_name;
+	public var animSuffix:String = '';
 	public var singDuration:Float = 4;
 	public var danceInterval:Int = 2;
 	public var healthColor:FlxColor = 0xFFA1A1A1;
@@ -81,6 +82,8 @@ class Character extends FunkinSprite {
 		}
 
 		animation.finishCallback = anim -> {
+			anim = '$anim$animSuffix';
+
 			if (!animation.exists('$anim-loop')) return;
 			playAnim('$anim-loop');
 		}
@@ -115,8 +118,9 @@ class Character extends FunkinSprite {
 	}
 
 	override function playAnim(name:String, ?forced:Bool = true) {
+		name = '$name$animSuffix';
 		super.playAnim(name, forced);
-		if ((name.startsWith('sing') || name.startsWith('miss')) && !name.endsWith('loop')) {
+		if ((name.startsWith('sing') || name.startsWith('miss')) && !name.contains('loop')) {
 			_singTimer = singDuration * (Conductor.stepCrotchet * 0.15);
 		}
 	}
