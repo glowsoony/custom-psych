@@ -161,8 +161,8 @@ class Conductor extends flixel.FlxBasic {
 		if (point.beatsPerMeasure != beatsPerMeasure) beatsPerMeasure = point.beatsPerMeasure;
 
         _fBeat = getBeatFromTime(rawTime) + ((rawTime - point.time) / crotchet);
-        _fStep = _fBeat * 4;
-        _fMeasure = _fBeat / beatsPerMeasure;
+        _fMeasure = getMeasureFromTime(rawTime) + (_fBeat / beatsPerMeasure);
+		_fStep = _fBeat * 4;
 
         var nextStep:Int = Math.floor(_fStep);
         var nextBeat:Int = Math.floor(_fBeat);
@@ -274,10 +274,11 @@ class Conductor extends flixel.FlxBasic {
 
     public static function getBeatFromTime(timeAt:Float):Float {
 		var beatFromTime:Float = 0;
-		var lastPointTime:Float = songOffset * -1;
+		
 		if (timingPoints.length <= 1) return beatFromTime;
 
         var curBPM:Float = timingPoints[0].bpm;
+		var lastPointTime:Float = songOffset * -1;
 
         for (point in timingPoints) {
 			if (timeAt >= point.offsettedTime) {
@@ -305,4 +306,26 @@ class Conductor extends flixel.FlxBasic {
 
         return lastPoint;
     }
+
+	public static function getMeasureFromTime(timeAt:Float):Float {
+		var measureFromTime:Float = 0;
+		
+		if (timingPoints.length <= 1) return measureFromTime;
+
+		var curSignature:Float = timingPoints[0].beatsPerMeasure;
+		var curBPM:Float = timingPoints[0].bpm;
+        var lastPointTime:Float = 0;
+
+        for (point in timingPoints) {
+			if (timeAt >= point.offsettedTime) {
+				measureFromTime += ((point.offsettedTime - lastPointTime) / (calculateCrotchet(curBPM))) / curSignature;
+				lastPointTime = point.offsettedTime;
+
+				curSignature = point.beatsPerMeasure;
+				curBPM = point.bpm;
+			} else break;
+        }
+
+        return measureFromTime;
+	}
 }

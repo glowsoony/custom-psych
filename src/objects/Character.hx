@@ -118,7 +118,7 @@ class Character extends FunkinSprite {
 	override function playAnim(name:String, ?forced:Bool = true) {
 		name = '$name$animSuffix';
 		super.playAnim(name, forced);
-		if ((name.startsWith('sing') || name.startsWith('miss')) && !name.contains('-loop')) {
+		if ((name.startsWith('sing') || name.startsWith('miss')) && !name.endsWith('-loop')) {
 			_singTimer = singDuration * (Conductor.stepCrotchet * 0.15);
 		}
 	}
