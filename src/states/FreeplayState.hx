@@ -51,6 +51,13 @@ class FreeplayState extends MusicState {
 		DiscordClient.changePresence('Selecting a Song', 'Freeplay');
 		#end
 
+		songList.push({
+			id: 'random',
+			colour: 0xFF000000,
+			folder: '',
+			icon: ''
+		});
+
 		for (week in WeekData.list) {
 			for (song in week.songs) {
 				songList.push({
@@ -75,7 +82,8 @@ class FreeplayState extends MusicState {
 		add(grpIcons = new FlxTypedSpriteGroup<CharIcon>());
 
 		for (index => song in songList) {
-			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, Meta.load(song.id).songName));
+			var songName:String = song.id == 'random' ? 'Random' : Meta.load(song.id).songName;
+			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, songName));
 			alphabet.visible = alphabet.active = false;
 			alphabet.targetY = index;
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
@@ -136,20 +144,16 @@ class FreeplayState extends MusicState {
 		super.update(elapsed);
 
 		if (Controls.justPressed('accept')) {
-			final songID:String = songList[curSelected].id;
-			final diff:String = Difficulty.format(curDiffName);
-			final path:String = 'songs/$songID/${Song.getFile(songID, diff)}';
-			if (Paths.exists(path)) {
-				PlayState.songID = songID;
-				Difficulty.list = curDiffs;
-				Difficulty.current = curDiffName;
-				Mods.current = songList[curSelected].folder;
-				MusicState.switchState(new PlayState());
-			} else {
-				persistentUpdate = false;
-				trace('Song/Difficulty doesn\'t exist: "$path"');
-				return;
-			}
+			if (songList[curSelected].id == 'random') {
+				var oldSelected:Int = curSelected;
+				curSelected = FlxG.random.int(1, songList.length - 1);
+				changeSelection();
+				enterSong();
+
+				// so that the user doesn't have to scroll all the way back up
+				// just to hit "random" again
+				curSelected = oldSelected;
+			} else enterSong();
 		}
 
 		if (FlxG.keys.justPressed.CONTROL) {
@@ -158,6 +162,23 @@ class FreeplayState extends MusicState {
 		}
 
 		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
+	}
+
+	function enterSong() {
+		final songID:String = songList[curSelected].id;
+		final diff:String = Difficulty.format(curDiffName);
+		final path:String = 'songs/$songID/${Song.getFile(songID, diff)}';
+		if (Paths.exists(path)) {
+			PlayState.songID = songID;
+			Difficulty.list = curDiffs;
+			Difficulty.current = curDiffName;
+			Mods.current = songList[curSelected].folder;
+			MusicState.switchState(new PlayState());
+		} else {
+			persistentUpdate = false;
+			trace('Song/Difficulty doesn\'t exist: "$path"');
+			return;
+		}
 	}
 
 	// regenerate the current score

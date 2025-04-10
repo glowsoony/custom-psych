@@ -82,7 +82,7 @@ class Note extends FlxSprite {
 
 	public var lateHitMult:Float = 1;
 	public var earlyHitMult:Float = 1;
-
+	
 	// sustain stuff
 	public var pieces:Array<Note> = []; 
 	public var parent:Note;
