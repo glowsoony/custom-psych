@@ -139,10 +139,14 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		switch id {
 			case PsychUIInputText.CHANGE_EVENT:
 				if (sender == healthColourInputText) {
+					_characterFile.healthColor = Std.parseInt(healthColourInputText.text);
 					healthBar.rightBar.color = Std.parseInt(healthColourInputText.text);
 				}
 
-				if (sender == iconInputText) icon.change(iconInputText.text);
+				if (sender == iconInputText) {
+					_characterFile.icon = iconInputText.text;
+					icon.change(iconInputText.text);
+				}
 
 			case PsychUINumericStepper.CHANGE_EVENT:
 				if (sender == scaleStepper) {
