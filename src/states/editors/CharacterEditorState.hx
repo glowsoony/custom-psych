@@ -390,8 +390,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 					// if the max number wasn't a number then don't do anything
 					// because we don't know how long to run the loop for
-					if (Math.isNaN(max)) return;
-					for (i in min...max) indices.push(i);
+					if (!Math.isNaN(max)) for (i in min...max) indices.push(i);
 				} else {
 					// use normal indices instead
 					for (i in animationIndicesInputText.text.split(',')) indices.push(Std.parseInt(i));
@@ -422,6 +421,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 			reloadAnimList();
 			@:arrayAccess curAnim = Std.int(Math.max(0, anims.indexOf(addedAnim)));
+			updateText();
 			character.playAnim(addedAnim.name, true);
 			trace('Added/Updated animation: ' + animationNameInputText.text);
 		}));
