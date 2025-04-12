@@ -202,22 +202,22 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 		// Make Ghost
 		tabMenu.add(new PsychUIButton(25, 15, "Make Ghost", function() {
-			ghost.setPosition(character.x, character.y);
+			var anim:CharacterAnim = _characterFile.animations[0];
+
 			ghost.antialiasing = _characterFile.antialiasing;
 			ghost.flipX = _characterFile.flipX;
 			ghost.alpha = ghostAlpha;
 
 			ghost.scale.set(_characterFile.scale, _characterFile.scale);
-			ghost.updateHitbox();
+			ghost.setPosition(character.x, character.y);
+			ghost.offset.set(anim.offsets[0] * ghost.scale.x, anim.offsets[1] * ghost.scale.y);
+			//ghost.updateHitbox();
 
-			var anim:CharacterAnim = _characterFile.animations[0];
-			ghost.offset.set(anim.offsets[0], anim.offsets[1]);
-
+			ghost.loadGraphic(character.graphic);
 			ghost.visible = true;
 
 			if (character.animation.curAnim == null) return;
-
-			ghost.loadGraphic(character.graphic);
+			
 			ghost.frames.frames = character.frames.frames;
 			ghost.animation.copyFrom(character.animation);
 			ghost.animation.play(character.animation.curAnim.name, true, false, character.animation.curAnim.curFrame);
