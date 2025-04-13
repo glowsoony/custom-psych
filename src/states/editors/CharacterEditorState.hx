@@ -12,7 +12,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	var _characterFile:CharacterFile = Character.createDummyFile();
 	var name:String = 'bf';
 	var character:Character;
-	var ghost:FlxSprite;
+	var ghost:FunkinSprite;
 	var camHUD:FlxCamera;
 	
 	var characterUIBox:PsychUIBox;
@@ -37,7 +37,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
 		camHUD.bgColor.alpha = 0;
 		
-		add(ghost = new FlxSprite());
+		add(ghost = new FunkinSprite());
 		ghost.visible = false;
 		ghost.alpha = ghostAlpha;
 
@@ -202,7 +202,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 		// Make Ghost
 		tabMenu.add(new PsychUIButton(25, 15, "Make Ghost", function() {
-			var anim:CharacterAnim = _characterFile.animations[0];
+			var anim:CharacterAnim = anims[curAnim];
 
 			ghost.antialiasing = _characterFile.antialiasing;
 			ghost.flipX = _characterFile.flipX;
@@ -217,7 +217,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 			ghost.visible = true;
 
 			if (character.animation.curAnim == null) return;
-			
+
 			ghost.offset.set(anim.offsets[0] * ghost.scale.x, anim.offsets[1] * ghost.scale.y);
 			ghost.frames.frames = character.frames.frames;
 			ghost.animation.copyFrom(character.animation);
