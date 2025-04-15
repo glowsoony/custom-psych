@@ -14,7 +14,6 @@ import openfl.utils.Assets;
 
 class FreeplayState extends MusicState {
 	var songList:Array<SongMeta> = [];
-	var difficultyList:Array<Array<String>> = [];
 
 	static var curSelected:Int = 0;
 
@@ -55,21 +54,22 @@ class FreeplayState extends MusicState {
 			id: 'random',
 			colour: 0xFF000000,
 			folder: '',
-			icon: ''
+			icon: 'random',
+			difficulties: ['???']
 		});
 
 		for (week in WeekData.list) {
 			for (song in week.songs) {
+				var diffs:Array<String> = song.difficulties;
+				if (song.difficulties == null || song.difficulties.length == 0) diffs = Difficulty.loadFromWeek(week);
+
 				songList.push({
 					id: song.name,
 					colour: song.color,
 					folder: week.folder,
-					icon: song.icon
+					icon: song.icon,
+					difficulties: diffs
 				});
-
-				var diffs:Array<String> = song.difficulties;
-				if (song.difficulties == null || song.difficulties.length == 0) diffs = Difficulty.loadFromWeek(week);
-				difficultyList.push(diffs);
 			}
 		}
 
@@ -148,6 +148,7 @@ class FreeplayState extends MusicState {
 				var oldSelected:Int = curSelected;
 				curSelected = FlxG.random.int(1, songList.length - 1);
 				changeSelection();
+				curDiffName = curDiffs[FlxG.random.int(0, curDiffs.length - 1)];
 				enterSong();
 
 				// so that the user doesn't have to scroll all the way back up
@@ -264,7 +265,7 @@ class FreeplayState extends MusicState {
 			FlxTween.color(bg, 1, bg.color, intendedColour);
 		}
 
-		curDiffs = difficultyList[curSelected];
+		curDiffs = songList[curSelected].difficulties;
 
 		curDifficulty = curDiffs.indexOf(curDiffName);
 		if (curDifficulty == -1) curDifficulty = 0;
@@ -319,4 +320,5 @@ typedef SongMeta = {
 	var icon:String;
 	var colour:FlxColor;
 	var folder:String;
+	var difficulties:Array<String>;
 }
