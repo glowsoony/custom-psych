@@ -42,6 +42,7 @@ class EventHandler {
         }
 
         index = 0;
+		list.sort((a, b) -> return Std.int(a.time - b.time));
 
 		return this;
     }
