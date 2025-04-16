@@ -1,6 +1,7 @@
 {
 	"songName": "Guns",
 	"composer": "Kawai Sprite",
+	"enemy": "tankman",
 	"timingPoints": [
 		{
 			"time": 0,

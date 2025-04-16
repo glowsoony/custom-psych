@@ -1,6 +1,7 @@
 {
 	"songName": "Eggnog",
 	"composer": "Kawai Sprite",
+	"enemy": "parents",
 	"timingPoints": [
 		{
 			"time": 0,

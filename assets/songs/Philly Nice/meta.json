@@ -1,6 +1,7 @@
 {
 	"songName": "Philly Nice",
 	"composer": "Kawai Sprite",
+	"enemy": "pico",
 	"timingPoints": [
 		{
 			"time": 0,

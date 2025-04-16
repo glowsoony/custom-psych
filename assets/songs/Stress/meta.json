@@ -1,6 +1,7 @@
 {
 	"songName": "Stress",
 	"composer": "Kawai Sprite",
+	"enemy": "tankman",
 	"timingPoints": [
 		{
 			"time": 0,
