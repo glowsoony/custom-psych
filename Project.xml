@@ -48,6 +48,9 @@
 	<!-- Assets -->
 	<classpath name="src" />
 
+	<assets path="alsoft.txt" rename="alsoft.ini" type="text" if="windows"/>
+	<assets path="alsoft.txt" rename="alsoft.conf" type="text" unless="windows"/>
+
 	<assets path="assets/characters" />
 	<assets path="assets/data" />
 	<assets path="assets/fonts" />
