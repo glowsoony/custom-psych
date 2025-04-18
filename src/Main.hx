@@ -18,7 +18,8 @@ import flixel.input.keyboard.FlxKey;
 import openfl.Lib;
 import backend.DiscordClient;
 
-#if linux
+// NATIVE API STUFF, YOU CAN IGNORE THIS AND SCROLL //
+#if (linux && !debug)
 @:cppInclude('./_external/gamemode_client.h')
 @:cppFileCode('#define GAMEMODE_AUTO')
 #end
@@ -37,6 +38,10 @@ class Main extends Sprite {
 
 	public function new() {
 		super();
+
+		#if (cpp && windows)
+		backend.Native.fixScaling();
+		#end
 
 		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
