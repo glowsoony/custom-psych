@@ -53,6 +53,7 @@ class GameplayChangersSubstate extends FlxSubState {
 		optionsArray.push(new GameplayOption('Blind', 'blind', BOOL, false));
 		optionsArray.push(new GameplayOption('Mirrored Notes', 'mirroredNotes', BOOL, false));
 		optionsArray.push(new GameplayOption('Randomized Notes', 'randomizedNotes', BOOL, false));
+		optionsArray.push(new GameplayOption('Play As Opponent', 'opponentMode', BOOL, false));
 	}
 
 	public function getOptionByName(name:String)

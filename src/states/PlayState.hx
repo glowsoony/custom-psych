@@ -31,6 +31,32 @@ class PlayState extends MusicState {
 	public static var storyMode:Bool = false;
 	public static var currentLevel:Int = 0;
 
+	public var playerID(default, set):Int = 1;
+	function set_playerID(value:Int):Int {
+		if (playerID == value) return value;
+
+		if (value >= strumlines.length) return playerID;
+
+		for (i => line in strumlines.members) {
+			line.ai = (value == i) ? botplay : true;
+		}
+
+		return playerID = value;
+	}
+
+	var playerStrumline(get, never):Strumline;
+	function get_playerStrumline():Strumline {
+		if (strumlines == null || strumlines.length <= 0) return null;
+
+		if (playerID >= strumlines.length) {
+			return strumlines.members[strumlines.length - 1];
+		}
+
+		return strumlines.members[playerID];
+	}
+
+	var strumlines:FlxTypedSpriteGroup<Strumline>;
+
 	var songName:String;
 	var stageName:String;
 	var noteSpawnIndex:Int = 0;
@@ -60,8 +86,8 @@ class PlayState extends MusicState {
 		// and saving the play
 		if (value) disqualified = true;
 
-		if (playerStrums != null) playerStrums.ai = value;
-		if (botplayTxt != null) botplayTxt.visible = value;
+		playerStrumline.ai = value;
+		botplayTxt.visible = value;
 		return botplay = value;
 	}
 
@@ -90,6 +116,9 @@ class PlayState extends MusicState {
 
 	var health(default, set):Float = 50;
 	function set_health(value:Float):Float {
+		if (!noFail && ((playerID == 1 && value <= 0) || (playerID == 0 && value >= 100)))
+			die();
+
 		value = FlxMath.bound(value, 0, 100);
 
 		// update health bar
@@ -153,8 +182,8 @@ class PlayState extends MusicState {
 	var camFollow:FlxObject;
 	static var prevCamFollow:FlxObject;
 
-	var opponentStrums:Strumline;
-	var playerStrums:Strumline;
+	var leftStrumline:Strumline;
+	var rightStrumline:Strumline;
 
 	var noteSplashes:FlxTypedSpriteGroup<NoteSplash>;
 
@@ -215,7 +244,6 @@ class PlayState extends MusicState {
 		Paths.music(PauseMenu.musicPath);
 
 		// set up gameplay settings
-		botplay = Settings.data.gameplaySettings['botplay'];
 		playbackRate = Settings.data.gameplaySettings['playbackRate'];
 		noFail = Settings.data.gameplaySettings['noFail'];
 		canReset = Settings.data.canReset;
@@ -266,12 +294,12 @@ class PlayState extends MusicState {
 		camOther.bgColor.alpha = 0;
 
 		// set up strumlines and the note group
-		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
-		add(playerStrums = new Strumline(950, strumlineYPos, !botplay));
-		add(opponentStrums = new Strumline(320, strumlineYPos));
+		add(strumlines = new FlxTypedSpriteGroup<Strumline>());
+		strumlines.cameras = [camHUD];
 
-		playerStrums.cameras = [camHUD];
-		opponentStrums.cameras = [camHUD];
+		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
+		strumlines.add(leftStrumline = new Strumline(320, strumlineYPos));
+		strumlines.add(rightStrumline = new Strumline(950, strumlineYPos));
 
 		add(notes = new FlxTypedSpriteGroup<Note>());
 		notes.cameras = [camHUD];
@@ -281,21 +309,26 @@ class PlayState extends MusicState {
 		noteSplashes.cameras = [camHUD];
 
 		if (Settings.data.centeredNotes) {
-			playerStrums.screenCenter(X);
-			opponentStrums.alpha = 0;
+			for (i => strumline in strumlines.members) {
+				if (i == playerID) {
+					strumline.screenCenter(X);
+					continue;
+				}
+
+				strumline.alpha = 0;
+			}
+			
 		}
 
-		if (!Settings.data.opponentNotes) opponentStrums.alpha = 0;
+		if (!Settings.data.opponentNotes) leftStrumline.alpha = 0;
 
 		if (Settings.data.gameplaySettings['blind']) {
 			notes.alpha = 0;
-			opponentStrums.alpha = 0;
-			playerStrums.alpha = 0;
+			strumlines.alpha = 0;
 
 			// just to make sure some note types don't work around alpha stuff
 			notes.visible = false;
-			opponentStrums.visible = false;
-			playerStrums.visible = false;
+			strumlines.visible = false;
 		}
 
 		stage = switch stageName {
@@ -333,7 +366,10 @@ class PlayState extends MusicState {
 		camGame.snapToTarget();
 
 		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.meta.enemy, false));
+		leftStrumline.character = dad;
+
 		add(bf = new Character(stage.player.x, stage.player.y, song.meta.player));
+		rightStrumline.character = bf;
 
 		stage.create();
 
@@ -342,6 +378,8 @@ class PlayState extends MusicState {
 		hud.cameras = [camHUD];
 
 		loadHUD();
+		botplay = Settings.data.gameplaySettings['botplay'];
+		playerID = Settings.data.gameplaySettings['opponentMode'] ? 0 : 1;
 
 		hud.add(countdown = new Countdown());
 		countdown.screenCenter();
@@ -475,7 +513,8 @@ class PlayState extends MusicState {
 						noFail: Settings.data.gameplaySettings['noFail'],
 						randomizedNotes: Settings.data.gameplaySettings['randomizedNotes'],
 						mirroredNotes: Settings.data.gameplaySettings['mirroredNotes'],
-						sustains: Settings.data.gameplaySettings['sustains']
+						sustains: Settings.data.gameplaySettings['sustains'],
+						blind: Settings.data.gameplaySettings['blind']
 					});
 				}
 
@@ -610,7 +649,7 @@ class PlayState extends MusicState {
 		ScriptHandler.call('update', [elapsed]);
 		super.update(elapsed);
 
-		if ((Controls.justPressed('reset') && canReset) || (health <= 0 && !noFail)) die();
+		if ((Controls.justPressed('reset') && canReset)) die();
 
 		spawnNotes();
 		updateNotes();
@@ -676,15 +715,15 @@ class PlayState extends MusicState {
 		for (note in notes.members) {
 			if (note == null || !note.alive) continue;
 
-			final strum:StrumNote = (note.player ? playerStrums : opponentStrums).members[note.lane];
+			final strum:StrumNote = strumlines.members[note.player].members[note.lane];
 			note.followStrum(strum, scrollSpeed);
 
-			if (note.player) {
+			if (note.player == playerID) {
 				if (botplay) botplayInputs(strum, note);
 				else if (note.isSustain) sustainInputs(strum, note);
 			} else botplayInputs(strum, note);
 
-			if (!botplay && note.player && !note.missed && !note.isSustain && note.tooLate) {
+			if (!botplay && note.player == playerID && !note.missed && !note.isSustain && note.tooLate) {
 				noteMiss(note);
 			}
 
@@ -760,18 +799,21 @@ class PlayState extends MusicState {
 	dynamic function botplayInputs(strum:StrumNote, note:Note):Void {
 		if (!note.canHit || note.ignore || note.breakOnHit || note.time > Conductor.rawTime) return;
 
-		final noteFunc = note.player ? noteHit : opponentNoteHit;
+		final noteFunc = note.player == playerID ? noteHit : opponentNoteHit;
+		
 
 		// sustain input
 		if (note.isSustain) {
 			note.clipToStrum(strum);
 			if (note.wasHit) return;
 
-			note.wasHit = true;
 			strum.playAnim('notePressed');
+			note.wasHit = true;
 			noteFunc(note);
 			return;
 		}
+
+		strum.playAnim('notePressed');
 
 		// normal notes
 		note.wasHit = true;
@@ -784,8 +826,7 @@ class PlayState extends MusicState {
 		ScriptHandler.call('opponentNoteHit', [note]);
 		if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
-		opponentStrums.members[note.lane].playAnim('notePressed');
-		dad.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+		(playerID == 0 ? bf : dad).playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 	}
 
 	// note hitting specific to the player
@@ -818,22 +859,22 @@ class PlayState extends MusicState {
 		parent.coyoteTimer = 0.25;
 		
 		strum.playAnim('notePressed');
-		bf.playAnim('sing${Note.directions[parent.lane].toUpperCase()}');
+		playerStrumline.character.playAnim('sing${Note.directions[parent.lane].toUpperCase()}');
 	}
 
 	dynamic function noteHit(note:Note) {
-		final strum:StrumNote = playerStrums.members[note.lane];
+		final strum:StrumNote = playerStrumline.members[note.lane];
 
 		note.wasHit = true;
 
 		if (botplay) {
-			strum.playAnim('notePressed');
-			bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+			playerStrumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 			if (note.isSustain) return;
 
 			final judge:Judgement = Judgement.min;
 
-			health += judge.health;
+			if (playerID == 0) health -= judge.health;
+			else health += judge.health;
 			judgeSpr.display(0);
 			judge.hits++;
 			comboNumbers.display(++combo);
@@ -851,7 +892,8 @@ class PlayState extends MusicState {
 	
 		if (!note.breakOnHit) {
 			totalNotesPlayed += judge.accuracy;
-			health += judge.health;
+			if (playerID == 0) health -= judge.health;
+			else health += judge.health;
 			// pbot1-ish scoring system
 			// cuz judgement based is boring :sob:
 			score += Math.floor(500 - Math.abs(adjustedHitTime));
@@ -859,7 +901,8 @@ class PlayState extends MusicState {
 			combo++;
 		} else {
 			score -= 20;
-			health -= 6;
+			if (playerID == 0) health += 6;
+			else health -= 6;
 			combo = 0;
 			comboBreaks++;
 		}
@@ -876,7 +919,7 @@ class PlayState extends MusicState {
 
 		strum.playAnim('notePressed');
 
-		bf.playAnim('sing${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
+		playerStrumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
 
 		if (Settings.data.noteSplashSkin != 'None' && judge.name == 'sick' && note.splashes) {
 			noteSplashes.members[note.lane].hit(strum);
@@ -884,7 +927,10 @@ class PlayState extends MusicState {
 
 		updateScoreTxt();
 		updateJudgeCounter();
-		if (song.meta.hasVocals) Conductor.mainVocals.volume = 1;
+		if (song.meta.hasVocals) {
+			if (Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
+			else Conductor.vocals.members[playerID].volume = 1;
+		}
 
 		if (!note.breakOnHit) {
 			judgeSpr.display(adjustedHitTime);
@@ -904,7 +950,8 @@ class PlayState extends MusicState {
 		comboBreaks++;
 		combo = 0;
 		score -= 20;
-		health -= 6;
+		if (playerID == 0) health += 6;
+		else health -= 6;
 
 		accuracy = updateAccuracy();
 		grade = updateGrade();
@@ -918,8 +965,12 @@ class PlayState extends MusicState {
 			piece.multAlpha = 0.25;
 		}
 
-		if (song.meta.hasVocals) Conductor.mainVocals.volume = 0;
-		bf.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
+		if (song.meta.hasVocals) {
+			if (Conductor.opponentVocals == null) Conductor.mainVocals.volume = 0;
+			else Conductor.vocals.members[playerID].volume = 0;
+		}
+
+		playerStrumline.character.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
 
 		updateScoreTxt();
 	}
@@ -1083,15 +1134,16 @@ class PlayState extends MusicState {
 
 		final sortedNotes:Array<Note> = notes.members.filter(function(note:Note):Bool {
 			if (note == null) return false;
-			return note.hittable && note.lane == dir && note.player && !note.isSustain;
+			return note.hittable && note.lane == dir && note.player == playerID && !note.isSustain;
 		});
 
 		if (sortedNotes.length == 0) {
-			playerStrums.members[dir].playAnim('pressed');
+			playerStrumline.members[dir].playAnim('pressed');
 			ScriptHandler.call('ghostTap', [dir]);
 			if (Settings.data.ghostTapping) return;
 			score -= 20;
-			health -= 6;
+			if (playerID == 0) health += 6;
+			else health -= 6;
 
 			accuracy = updateAccuracy();
 			grade = updateGrade();
@@ -1114,7 +1166,7 @@ class PlayState extends MusicState {
 		if (dir == -1) return;
 		
 		keysHeld[dir] = false;
-		playerStrums.members[dir].playAnim('default');
+		playerStrumline.members[dir].playAnim('default');
 	}
 
 	override function destroy() {

@@ -10,7 +10,7 @@ typedef NoteData = {
 	var length:Float;
 	var type:String;
 	var lane:Int;
-	var player:Bool;
+	var player:Int;
 	var altAnim:Bool;
 }
 
@@ -39,7 +39,7 @@ class Note extends FlxSprite {
 	public var rawTime:Float = 0;
 
 	public var lane:Int = 0;
-	public var player:Bool = false;
+	public var player:Int = 1;
 	public var spawned:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;

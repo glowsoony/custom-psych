@@ -18,6 +18,7 @@ class PlayData {
 	public var randomizedNotes:Bool;
 	public var mirroredNotes:Bool;
 	public var sustains:Bool;
+	public var blind:Bool;
 }
 
 class Scores {
@@ -52,7 +53,8 @@ class Scores {
 				noFail: false,
 				randomizedNotes: false,
 				mirroredNotes: false,
-				sustains: true
+				sustains: true,
+				blind: false
 			}
 		}
 
@@ -63,7 +65,7 @@ class Scores {
 		var filteredList:Array<PlayData> = filter(list, data.songID, data.difficulty);
 
 		Sys.println('current modifiers for "${data.songID} - ${data.difficulty}":');
-		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains']) {
+		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode']) {
 			Sys.println('$i: ${Settings.data.gameplaySettings[i]}');
 		}
 		Sys.println('');
@@ -88,7 +90,7 @@ class Scores {
 		var modifiers:Map<String, Dynamic> = Settings.data.gameplaySettings;
 
 		return plays.filter(function(play:PlayData) {
-			for (m in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains']) {
+			for (m in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode', 'blind']) {
 				if (!modifiers.exists(m)) return false;
 				if (Reflect.field(play, m) != modifiers[m]) return false;
 			}

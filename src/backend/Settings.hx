@@ -72,7 +72,8 @@ class SaveVariables {
 		'mirroredNotes' => false,
 		'randomizedNotes' => false,
 		'sustains' => true,
-		'blind' => false
+		'blind' => false,
+		'opponentMode' => false
 	];
 }
 

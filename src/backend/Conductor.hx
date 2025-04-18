@@ -231,21 +231,21 @@ class Conductor extends flixel.FlxBasic {
     }
 
     static function get_mainVocals():FlxSound {
-        return vocals.members[0];
+        return vocals.members[1];
     }
 
     static function get_opponentVocals():FlxSound {
-        return vocals.members[1];
+        return vocals.members[0];
     }
 
     static function set_mainVocals(value:FlxSound):FlxSound {
         value.pitch = rate;
-        return vocals.members[0] = value;
+        return vocals.members[1] = value;
     }
 
     static function set_opponentVocals(value:FlxSound):FlxSound {
         value.pitch = rate;
-        return vocals.members[1] = value;
+        return vocals.members[0] = value;
     }
 
     static function set_rate(value:Float):Float {
