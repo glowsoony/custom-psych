@@ -18,6 +18,7 @@ class PlayData {
 	public var randomizedNotes:Bool;
 	public var mirroredNotes:Bool;
 	public var sustains:Bool;
+	public var opponentMode:Bool;
 	public var blind:Bool;
 }
 
@@ -54,6 +55,7 @@ class Scores {
 				randomizedNotes: false,
 				mirroredNotes: false,
 				sustains: true,
+				opponentMode: false,
 				blind: false
 			}
 		}

@@ -514,6 +514,7 @@ class PlayState extends MusicState {
 						randomizedNotes: Settings.data.gameplaySettings['randomizedNotes'],
 						mirroredNotes: Settings.data.gameplaySettings['mirroredNotes'],
 						sustains: Settings.data.gameplaySettings['sustains'],
+						opponentMode: Settings.data.gameplaySettings['opponentMode'],
 						blind: Settings.data.gameplaySettings['blind']
 					});
 				}
