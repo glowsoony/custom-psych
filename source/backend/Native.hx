@@ -55,6 +55,10 @@ void getHandle() {
 }
 ')
 #end
+/**
+ * Native API functions
+ * @author @cyn0x8
+ */
 class Native
 {
 	public static function __init__():Void
