@@ -53,7 +53,7 @@ class Main extends Sprite {
 
 		Settings.load();
 
-		var game:FlxGame = new FlxGame(InitState, 0, 0, 60, true);
+		var game:FlxGame = new FlxGame(InitState, 1280, 720, 60, true);
 
     	@:privateAccess
     	game._customSoundTray = backend.FunkinSoundTray;

@@ -94,7 +94,7 @@ class Native
 		fixedScaling = true;
 
 		#if (cpp && windows)
-		final display:Null<Display> = System.getDisplay(0);
+/*		final display:Null<Display> = System.getDisplay(0);
 		if (display != null)
 		{
 			final dpiScale:Float = display.dpi / 96;
@@ -103,7 +103,7 @@ class Native
 
 			Application.current.window.x = Std.int((Application.current.window.display.bounds.width - Application.current.window.width) / 2);
 			Application.current.window.y = Std.int((Application.current.window.display.bounds.height - Application.current.window.height) / 2);
-		}
+		}*/
 
 		untyped __cpp__('
 			getHandle();
