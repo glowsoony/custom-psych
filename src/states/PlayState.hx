@@ -472,14 +472,19 @@ class PlayState extends MusicState {
 		botplayTxt.visible = botplay;
 		botplayTxt.screenCenter(X);
 
-		hud.add(judgeCounter = new FlxText(5, 0, 500, '', 20));
+		var opponentMode:Bool = Settings.data.gameplaySettings['opponentMode'];
+		hud.add(judgeCounter = new FlxText(0, 0, 500, '', 20));
 		judgeCounter.font = Paths.font('vcr.ttf');
 		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
 		judgeCounter.borderColor = FlxColor.BLACK;
 		judgeCounter.borderSize = 1.25;
+		judgeCounter.alignment = opponentMode ? 'right' : 'left';
 		updateJudgeCounter();
 		judgeCounter.screenCenter(Y);
 		judgeCounter.visible = Settings.data.judgementCounter;
+
+		judgeCounter.x = opponentMode ? (FlxG.width - judgeCounter.width) - 5 : 5;
+		
 	}
 
 	function loadSong():Void {
