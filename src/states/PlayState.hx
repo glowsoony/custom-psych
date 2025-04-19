@@ -405,6 +405,7 @@ class PlayState extends MusicState {
 		DiscordClient.changePresence('$songName - ${Difficulty.current}', storyMode ? 'Story Mode' : 'Freeplay', dad.icon, true);
 
 		ScriptHandler.call('create');
+		persistentUpdate = true;
 	}
 
 	function loadHUD():Void {
