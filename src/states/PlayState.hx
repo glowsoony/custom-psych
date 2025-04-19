@@ -1134,12 +1134,18 @@ class PlayState extends MusicState {
 		if (dir == -1 || keysHeld[dir] || paused) return;
 		keysHeld[dir] = true;
 
-		final sortedNotes:Array<Note> = notes.members.filter(function(note:Note):Bool {
-			if (note == null) return false;
-			return note.hittable && note.lane == dir && note.player == playerID && !note.isSustain;
-		});
+		var lowestTime:Float = Math.POSITIVE_INFINITY;
+		var noteToHit:Note = null;
+		for (note in notes.members) {
+			if (note == null || !note.exists || !note.alive) continue;
+			if (note.player != playerID || !note.hittable || note.lane != dir || note.isSustain) continue;
+			if (note.time >= lowestTime) continue;
 
-		if (sortedNotes.length == 0) {
+			lowestTime = note.time;
+			noteToHit = note;
+		}
+
+		if (noteToHit == null) {
 			playerStrumline.members[dir].playAnim('pressed');
 			ScriptHandler.call('ghostTap', [dir]);
 			if (Settings.data.ghostTapping) return;
@@ -1153,12 +1159,10 @@ class PlayState extends MusicState {
 			return;
 		} 
 
-		sortedNotes.sort((a, b) -> Std.int(a.time - b.time));
-		var note:Note = sortedNotes[0];
-		noteHit(note);
-		note.destroy();
-		notes.remove(note);
-		note = null;
+		noteHit(noteToHit);
+		noteToHit.destroy();
+		notes.remove(noteToHit);
+		noteToHit = null;
 	}
 
 	inline function keyReleased(key:KeyCode, _):Void {
