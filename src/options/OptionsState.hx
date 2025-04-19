@@ -15,7 +15,6 @@ class OptionsState extends MusicState
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
-	public static var onPlayState:Bool = false;
 
 	function openSelectedSubstate(label:String) {
 		switch (label) {
@@ -83,7 +82,7 @@ class OptionsState extends MusicState
 
 		if (Controls.justPressed('back')) {
 			FlxG.sound.play(Paths.sound('cancel'));
-			if (onPlayState) {
+			if (substates.PauseMenu.wentToOptions) {
 				MusicState.switchState(new PlayState());
 				Conductor.inst.volume = 0;
 			} else MusicState.switchState(new MainMenuState());

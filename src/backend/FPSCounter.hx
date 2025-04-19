@@ -22,7 +22,13 @@ class FPSCounter extends Sprite {
 	final font:String = 'assets/fonts/Nunito-Medium.ttf';
 
 	public static var gcMemoryInBytes(get, never):Float;
-	static function get_gcMemoryInBytes():Float return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
+	static function get_gcMemoryInBytes():Float {
+		#if cpp
+		return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
+		#else
+		return openfl.system.System.totalMemory;
+		#end
+	}
 
 	public static var appMemoryInBytes(get, never):Float;
 	static function get_appMemoryInBytes():Float return Memory.getCurrentUsage();

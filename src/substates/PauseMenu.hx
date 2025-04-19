@@ -14,6 +14,8 @@ class PauseMenu extends flixel.FlxSubState {
 	public static var musicPath:String = Settings.data.pauseMusic;
 	public static var openCount:Int = 0;
 
+	public static var wentToOptions:Bool = false;
+
 	var curSelected:Int = 0;
 
 	public function new(song:String, difficulty:String, deaths:Int) {
@@ -111,7 +113,7 @@ class PauseMenu extends flixel.FlxSubState {
 					parent.persistentUpdate = true;
 					
 				case 'Options': 
-					OptionsState.onPlayState = true;
+					PauseMenu.wentToOptions = true;
 					if (Settings.data.pauseMusic != 'None') {
 						Conductor.inst = FlxG.sound.load(Paths.music(Settings.data.pauseMusic), music.volume);
 						Conductor.inst.play();
@@ -134,11 +136,10 @@ class PauseMenu extends flixel.FlxSubState {
 	}
 
 	override function close() {
+		PauseMenu.wentToOptions = false; // reset
 		FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if (!tmr.finished) tmr.active = true);
 		FlxTween.globalManager.forEach(function(twn:FlxTween) if (!twn.finished) twn.active = true);
-
 		PlayState.self.paused = false;
-
 		super.close();
 	}
 }

@@ -1,5 +1,6 @@
 package states;
 
+import states.MusicState;
 import flixel.FlxObject;
 import flixel.effects.FlxFlicker;
 import options.OptionsState;
@@ -123,8 +124,11 @@ class MainMenuState extends MusicState {
 						MusicState.switchState(new CreditsState());*/
 
 					case 'options':
-						OptionsState.onPlayState = false;
-						MusicState.switchState(new OptionsState());
+						if (!FlxG.keys.pressed.SHIFT)
+							MusicState.switchState(new OptionsState());
+						else
+							MusicState.switchState(new options.NewOptionsMenu());
+						substates.PauseMenu.wentToOptions = false;
 
 					default:
 						optionGrp.members[curSelected].alpha = 0.0;
