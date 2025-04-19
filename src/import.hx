@@ -20,6 +20,8 @@ import states.PlayState;
 import scripting.ScriptHandler;
 import scripting.*;
 
+import TraceFunctions;
+
 // flixel specific
 import flixel.*;
 import flixel.sound.FlxSound;

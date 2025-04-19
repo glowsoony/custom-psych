@@ -177,7 +177,7 @@ class FreeplayState extends MusicState {
 			MusicState.switchState(new PlayState());
 		} else {
 			persistentUpdate = false;
-			trace('Song/Difficulty doesn\'t exist: "$path"');
+			warn('Song/Difficulty doesn\'t exist: "$path"');
 			return;
 		}
 	}
@@ -191,7 +191,7 @@ class FreeplayState extends MusicState {
 		intendedScore = play.score;
 		intendedAccuracy = play.accuracy;
 
-		Sys.println('current modifiers just in case you forget somehow:');
+		info('current modifiers just in case you forget somehow:');
 		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains']) {
 			Sys.println('$i: ${Settings.data.gameplaySettings[i]}');
 		}

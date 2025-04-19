@@ -37,6 +37,8 @@ class Main extends Sprite {
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
 
 	public function new() {
+		haxe.Log.trace = print;
+
 		super();
 
 		#if (cpp && windows)

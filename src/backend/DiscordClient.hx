@@ -40,16 +40,16 @@ class DiscordClient {
 		final user:String = cast (request[0].username, String);
 		final discriminator:String = cast (request[0].discriminator, String);
 
-		var message:String = '(Discord) Connected to User $user${discriminator != '0' ? '#$discriminator' : ''}';
+		info('Connected to User $user');
 		changePresence();
 	}
 
 	static function onError(errorCode:Int, message:cpp.ConstCharStar):Void {
-		trace('Discord: Error ($errorCode: ${cast(message, String)})');
+		error('Error ($errorCode: ${cast(message, String)})');
 	}
 
 	static function onDisconnected(errorCode:Int, message:cpp.ConstCharStar):Void {
-		trace('Discord: Disconnected ($errorCode: ${cast(message, String)})');
+		info('Disconnected ($errorCode: ${cast(message, String)})');
 	}
 
 	public static function initialize() {
@@ -59,7 +59,7 @@ class DiscordClient {
 		discordHandlers.errored = cpp.Function.fromStaticFunction(onError);
 		Discord.Initialize(clientID, cpp.RawPointer.addressOf(discordHandlers), 1, null);
 
-		if (!isInitialized) trace("Discord Client initialized");
+		if (!isInitialized) info("Client initialized");
 
 		if (__thread == null) {
 			__thread = Thread.create(() -> {

@@ -235,8 +235,7 @@ class PlayState extends MusicState {
 
 		if (storyMode) songID = songList[currentLevel];
 
-		Sys.println('');
-		trace('new song was loaded: $songID - ${Difficulty.current}');
+		info('new song was loaded: $songID - ${Difficulty.current}');
 
 		// precache the pause menu music
 		// to prevent the pause menu freezing on first pause
@@ -492,7 +491,7 @@ class PlayState extends MusicState {
 		try {
 			song = Song.load(songID, Difficulty.format());
 		} catch (e:haxe.Exception) {
-			Sys.println('The chart "$songID (${Difficulty.current})" failed to load: $e');
+			error('The chart "$songID (${Difficulty.current})" failed to load: $e');
 			song = Song.createDummyFile();
 			song.meta = Meta.load(songID);
 		}
@@ -529,7 +528,7 @@ class PlayState extends MusicState {
 				Scores.save();
 			}
 		} catch (e:Dynamic) {
-			Sys.println('Instrumental failed to load: $e');
+			error('Instrumental failed to load: $e');
 		}
 
 		songLength = Conductor.inst.length;
@@ -546,7 +545,7 @@ class PlayState extends MusicState {
 				if (opponentFile != null) Conductor.opponentVocals = FlxG.sound.load(opponentFile);
 			}
 		} catch (e:Dynamic) {
-			Sys.println('Vocals failed to load: $e');
+			warn('Vocals failed to load: $e');
 		}
 
 		loadNotes(songID);
@@ -787,6 +786,8 @@ class PlayState extends MusicState {
 			storyMode = false;
 			currentLevel = 0;
 		} else prevCamFollow = camFollow;
+
+		Sys.println('');
 	}
 
 	// you die

@@ -120,8 +120,8 @@ class MainMenuState extends MusicState {
 						MusicState.switchState(new AchievementsMenuState());
 					#end
 
-/*					case 'credits':
-						MusicState.switchState(new CreditsState());*/
+					case 'credits':
+						MusicState.switchState(new CreditsState());
 
 					case 'options':
 						if (!FlxG.keys.pressed.SHIFT)
@@ -138,7 +138,7 @@ class MainMenuState extends MusicState {
 							FlxTween.tween(option, {alpha: 1.0}, 0.2 * (i + 1), {ease: FlxEase.quadIn, startDelay: 0.5});
 						}
 						alreadyPressedEnter = false;
-						trace('"${options[curSelected]}" not implemented.');
+						warn('"${options[curSelected]}" not implemented.');
 				}
 			});
 		}
