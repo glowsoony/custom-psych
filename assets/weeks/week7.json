@@ -1,0 +1,28 @@
+{
+	songs: [
+		{
+			name: 'Ugh',
+			icon: 'tankman',
+			color: 0xFFF6B604,
+		},
+		{
+			name: 'Guns',
+			icon: 'tankman',
+			color: 0xFFF6B604,
+		},
+		{
+			name: 'Stress',
+			icon: 'tankman',
+			color: 0xFFF6B604,
+		},
+	],
+
+	name: 'Tankman',
+	weekBefore: 'week6',
+	background: 'stage',
+	characters: ['tankman', 'gf', 'bf'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}

@@ -6,6 +6,9 @@ class InitState extends flixel.FlxState {
 		Controls.load();
 		Scores.load();
 		
+		Mods.reload();
+		Meta.cacheFiles();
+
 		Language.reloadPhrases();
 
 		#if DISCORD_ALLOWED

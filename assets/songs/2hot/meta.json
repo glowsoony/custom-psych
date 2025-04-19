@@ -1,0 +1,12 @@
+{
+	"songName": "2hot",
+	"composer": "Kawai Sprite",
+	"enemy": "darnell",
+	"player": "pico",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 182
+		}
+	]
+}

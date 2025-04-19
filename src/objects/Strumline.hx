@@ -4,17 +4,18 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 	public static final keyCount:Int = 4;
 	public static var size:Float = Settings.data.strumlineSize;
 	public var skin(default, set):String;
-	public static inline var default_skin:String = 'noteSkins/default';
+	public var character:Character;
+	public static inline var default_skin:String = 'noteSkins/funkin';
 	function set_skin(value:String):String {
 		skin = value;
 		regenerate();
 		return value;
 	}
-	public var player:Bool;
+	public var ai:Bool;
 
 	public function new(?x:Float, ?y:Float, ?player:Bool = false, ?skin:String) {
 		this.moves = false;
-		this.player = player;
+		this.ai = !player;
 		super(x, y);
 		this.skin = skin ?? Settings.data.noteSkin;
 
@@ -38,6 +39,7 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 }
 
 class StrumNote extends FunkinSprite {
+	public var queueStatic:Bool = false;
 	var parent:Strumline;
 	public function new(parent:Strumline, lane:Int) {
 		super();
@@ -46,8 +48,8 @@ class StrumNote extends FunkinSprite {
 
 		animation.finishCallback = _ -> {
 			active = false;
-			
-			if (parent.player || animation.curAnim.name != 'notePressed') return;
+
+			if (!(parent.ai || queueStatic) || animation.curAnim.name != 'notePressed') return;
 			playAnim('default');
 		}
 

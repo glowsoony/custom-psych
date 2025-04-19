@@ -4,6 +4,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.media.Sound;
+import backend.EventHandler.Event;
 
 typedef StageFile = {
 	var ?directory:String;
@@ -40,7 +41,7 @@ class Stage {
 	public var isSpectatorVisible:Bool = true;
 
 	public function new(name:String) {
-		_file = getFile('assets/stages/$name.json');
+		_file = getFile('stages/$name.json');
 
 		player.set(_file.playerPos[0], _file.playerPos[1]);
 		spectator.set(_file.spectatorPos[0], _file.spectatorPos[1]);
@@ -99,9 +100,9 @@ class Stage {
 	// functions copy pasted from Paths.hx
 	// to support stage directories
 	// like `assets/week2/...` `assets/week4/...` etc
-	final function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
+	final function image(key:String, ?subFolder:String = 'images'):FlxGraphic {
 		subFolder = redirectSubFolder(subFolder);
-		return Paths.image(key, subFolder, allowGPU);
+		return Paths.image(key, subFolder);
 	}
 
 	final function audio(key:String, ?subFolder:String, ?beepIfNull:Bool = true):Sound {
@@ -155,11 +156,14 @@ class Stage {
 	public function update(elapsed:Float):Void {}
 	public function destroy():Void {}
 
+	public function eventPreloaded(event:Event):Void {}
+	public function eventTriggered(event:Event):Void {}
+
 	public static function getFile(path:String):StageFile {
 		var file:StageFile = createDummyFile();
-		if (!FileSystem.exists(path)) return file;
+		if (!Paths.exists(path)) return file;
 		
-		var data = Json5.parse(File.getContent(path));
+		var data = Json5.parse(Paths.getFileContent(path));
 		for (property in Reflect.fields(data)) {
 			if (!Reflect.hasField(file, property)) continue;
 			Reflect.setField(file, property, Reflect.field(data, property));

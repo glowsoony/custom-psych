@@ -61,7 +61,7 @@ class CalibrateOffsetState extends MusicState {
 
 		//trace(Conductor.time - (Conductor.time / Conductor.crotchet));
 
-		var offset:Float = Conductor.time % Conductor.crotchet;
+		var offset:Float = Conductor.rawTime % Conductor.crotchet;
 
 		var deviation:Float = Math.min(offset, Conductor.crotchet - offset); // ?
 

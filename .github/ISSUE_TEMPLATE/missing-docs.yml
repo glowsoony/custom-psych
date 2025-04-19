@@ -1,10 +1,10 @@
-name: Missing Documentation
-description: Ask for documentation if something is missing.
-labels: [documentation]
+name: Missing/Incorrect Documentation
+description: If you'd like to report incorrect or missing docs.
+labels: [Documentation]
 body:
   - type: textarea
+    id: description
     attributes:
-      label: What needs to be documented?
-      description: 'For example: "There is no page explaining how to create an Achievement!"'
+      label: "Where's the problem?"
     validations:
       required: true

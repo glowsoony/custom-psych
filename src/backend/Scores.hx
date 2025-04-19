@@ -2,111 +2,102 @@ package backend;
 
 import flixel.util.FlxSave;
 
+@:structInit
+class PlayData {
+	// song data
+	public var songID:String;
+	public var difficulty:String;
+
+	// play data
+	public var score:Int;
+	public var accuracy:Float;
+
+	// modifiers
+	public var playbackRate:Float;
+	public var noFail:Bool;
+	public var randomizedNotes:Bool;
+	public var mirroredNotes:Bool;
+	public var sustains:Bool;
+	public var opponentMode:Bool;
+	public var blind:Bool;
+}
+
 class Scores {
-	public static var weekScores:Map<String, Int> = new Map();
-	public static var songScores:Map<String, Int> = new Map<String, Int>();
-	public static var songRating:Map<String, Float> = new Map<String, Float>();
+	public static var list:Array<PlayData> = [];
 
 	static var _save:FlxSave;
-
-	public static function resetSong(song:String, ?diff:Int = 0):Void {
-		var daSong:String = formatSong(song, diff);
-		setScore(daSong, 0);
-		setRating(daSong, 0);
-	}
-
-	public static function resetWeek(week:String, ?diff:Int = 0):Void {
-		var daWeek:String = formatSong(week, diff);
-		setWeekScore(daWeek, 0);
-	}
-
-	public static function saveScore(song:String, ?score:Int = 0, ?diff:Int = 0, ?rating:Float = -1):Void {
-		if (song == null) return;
-		var daSong:String = formatSong(song, diff);
-
-		if (songScores.exists(daSong)) {
-			if (songScores.get(daSong) < score)	{
-				setScore(daSong, score);
-				if (rating >= 0) setRating(daSong, rating);
-			}
-		} else {
-			setScore(daSong, score);
-			if (rating >= 0) setRating(daSong, rating);
-		}
-	}
-
-	public static function saveWeekScore(week:String, score:Int = 0, ?diff:Int = 0):Void {
-		var daWeek:String = formatSong(week, diff);
-
-		if (weekScores.exists(daWeek)) {
-			if (weekScores.get(daWeek) < score)
-				setWeekScore(daWeek, score);
-		} else setWeekScore(daWeek, score);
-	}
-
-	/**
-	 * YOU SHOULD FORMAT SONG WITH formatSong() BEFORE TOSSING IN SONG VARIABLE
-	 */
-	static function setScore(song:String, score:Int):Void {
-		songScores.set(song, score);
-		FlxG.save.data.songScores = songScores;
-		FlxG.save.flush();
-	}
-
-	static function setWeekScore(week:String, score:Int):Void {
-		weekScores.set(week, score);
-		FlxG.save.data.weekScores = weekScores;
-		FlxG.save.flush();
-	}
-
-	static function setRating(song:String, rating:Float):Void {
-		songRating.set(song, rating);
-		FlxG.save.data.songRating = songRating;
-		FlxG.save.flush();
-	}
-
-	public static function formatSong(song:String, diff:Int):String {
-		return '';
-	}
-
-	public static function getScore(song:String, diff:Int):Int {
-		var daSong:String = formatSong(song, diff);
-		if (!songScores.exists(daSong))
-			setScore(daSong, 0);
-
-		return songScores.get(daSong);
-	}
-
-	public static function getRating(song:String, diff:Int):Float {
-		var daSong:String = formatSong(song, diff);
-		if (!songRating.exists(daSong))
-			setRating(daSong, 0);
-
-		return songRating.get(daSong);
-	}
-
-	public static function getWeekScore(week:String, diff:Int):Int {
-		var daWeek:String = formatSong(week, diff);
-		if (!weekScores.exists(daWeek))
-			setWeekScore(daWeek, 0);
-
-		return weekScores.get(daWeek);
-	}
 
 	public static function load():Void {
 		_save = new FlxSave();
 		_save.bind('scores', Util.getSavePath());
 
-		if (_save.data.weekScores != null) weekScores = _save.data.weekScores;
-		if (_save.data.songScores != null) songScores = _save.data.songScores;
-		if (_save.data.songRating != null) songRating = _save.data.songRating;
+		if (_save.data.list != null) list = _save.data.list;
 	}
 
 	public static function save():Void {
-		_save.data.weekScores = weekScores;
-		_save.data.songScores = songScores;
-		_save.data.songRating = songRating;
-
+		_save.data.list = list;
 		_save.flush();
+	}
+
+	public static function get(songID:String, ?difficulty:String):PlayData {
+		difficulty ??= Difficulty.current;
+
+		var plays:Array<PlayData> = filter(list, songID, difficulty);
+		if (plays.length == 0) {
+			return {
+				songID: songID,
+				difficulty: difficulty,
+				score: 0,
+				accuracy: 0.0,
+
+				playbackRate: 1.0,
+				noFail: false,
+				randomizedNotes: false,
+				mirroredNotes: false,
+				sustains: true,
+				opponentMode: false,
+				blind: false
+			}
+		}
+
+		return plays[0];
+	}
+
+	public static function set(data:PlayData):Void {
+		var filteredList:Array<PlayData> = filter(list, data.songID, data.difficulty);
+
+		Sys.println('current modifiers for "${data.songID} - ${data.difficulty}":');
+		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode']) {
+			Sys.println('$i: ${Settings.data.gameplaySettings[i]}');
+		}
+		Sys.println('');
+
+		if (filteredList.length == 0) {
+			list.push(data);
+			return;
+		}
+
+		var oldPlay:PlayData = list[list.indexOf(filteredList[0])];
+
+		if (oldPlay.accuracy < data.accuracy) {
+			oldPlay.accuracy = data.accuracy;
+		}
+
+		if (oldPlay.score < data.score) {
+			oldPlay.score = data.score;
+		}
+	}
+
+	public static function filter(plays:Array<PlayData>, songID:String, difficulty:String):Array<PlayData> {
+		var modifiers:Map<String, Dynamic> = Settings.data.gameplaySettings;
+
+		return plays.filter(function(play:PlayData) {
+			for (m in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode', 'blind']) {
+				if (!modifiers.exists(m)) return false;
+				if (Reflect.field(play, m) != modifiers[m]) return false;
+			}
+
+			return play.songID == songID && play.difficulty == difficulty;
+		});
 	}
 }

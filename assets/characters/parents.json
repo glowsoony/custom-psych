@@ -1,0 +1,115 @@
+{
+	animations: [
+		{
+			offsets: [
+				0,
+				0,
+			],
+			indices: [],
+			id: 'Parent Christmas Idle',
+			name: 'idle',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-28,
+				20,
+			],
+			indices: [],
+			id: 'Parent Left Note Dad',
+			name: 'singLEFT',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-33,
+				-24,
+			],
+			indices: [],
+			id: 'Parent Down Note Dad',
+			name: 'singDOWN',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-49,
+				24,
+			],
+			indices: [],
+			id: 'Parent Up Note Dad',
+			name: 'singUP',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-4,
+				-20,
+			],
+			indices: [],
+			id: 'Parent Right Note Dad',
+			name: 'singRIGHT',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-28,
+				18,
+			],
+			indices: [],
+			id: 'Parent Left Note Mom',
+			name: 'singLEFT-alt',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-33,
+				-24,
+			],
+			indices: [],
+			id: 'Parent Down Note Mom',
+			name: 'singDOWN-alt',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-46,
+				26,
+			],
+			indices: [],
+			id: 'Parent Up Note Mom',
+			name: 'singUP-alt',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-4,
+				-19,
+			],
+			indices: [],
+			id: 'Parent Right Note Mom',
+			name: 'singRIGHT-alt',
+			framerate: 24,
+			looped: false,
+		},
+	],
+	healthColor: -3907922,
+	singDuration: 4,
+	flipX: false,
+	sheets: 'characters/parents',
+	danceInterval: 2,
+	cameraOffset: [
+		100,
+		-100,
+	],
+	icon: 'parents',
+	antialiasing: true,
+	scale: 1,
+}

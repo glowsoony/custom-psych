@@ -1,0 +1,11 @@
+{
+	"songName": "High",
+	"composer": "Kawai Sprite",
+	"enemy": "mom",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 125
+		}
+	]
+}

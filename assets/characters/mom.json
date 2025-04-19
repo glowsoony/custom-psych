@@ -1,0 +1,71 @@
+{
+	animations: [
+		{
+			offsets: [
+				0,
+				0,
+			],
+			indices: [],
+			id: 'Mom Idle',
+			name: 'idle',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				140,
+				-5,
+			],
+			indices: [],
+			id: 'Mom Left Pose',
+			name: 'singLEFT',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				0,
+				-160,
+			],
+			indices: [],
+			id: 'MOM DOWN POSE',
+			name: 'singDOWN',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				33,
+				82,
+			],
+			indices: [],
+			id: 'Mom Up Pose',
+			name: 'singUP',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				40,
+				-40,
+			],
+			indices: [],
+			id: 'Mom Pose Left',
+			name: 'singRIGHT',
+			framerate: 24,
+			looped: false,
+		},
+	],
+	healthColor: -2599538,
+	singDuration: 4,
+	flipX: false,
+	sheets: 'characters/mommyMearest',
+	danceInterval: 2,
+	cameraOffset: [
+		100,
+		-100,
+	],
+	icon: 'mom',
+	antialiasing: true,
+	scale: 1,
+}

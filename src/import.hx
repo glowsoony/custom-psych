@@ -9,12 +9,16 @@ import backend.Settings;
 import backend.Language;
 import backend.Paths;
 import backend.Scores;
+import backend.Mods;
 import backend.Song;
 import backend.Difficulty;
+import backend.Meta;
 import objects.Alphabet;
 import objects.FunkinSprite;
 import states.MusicState;
 import states.PlayState;
+import scripting.ScriptHandler;
+import scripting.*;
 
 // flixel specific
 import flixel.*;

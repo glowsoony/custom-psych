@@ -23,6 +23,7 @@ class SaveVariables {
 	var canReset:Bool = true;
 	var mechanics:Bool = true;
 	var noteOffset:Float = 0;
+	var pauseType:String = 'Unlimited';
 
 	// graphics (that affect performance)
 	var antialiasing:Bool = true;
@@ -39,7 +40,8 @@ class SaveVariables {
 	var judgePosition:Array<Float> = [300, 200];
 
 	var flashingLights:Bool = true;
-	var noteSkin:String = 'Default';
+	var noteSkin:String = 'Funkin';
+	var noteSplashSkin:String = 'Psych';
 	var gameVisibility:Int = 100;
 	var cameraZooms:Bool = true;
 	var judgementAlpha:Float = 1;
@@ -61,17 +63,17 @@ class SaveVariables {
 	var gameplaySettings:Map<String, Dynamic> = [
 		'scrollSpeed' => 1.0,
 		'scrollType' => 'Multiplied',
-		'healthGain' => 1.0,
-		'healthLoss' => 1.0,
 
 		'playbackRate' => 1.0,
 		'instakill' => false,
+		'onlySicks' => false,
 		'noFail' => false,
 		'botplay' => false,
 		'mirroredNotes' => false,
 		'randomizedNotes' => false,
 		'sustains' => true,
-		'blind' => false
+		'blind' => false,
+		'opponentMode' => false
 	];
 }
 
@@ -81,7 +83,8 @@ class Settings {
 
 	public static function save() {
 		for (key in Reflect.fields(data)) {
-			if (key == 'downscroll') continue;
+			// ignores variables with getters
+			if (Reflect.hasField(data, 'get_$key')) continue;
 			Reflect.setField(FlxG.save.data, key, Reflect.field(data, key));
 		}
 
@@ -94,7 +97,9 @@ class Settings {
 		final fields:Array<String> = Type.getInstanceFields(SaveVariables);
 		for (i in Reflect.fields(FlxG.save.data)) {
 			if (i == 'gameplaySettings' || !fields.contains(i)) continue;
-			Reflect.setField(data, i, Reflect.field(FlxG.save.data, i));
+
+			if (Reflect.hasField(data, 'set_$i')) Reflect.setProperty(data, i, Reflect.field(FlxG.save.data, i));
+			else Reflect.setField(data, i, Reflect.field(FlxG.save.data, i));
 		}
 
 		if (FlxG.save.data.framerate == null) {

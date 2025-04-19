@@ -45,29 +45,15 @@ class GameplayChangersSubstate extends FlxSubState {
 		optionsArray.push(option);
 		#end
 
-		var option:GameplayOption = new GameplayOption('Health Gain Multiplier', 'healthgain', FLOAT, 1);
-		option.scrollSpeed = 2.5;
-		option.minValue = 0;
-		option.maxValue = 5;
-		option.changeValue = 0.1;
-		option.displayFormat = '%vX';
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Health Loss Multiplier', 'healthloss', FLOAT, 1);
-		option.scrollSpeed = 2.5;
-		option.minValue = 0.5;
-		option.maxValue = 5;
-		option.changeValue = 0.1;
-		option.displayFormat = '%vX';
-		optionsArray.push(option);
-
 		optionsArray.push(new GameplayOption('Instakill on Miss', 'instakill', BOOL, false));
+		optionsArray.push(new GameplayOption('PFC Or Die', 'onlySicks', BOOL, false));
 		optionsArray.push(new GameplayOption('No Fail', 'noFail', BOOL, false));
 		optionsArray.push(new GameplayOption('Botplay', 'botplay', BOOL, false));
 		optionsArray.push(new GameplayOption('Sustains', 'sustains', BOOL, true));
 		optionsArray.push(new GameplayOption('Blind', 'blind', BOOL, false));
 		optionsArray.push(new GameplayOption('Mirrored Notes', 'mirroredNotes', BOOL, false));
 		optionsArray.push(new GameplayOption('Randomized Notes', 'randomizedNotes', BOOL, false));
+		optionsArray.push(new GameplayOption('Play As Opponent', 'opponentMode', BOOL, false));
 	}
 
 	public function getOptionByName(name:String)

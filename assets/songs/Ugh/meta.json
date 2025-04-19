@@ -1,0 +1,11 @@
+{
+	"songName": "Ugh",
+	"composer": "Kawai Sprite",
+	"enemy": "tankman",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 160
+		}
+	]
+}

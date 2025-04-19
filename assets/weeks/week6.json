@@ -1,0 +1,28 @@
+{
+	songs: [
+		{
+			name: 'Senpai',
+			icon: 'senpai-pixel',
+			color: 0xFFFF78BF,
+		},
+		{
+			name: 'Roses',
+			icon: 'senpai-pixel',
+			color: 0xFFFF78BF,
+		},
+		{
+			name: 'Thorns',
+			icon: 'spirit-pixel',
+			color: 0xFFFF78BF,
+		},
+	],
+
+	name: 'Hating Simulator (ft. Moawling)',
+	weekBefore: 'week5',
+	background: 'stage',
+	characters: ['senpai', 'gf', 'bf'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}

@@ -1,0 +1,11 @@
+{
+	"songName": "Cocoa",
+	"composer": "Kawai Sprite",
+	"enemy": "parents",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 100
+		}
+	]
+}

@@ -354,23 +354,20 @@ class NativeAudioSource
 	// Get & Set Methods
 	public function getCurrentTime():Float {
 		if (completed) return getLength();
-		else if (handle != null) {
-			if (stream) {
-				var time = ((bufferTimeBlocks[0] * 1000) + (AL.getSourcef(handle, AL.SEC_OFFSET) * 1000)) - parent.offset;
-				if (time < 0) return 0;
-				return time;
-			} else {
-				var offset = AL.getSourcei(handle, AL.BYTE_OFFSET);
-				var ratio = (offset / dataLength);
-				var totalSeconds = samples / parent.buffer.sampleRate;
+		if (handle == null) return 0;
 
-				var time = (totalSeconds * ratio * 1000) - parent.offset;
-				if (time < 0) return 0;
-				return time;
-			}
+		if (stream) {
+			var offsetSeconds:Float = AL.getSourcef(handle, AL.SEC_OFFSET) * 1000;
+			var timeBuffer:Float = bufferTimeBlocks[0] * 1000;
+
+			return Math.max(0, (timeBuffer + offsetSeconds) - parent.offset);
 		}
-
-		return 0;
+			
+		var offset:Int = AL.getSourcei(handle, AL.BYTE_OFFSET);
+		var ratio:Float = (offset / dataLength) * 1000;
+		var totalSeconds:Float = samples / parent.buffer.sampleRate;
+		
+		return Math.max(0, (totalSeconds * ratio) - parent.offset);
 	}
 
 	public function setCurrentTime(value:Float):Float {
@@ -386,10 +383,8 @@ class NativeAudioSource
 			} else if (parent.buffer != null) {
 				AL.sourceRewind(handle);
 
-				var secondOffset:Float = (value + parent.offset) * 0.001;
+				var secondOffset:Float = Math.max(0, (value + parent.offset) * 0.001);
 				var totalSeconds:Float = samples / parent.buffer.sampleRate;
-
-				if (secondOffset < 0) secondOffset = 0;
 				if (secondOffset > totalSeconds) secondOffset = totalSeconds;
 
 				var ratio:Float = (secondOffset / totalSeconds);

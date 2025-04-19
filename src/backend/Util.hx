@@ -34,6 +34,8 @@ class Util {
 		return '${FlxMath.roundDecimal(bytes, precision)} ${units[curUnit]}';
 	}
 
+	public static inline function format(string:String):String return string.toLowerCase().replace(' ', '-');
+
 	inline public static function capitalize(text:String):String {
 		return '${text.charAt(0).toUpperCase()}${text.substr(1).toLowerCase()}';
 	}

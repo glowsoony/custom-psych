@@ -1,0 +1,28 @@
+{
+	songs: [
+		{
+			name: 'Pico',
+			icon: 'pico',
+			color: 0xFF941606,
+		},
+		{
+			name: 'Philly Nice',
+			icon: 'pico',
+			color: 0xFF941606,
+		},
+		{
+			name: 'Blammed',
+			icon: 'pico',
+			color: 0xFF941606,
+		},
+	],
+
+	name: 'Pico',
+	weekBefore: 'week2',
+	background: 'stage',
+	characters: ['pico', 'gf', 'bf'],
+	unlocked: true,
+
+	hideStoryMode: false,
+	hideFreeplay: false
+}

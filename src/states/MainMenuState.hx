@@ -5,6 +5,8 @@ import flixel.FlxObject;
 import flixel.effects.FlxFlicker;
 import options.OptionsState;
 
+import scripting.ScriptHandler;
+
 import objects.Character;
 
 class MainMenuState extends MusicState {
@@ -29,7 +31,7 @@ class MainMenuState extends MusicState {
 		persistentUpdate = true;
 
 		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("In the Menus", null);
+		DiscordClient.changePresence();
 		#end
 
 		add(camFollow = new FlxObject(FlxG.width * 0.5, 0, 1, 1));
@@ -108,30 +110,42 @@ class MainMenuState extends MusicState {
 					case 'freeplay':
 						MusicState.switchState(new FreeplayState());
 
-					#if MODS_ALLOWED
+	/*				#if MODS_ALLOWED
 					case 'mods':
 						MusicState.switchState(new ModsMenuState());
-					#end
+					#end*/
 
 					#if AWARDS_ALLOWED
 					case 'awards':
 						MusicState.switchState(new AchievementsMenuState());
 					#end
 
-					case 'credits':
-						MusicState.switchState(new CreditsState());
+/*					case 'credits':
+						MusicState.switchState(new CreditsState());*/
 
 					case 'options':
 						if (!FlxG.keys.pressed.SHIFT)
 							MusicState.switchState(new OptionsState());
 						else
 							MusicState.switchState(new options.NewOptionsMenu());
-						
+						substates.PauseMenu.wentToOptions = false;
+
+					default:
+						optionGrp.members[curSelected].alpha = 0.0;
+						optionGrp.members[curSelected].visible = true;
+						for (i => option in optionGrp.members) {
+							if (!option.alive) option.revive();
+							FlxTween.tween(option, {alpha: 1.0}, 0.2 * (i + 1), {ease: FlxEase.quadIn, startDelay: 0.5});
+						}
+						alreadyPressedEnter = false;
+						trace('"${options[curSelected]}" not implemented.');
 				}
 			});
 		}
 
 		if (Controls.justPressed('back')) MusicState.switchState(new TitleState());
+
+		if (FlxG.keys.justPressed.SEVEN) MusicState.switchState(new states.editors.CharacterEditorState());
 
 		super.update(elapsed);
 	}

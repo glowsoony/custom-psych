@@ -22,6 +22,22 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 		));
 
 		addOption(new Option(
+			'Noteskin:',
+			'Choose a noteskin to show mid-game.',
+			'noteSkin',
+			STRING,
+			['Funkin', 'Circle', 'Future']
+		));
+
+		addOption(new Option(
+			'Note Splash Skin:',
+			'Choose a note splash skin to show mid-game.',
+			'noteSplashSkin',
+			STRING,
+			['None', 'Psych', 'Funkin']
+		));
+
+		addOption(new Option(
 			'Time Bar Type:',
 			'What kind of time bar should be displayed in-game?',
 			'timeBarType',

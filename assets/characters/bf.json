@@ -2,7 +2,7 @@
 	animations: [
 		{
 			name: 'idle',
-			id: 'BF idle dance', 
+			id: 'idle', 
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -10,7 +10,7 @@
 		},
 		{
 			name: 'singLEFT',
-			id: 'BF NOTE LEFT0',
+			id: 'sing left',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -18,7 +18,7 @@
 		},
 		{
 			name: 'singDOWN',
-			id: 'BF NOTE DOWN0',
+			id: 'sing down',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -26,7 +26,7 @@
 		},
 		{
 			name: 'singUP',
-			id: 'BF NOTE UP0',
+			id: 'sing up',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -34,7 +34,7 @@
 		},
 		{
 			name: 'singRIGHT',
-			id: 'BF NOTE RIGHT0',
+			id: 'sing right',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -42,7 +42,7 @@
 		},
 		{
 			name: 'missLEFT',
-			id: 'BF NOTE LEFT MISS',
+			id: 'miss left',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -50,7 +50,7 @@
 		},
 		{
 			name: 'missDOWN',
-			id: 'BF NOTE DOWN MISS',
+			id: 'miss down',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -58,7 +58,7 @@
 		},
 		{
 			name: 'missUP',
-			id: 'BF NOTE UP MISS',
+			id: 'miss up',
 			indices: [],
 			framerate: 24,
 			looped: false,
@@ -66,21 +66,37 @@
 		},
 		{
 			name: 'missRIGHT',
-			id: 'BF NOTE RIGHT MISS',
+			id: 'miss right',
 			indices: [],
 			framerate: 24,
 			looped: false,
 			offsets: [-40, 21]
+		},
+		{
+			name: 'hey',
+			id: 'hey',
+			indices: [],
+			framerate: 24,
+			looped: false,
+			offsets: [3, 5]
+		},
+		{
+			name: 'shaking',
+			id: 'shaking',
+			indices: [],
+			framerate: 24,
+			looped: true,
+			offsets: [0, 0]
 		}
 	],
 
 	antialiasing: true,
 	singDuration: 4,
-	scale: [1, 1],
+	scale: 1,
 	healthColor: 0xFF31B0D1,
 	sheets: 'characters/bf',
 	icon: 'bf',
 	cameraOffset: [100, -100],
 	
-	flipX: true
+	flipX: false
 }

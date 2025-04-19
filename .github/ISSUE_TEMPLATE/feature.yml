@@ -1,0 +1,10 @@
+name: Suggestion
+description: If you'd like to suggest changing/adding something to the game.
+labels: [Suggestion]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "What's your suggestion?"
+    validations:
+      required: true

@@ -1,0 +1,11 @@
+{
+	"songName": "Pico",
+	"composer": "Kawai Sprite",
+	"enemy": "pico",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 150
+		}
+	]
+}

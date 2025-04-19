@@ -1,0 +1,16 @@
+{
+	songs: [
+		{
+			name: 'Test',
+			icon: 'face',
+			color: 0xFFA5004D,
+		}
+	],
+
+	name: 'Test',
+	unlocked: true,
+	difficulties: ['Normal'],
+
+	hideStoryMode: true,
+	hideFreeplay: false
+}

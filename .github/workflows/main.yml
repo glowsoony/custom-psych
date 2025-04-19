@@ -69,7 +69,7 @@ jobs:
           name: Windows
           path: _export/release/windows/bin
   MacOS:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: krdlab/setup-haxe@master

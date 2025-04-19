@@ -2,14 +2,16 @@
 <project>
 	<!-- Application Related Variables -->
 	<app title="Friday Night Funkin': Psych Engine" file="PsychEngine" packageName="com.rudyrue.psychengine" package="com.rudyrue.psychengine" main="Main" version="0.3.0" company="Rudyrue" />
-	<window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" orientation="landscape" fullscreen="false" resizable="true"/>
+	<window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" orientation="landscape" fullscreen="false" resizable="true" allow-high-dpi="true"/>
 
 	<!-- Project Defines -->
-	<!--<define name="SCRIPTING_ALLOWED" />-->
 	<define name="ACHIEVEMENTS_ALLOWED" />
 	<define name="DISCORD_ALLOWED" if="desktop cpp" />
 	<define name="TRANSLATIONS_ALLOWED" />
 	<define name="PSYCH_WATERMARKS"/> 
+	<define name="HSCRIPT_ALLOWED" />
+	<define name="LUA_ALLOWED" />
+	<define name="MODS_ALLOWED" />
 
 	<!-- DISABLE THIS IF ISSUES ARE FOUND -->
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>
@@ -37,13 +39,17 @@
 	<haxelib name="hxjson5" />
 
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
-	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED" version="1.1.0"/>
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" version="1.9.2"/>
+	<haxelib name="hxvlc" version="1.9.2" if="VIDEOS_ALLOWED" />
 	<haxelib name="hxdiscord_rpc" version="1.2.4" if="DISCORD_ALLOWED"/>
-	<haxelib name="hscript-iris" if="SCRIPTING_ALLOWED"/>
+	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED"/>
+
+	<haxelib name="moonchart"/>
 
 	<!-- Assets -->
 	<classpath name="src" />
+
+	<assets path="alsoft.txt" rename="alsoft.ini" type="text" if="windows"/>
+	<assets path="alsoft.txt" rename="alsoft.conf" type="text" unless="windows"/>
 
 	<assets path="assets/characters" />
 	<assets path="assets/data" />
@@ -100,6 +106,7 @@
 	<haxedef name="macos" if="macos"/>
 
 	<define name="IRIS_DEBUG"/>
+	<define name="hscriptPos"/>
 
 	<assets path='icons/iconOG.png' rename='icon.png' if="linux || mac" />
 	

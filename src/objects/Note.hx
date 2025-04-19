@@ -10,8 +10,8 @@ typedef NoteData = {
 	var length:Float;
 	var type:String;
 	var lane:Int;
-	var player:Bool;
-	var speed:Float;
+	var player:Int;
+	var altAnim:Bool;
 }
 
 /**
@@ -39,23 +39,32 @@ class Note extends FlxSprite {
 	public var rawTime:Float = 0;
 
 	public var lane:Int = 0;
-	public var speed:Float = 1.0;
-	public var player:Bool = false;
+	public var player:Int = 1;
 	public var spawned:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;
 
+	public var judge:String = '';
+	public var coyoteTimer:Float = 0.25;
+	public var animSuffix:String = '';
+
 	public var rawHitTime(get, never):Float;
-	function get_rawHitTime():Float return time - Conductor.rawTime;
+	function get_rawHitTime():Float {
+		return time - Conductor.rawTime;
+	}
 
 	public var hitTime(get, never):Float;
-	function get_hitTime():Float return time - Conductor.time;
+	function get_hitTime():Float {
+		return time - Conductor.visualTime;
+	}
 
 	public var canHit:Bool = true;
 	public var inHitRange(get, never):Bool;
 	function get_inHitRange():Bool {
-		return time < (Conductor.rawTime + (Judgement.maxHitWindow * earlyHitMult)) && 
-		time > (Conductor.rawTime - (Judgement.maxHitWindow * lateHitMult));
+		final early:Bool = time < (Conductor.rawTime + ((Judgement.maxHitWindow * earlyHitMult) * Conductor.rate));
+		final late:Bool = time > (Conductor.rawTime - ((Judgement.maxHitWindow * lateHitMult) * Conductor.rate));
+
+		return early && late;
 	}
 
 	public var tooLate(get, never):Bool;
@@ -73,7 +82,7 @@ class Note extends FlxSprite {
 
 	public var lateHitMult:Float = 1;
 	public var earlyHitMult:Float = 1;
-
+	
 	// sustain stuff
 	public var pieces:Array<Note> = []; 
 	public var parent:Note;
@@ -86,6 +95,7 @@ class Note extends FlxSprite {
 
 	public var breakOnHit:Bool = false;
 	public var ignore:Bool = false;
+	public var splashes:Bool = true;
 
 	public var texture(default, set):String;
 	function set_texture(value:String):String {
@@ -147,9 +157,9 @@ class Note extends FlxSprite {
 		this.rawTime = data.time;
 		this.lane = data.lane;
 		this.player = data.player;
-		this.speed = data.speed;
 		this.type = data.type;
 		this.sustainLength = data.length;
+		this.animSuffix = data.altAnim ? '-alt' : '';
 
 		if (!isSustain && lane < colours.length) { // Doing this 'if' check to fix the warnings on Senpai songs
 			animation.play('default');
@@ -157,7 +167,7 @@ class Note extends FlxSprite {
 
 		if (isSustain) {
 			multAlpha = 0.6;
-			flipY = Settings.data.scrollDirection == 'Down';
+			flipY = Settings.data.downscroll;
 
 			correctionOffset.x += width * 0.5;
 			animation.play('holdend');
@@ -179,7 +189,7 @@ class Note extends FlxSprite {
 		path ??= '';
 
 		if (path.length == 0) {
-			path = PlayState.song != null ? PlayState.song.arrowSkin : '';
+			path = 'noteSkins/${Util.format(Settings.data.noteSkin)}';
 		}
 
 		if (!Paths.exists('images/$path.png')) path = Strumline.default_skin;
@@ -197,7 +207,7 @@ class Note extends FlxSprite {
 	}
 
 	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
-		distance = (hitTime * 0.45 * ((scrollSpeed * multSpeed) / Conductor.rate));
+		distance = (hitTime * 0.45 * (scrollSpeed * multSpeed)) / Conductor.rate;
 		distance *= Settings.data.downscroll ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;

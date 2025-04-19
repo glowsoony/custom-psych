@@ -13,8 +13,7 @@ import flixel.util.FlxDestroyUtil;
 import openfl.utils.Assets;
 
 class FreeplayState extends MusicState {
-	var songList:Array<Track> = [];
-	var difficultyList:Array<Array<String>> = [];
+	var songList:Array<SongMeta> = [];
 
 	static var curSelected:Int = 0;
 
@@ -45,35 +44,53 @@ class FreeplayState extends MusicState {
 	override function create() {
 		persistentUpdate = true;
 		WeekData.reload();
+		Mods.loadTop();
 
 		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("In the Menus", null);
+		DiscordClient.changePresence('Selecting a Song', 'Freeplay');
 		#end
+
+		songList.push({
+			id: 'random',
+			colour: 0xFF000000,
+			folder: '',
+			icon: 'random',
+			difficulties: ['???']
+		});
 
 		for (week in WeekData.list) {
 			for (song in week.songs) {
-				songList.push(song);
-
 				var diffs:Array<String> = song.difficulties;
 				if (song.difficulties == null || song.difficulties.length == 0) diffs = Difficulty.loadFromWeek(week);
-				difficultyList.push(diffs);
+
+				songList.push({
+					id: song.name,
+					colour: song.color,
+					folder: week.folder,
+					icon: song.icon,
+					difficulties: diffs
+				});
 			}
 		}
 
 		add(bg = new FlxSprite().loadGraphic(Paths.image('menus/desatBG')));
 		bg.antialiasing = Settings.data.antialiasing;
 		bg.screenCenter();
-		bg.color = intendedColour = songList[curSelected].color;
+		bg.color = intendedColour = songList[curSelected].colour;
 
 		add(grpSongs = new FlxTypedSpriteGroup<Alphabet>());
 		add(grpIcons = new FlxTypedSpriteGroup<CharIcon>());
 
 		for (index => song in songList) {
-			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, song.name));
+			var songName:String = song.id == 'random' ? 'Random' : Meta.load(song.id).songName;
+			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, songName));
 			alphabet.visible = alphabet.active = false;
 			alphabet.targetY = index;
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
 			alphabet.snapToPosition();
+
+			// otherwise the icons won't load properly
+			Mods.current = song.folder;
 
 			var icon:CharIcon = new CharIcon(song.icon);
 			icon.visible = icon.active = false;
@@ -127,19 +144,17 @@ class FreeplayState extends MusicState {
 		super.update(elapsed);
 
 		if (Controls.justPressed('accept')) {
-			final songID:String = songList[curSelected].name;
-			final diff:String = Difficulty.format(curDiffName);
-			final path:String = 'songs/$songID/$diff.json';
-			if (Paths.exists(path)) {
-				PlayState.songID = songID;
-				Difficulty.list = curDiffs;
-				Difficulty.current = diff;
-				MusicState.switchState(new PlayState());
-			} else {
-				persistentUpdate = false;
-				trace('Song/Difficulty doesn\'t exist: "$path"');
-				return;
-			}
+			if (songList[curSelected].id == 'random') {
+				var oldSelected:Int = curSelected;
+				curSelected = FlxG.random.int(1, songList.length - 1);
+				changeSelection();
+				curDiffName = curDiffs[FlxG.random.int(0, curDiffs.length - 1)];
+				enterSong();
+
+				// so that the user doesn't have to scroll all the way back up
+				// just to hit "random" again
+				curSelected = oldSelected;
+			} else enterSong();
 		}
 
 		if (FlxG.keys.justPressed.CONTROL) {
@@ -148,6 +163,39 @@ class FreeplayState extends MusicState {
 		}
 
 		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
+	}
+
+	function enterSong() {
+		final songID:String = songList[curSelected].id;
+		final diff:String = Difficulty.format(curDiffName);
+		final path:String = 'songs/$songID/${Song.getFile(songID, diff)}';
+		if (Paths.exists(path)) {
+			PlayState.songID = songID;
+			Difficulty.list = curDiffs;
+			Difficulty.current = curDiffName;
+			Mods.current = songList[curSelected].folder;
+			MusicState.switchState(new PlayState());
+		} else {
+			persistentUpdate = false;
+			trace('Song/Difficulty doesn\'t exist: "$path"');
+			return;
+		}
+	}
+
+	// regenerate the current score
+	// to accomodate possible modifier changes
+	override function closeSubState():Void {
+		super.closeSubState();
+
+		var play:PlayData = Scores.get(songList[curSelected].id, curDiffName);
+		intendedScore = play.score;
+		intendedAccuracy = play.accuracy;
+
+		Sys.println('current modifiers just in case you forget somehow:');
+		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains']) {
+			Sys.println('$i: ${Settings.data.gameplaySettings[i]}');
+		}
+		Sys.println('');
 	}
 
 	function songControls(elapsed:Float) {
@@ -208,14 +256,16 @@ class FreeplayState extends MusicState {
 			grpIcons.members[num].alpha = num == curSelected ? 1 : 0.6;
 		}
 
-		var newColour:Int = songList[curSelected].color;
+		Mods.current = songList[curSelected].folder; // sigh
+
+		var newColour:Int = songList[curSelected].colour;
 		if (newColour != intendedColour) {
 			intendedColour = newColour;
 			FlxTween.cancelTweensOf(bg);
 			FlxTween.color(bg, 1, bg.color, intendedColour);
 		}
 
-		curDiffs = difficultyList[curSelected];
+		curDiffs = songList[curSelected].difficulties;
 
 		curDifficulty = curDiffs.indexOf(curDiffName);
 		if (curDifficulty == -1) curDifficulty = 0;
@@ -229,8 +279,9 @@ class FreeplayState extends MusicState {
 		var displayDiff:String = curDiffName.toUpperCase();
 		difficultyText.text = curDiffs.length == 1 ? displayDiff : '< $displayDiff >';
 
-		intendedScore = FlxG.random.int(0, 500000);
-		intendedAccuracy = FlxG.random.float(0, 100);
+		var play:PlayData = Scores.get(songList[curSelected].id, curDiffName);
+		intendedScore = play.score;
+		intendedAccuracy = play.accuracy;
 
 		positionStats();
 	}
@@ -262,4 +313,12 @@ class FreeplayState extends MusicState {
 			_lastVisibles.push(i);
 		}
 	}	
+}
+
+typedef SongMeta = {
+	var id:String;
+	var icon:String;
+	var colour:FlxColor;
+	var folder:String;
+	var difficulties:Array<String>;
 }

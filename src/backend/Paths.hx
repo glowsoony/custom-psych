@@ -105,42 +105,56 @@ class Paths {
 	}
 
 	public static function get(path:String, ?subFolder:String):String {
-		if (subFolder == null || subFolder.length == 0) return 'assets/$path';
+		if (subFolder != null && subFolder.length != 0) {
+			path = '$subFolder/$path';
+		}
 
-		return 'assets/$subFolder/$path';
+		// start by checking the currently played mod
+		var mainDirectory:String = Mods.current;
+		var finalPath:String = '$mainDirectory/$path';
+
+		// if there are any other mods active
+		// and the file doesn't exist in the currently played mod
+		// run through the mods
+		if (FileSystem.exists(finalPath)) return finalPath;
+
+		// first check global mods
+		var mods:Array<ModData> = Mods.getActive('global');
+		if (mods.length > 0) {
+			for (mod in mods) {
+				mainDirectory = 'mods/${mod.id}';
+				finalPath = '$mainDirectory/$path';
+				if (FileSystem.exists(finalPath)) return finalPath;
+			}
+
+			// then check local mods
+			mods = Mods.getActive('local');
+			for (mod in mods) {
+				mainDirectory = 'mods/${mod.id}';
+				finalPath = '$mainDirectory/$path';
+				if (FileSystem.exists(finalPath)) return finalPath;
+			}
+		}
+
+		// if the file STILL doesn't exist
+		// fallback to assets
+		return 'assets/$path';
 	}
 
 	// images
-	public static dynamic function image(key:String, ?subFolder:String = 'images', ?allowGPU:Bool = true):FlxGraphic {
-		allowGPU = Settings.data.gpuCaching ? allowGPU : false;
-
-		key = Language.getFileTranslation(key, subFolder);
+	public static dynamic function image(key:String, ?subFolder:String = 'images'):FlxGraphic {
 		if (key.lastIndexOf('.') < 0) key += '.$IMAGE_EXT';
+		key = Language.getFileTranslation(key, subFolder);
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
 		if (!FileSystem.exists(key)) return null;
 		if (!localTrackedAssets.contains(key)) localTrackedAssets.push(key);
 
-		return cacheBitmap(key, BitmapData.fromFile(key), allowGPU);
+		return cacheBitmap(key, BitmapData.fromFile(key));
 	}
 
-	public static dynamic function cacheBitmap(key:String, bitmap:BitmapData, ?allowGPU:Bool = true):FlxGraphic {
-		if (allowGPU && bitmap.image != null) {
-			@:privateAccess
-			if (bitmap.__texture == null) {
-				bitmap.image.premultiplied = true;
-				bitmap.getTexture(FlxG.stage.context3D);
-			}
-	
-			bitmap.getSurface();
-			bitmap.disposeImage();
-			bitmap.image.data = null;
-
-			@:privateAccess {
-				bitmap.image = null;
-				bitmap.readable = true;
-			}
-		}
+	public static dynamic function cacheBitmap(key:String, bitmap:BitmapData):FlxGraphic {
+		//bitmap.disposeImage();
 
 		final graph:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, key);
 		graph.persist = true;
@@ -164,14 +178,15 @@ class Paths {
 	}
 
 	public static dynamic function audio(key:String, ?subFolder:String, ?beepIfNull:Bool = true):Sound {
-		key = Language.getFileTranslation(key, subFolder);
 		if (key.lastIndexOf('.') < 0) key += '.$SOUND_EXT';
+		key = Language.getFileTranslation(key, subFolder);
 
 		var file:Sound = null;
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
 		if (!FileSystem.exists(key)) {
 			if (beepIfNull) file = flixel.system.FlxAssets.getSound('flixel/sounds/beep');
+			Sys.println('could not find sound file: $key');
 		} else {
 			if (!localTrackedAssets.contains(key)) localTrackedAssets.push(key);
 
@@ -200,16 +215,19 @@ class Paths {
 		return get(path, subFolder);
 	}
 
-	public static dynamic function getMultiAtlas(keys:Array<String>, ?subFolder:String = null):FlxAtlasFrames {
-		var parentFrames:FlxAtlasFrames = cast Paths.sparrowAtlas(keys[0].trim());
+	public static dynamic function multiAtlas(keys:Array<String>, ?subFolder:String = null):FlxAtlasFrames {
+		var parentFrames:FlxAtlasFrames = cast sparrowAtlas(keys[0].trim());
 		if (keys.length < 1) return parentFrames;
+
+		if (parentFrames == null) return null;
 
 		var original:FlxAtlasFrames = parentFrames;
 		parentFrames = new FlxAtlasFrames(parentFrames.parent);
 		parentFrames.addAtlas(original, true);
 		for (i in 1...keys.length) {
-			var extraFrames:FlxAtlasFrames = cast Paths.sparrowAtlas(keys[i].trim(), subFolder);
-			if (extraFrames != null) parentFrames.addAtlas(extraFrames, true);
+			var extraFrames:FlxAtlasFrames = cast sparrowAtlas(keys[i].trim(), subFolder);
+			if (extraFrames == null) continue;
+			parentFrames.addAtlas(extraFrames, true);
 		}
 
 		return parentFrames;

@@ -69,7 +69,7 @@ class Language
 	}
 
 	public static function getFileTranslation(id:String, ?subFolder:String):String {
-		var defaultPath:String = return Paths.get(id, subFolder);
+		var defaultPath:String = Paths.get(id, subFolder);
 		if (!isDirectory) return defaultPath; // not gonna have a file to give if the language doesn't have any
 
 		if (subFolder != null && subFolder.length != 0) subFolder = 'locale/${Settings.data.language}/$subFolder';

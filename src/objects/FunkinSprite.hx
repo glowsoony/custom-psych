@@ -26,10 +26,7 @@ class FunkinSprite extends flixel.FlxSprite {
 	public function setOffset(name:String, offsets:Array<Float>) offsetMap.set(name, offsets);
 
 	public function playAnim(name:String, ?forced:Bool = true) {
-		if (!animation.exists(name)) {
-			trace('Animation "$name" doesn\'t exist.');
-			return;
-		}
+		if (!animation.exists(name)) return;
 
 		final offsetsForAnim:Array<Float> = offsetMap[name] ?? [0, 0];
 

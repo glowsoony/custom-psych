@@ -29,6 +29,8 @@ class FlxSoundGroup {
 	public function remove(sound:FlxSound):FlxSound {
 		if (!members.contains(sound)) return sound;
 			
+		if (sound == null) return sound;
+
 		@:bypassAccessor sound.group = null;
 		members.remove(sound);
 		@:privateAccess sound.updateTransform();
@@ -40,6 +42,10 @@ class FlxSoundGroup {
 	public function destroy():Void {
 		while (members.length > 0) {
 			var sound:FlxSound = members[0];
+			if (sound == null) {
+				members.remove(sound);
+				continue;
+			}
 
 			remove(sound);
 			sound.destroy();
@@ -48,38 +54,69 @@ class FlxSoundGroup {
 	}
 
 	public function play():Void {
-		for (sound in members) sound.play();
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.play();
+		}
 	}
 
 	public function stop():Void {
-		for (sound in members) sound.stop();
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.stop();
+		}
+		
 	}
 
 	public function pause():Void {
-		for (sound in members) sound.pause();
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.pause();
+		}
+		
 	}
 
 	public function resume():Void {
-		for (sound in members) sound.resume();
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.resume();
+		}
+		
 	}
 
 	function set_volume(value:Float):Float {
-		for (sound in members) sound.volume = value;
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.volume = value;
+		}
+		
 		return volume = value;
 	}
 
 	function set_pitch(value:Float):Float {
-		for (sound in members) sound.pitch = value;
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.pitch = value;
+		}
+		
 		return pitch = value;
 	}
 
 	function set_time(value:Float):Float {
-		for (sound in members) sound.time = value;
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.time = value;
+		}
+		
 		return time = value;
 	}
 
 	function set_pan(value:Float):Float {
-		for (sound in members) sound.pan = value;
+		for (sound in members) {
+			if (sound == null) continue;
+			sound.pan = value;
+		}
+		
 		return pan = value;
 	}
 }

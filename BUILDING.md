@@ -9,10 +9,10 @@
 	- Lime 8.1.2 `haxelib install lime 8.1.2`
 	- OpenFL 9.3.3 `haxelib install openfl 9.3.3`
 	- Flixel Addons 3.2.2 `haxelib install flixel-addons 3.2.2`
-	- Flixel Tools 1.5.1 `haxelib install flixel-tools 1.5.1`
 	- HScript (Iris) 1.1.0 `haxelib install hscript-iris 1.1.0`
 	- hxJson5 `haxelib install hxjson5`
 	- hxDiscord_RPC 1.2.4 `haxelib install hxdiscord_rpc 1.2.4`
+	- Moonchart `haxelib git moonchart https://github.com/MaybeMaru/moonchart`
 	- hxVLC 1.9.2 `haxelib install hxvlc 1.9.2`
 	- hxcpp (GIT) `haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp 54af892be2ca4c63988c99c9c524431af6c6f036`
 	- FlxAnimate (GIT) `haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e`
@@ -71,6 +71,11 @@ i don't use mac lol
 i don't use linux lol
 
 # FAQ
+## "I wanna use HMM, it's way easier!"
+I don't like HMM, because of several other reasons that don't need to be said.  
+As a workaround, make a `.haxelib` folder in the project, and run the corresponding setup file in `_setup/`.  
+It's basically the same thing.
+
 ## "It's taking a while, should I be worried?"
 No, it's completely normal.  
 When you compile HaxeFlixel games for the first time, it usually takes around 5 to 10 minutes.  

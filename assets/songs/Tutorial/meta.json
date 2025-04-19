@@ -1,0 +1,11 @@
+{
+	"songName": "Tutorial",
+	"composer": "Kawai Sprite",
+	"enemy": "gf",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 100
+		}
+	]
+}

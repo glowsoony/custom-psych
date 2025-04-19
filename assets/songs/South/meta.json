@@ -1,0 +1,11 @@
+{
+	"songName": "South",
+	"composer": "Kawai Sprite",
+	"enemy": "kids",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 165
+		}
+	]
+}

@@ -16,6 +16,7 @@ typedef WeekFile = {
 	var difficulties:Array<String>;
 
 	var ?fileName:String;
+	var ?folder:String;
 }
 
 // synonym for "Song" because Song.hx already exists lmao
@@ -45,23 +46,25 @@ class WeekData {
 			hiddenUntilUnlocked: false,
 			hideStoryMode: false,
 			hideFreeplay: false,
-			difficulties: Difficulty.default_list,
-
-			fileName: ''
+			difficulties: Difficulty.default_list
 		}
 	}
 
 	public static function reload() {
 		list.resize(0);
 
-		// making it an array for mods later
-		final directories:Array<String> = [Paths.get('weeks')];
-		for (path in directories) {
-			for (week in FileSystem.readDirectory(path)) {
+		final directories:Array<String> = ['assets'];
+		final originalLength:Int = directories.length;
+		for (mod in Mods.getActive()) directories.push('mods/${mod.id}');
+
+		for (i => path in directories) {
+			if (!FileSystem.exists(path)) continue;
+			for (week in FileSystem.readDirectory('$path/weeks')) {
 				if (FileSystem.isDirectory(week)) continue;
 
-				var file:WeekFile = getFile('$path/$week');
+				var file:WeekFile = getFile('$path/weeks/$week');
 				file.fileName = week.replace('.json', '');
+				if (i >= originalLength) file.folder = path;
 
 				list.push(file);
 			}

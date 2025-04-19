@@ -1,0 +1,71 @@
+{
+	animations: [
+		{
+			offsets: [
+				0,
+				0,
+			],
+			indices: [],
+			id: 'Pico Idle Dance',
+			name: 'idle',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				54,
+				0,
+			],
+			indices: [],
+			id: 'Pico Note Right0',
+			name: 'singLEFT',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				181,
+				-86,
+			],
+			indices: [],
+			id: 'Pico Down Note0',
+			name: 'singDOWN',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-39,
+				26,
+			],
+			indices: [],
+			id: 'pico Up note0',
+			name: 'singUP',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-82,
+				-12,
+			],
+			indices: [],
+			id: 'Pico NOTE LEFT0',
+			name: 'singRIGHT',
+			framerate: 24,
+			looped: false,
+		},
+	],
+	healthColor: -4728747,
+	singDuration: 4,
+	flipX: true,
+	sheets: 'characters/pico',
+	danceInterval: 2,
+	cameraOffset: [
+		100,
+		-100,
+	],
+	icon: 'pico',
+	antialiasing: true,
+	scale: 1,
+}

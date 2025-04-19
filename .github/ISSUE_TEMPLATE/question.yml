@@ -1,9 +1,10 @@
 name: Question
-description: Ask about something here.
-labels: [question]
+description: If you'd like to ask a question.
+labels: [Question]
 body:
   - type: textarea
+    id: description
     attributes:
-      label: What is your question?
+      label: "What's your question?"
     validations:
       required: true

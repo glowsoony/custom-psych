@@ -1,0 +1,11 @@
+{
+	"songName": "Winter Horrorland",
+	"composer": "Bassetfilms, Kawai Sprite",
+	"enemy": "monster",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 159
+		}
+	]
+}

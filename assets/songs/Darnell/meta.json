@@ -1,0 +1,12 @@
+{
+	"songName": "Darnell",
+	"composer": "Kawai Sprite",
+	"enemy": "darnell",
+	"player": "pico",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 155
+		}
+	]
+}

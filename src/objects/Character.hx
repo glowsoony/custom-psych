@@ -4,9 +4,9 @@ typedef CharacterFile = {
 	var antialiasing:Bool;
 	var flipX:Bool;
 	var icon:String;
-	var scale:Array<Float>;
+	var scale:Float;
 	var singDuration:Float;
-	var healthColor:Int;
+	var healthColor:FlxColor;
 	var sheets:String;
 	var cameraOffset:Array<Float>;
 	var danceInterval:Int;
@@ -26,40 +26,44 @@ typedef CharacterAnim = {
 class Character extends FunkinSprite {
 	public static inline var default_name:String = 'bf';
 	public var name:String = default_name;
+	public var animSuffix:String = '';
 	public var singDuration:Float = 4;
 	public var danceInterval:Int = 2;
-	public var healthColor:Int = 0xFFA1A1A1;
-	public var sheets:String;
+	public var healthColor:FlxColor = 0xFFA1A1A1;
+	public var sheets:Array<String> = [];
 	public var icon:String = '';
 	public var cameraOffset:FlxPoint = FlxPoint.get(0, 0);
 	public var dancer:Bool = false;
+	public var autoIdle:Bool = true;
 
-	var _file:CharacterFile;
+	public var file:CharacterFile;
 
 	public function new(?x:Float, ?y:Float, ?name:String, ?player:Bool = true) {
 		name ??= default_name;
 		super(x, y);
 
 		var path:String = Paths.get('characters/$name.json');
-		if (!FileSystem.exists(path)) name = default_name;
+		if (!FileSystem.exists(path)) {
+			trace('character path "$path" doesn\'t exist');
+			name = default_name;
+		}
 		path = Paths.get('characters/$name.json');
 
-		_file = getFile(path);
+		file = getFile(path);
 
 		this.name = name;
-		this.singDuration = _file.singDuration;
-		this.healthColor = _file.healthColor;
-		this.sheets = _file.sheets;
-		this.icon = _file.icon;
-		this.danceInterval = _file.danceInterval;
-		this.cameraOffset.set(_file.cameraOffset[0], _file.cameraOffset[1]);
-		flipX = (_file.flipX != player);
+		this.singDuration = file.singDuration;
+		this.healthColor = file.healthColor;
+		this.sheets = file.sheets.split(',');
+		this.icon = file.icon;
+		this.danceInterval = file.danceInterval;
+		this.cameraOffset.set(file.cameraOffset[0], file.cameraOffset[1]);
+		flipX = file.flipX;
+		antialiasing = Settings.data.antialiasing && file.antialiasing;
 
-		scale.set(_file.scale[0], _file.scale[1]);
-		updateHitbox();
+		frames = Paths.multiAtlas(this.sheets);
 
-		frames = Paths.sparrowAtlas(sheets);
-		for (anim in _file.animations) {
+		for (anim in file.animations) {
 			if (anim.indices.length == 0) {
 				animation.addByPrefix(anim.name, anim.id, anim.framerate, anim.looped);
 			} else {
@@ -69,9 +73,17 @@ class Character extends FunkinSprite {
 			offsetMap.set(anim.name, anim.offsets);
 		}
 
+		scale.set(file.scale, file.scale);
+		updateHitbox();
+
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
 			danceList = ['danceLeft', 'danceRight'];
 			dancer = true;
+		}
+
+		animation.finishCallback = anim -> {
+			if (!animation.exists('$anim-loop')) return;
+			playAnim('$anim-loop');
 		}
 
 		dance(true);
@@ -85,11 +97,10 @@ class Character extends FunkinSprite {
 	var _singTimer:Float = 0.0;
 	override function update(elapsed:Float) {
 		super.update(elapsed);
+		if (!autoIdle || dancing) return;
 
-		if (!dancing) {
-			_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
-			if (_singTimer <= 0.0) dance(true);
-		}
+		_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
+		if (_singTimer <= 0.0) dance(true);
 	}
 
 	var animIndex:Int = 0;
@@ -105,32 +116,35 @@ class Character extends FunkinSprite {
 	}
 
 	override function playAnim(name:String, ?forced:Bool = true) {
+		name = '$name$animSuffix';
 		super.playAnim(name, forced);
-		if (name.startsWith('sing') || name.startsWith('miss')) {
+		if ((name.startsWith('sing') || name.startsWith('miss')) && !name.endsWith('-loop')) {
 			_singTimer = singDuration * (Conductor.stepCrotchet * 0.15);
 		}
 	}
 
-	static function createDummyFile():CharacterFile {
+	public static function createDummyFile():CharacterFile {
 		return {
 			antialiasing: true,
 			flipX: false,
 			icon: 'face',
-			scale: [1, 1],
+			scale: 1,
 			singDuration: 4,
 			healthColor: 0xFFA1A1A1,
 			danceInterval: 2,
 			sheets: 'characters/bf',
 			cameraOffset: [0, 0],
 
-			animations: [{
-				name: 'idle',
-				id: 'anim',
-				indices: [],
-				framerate: 24,
-				looped: false,
-				offsets: [0, 0]
-			}],
+			animations: [
+				{
+					name: 'name',
+					id: 'id',
+					indices: [],
+					framerate: 24,
+					looped: false,
+					offsets: [0, 0]
+				}
+			],
 		}
 	}
 

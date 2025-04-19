@@ -12,6 +12,7 @@ class PauseMenu extends flixel.FlxSubState {
 
 	var music:FlxSound;
 	public static var musicPath:String = Settings.data.pauseMusic;
+	public static var openCount:Int = 0;
 
 	public static var wentToOptions:Bool = false;
 
@@ -25,6 +26,11 @@ class PauseMenu extends flixel.FlxSubState {
 	}
 
 	override function create():Void {
+		if (Settings.data.pauseType != 'Unlimited') {
+			openCount++;
+			if (openCount > 3 || Settings.data.pauseType == 'Disabled') options.remove('Resume');
+		}
+
 		music = FlxG.sound.load(Paths.music(musicPath), 0, true);
 		music.play(FlxG.random.float(0, music.length * 0.5));
 

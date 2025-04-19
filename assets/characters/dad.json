@@ -1,0 +1,71 @@
+{
+	"animations": [
+		{
+			"offsets": [
+				0,
+				0
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "idle",
+			"id": "idle",
+			"indices": []
+		},
+		{
+			"offsets": [
+				-10,
+				9
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singLEFT",
+			"id": "singLEFT",
+			"indices": []
+		},
+		{
+			"offsets": [
+				2,
+				-31
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singDOWN",
+			"id": "singDOWN",
+			"indices": []
+		},
+		{
+			"offsets": [
+				-9,
+				47
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singUP",
+			"id": "singUP",
+			"indices": []
+		},
+		{
+			"offsets": [
+				-3,
+				26
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singRIGHT",
+			"id": "singRIGHT",
+			"indices": []
+		}
+	],
+	"healthColor": -5282098,
+	"singDuration": 4,
+	"flipX": false,
+	"sheets": "characters/daddyDearest",
+	"danceInterval": 2,
+	"cameraOffset": [
+		100,
+		-100
+	],
+	"icon": "dad",
+	"antialiasing": true,
+	"scale": 1
+}

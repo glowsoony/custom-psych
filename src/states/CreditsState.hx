@@ -1,247 +1,261 @@
 package states;
 
 import objects.AttachedSprite;
+import objects.CreditsSchema;
 
-class CreditsState extends MusicState {
-	var curSelected:Int = -1;
+class CreditsState extends MusicState
+{
+	final defaultCredits:Array<CreditsPageSchema> = [
+		/**
+		```haxe
+		{
+			name: "My Team",
+			users: [
+				// all fields are optional, except name.
+				// NOTE: leaving any of these unset will either not display them or use a fallback value (antialiasing sets itself automatically depending on if the icon ends in -pixel for example)
+				{name: "Me", icon: "myself", role: "stuff", url: "https://example.com", color: 0xFF00FFFF, pronouns: "they/them", antialiasing: true},
+				{name: "My Mom", icon: "mom", role: "hi mom", url: "https://youtu.be/rgSNmapyrHw?si=IES4WH-bYbYUY5Ly", color: 0xFFFF0000, pronouns: "she/her", antialiasing: true}
+			],
+			icon: "superCoolHeaderIcon"
+		},
+		```
+		**/
+		{
+			name: "Psych Engine Team",
+			users: [
+				{name: "Shadow Mario", icon: "shadowmario", role: "Main Programmer, Head Developer", url: "https://ko-fi.com/shadowmario", pronouns: "he/him", color: 0xFF444444},
+				{name: "Riveren", icon: "riveren", role: "Main Artist and Animator", url: "https://twitter.com/riverennn", pronouns: "any", color: 0xFF14967B},
+				{name: "Join the Psych Ward!", icon: "discord", role: "Official Discord Server", url: "https://discord.gg/2ka77eMXDv", pronouns: "it's a discord server.", color: 0xFF5165F6},
+			],
+		},
+		{
+			name: "Psych Engine Contributors",
+			users: [
+				{name: "bb-panzu", icon: "bb", role: "Former Programmer", url: "https://twitter.com/bbpnz213", pronouns: "he/him", color: 0xFF3E813A},
+				{name: "IamMorwen", icon: "crowplexus", role: "HScript Iris, Input System V3, and Other PRs", url: "https://bsky.app/profile/crowplexus.bsky.social", pronouns: "any", color: 0xFFCFCFCF},
+				{name: "Kamizeta", icon: "kamizeta", role: "Creator of Pessy, Psych Engine's mascot", url: "https://www.instagram.com/cewweey/", pronouns: "para/béns", color: 0xFFD21C11},
+				{name: "MaxNeton", icon: "maxneton", role: "Loading Screen Easter Egg Artist/Animator", url: "https://bsky.app/profile/maxneton.bsky.social", color: 0xFF3C2E4E},
+				{name: "Keoiki", icon: "keoiki", role: "Note Splash Animations, Additional Characters for Alphabet", url: "https://twitter.com/Keoiki_", color: 0xFFD2D2D2},
+				{name: "sqirra-rng", icon: "sqirra", role: "Crash Handler, Original code for the Chart Editor's Waveform", url: "https://twitter.com/sqirradotdev", pronouns: "she/her", color: 0xFFE1843A},
+				{name: "EliteMasterEric", icon: "mastereric", role: "Runtime Shaders support and Other PRs", url: "https://twitter.com/EliteMasterEric", color: 0xFFFFBD40},
+				{name: "MAJigsaw77", icon: "majigsaw", role: ".MP4 Video Loader Library (hxvlc)", url: "https://twitter.com/MAJigsaw77", color: 0xFF5F5F5F},
+				{name: "iFlicky", icon: "flicky", role: "Composer of Psync and Tea Time, Sound Effects", url: "https:twitter.com/flicky_i", color: 0xFF9E29CF},
+				{name: "KadeDev", icon: "kade", role: "Fixed some issues on Chart Editor and Other PRs", url: "https://twitter.com/kade0912", color: 0xFF64A250},
+				{name: "superpowers04", icon: "superpowers04", role: "LUA JIT Fork", url: "https://twitter.com/superpowers04", pronouns: "she/her", color: 0xFFB957ED},
+				{name: "CheemsAndFriends", icon: "cheems", role: "Creator of FlxAnimate", url: "https://twitter.com/CheemsnFriendos", color: 0xFFE1E1E1},
+			]
+		},
+		{
+			name: "Funkin' Crew",
+			users: [
+				{name: "ninjamuffin99", icon: "ninjamuffin99", role: "Programmer of Friday Night Funkin'", url: "https://twitter.com/ninja_muffin99", color: 0xFFCF2D2D},
+				{name: "PhantomArcade", icon: "phantomarcade", role: "Animator of Friday Night Funkin'", url: "https://twitter.com/PhantomArcade3K", color: 0xFFFADC45},
+				{name: "evilsk8r", icon: "evilsk8r", role: "Artist of Friday Night Funkin'", url: "https://twitter.com/evilsk8r", color: 0xFF5ABD4B},
+				{name: "kawaisprite", icon: "kawaisprite", role: "Composer of Friday Night Funkin'", url: "https://twitter.com/kawaisprite", color: 0xFF378FC7},
+			]
+		}
+	];
 
-	private var grpOptions:FlxTypedGroup<Alphabet>;
-	private var iconArray:Array<AttachedSprite> = [];
-	private var creditsStuff:Array<Array<String>> = [];
+	var displayCredits:Array<CreditsPageSchema> = [];
 
-	var bg:FlxSprite;
-	var descText:FlxText;
+	// [0] = Selected Page | [1] = Selected User
+	var selections:Array<Int> = [0, 0];
+	var selectLength:Array<Int> = [0, 0];
+
+	var grpOptions:FlxTypedSpriteGroup<Alphabet>;
+	var grpHeaderIcons:FlxSpriteGroup;
 	var intendedColor:FlxColor;
-	var descBox:AttachedSprite;
+	var headerText:FlxText;
+	var bg:FlxSprite;
 
-	var offsetThing:Float = -75;
+	var currentPage:CreditsPageSchema = null;
+	var currentUser:CreditSchema = null;
 
-	override function create() {
+	override function create()
+	{
+		super.create(); // make sure the transition works
+
+		// push mod credits in *this exact line* so they show up before the default ones
+		for (v in defaultCredits) displayCredits.push(v); // push default credits.
+
 		#if DISCORD_ALLOWED
-		DiscordClient.changePresence("In the Menus", null);
+		DiscordClient.changePresence("Looking at the Credits", "In the Menus");
 		#end
 
 		persistentUpdate = true;
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/desatBG'));
 		bg.antialiasing = Settings.data.antialiasing;
-		add(bg);
 		bg.screenCenter();
-		
-		add(grpOptions = new FlxTypedGroup<Alphabet>());
+		add(bg);
 
-		#if MODS_ALLOWED
-		for (mod in Mods.parseList().enabled) pushModCreditsToList(mod);
-		#end
+		// ——— TOP BAR ——— //
 
-		var defaultList:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
-			["Psych Engine Team"],
-			["Shadow Mario",		"shadowmario",		"Main Programmer and Head of Psych Engine",					"https://ko-fi.com/shadowmario",	"444444"],
-			["Riveren",				"riveren",			"Main Artist/Animator of Psych Engine",						"https://x.com/riverennn",			"14967B"],
-			[""],
-			["Former Engine Members"],
-			["bb-panzu",			"bb",				"Ex-Programmer of Psych Engine",							"https://x.com/bbsub3",				"3E813A"],
-			[""],
-			["Engine Contributors"],
-			["crowplexus",			"crowplexus",		"HScript Iris, Input System v3, and Other PRs",				"https://github.com/crowplexus",	"CFCFCF"],
-			["Kamizeta",			"kamizeta",			"Creator of Pessy, Psych Engine's mascot.",				"https://www.instagram.com/cewweey/",	"D21C11"],
-			["MaxNeton",			"maxneton",			"Loading Screen Easter Egg Artist/Animator.",	"https://bsky.app/profile/maxneton.bsky.social","3C2E4E"],
-			["Keoiki",				"keoiki",			"Note Splash Animations and Latin Alphabet",				"https://x.com/Keoiki_",			"D2D2D2"],
-			["SqirraRNG",			"sqirra",			"Crash Handler and Base code for\nChart Editor's Waveform",	"https://x.com/gedehari",			"E1843A"],
-			["EliteMasterEric",		"mastereric",		"Runtime Shaders support and Other PRs",					"https://x.com/EliteMasterEric",	"FFBD40"],
-			["MAJigsaw77",			"majigsaw",			".MP4 Video Loader Library (hxvlc)",						"https://x.com/MAJigsaw77",			"5F5F5F"],
-			["Tahir Toprak Karabekiroglu",	"tahir",	"Note Splash Editor and Other PRs",							"https://x.com/TahirKarabekir",		"A04397"],
-			["iFlicky",				"flicky",			"Composer of Psync and Tea Time\nAnd some sound effects",	"https://x.com/flicky_i",			"9E29CF"],
-			["KadeDev",				"kade",				"Fixed some issues on Chart Editor and Other PRs",			"https://x.com/kade0912",			"64A250"],
-			["superpowers04",		"superpowers04",	"LUA JIT Fork",												"https://x.com/superpowers04",		"B957ED"],
-			["CheemsAndFriends",	"cheems",			"Creator of FlxAnimate",									"https://x.com/CheemsnFriendos",	"E1E1E1"],
-			[""],
-			["Funkin' Crew"],
-			["ninjamuffin99",		"ninjamuffin99",	"Programmer of Friday Night Funkin'",						"https://x.com/ninja_muffin99",		"CF2D2D"],
-			["PhantomArcade",		"phantomarcade",	"Animator of Friday Night Funkin'",							"https://x.com/PhantomArcade3K",	"FADC45"],
-			["evilsk8r",			"evilsk8r",			"Artist of Friday Night Funkin'",							"https://x.com/evilsk8r",			"5ABD4B"],
-			["kawaisprite",			"kawaisprite",		"Composer of Friday Night Funkin'",							"https://x.com/kawaisprite",		"378FC7"],
-			[""],
-			["Psych Engine Discord"],
-			["Join the Psych Ward!", "discord", "", "https://discord.gg/2ka77eMXDv", "5165F6"]
-		];
-		
-		for(i in defaultList)
-			creditsStuff.push(i);
-	
-		for (i => credit in creditsStuff)
-		{
-			var isSelectable:Bool = !unselectableCheck(i);
-			var optionText:Alphabet = new Alphabet(FlxG.width / 2, 300, credit[0], isSelectable ? NORMAL : BOLD);
-			optionText.isMenuItem = true;
-			optionText.targetY = i;
-			optionText.changeX = false;
-			optionText.snapToPosition();
-			grpOptions.add(optionText);
+		headerText = new FlxText(0, 0, FlxG.width, displayCredits[selections[0]].name);
+		headerText.setFormat(Paths.font("vcr.ttf"), 24, 0xFFFFFFFF, CENTER);
+		headerText.antialiasing = Settings.data.antialiasing;
+		headerText.textField.backgroundColor = 0xAA000000;
+		headerText.textField.background = true;
+		add(headerText);
 
-			if(isSelectable)
-			{
+		// ——— OPTIONS ——— //
 
-				var str:String = 'credits/missing_icon';
-				if(credit[1] != null && credit[1].length > 0)
-				{
-					var fileName = 'credits/' + credit[1];
-					if (Paths.exists('images/$fileName.png')) str = fileName;
-					else if (Paths.exists('images/$fileName-pixel.png')) str = fileName + '-pixel';
-				}
+		add(grpHeaderIcons = new FlxSpriteGroup());
+		add(grpOptions = new FlxTypedSpriteGroup());
 
-				var icon:AttachedSprite = new AttachedSprite(str);
-				if(str.endsWith('-pixel')) icon.antialiasing = false;
-				icon.xAdd = optionText.width + 10;
-				icon.sprTracker = optionText;
-	
-				// using a FlxGroup is too much fuss!
-				iconArray.push(icon);
-				add(icon);
-
-				if(curSelected == -1) curSelected = i;
-			}
-			else optionText.alignment = CENTER;
+		for (i in 0...3) {
+			var alpha:Alphabet = new Alphabet(0, 0, "", NORMAL, CENTER, 0.8);
+			alpha.antialiasing = Settings.data.antialiasing;
+			alpha.isMenuItem = true;
+			alpha.changeX = false;
+			alpha.screenCenter(X);
+			alpha.kill();
+			grpOptions.add(alpha);
 		}
 		
-		descBox = new AttachedSprite();
-		descBox.makeGraphic(1, 1, FlxColor.BLACK);
-		descBox.xAdd = -10;
-		descBox.yAdd = -10;
-		descBox.alphaMult = 0.6;
-		descBox.alpha = 0.6;
-		add(descBox);
+		createHeaderOptions();
+		createUserOptions();
+		resetPageVariables();
+		changeBGColor();
 
-		descText = new FlxText(50, FlxG.height + offsetThing - 25, 1180, "", 32);
-		descText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER/*, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK*/);
-		descText.scrollFactor.set();
-		//descText.borderSize = 2.4;
-		descBox.sprTracker = descText;
-		add(descText);
+		// ——— BOTTOM BAR (BRIEF) ——— //
 
-		bg.color = Util.colorFromString(creditsStuff[curSelected][4]);
-		intendedColor = bg.color;
-		changeSelection();
-		super.create();
+		final footerText:FlxText = new FlxText(0, 0, FlxG.width, "Left/Right ~ Switch Pages | Up/Down ~ Select User Enter ~ Redirect to the user's page.");
+		footerText.setFormat(Paths.font("vcr.ttf"), 24, 0xFFFFFFFF, CENTER);
+		footerText.y = (FlxG.height - footerText.height);
+		footerText.antialiasing = Settings.data.antialiasing;
+		footerText.textField.backgroundColor = 0xAA000000;
+		footerText.textField.background = true;
+		add(footerText);
+
+		FlxTween.tween(footerText, {y: footerText.y + 50}, 1.0, {
+			onComplete: (tween:FlxTween) -> footerText.kill(),
+			ease: FlxEase.bounceOut,
+			startDelay: 3.0,
+		});
 	}
 
-	var quitting:Bool = false;
-	var holdTime:Float = 0;
-	override function update(elapsed:Float) {
-		if (!quitting) {
-			if (creditsStuff.length > 1) {
-				var shiftMult:Int = 1;
-				if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
-
-				var upPressed:Bool = Controls.pressed('ui_up');
-				var downPressed:Bool = Controls.pressed('ui_down');
-				var upJustPressed:Bool = Controls.justPressed('ui_up');
-
-				if (upPressed || downPressed) {
-					changeSelection(upPressed ? -shiftMult : shiftMult);
-					holdTime = 0;
-				}
-
-				if (Controls.justPressed('ui_down') || upJustPressed) {
-					var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
-					holdTime += elapsed;
-					var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
-
-					if (holdTime > 0.5 && checkNewHold - checkLastHold > 0) {
-						changeSelection((checkNewHold - checkLastHold) * (upJustPressed ? -shiftMult : shiftMult));
-					}
-				}
-			}
-
-			if (Controls.justPressed('accept') && (creditsStuff[curSelected][3] == null || creditsStuff[curSelected][3].length > 4)) {
-				Util.openURL(creditsStuff[curSelected][3]);
-			}
-
-			if (Controls.justPressed('back')) {
-				FlxG.sound.play(Paths.sound('cancelMenu'));
-				MusicState.switchState(new MainMenuState());
-				quitting = true;
-			}
-		}
-		
-		for (item in grpOptions.members) {
-			if (item.type == BOLD) continue;
-			var lerpVal:Float = Math.exp(-elapsed * 12);
-			if (item.targetY == 0) {
-				var lastX:Float = item.x;
-				item.screenCenter(X);
-				item.x = FlxMath.lerp(item.x - 70, lastX, lerpVal);
-			} else item.x = FlxMath.lerp(200 + -40 * Math.abs(item.targetY), item.x, lerpVal);
-		}
+	override function update(elapsed:Float):Void {
 		super.update(elapsed);
+		updateTexts(elapsed);
+		for (idx => letter in grpOptions.members) {
+			if (lerpSelected == selections[1]) letter.x = FlxMath.lerp(letter.x, 100 + 20, 0.3);
+			else if (lerpSelected == selections[1] - 1) letter.x = FlxMath.lerp(letter.x, 50 + 20, 0.3);
+			else if (lerpSelected == selections[1] + 1) letter.x = FlxMath.lerp(letter.x, 20, 0.3);
+		}
+		moveControls();
+		if (Controls.justPressed('accept') && currentUser.url != null) Util.openURL(currentUser.url);
+		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
 	}
 
-	var moveTween:FlxTween = null;
-	function changeSelection(change:Int = 0) {
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-		do {
-			curSelected = FlxMath.wrap(curSelected + change, 0, creditsStuff.length - 1);
-		} while (unselectableCheck(curSelected));
+	function createHeaderOptions():Void {
+		// this should generate the icons and whatnot.
+		selectLength[0] = displayCredits.length - 1;
+		changeSelection(0, 0);
+	}
 
-		var newColor:FlxColor = Util.colorFromString(creditsStuff[curSelected][4]);
-		//trace('The BG color is: $newColor');
-		if(newColor != intendedColor)
-		{
-			intendedColor = newColor;
+	function createUserOptions():Void {
+		for (i in 0...grpOptions.members.length)
+			grpOptions.members[i].kill();
+		
+		for (idx => user in displayCredits[selections[0]].users) {
+			final bet:Alphabet = grpOptions.recycle(Alphabet);
+			bet.alpha = selections[1] == idx ? 1.0 : 0.6;
+			bet.targetY = idx;
+			bet.type = NORMAL; // just making sure.
+			bet.alignment = CENTER;
+			bet.text = user.name;
+			bet.screenCenter(X);
+			bet.snapToPosition();
+		}
+
+		selectLength[1] = displayCredits[selections[0]].users.length - 1;
+		changeSelection(0, 1);
+	}
+
+	/**
+	 * Changes the current selection of the specified cursor.
+	 *
+	 * 0 = Header / Page Selection.
+	 *
+	 * 1 = User Selction.
+	 */
+	function changeSelection(next:Int = 0, type: Int = 0):Void {
+		var previous:Int = selections[type];
+		selections[type] = FlxMath.wrap(previous + next, 0, selectLength[type]);
+		var current:Int = selections[type];
+		if (current != previous) {
+			FlxG.sound.play(Paths.sound('scroll'));
+			resetPageVariables();
+			switch type {
+				case 0:
+					createUserOptions();
+					headerText.text = currentPage.name;
+					changeBGColor();
+				case 1:
+					final item:Alphabet = grpOptions.members[current];
+					item.x = ((item.targetY - lerpSelected) * item.distancePerItem.x) + item.spawnPos.x;
+					item.y = ((item.targetY - lerpSelected) * 1.3 * item.distancePerItem.y) + item.spawnPos.y;
+					final prev:Alphabet = grpOptions.members[previous];
+					if (prev != null) prev.alpha = 0.6;
+					if (item != null) item.alpha = 1.0;
+					changeBGColor();
+			}
+		}
+	}
+
+	function resetPageVariables():Void {
+		currentPage = displayCredits[selections[0]];
+		currentUser = currentPage.users[selections[1]];
+	}
+
+	function changeBGColor(force:Bool = false):Void {
+		var nextColor = currentUser.color;
+		if (nextColor != intendedColor || force) {
+			intendedColor = nextColor;
 			FlxTween.cancelTweensOf(bg);
 			FlxTween.color(bg, 1, bg.color, intendedColor);
 		}
-
-		for (num => item in grpOptions.members)
-		{
-			item.targetY = num - curSelected;
-			if(!unselectableCheck(num)) {
-				item.alpha = 0.6;
-				if (item.targetY == 0) {
-					item.alpha = 1;
-				}
-			}
-		}
-
-		descText.text = creditsStuff[curSelected][2];
-		if(descText.text.trim().length > 0)
-		{
-			descText.visible = descBox.visible = true;
-			descText.y = FlxG.height - descText.height + offsetThing - 60;
-	
-			if(moveTween != null) moveTween.cancel();
-			moveTween = FlxTween.tween(descText, {y : descText.y + 75}, 0.25, {ease: FlxEase.sineOut});
-	
-			descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
-			descBox.updateHitbox();
-		}
-		else descText.visible = descBox.visible = false;
 	}
 
-	#if MODS_ALLOWED
-	function pushModCreditsToList(folder:String)
-	{
-		var creditsFile:String = Paths.mods(folder + '/data/credits.txt');
-		
-		#if TRANSLATIONS_ALLOWED
-		//trace('/data/credits-${Settings.data.language}.txt');
-		var translatedCredits:String = Paths.mods(folder + '/data/credits-${Settings.data.language}.txt');
-		#end
-
-		if (#if TRANSLATIONS_ALLOWED (FileSystem.exists(translatedCredits) && (creditsFile = translatedCredits) == translatedCredits) || #end FileSystem.exists(creditsFile))
-		{
-			var firstarray:Array<String> = File.getContent(creditsFile).split('\n');
-			for(i in firstarray)
-			{
-				var arr:Array<String> = i.replace('\\n', '\n').split("::");
-				if(arr.length >= 5) arr.push(folder);
-				creditsStuff.push(arr);
-			}
-			creditsStuff.push(['']);
+	function moveControls():Void {
+		if (selectLength[0] > 1) { // Pages
+			final leftPressed:Bool = Controls.justPressed('ui_left');
+			if (leftPressed || Controls.justPressed('ui_right')) changeSelection(leftPressed ? -1 : 1, 0);
+		}
+		if (selectLength[1] > 1) { // Users
+			final upPressed:Bool = Controls.justPressed('ui_up');
+			if (upPressed || Controls.justPressed('ui_down')) changeSelection(upPressed ? -1 : 1, 1);
 		}
 	}
-	#end
 
-	private function unselectableCheck(num:Int):Bool {
-		return creditsStuff[num].length <= 1;
+	var _drawDistance:Int = 5;
+	var _lastVisibles:Array<Int> = [];
+	var lerpSelected:Float = 0.0;
+
+	public function updateTexts(elapsed:Float = 0.0) {
+		lerpSelected = FlxMath.lerp(selections[1], lerpSelected, Math.exp(-elapsed * 9.6));
+		for (i in _lastVisibles) {
+			var text = grpOptions.members[i];
+			if (text == null) continue; // need to do this since regens can happen during this function.
+			text.visible = text.active = false;
+			//grpIcons.members[i].visible = false;
+		}
+		_lastVisibles.resize(0);
+
+		var min:Int = Math.round(FlxMath.bound(lerpSelected - _drawDistance, 0, selectLength[1] + 1));
+		var max:Int = Math.round(FlxMath.bound(lerpSelected + _drawDistance, 0, selectLength[1] + 1));
+		for (i in min...max) {
+			var item:Alphabet = grpOptions.members[i];
+			if (item == null) continue;
+			item.visible = item.active = true;
+			item.x = ((item.targetY - lerpSelected) * item.distancePerItem.x) + item.spawnPos.x;
+			item.y = ((item.targetY - lerpSelected) * 1.3 * item.distancePerItem.y) + item.spawnPos.y;
+			/*
+			var icon:CharIcon = grpIcons.members[i];
+			icon.visible = true;
+			icon.setPosition(item.x + (item.width + (icon.width * 0.05)), item.y - (item.height * 0.5));
+			*/
+			_lastVisibles.push(i);
+		}
 	}
 }

@@ -1,0 +1,11 @@
+{
+	"songName": "Thorns",
+	"composer": "Kawai Sprite",
+	"enemy": "spirit",
+	"timingPoints": [
+		{
+			"time": 0,
+			"bpm": 190
+		}
+	]
+}

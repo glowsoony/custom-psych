@@ -109,10 +109,17 @@ class TitleState extends MusicState {
 		introGroup.add(titleText); //"Press Enter to Begin" text
 		add(ngSpr);
 
+		#if DISCORD_ALLOWED
+		DiscordClient.changePresence();
+		#end
+
 		Conductor.bpm = bpm;
 		Conductor.playing = true;
 		if (seenIntro) {
 			skipIntro();
+
+			// so that you doesn't have to restart the game every time
+			Meta.cacheFiles(true);
 			return;
 		}
 

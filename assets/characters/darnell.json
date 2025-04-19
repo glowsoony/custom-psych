@@ -1,0 +1,71 @@
+{
+	animations: [
+		{
+			offsets: [
+				0,
+				0,
+			],
+			framerate: 24,
+			looped: false,
+			name: 'idle',
+			id: 'Idle',
+			indices: [],
+		},
+		{
+			offsets: [
+				-2,
+				1,
+			],
+			framerate: 24,
+			looped: false,
+			name: 'singLEFT',
+			id: 'Pose Left',
+			indices: [],
+		},
+		{
+			offsets: [
+				0,
+				0,
+			],
+			framerate: 24,
+			looped: false,
+			name: 'singDOWN',
+			id: 'Pose Down',
+			indices: [],
+		},
+		{
+			offsets: [
+				9,
+				7,
+			],
+			framerate: 24,
+			looped: false,
+			name: 'singUP',
+			id: 'Pose Up',
+			indices: [],
+		},
+		{
+			offsets: [
+				6,
+				1,
+			],
+			framerate: 24,
+			looped: false,
+			name: 'singRIGHT',
+			id: 'Pose Right',
+			indices: [],
+		},
+	],
+	healthColor: -9216336,
+	singDuration: 4,
+	flipX: false,
+	sheets: 'characters/darnell',
+	danceInterval: 2,
+	cameraOffset: [
+		100,
+		-100,
+	],
+	icon: 'darnell',
+	antialiasing: true,
+	scale: 1,
+}

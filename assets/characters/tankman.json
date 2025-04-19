@@ -1,0 +1,93 @@
+{
+	"animations": [
+		{
+			"offsets": [
+				0,
+				0
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "idle",
+			"id": "Tankman Idle Dance 1",
+			"indices": []
+		},
+		{
+			"offsets": [
+				87,
+				-13
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singLEFT",
+			"id": "Tankman Note Left 1",
+			"indices": []
+		},
+		{
+			"offsets": [
+				85,
+				-110
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singDOWN",
+			"id": "Tankman DOWN note 1",
+			"indices": []
+		},
+		{
+			"offsets": [
+				42,
+				49
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singUP",
+			"id": "Tankman UP note 1",
+			"indices": []
+		},
+		{
+			"offsets": [
+				-16,
+				-28
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "singRIGHT",
+			"id": "Tankman Right Note 1",
+			"indices": []
+		},
+		{
+			"offsets": [
+				-16,
+				-9
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "ugh",
+			"id": "TANKMAN UGH 1",
+			"indices": []
+		},
+		{
+			"offsets": [
+				2,
+				16
+			],
+			"framerate": 24,
+			"looped": false,
+			"name": "pretty good",
+			"id": "PRETTY GOOD tankman 1",
+			"indices": []
+		}
+	],
+	"healthColor": -1,
+	"singDuration": 4,
+	"flipX": true,
+	"sheets": "characters/tankman",
+	"danceInterval": 2,
+	"cameraOffset": [
+		100,
+		-100
+	],
+	"icon": "tankman",
+	"antialiasing": true,
+	"scale": 1
+}

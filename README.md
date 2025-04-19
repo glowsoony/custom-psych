@@ -1,29 +1,20 @@
-# Friday Night Funkin': Psych Engine
-Psych Engine serves as an alternative to other engines, aiming for easier softmodding capabilities while also enhancing the gameplay of the base game.
+# Custom Psych
+this fork aims to not only fit my needs for modding/playing fnf  
 
-It is currently available on Windows and Linux.
-MacOS I'm not sure on, as I don't use Mac and not anyone that I know of uses it either.
+but as a framework for upcoming mod/engine makers to look at for math/logic in rhythm games  
+(this does not mean the project is 100% right either, i also make mistakes and have made a couple along the way (so please do not take whatever is in here as fact))
 
-Other platforms like Android/iOS and HTML5/Web are completely unsupported, as I don't find a use for something like this on there.
+i made this mainly because every engine i've tried either
+* doesn't fit my needs
+* too overcomplicated
+* too laggy
+* doesn't fit the criteria i need it to be for a vsrg
 
-To get started, either grab a build from [the releases page](https://github.com/Rudyrue/custom-psych/releases) or compile the engine yourself (refer to [BUILDING.md](https://github.com/Rudyrue/custom-psych/blob/main/BUILDING.md)).
+psych fit all of those  
+however it had issues i personally disliked  
+both feature and source code wise
 
-# Credits
-## (Ex-)Developers
-* [ShadowMario](https://github.com/ShadowMario) - Lead Developer on Psych Engine
-* Riveren - Lead Artist on Psych Engine
-* [bbpanzu](https://bsky.app/profile/bbpnz213.bsky.social) - Ex-Programmer on Psych Engine
+pull requests and issues are open, i'm free for suggestions/changes as it takes the workload off of me  
+as i also have other projects going on at the moment
 
-## Contributors
-* [crowplexus](https://github.com/crowplexus) - Lead Contributor
-	- Worked on inputs, sustains as one note, [hscript-iris](https://github.com/crowplexus/hscript-iris), among many other things
-* Keoiki - Note Splashes and Latin Alphabet.
-* Kamizeta - Creator of Pessy, Psych Engine's mascot.
-* [EliteMasterEric](https://github.com/EliteMasterEric) - Runtime Shaders support and Other PRs.
-* [sqirradotdev](https://bsky.app/profile/sqirra.dev) - Crash Handler
-* [superpowers04](https://github.com/superpowers04) - [LuaJIT fork](https://github.com/superpowers04/linc_luajit) of [Nebula the Zorua's LuaJIT fork](https://github.com/nebulazorua/linc_luajit)
-	- that fixes a multitude of bugs like memory leaks and crashes
-* iFlicky - Composer of Psync, Tea Time and some sound effects.
-* Tahir Toprak Karabekiroglu - Note Splash Editor and Other PRs.
-* [MAJigsaw77](https://github.com/MAJigsaw77) - [hxvlc](https://github.com/MAJigsaw77/hxvlc) Library
-* [CheemsAndFriends](https://github.com/CheemsAndFriends) - Creator of [FlxAnimate](https://github.com/CheemsAndFriends/FlxAnimate)
+# This will never be classified as its own seperate engine, it is simply a fork of Psych Engine I enjoy working on.
