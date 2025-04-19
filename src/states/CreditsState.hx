@@ -68,6 +68,9 @@ class CreditsState extends MusicState
 	var headerText:FlxText;
 	var bg:FlxSprite;
 
+	var currentPage:CreditsPageSchema = null;
+	var currentUser:CreditSchema = null;
+
 	override function create()
 	{
 		super.create(); // make sure the transition works
@@ -108,10 +111,11 @@ class CreditsState extends MusicState
 			alpha.kill();
 			grpOptions.add(alpha);
 		}
-
-		changeBGColor();
+		
 		createHeaderOptions();
 		createUserOptions();
+		resetPageVariables();
+		changeBGColor();
 
 		// ——— BOTTOM BAR (BRIEF) ——— //
 
@@ -139,6 +143,8 @@ class CreditsState extends MusicState
 			else if (lerpSelected == selections[1] + 1) letter.x = FlxMath.lerp(letter.x, 20, 0.3);
 		}
 		moveControls();
+		if (Controls.justPressed('accept') && currentUser.url != null) Util.openURL(currentUser.url);
+		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
 	}
 
 	function createHeaderOptions():Void {
@@ -179,10 +185,11 @@ class CreditsState extends MusicState
 		var current:Int = selections[type];
 		if (current != previous) {
 			FlxG.sound.play(Paths.sound('scroll'));
+			resetPageVariables();
 			switch type {
 				case 0:
 					createUserOptions();
-					headerText.text = displayCredits[selections[0]].name;
+					headerText.text = currentPage.name;
 					changeBGColor();
 				case 1:
 					final item:Alphabet = grpOptions.members[current];
@@ -196,8 +203,13 @@ class CreditsState extends MusicState
 		}
 	}
 
+	function resetPageVariables():Void {
+		currentPage = displayCredits[selections[0]];
+		currentUser = currentPage.users[selections[1]];
+	}
+
 	function changeBGColor(force:Bool = false):Void {
-		var nextColor = displayCredits[selections[0]].users[selections[1]].color;
+		var nextColor = currentUser.color;
 		if (nextColor != intendedColor || force) {
 			intendedColor = nextColor;
 			FlxTween.cancelTweensOf(bg);
