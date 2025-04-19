@@ -125,7 +125,16 @@ class MainMenuState extends MusicState {
 					case 'options':
 						OptionsState.onPlayState = false;
 						MusicState.switchState(new OptionsState());
-						
+
+					default:
+						optionGrp.members[curSelected].alpha = 0.0;
+						optionGrp.members[curSelected].visible = true;
+						for (i => option in optionGrp.members) {
+							if (!option.alive) option.revive();
+							FlxTween.tween(option, {alpha: 1.0}, 0.2 * (i + 1), {ease: FlxEase.quadIn, startDelay: 0.5});
+						}
+						alreadyPressedEnter = false;
+						trace('"${options[curSelected]}" not implemented.');
 				}
 			});
 		}
