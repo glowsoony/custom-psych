@@ -2,7 +2,7 @@
 	songs: [
 		{
 			name: 'Test',
-			icon: 'face',
+			icon: 'bf-pixel',
 			color: 0xFFA5004D,
 		}
 	],

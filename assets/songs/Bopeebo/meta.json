@@ -1,6 +1,8 @@
 {
 	"songName": "Bopeebo",
 	"composer": "Kawai Sprite",
+	"enemy": "dad",
+	"spectator": "gf",
 	"timingPoints": [
 		{
 			"time": 0,
