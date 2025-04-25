@@ -1,15 +1,18 @@
 package objects;
 
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.graphics.frames.FlxFrame;
 
 class FunkinSprite extends flixel.FlxSprite {
 	public var offsetMap:Map<String, Array<Float>> = [];
+	public var frameOffset:FlxPoint;
 
 	public function new(?x:Float, ?y:Float, ?graphic:FlxGraphicAsset) {
 		super(x, y, graphic);
 		moves = false;
 		active = false;
 		antialiasing = Settings.data.antialiasing;
+		frameOffset = new FlxPoint();
 	}
 
 	// knew this was gonna get to me eventually lol
@@ -32,6 +35,33 @@ class FunkinSprite extends flixel.FlxSprite {
 
 		animation.play(name, forced);
 		active = animation.curAnim != null ? animation.curAnim.frames.length > 1 : false;
-		offset.set(offsetsForAnim[0] * scale.x, offsetsForAnim[1] * scale.y);
+		frameOffset.set(offsetsForAnim[0] * scale.x, offsetsForAnim[1] * scale.y);
+	}
+
+	override function drawComplex(camera:FlxCamera) {
+		_frame.prepareMatrix(_matrix, FlxFrameAngle.ANGLE_0, checkFlipX(), checkFlipY());
+		_matrix.translate(-origin.x, -origin.y);
+		_matrix.translate(-frameOffset.x, -frameOffset.y);
+		_matrix.scale(scale.x, scale.y);
+
+		if (bakedRotationAngle <= 0)
+		{
+			updateTrig();
+
+			if (angle != 0)
+				_matrix.rotateWithTrig(_cosAngle, _sinAngle);
+		}
+
+		getScreenPosition(_point, camera).subtractPoint(offset);
+		_point.add(origin.x, origin.y);
+		_matrix.translate(_point.x, _point.y);
+
+		if (isPixelPerfectRender(camera))
+		{
+			_matrix.tx = Math.floor(_matrix.tx);
+			_matrix.ty = Math.floor(_matrix.ty);
+		}
+
+		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing, shader);
 	}
 }

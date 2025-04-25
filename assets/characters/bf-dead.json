@@ -30,5 +30,6 @@
 	icon: 'face',
 	flipX: false,
 	cameraOffset: [0, 0],
+	positionOffset: [0, 350],
 	scale: 1
 }

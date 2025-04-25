@@ -87,6 +87,10 @@
 		100,
 		-100
 	],
+	"positionOffset": [
+		0,
+		240
+	],
 	"icon": "tankman",
 	"antialiasing": true,
 	"scale": 1

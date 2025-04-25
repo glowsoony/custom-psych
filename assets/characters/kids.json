@@ -81,6 +81,7 @@
 	sheets: 'characters/bf',
 	icon: 'kids',
 	cameraOffset: [100, -100],
+	positionOffset: [0, 200],
 	
 	flipX: true
 }

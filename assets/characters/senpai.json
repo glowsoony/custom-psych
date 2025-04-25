@@ -81,6 +81,7 @@
 	sheets: 'characters/senpai',
 	icon: 'senpai',
 	cameraOffset: [100, -100],
+	positionOffset: [150, 360],
 	
 	flipX: true
 }

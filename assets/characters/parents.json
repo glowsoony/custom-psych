@@ -109,6 +109,10 @@
 		100,
 		-100,
 	],
+	positionOffset: [
+		-500,
+		0
+	],
 	icon: 'parents',
 	antialiasing: true,
 	scale: 1,

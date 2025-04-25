@@ -81,6 +81,7 @@
 	sheets: 'characters/bf',
 	icon: 'bf-pixel',
 	cameraOffset: [100, -100],
+	positionOffset: [0, 350],
 	
 	flipX: true
 }

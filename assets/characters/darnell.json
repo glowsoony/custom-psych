@@ -65,6 +65,10 @@
 		100,
 		-100,
 	],
+	positionOffset: [
+		0,
+		200
+	],
 	icon: 'darnell',
 	antialiasing: true,
 	scale: 1,

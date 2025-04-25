@@ -81,6 +81,7 @@
 	sheets: 'characters/bf',
 	icon: 'monster',
 	cameraOffset: [100, -100],
+	positionOffset: [0, 100],
 	
 	flipX: true
 }
