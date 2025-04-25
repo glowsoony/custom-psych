@@ -43,13 +43,10 @@ class NoteSplash extends FunkinSprite {
 	}
 
 	public function hit(strum:StrumNote) {
-		final swagWidth:Float = (160 * Strumline.size);
-		setPosition(strum.x - swagWidth * 0.95, strum.y - swagWidth);
-		centerOffsets();
-		centerOrigin();
-
 		visible = true;
 		playAnim('hit${FlxG.random.int(1, 2)}');
+		updateHitbox();
+		setPosition(strum.x + (strum.width - width) * 0.5, strum.y + (strum.height - height) * 0.5);
 
 		animation.curAnim.frameRate = FlxG.random.int(22, 26);
 	}
