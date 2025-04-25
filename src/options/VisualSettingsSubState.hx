@@ -22,6 +22,13 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 		));
 
 		addOption(new Option(
+			'Glow Animation On Note Hit',
+			'Plays a glow animation whenever you hit a note. Will not affect sustains and ghost taps, if turned off.',
+			'pressAnimOnTap',
+			BOOL
+		));
+
+		addOption(new Option(
 			'Noteskin:',
 			'Choose a noteskin to show mid-game.',
 			'noteSkin',

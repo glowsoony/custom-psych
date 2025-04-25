@@ -821,7 +821,7 @@ class PlayState extends MusicState {
 			return;
 		}
 
-		strum.playAnim('notePressed');
+		if (Settings.data.pressAnimOnTap) strum.playAnim('notePressed');
 
 		// normal notes
 		note.wasHit = true;
@@ -925,7 +925,7 @@ class PlayState extends MusicState {
 		grade = updateGrade();
 		clearType = updateClearType();
 
-		strum.playAnim('notePressed');
+		if (Settings.data.pressAnimOnTap) strum.playAnim('notePressed');
 
 		playerStrumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
 
