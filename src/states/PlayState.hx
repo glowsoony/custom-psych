@@ -882,7 +882,7 @@ class PlayState extends MusicState {
 
 			if (playerID == 0) health -= judge.health;
 			else health += judge.health;
-			judgeSpr.display(0);
+			if (!Settings.data.hideTightestJudge) judgeSpr.display(0);
 			judge.hits++;
 			comboNumbers.display(++combo);
 			updateJudgeCounter();
