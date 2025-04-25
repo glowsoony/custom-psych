@@ -29,6 +29,13 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 		));
 
 		addOption(new Option(
+			'Hide Tightest Judgement',
+			'Hides the tightest judgement from the screen. Can make it easier to tell if you lost an FC, or if you just wanna focus better.',
+			'hideTightestJudge',
+			BOOL
+		));
+
+		addOption(new Option(
 			'Noteskin:',
 			'Choose a noteskin to show mid-game.',
 			'noteSkin',

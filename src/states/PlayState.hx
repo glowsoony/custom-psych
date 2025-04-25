@@ -809,7 +809,6 @@ class PlayState extends MusicState {
 
 		final noteFunc = note.player == playerID ? noteHit : opponentNoteHit;
 		
-
 		// sustain input
 		if (note.isSustain) {
 			note.clipToStrum(strum);
@@ -892,7 +891,8 @@ class PlayState extends MusicState {
 		}
 
 		final adjustedHitTime:Float = note.rawHitTime / playbackRate;
-		var judge:Judgement = Judgement.getFromTiming(adjustedHitTime);
+		var judgeID:Int = Judgement.getIDFromTiming(adjustedHitTime);
+		var judge:Judgement = Judgement.list[judgeID];
 
 		note.judge = judge.name;
 
@@ -941,7 +941,9 @@ class PlayState extends MusicState {
 		}
 
 		if (!note.breakOnHit) {
-			judgeSpr.display(adjustedHitTime);
+			if (!Settings.data.hideTightestJudge || judgeID > 0) {
+				judgeSpr.display(adjustedHitTime);
+			}
 			comboNumbers.display(combo);
 		}
 

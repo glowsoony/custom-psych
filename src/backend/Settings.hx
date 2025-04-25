@@ -56,6 +56,7 @@ class SaveVariables {
 	var strumlineSize:Float = 0.7;
 	var timeBarType:String = 'Disabled';
 	var pressAnimOnTap:Bool = true;
+	var hideTightestJudge:Bool = false;
 
 	// miscellaneous
 	var discordRPC:Bool = true;
