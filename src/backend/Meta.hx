@@ -31,19 +31,18 @@ class Meta {
 
 		for (path in directories) {
 			for (songFolder in FileSystem.readDirectory('$path/songs')) {
-				if (!FileSystem.exists('$path/songs/$songFolder/meta.json')) {
-					continue;
-				}
+				final path = '$path/songs/$songFolder/meta.json';
+				if (!FileSystem.exists(path)) continue;
 
-				_cache.set(songFolder, load(songFolder));
+				_cache.set(songFolder, load(songFolder, path));
 			}
 		}
 	}
 
-	public static function load(song:String):MetaFile {
+	public static function load(song:String, ?fullPath:String):MetaFile {
 		if (_cache.exists(song)) return _cache[song];
 		
-		var path:String = Paths.get('songs/$song/meta.json');
+		var path:String = fullPath != null ? fullPath : Paths.get('songs/$song/meta.json');
 		var file:MetaFile = {};
 
 		// still keeping this check here

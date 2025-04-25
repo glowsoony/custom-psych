@@ -82,15 +82,15 @@ class FreeplayState extends MusicState {
 		add(grpIcons = new FlxTypedSpriteGroup<CharIcon>());
 
 		for (index => song in songList) {
+			// some mods have a custom alphabet sparrow, so lets use it
+			Mods.current = song.folder;
+
 			var songName:String = song.id == 'random' ? 'Random' : Meta.load(song.id).songName;
 			final alphabet:Alphabet = grpSongs.add(new Alphabet(90, 320, songName));
 			alphabet.visible = alphabet.active = false;
 			alphabet.targetY = index;
 			alphabet.scaleX = Math.min(1, 980 / alphabet.width);
 			alphabet.snapToPosition();
-
-			// otherwise the icons won't load properly
-			Mods.current = song.folder;
 
 			var icon:CharIcon = new CharIcon(song.icon);
 			icon.visible = icon.active = false;
