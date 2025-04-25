@@ -929,7 +929,7 @@ class PlayState extends MusicState {
 
 		playerStrumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
 
-		if (Settings.data.noteSplashSkin != 'None' && judge.name == 'sick' && note.splashes) {
+		if (Settings.data.noteSplashSkin != 'None' && judge.splashes && note.splashes) {
 			noteSplashes.members[note.lane].hit(strum);
 		}
 
