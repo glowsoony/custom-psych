@@ -124,7 +124,13 @@ class FreeplayState extends MusicState {
 	}
 
 	var holdTime:Float;
+	var actionPressed:Bool = false;
 	override function update(elapsed:Float) {
+		if (actionPressed) {
+			super.update(elapsed);
+			return;
+		}
+
 		lerpScore = Math.floor(FlxMath.lerp(intendedScore, lerpScore, Math.exp(-elapsed * 24)));
 		lerpAccuracy = FlxMath.lerp(intendedAccuracy, lerpAccuracy, Math.exp(-elapsed * 12));
 		if (Math.abs(lerpScore - intendedScore) <= 10) lerpScore = intendedScore;
@@ -144,6 +150,7 @@ class FreeplayState extends MusicState {
 		super.update(elapsed);
 
 		if (Controls.justPressed('accept')) {
+			actionPressed = true;
 			if (songList[curSelected].id == 'random') {
 				var oldSelected:Int = curSelected;
 				curSelected = FlxG.random.int(1, songList.length - 1);
@@ -162,7 +169,10 @@ class FreeplayState extends MusicState {
 			openSubState(new GameplayChangersSubstate());
 		}
 
-		if (Controls.justPressed('back')) MusicState.switchState(new MainMenuState());
+		if (Controls.justPressed('back')) {
+			MusicState.switchState(new MainMenuState());
+			actionPressed = true;
+		}
 	}
 
 	function enterSong() {
@@ -178,6 +188,7 @@ class FreeplayState extends MusicState {
 		} else {
 			persistentUpdate = false;
 			warn('Song/Difficulty doesn\'t exist: "$path"');
+			actionPressed = false;
 			return;
 		}
 	}

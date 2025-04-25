@@ -70,9 +70,9 @@ class MainMenuState extends MusicState {
 		FlxG.mouse.visible = true;
 	}
 
-	var alreadyPressedEnter:Bool = false;
+	var actionPressed:Bool = false;
 	override function update(elapsed:Float) {
-		if (alreadyPressedEnter) {
+		if (actionPressed) {
 			super.update(elapsed);
 			return;
 		}
@@ -90,7 +90,7 @@ class MainMenuState extends MusicState {
 		}
 
 		if (Controls.justPressed('accept') || (mouseControls && FlxG.mouse.overlaps(optionGrp.members[curSelected]) && FlxG.mouse.justPressed)) {
-			alreadyPressedEnter = true;
+			actionPressed = true;
 			FlxG.sound.play(Paths.sound('confirm'));
 
 			for (i => option in optionGrp.members) {
@@ -137,13 +137,16 @@ class MainMenuState extends MusicState {
 							if (!option.alive) option.revive();
 							FlxTween.tween(option, {alpha: 1.0}, 0.2 * (i + 1), {ease: FlxEase.quadIn, startDelay: 0.5});
 						}
-						alreadyPressedEnter = false;
+						actionPressed = false;
 						warn('"${options[curSelected]}" not implemented.');
 				}
 			});
 		}
 
-		if (Controls.justPressed('back')) MusicState.switchState(new TitleState());
+		if (Controls.justPressed('back')) {
+			MusicState.switchState(new TitleState());
+			actionPressed = true;
+		}
 
 		if (FlxG.keys.justPressed.SEVEN) MusicState.switchState(new states.editors.CharacterEditorState());
 
