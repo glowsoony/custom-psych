@@ -94,7 +94,7 @@ class Settings {
 	}
 
 	public static function load() {
-		FlxG.save.bind('funkin', Util.getSavePath());
+		FlxG.save.bind('settings', Util.getSavePath());
 
 		final fields:Array<String> = Type.getInstanceFields(SaveVariables);
 		for (i in Reflect.fields(FlxG.save.data)) {
@@ -120,10 +120,5 @@ class Settings {
 
 	public static inline function reset() {
 		data = default_data;
-	}
-
-	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic = null, ?customDefaultValue:Bool = false):Dynamic {
-		if (!customDefaultValue) defaultValue = default_data.gameplaySettings[name];
-		return (data.gameplaySettings.exists(name) ? data.gameplaySettings[name] : defaultValue);
 	}
 }

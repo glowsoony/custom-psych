@@ -514,13 +514,7 @@ class PlayState extends MusicState {
 						score: score,
 						accuracy: accuracy,
 
-						playbackRate: Settings.data.gameplaySettings['playbackRate'],
-						noFail: Settings.data.gameplaySettings['noFail'],
-						randomizedNotes: Settings.data.gameplaySettings['randomizedNotes'],
-						mirroredNotes: Settings.data.gameplaySettings['mirroredNotes'],
-						sustains: Settings.data.gameplaySettings['sustains'],
-						opponentMode: Settings.data.gameplaySettings['opponentMode'],
-						blind: Settings.data.gameplaySettings['blind']
+						modifiers: Settings.data.gameplaySettings
 					});
 				}
 
@@ -896,7 +890,7 @@ class PlayState extends MusicState {
 
 		note.judge = judge.name;
 
-		if (Settings.data.gameplaySettings['onlySicks'] && judge.name != 'sick') die();
+		if (Settings.data.gameplaySettings['onlySicks'] && judgeID != 0) die();
 	
 		if (!note.breakOnHit) {
 			totalNotesPlayed += judge.accuracy;
