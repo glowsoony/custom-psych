@@ -556,20 +556,12 @@ class PlayState extends MusicState {
 
 		var oldNote:Note = null;
 
-		var randomizedLanes:Array<Int> = [for (i in 0...Strumline.keyCount) i];
-		// randomizedLanes.push(FlxG.random.int(0, Strumline.keyCount - 1, randomizedLanes));
-		if (Settings.data.gameplaySettings['randomizedNotes']) FlxG.random.shuffle(randomizedLanes);
+		var lanes:Array<Int> = [for (i in 0...Strumline.keyCount) i];
+		if (Settings.data.gameplaySettings['mirroredNotes']) lanes = [3, 2, 1, 0];
+		if (Settings.data.gameplaySettings['randomizedNotes']) FlxG.random.shuffle(lanes);
 		for (i => note in parsedNotes) {
 			// thanks shubs /s
 			if (note.lane < 0) continue;
-
-			// dumbest way of doing it but whatever lmao
-			if (Settings.data.gameplaySettings['mirroredNotes']) {
-				if (note.lane == 0) note.lane = 3;
-				else if (note.lane == 3) note.lane = 0;
-				else if (note.lane == 1) note.lane = 2;
-				else note.lane = 1;
-			}
 
 			// stepmania shuffle
 			// instead of randomizing every note's lane individually
