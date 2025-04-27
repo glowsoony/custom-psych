@@ -13,13 +13,19 @@ class BoolOption extends BaseOption<Bool, Bool>
 	public function new(name:String, ?description:String, ?preference:String)
 	{
 		super(name, description, preference);
-		this.change = _change;
+		this.hasEnter = true;
+		this.enter = _enter;
+		this.getText = _getText;
 	}
 
-	private function _change(next:Bool):Void
+    private function _getText():String {
+        return value ? "ON" : "OFF";
+    }
+
+	private function _enter():Void
 	{
 		var prev:Bool = this.value;
-		this.value = next;
+		this.value = !prev;
 		onChange(prev);
 	}
 }

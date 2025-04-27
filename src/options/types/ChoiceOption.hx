@@ -17,8 +17,14 @@ class ChoiceOption extends BaseOption<String, Int>
 	{
 		super(name, description, preference);
 		this.options = options ?? [];
+		this.hasMovement = true;
 		this.change = _change;
+		this.getText = _getText;
 	}
+
+    private function _getText():String {
+        return value;
+    }
 
 	private function _change(next:Int)
 	{

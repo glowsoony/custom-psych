@@ -45,6 +45,16 @@ class BaseOption<T:Any, VT:Any> {
 	var defaultValue:T = null;
 
 	/**
+	 * If left and right can be used with this option.
+	**/
+	public var hasMovement:Bool = false;
+
+	/**
+	 * If enter can be used with this option.
+	**/
+	public var hasEnter:Bool = false;
+
+	/**
 	 * @param name          Option Name in the options menu
 	 * @param description   Descriptor for what the option does
 	 * @param preference    Name of the preference it modifies (in backend.Settings)
@@ -54,11 +64,23 @@ class BaseOption<T:Any, VT:Any> {
 		this.description = description;
 		this.attachedPref = preference;
 
-		defaultValue = Reflect.field(backend.Settings.default_data, attachedPref);
-		value = Reflect.field(backend.Settings.data, attachedPref);
+		getValues();
 		canChange = this.defaultValue != null;
 	}
 
+	/**
+	 * Grab the values from data, typically not overridden.
+	**/
+	function getValues() {
+		defaultValue = Reflect.field(backend.Settings.default_data, attachedPref);
+		value = Reflect.field(backend.Settings.data, attachedPref);
+	}
+
+	public dynamic function getText():String {
+		return "";
+	}
+	
+	public dynamic function enter() {}
 	public dynamic function change(value:VT) {}
 	public dynamic function onHover() {}
 	public dynamic function onChange(previousValue:T) {}

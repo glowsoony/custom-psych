@@ -170,6 +170,14 @@ class CreditsState extends MusicState
 
 		selectLength[1] = displayCredits[selections[0]].users.length - 1;
 		changeSelection(0, 1);
+
+		for (i in 0...(selectLength[1] + 1)) {
+			var item:Alphabet = grpOptions.members[i];
+			if (item == null) continue;
+
+			item.x = ((item.targetY - lerpSelected) * item.distancePerItem.x) + item.spawnPos.x;
+			item.y = ((item.targetY - lerpSelected) * 1.3 * item.distancePerItem.y) + item.spawnPos.y;
+		}
 	}
 
 	/**

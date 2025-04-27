@@ -32,8 +32,14 @@ class NumberOption extends BaseOption<Float, Float>
 		super(name, description, preference);
 		this.minimum = minimum;
 		this.maximum = maximum;
+		this.hasMovement = true;
 		this.change = _change;
+		this.getText = _getText;
 	}
+
+    private function _getText():String {
+        return Std.string(this.value);
+    }
 
 	// just realised this would probably allow u to make something with scripts
 	// lolll ! !! ! @IamMorwen

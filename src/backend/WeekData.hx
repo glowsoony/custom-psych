@@ -58,7 +58,8 @@ class WeekData {
 		for (mod in Mods.getActive()) directories.push('mods/${mod.id}');
 
 		for (i => path in directories) {
-			if (!FileSystem.exists(path)) continue;
+			if (!FileSystem.exists('$path/weeks')) continue;
+			
 			for (week in FileSystem.readDirectory('$path/weeks')) {
 				if (FileSystem.isDirectory(week)) continue;
 

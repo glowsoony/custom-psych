@@ -30,6 +30,8 @@ class Meta {
 		for (mod in Mods.getActive()) directories.push('mods/${mod.id}');
 
 		for (path in directories) {
+			if (!FileSystem.exists('$path/songs')) continue;
+
 			for (songFolder in FileSystem.readDirectory('$path/songs')) {
 				final path = '$path/songs/$songFolder/meta.json';
 				if (!FileSystem.exists(path)) continue;

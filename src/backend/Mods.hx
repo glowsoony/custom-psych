@@ -72,7 +72,7 @@ class Mods {
 
 		for (i in [for (line in File.getContent('modsList.txt').split('\n')) line.split('|')]) {
 			var mod:ModData = add(i[0]);
-			mod.enabled = i[1] == '1';
+			mod.enabled = i[1].trim() == '1';
 		}
 
 		loadTop();
