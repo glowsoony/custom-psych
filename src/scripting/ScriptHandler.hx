@@ -32,13 +32,13 @@ class ScriptHandler {
 		if (!FileSystem.exists(dir)) return null;
 
 		switch haxe.io.Path.extension(dir) {
-			case "lua":
+/*			case "lua":
 				var script:LuaScript = new LuaScript(dir);
 
 				list.push(script);
 				script.execute();
 
-				return script;
+				return script;*/
 
 			case "hx": 
 				var script:HScript = new HScript(dir);

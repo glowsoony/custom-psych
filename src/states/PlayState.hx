@@ -346,7 +346,7 @@ class PlayState extends MusicState {
 			case 'phillyBlazin': new PhillyBlazin();
 			*/
 		}
-		ScriptHandler.loadFile('stages/$stageName.lua');
+		//ScriptHandler.loadFile('stages/$stageName.lua');
 		ScriptHandler.loadFile('stages/$stageName.hx');
 
 		cameraSpeed = stage.cameraSpeed;
