@@ -15,7 +15,7 @@ class InitState extends flixel.FlxState {
 		DiscordClient.prepare();
 		#end
 
-		FlxG.plugins.add(new backend.Conductor());
+		FlxG.plugins.add(new funkin.backend.Conductor());
 
 		FlxG.fullscreen = Settings.data.fullscreen;
 		FlxG.fixedTimestep = false;
@@ -26,7 +26,7 @@ class InitState extends flixel.FlxState {
 		FlxG.mouse.useSystemCursor = true;
 
 		if (Settings.data.flashingLights) {
-			FlxG.switchState(new states.FlashingState());
+			FlxG.switchState(new FlashingState());
 			return;
 		}
 		

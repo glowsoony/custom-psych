@@ -1,24 +1,15 @@
 #if !macro
 // project specific
-import backend.Util;
-import backend.Conductor;
-import backend.DiscordClient;
-import backend.Awards;
-import backend.Controls;
-import backend.Settings;
-import backend.Language;
-import backend.Paths;
-import backend.Scores;
-import backend.Mods;
-import backend.Song;
-import backend.Difficulty;
-import backend.Meta;
-import objects.Alphabet;
-import objects.FunkinSprite;
-import states.MusicState;
-import states.PlayState;
-import scripting.ScriptHandler;
-import scripting.*;
+import funkin.backend.*;
+import funkin.backend.Mods.ModData;
+import funkin.backend.WeekData.WeekFile;
+import funkin.backend.WeekData.Track;
+import funkin.backend.EventHandler.Event;
+import funkin.backend.Scores.PlayData;
+import funkin.objects.Alphabet;
+import funkin.objects.FunkinSprite;
+import funkin.states.*;
+import funkin.scripting.*;
 
 import TraceFunctions;
 

@@ -1,9 +1,9 @@
 package;
 
-import backend.FPSCounter;
+import funkin.backend.FPSCounter;
 import openfl.display.Sprite;
 import openfl.display.StageScaleMode;
-import states.TitleState;
+import funkin.states.TitleState;
 
 import lime.graphics.Image;
 
@@ -16,7 +16,7 @@ import _external.CompilerDefines;
 
 import flixel.input.keyboard.FlxKey;
 import openfl.Lib;
-import backend.DiscordClient;
+import funkin.backend.DiscordClient;
 
 // NATIVE API STUFF, YOU CAN IGNORE THIS AND SCROLL //
 #if (linux && !debug)
@@ -42,7 +42,7 @@ class Main extends Sprite {
 		super();
 
 		#if (cpp && windows)
-		backend.Native.fixScaling();
+		funkin.backend.Native.fixScaling();
 		#end
 
 		#if CRASH_HANDLER
@@ -58,7 +58,7 @@ class Main extends Sprite {
 		var game:FlxGame = new FlxGame(InitState, 1280, 720, 60, true);
 
     	@:privateAccess
-    	game._customSoundTray = backend.FunkinSoundTray;
+    	game._customSoundTray = funkin.backend.FunkinSoundTray;
 
 		addChild(game);
 
