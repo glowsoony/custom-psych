@@ -10,11 +10,11 @@
 	<define name="TRANSLATIONS_ALLOWED" />
 	<define name="PSYCH_WATERMARKS"/> 
 	<define name="HSCRIPT_ALLOWED" />
-	<define name="LUA_ALLOWED" />
+	<!--<define name="LUA_ALLOWED" />-->
 	<define name="MODS_ALLOWED" />
 
 	<!-- DISABLE THIS IF ISSUES ARE FOUND -->
-	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>
+	<!--<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>-->
 
 	<!--<define name="BASE_GAME_ASSETS" /> -->
 	<define name="VIDEOS_ALLOWED" if="desktop cpp" unless="32bits"/>
@@ -38,7 +38,7 @@
 	<haxelib name="flixel-addons" version="3.2.2"/>
 	<haxelib name="hxjson5" />
 
-	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
+	<!--<haxelib name="linc_luajit" if="LUA_ALLOWED"/>-->
 	<haxelib name="hxvlc" version="1.9.2" if="VIDEOS_ALLOWED" />
 	<haxelib name="hxdiscord_rpc" version="1.2.4" if="DISCORD_ALLOWED"/>
 	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED"/>
