@@ -789,6 +789,7 @@ class PlayState extends MusicState {
 
 	// in case someone wants to make their own accuracy calc
 	dynamic function updateAccuracy():Float {
+		if (totalNotesHit <= 0) return 0.0;
 		return totalNotesPlayed / (totalNotesHit + comboBreaks);
 	}
 
