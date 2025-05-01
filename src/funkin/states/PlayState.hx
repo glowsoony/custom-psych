@@ -67,7 +67,8 @@ class PlayState extends MusicState {
 		["Bruh", 0.5],
 		["Bad", 0.4],
 		["Shit", 0.2],
-		["You Suck!", 0]
+		["You Suck!", 0],
+		["WHAT THE FUCK", Math.NaN]
 	];
 
 	var health(default, set):Float = 50;
@@ -230,10 +231,12 @@ class PlayState extends MusicState {
 			default: song.speed;
 		}
 		
-		playfield.playerNoteHit = playerNoteHit;
-		playfield.sustainHit = sustainHit;
-		playfield.noteMiss = noteMiss;
-		playfield.ghostTap = ghostTap;
+		// i hate having to make a seperate function for this but
+		// it's the only way it'll work for dynamic functions
+		playfield.playerNoteHit = function(note:Note) playerNoteHit(note);
+		playfield.sustainHit = function(sustain:Note) sustainHit(sustain);
+		playfield.noteMiss = function(note:Note) noteMiss(note);
+		playfield.ghostTap = function() ghostTap();
 		playfield.opponentNoteHit = opponentNoteHit;
 
 		add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
@@ -391,7 +394,7 @@ class PlayState extends MusicState {
 		judgeCounter.x = opponentMode ? (FlxG.width - judgeCounter.width) - 5 : 5;
 	}
 
-	function ghostTap() {
+	dynamic function ghostTap() {
 		score -= 20;
 		if (playfield.playerID == 0) health += 6;
 		else health -= 6;
@@ -410,7 +413,7 @@ class PlayState extends MusicState {
 		playfield.currentPlayer.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 	}
 
-	function playerNoteHit(note:Note) {
+	dynamic function playerNoteHit(note:Note) {
 		final strumline:Strumline = playfield.currentPlayer;
 		final strum:StrumNote = strumline.members[note.lane];
 
@@ -490,7 +493,7 @@ class PlayState extends MusicState {
 		ScriptHandler.call('noteHit', [note]);
 	}
 
-	function noteMiss(note:Note) {
+	dynamic function noteMiss(note:Note) {
 		if (note.ignore) return;
 
 		if (Settings.data.gameplaySettings['instakill'] || Settings.data.gameplaySettings['onlySicks']) die();
@@ -789,7 +792,7 @@ class PlayState extends MusicState {
 
 	// in case someone wants to make their own accuracy calc
 	dynamic function updateAccuracy():Float {
-		if (totalNotesHit <= 0) return 0.0;
+		//if (totalNotesHit <= 0) return 0.0;
 		return totalNotesPlayed / (totalNotesHit + comboBreaks);
 	}
 
