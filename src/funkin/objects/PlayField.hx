@@ -316,7 +316,7 @@ class PlayField extends flixel.group.FlxGroup {
 		if (botplay) return;
 
 		final dir:Int = Controls.convertStrumKey(keys, Controls.convertLimeKeyCode(key));
-		if (dir == -1 || keysHeld[dir]) return;
+		if (dir == -1 || keysHeld[dir] || FlxG.state.subState != null) return;
 		keysHeld[dir] = true;
 
 		var lowestTime:Float = Math.POSITIVE_INFINITY;
@@ -332,8 +332,9 @@ class PlayField extends flixel.group.FlxGroup {
 
 		if (noteToHit == null) {
 			currentPlayer.members[dir].playAnim('pressed');
-			ghostTap();
 			if (Settings.data.ghostTapping) return;
+			ghostTap();
+			return;
 		} 
 
 		if (Settings.data.pressAnimOnTap) currentPlayer.members[dir].playAnim('notePressed');
