@@ -1,6 +1,6 @@
 package funkin.objects;
 
-import funkin.objects.Strumline.StrumNote;
+import funkin.objects.Strumline.Receptor;
 import flixel.math.FlxRect;
 
 typedef NoteData = {
@@ -203,7 +203,7 @@ class Note extends FlxSprite {
 		updateHitbox();
 	}
 
-	public function followStrum(strum:StrumNote, scrollSpeed:Float) {
+	public function followStrum(strum:Receptor, scrollSpeed:Float) {
 		distance = (hitTime * 0.45 * (scrollSpeed * multSpeed)) / Conductor.rate;
 		distance *= Settings.data.downscroll ? -1 : 1;
 
@@ -220,7 +220,7 @@ class Note extends FlxSprite {
 	}
 
 	// for clipping sustains
-	public function clipToStrum(strum:StrumNote) {
+	public function clipToStrum(strum:Receptor) {
 		if (!exists || !alive) return;
 
 		// why would you wanna cliprect normal notes lmao

@@ -42,7 +42,7 @@ class NoteSplash extends FunkinSprite {
 		visible = false;
 	}
 
-	public function hit(strum:StrumNote) {
+	public function hit(strum:Receptor) {
 		visible = true;
 		playAnim('hit${FlxG.random.int(1, 2)}');
 		updateHitbox();

@@ -1,6 +1,6 @@
 package funkin.objects;
 
-class Strumline extends FlxTypedSpriteGroup<StrumNote> {
+class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	public static final keyCount:Int = 4;
 	public static var size:Float = Settings.data.strumlineSize;
 	public var skin(default, set):String;
@@ -28,9 +28,9 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 		// just in case there's anything stored
 		while (members.length != 0) members.pop().destroy();
 
-		var strum:StrumNote = null;
+		var strum:Receptor = null;
 		for (i in 0...keyCount) {
-			add(strum = new StrumNote(this, i));
+			add(strum = new Receptor(this, i));
 			strum.scale.set(size, size);
 			strum.updateHitbox();
 			strum.x += strum.width * i;
@@ -38,7 +38,7 @@ class Strumline extends FlxTypedSpriteGroup<StrumNote> {
 	}
 }
 
-class StrumNote extends FunkinSprite {
+class Receptor extends FunkinSprite {
 	public var queueStatic:Bool = false;
 	var parent:Strumline;
 	public function new(parent:Strumline, lane:Int) {

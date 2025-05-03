@@ -8,7 +8,7 @@ import funkin.objects.*;
 import funkin.stages.*;
 import funkin.backend.Song.Chart;
 import funkin.objects.Note.NoteData;
-import funkin.objects.Strumline.StrumNote;
+import funkin.objects.Strumline.Receptor;
 import funkin.backend.EventHandler.Event;
 
 import flixel.util.FlxGradient;
@@ -415,7 +415,7 @@ class PlayState extends MusicState {
 
 	dynamic function playerNoteHit(note:Note) {
 		final strumline:Strumline = playfield.currentPlayer;
-		final strum:StrumNote = strumline.members[note.lane];
+		final strum:Receptor = strumline.members[note.lane];
 
 		if (playfield.botplay) {
 			strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');

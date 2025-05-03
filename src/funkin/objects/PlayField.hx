@@ -2,7 +2,7 @@ package funkin.objects;
 
 import funkin.backend.Song.Chart;
 import funkin.objects.Note;
-import funkin.objects.Strumline.StrumNote;
+import funkin.objects.Strumline.Receptor;
 import lime.app.Application;
 import lime.ui.KeyCode;
 
@@ -126,7 +126,7 @@ class PlayField extends flixel.group.FlxGroup {
 
 			note.update(delta);
 
-			final strum:StrumNote = strumlines.members[note.player].members[note.lane];
+			final strum:Receptor = strumlines.members[note.player].members[note.lane];
 			note.followStrum(strum, scrollSpeed);
 
 			if (note.player == playerID) {
@@ -158,7 +158,7 @@ class PlayField extends flixel.group.FlxGroup {
 		}
 	}
 
-	dynamic function botplayInputs(note:Note, strum:StrumNote):Void {
+	dynamic function botplayInputs(note:Note, strum:Receptor):Void {
 		if (!note.canHit || note.ignore || note.breakOnHit || note.time > Conductor.rawTime) return;
 
 		final noteFunc = note.player == playerID ? playerNoteHit : opponentNoteHit;
@@ -183,7 +183,7 @@ class PlayField extends flixel.group.FlxGroup {
 		notes.remove(note);
 	}
 
-	dynamic function sustainInputs(note:Note, strum:StrumNote) {
+	dynamic function sustainInputs(note:Note, strum:Receptor) {
 		var parent:Note = note.parent;
 
 		if (!parent.wasHit || !parent.canHit || parent.missed) return;
