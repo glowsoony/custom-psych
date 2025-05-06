@@ -40,7 +40,7 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 
 class Receptor extends FunkinSprite {
 	public var queueStatic:Bool = false;
-	var parent:Strumline;
+	public var parent:Strumline;
 	public function new(parent:Strumline, lane:Int) {
 		super();
 
@@ -52,7 +52,6 @@ class Receptor extends FunkinSprite {
 			if (!(parent.ai || queueStatic) || animation.curAnim.name != 'notePressed') return;
 			playAnim('default');
 		}
-
 
 		// modding by length will cause different behaviour here
 		// purple, blue, green, red, if it goes beyond that, it loops back, purple blue green red, and so on.

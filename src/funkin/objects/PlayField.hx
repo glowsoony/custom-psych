@@ -25,9 +25,8 @@ class PlayField extends flixel.group.FlxGroup {
 		'note_right'
 	];
 
-	public dynamic function playerNoteHit(note:Note):Void {}
+	public dynamic function noteHit(strumline:Strumline, note:Note):Void {}
 	public dynamic function sustainHit(note:Note):Void {}
-	public dynamic function opponentNoteHit(note:Note):Void {}
 	public dynamic function noteMiss(note:Note):Void {}
 	public dynamic function ghostTap():Void {}
 
@@ -126,13 +125,13 @@ class PlayField extends flixel.group.FlxGroup {
 
 			note.update(delta);
 
-			final strum:Receptor = strumlines.members[note.player].members[note.lane];
+			var strum:Receptor = strumlines.members[note.player].members[note.lane];
 			note.followStrum(strum, scrollSpeed);
 
 			if (note.player == playerID) {
-				if (botplay) botplayInputs(note, strum);
-				else if (note.isSustain) sustainInputs(note, strum);
-			} else botplayInputs(note, strum);
+				if (botplay) botplayInputs(strum, note);
+				else if (note.isSustain) sustainInputs(strum, note);
+			} else botplayInputs(strum, note);
 
 			if (!botplay && note.player == playerID && !note.missed && !note.isSustain && note.tooLate) {
 				noteMiss(note);
@@ -158,10 +157,8 @@ class PlayField extends flixel.group.FlxGroup {
 		}
 	}
 
-	dynamic function botplayInputs(note:Note, strum:Receptor):Void {
+	dynamic function botplayInputs(strum:Receptor, note:Note):Void {
 		if (!note.canHit || note.ignore || note.breakOnHit || note.time > Conductor.rawTime) return;
-
-		final noteFunc = note.player == playerID ? playerNoteHit : opponentNoteHit;
 		
 		// sustain input
 		if (note.isSustain) {
@@ -170,7 +167,7 @@ class PlayField extends flixel.group.FlxGroup {
 
 			strum.playAnim('notePressed');
 			note.wasHit = true;
-			noteFunc(note);
+			noteHit(strum.parent, note);
 			return;
 		}
 
@@ -178,12 +175,12 @@ class PlayField extends flixel.group.FlxGroup {
 
 		// normal notes
 		note.wasHit = true;
-		noteFunc(note);
+		noteHit(strum.parent, note);
 		note.destroy();
 		notes.remove(note);
 	}
 
-	dynamic function sustainInputs(note:Note, strum:Receptor) {
+	dynamic function sustainInputs(strum:Receptor, note:Note) {
 		var parent:Note = note.parent;
 
 		if (!parent.wasHit || !parent.canHit || parent.missed) return;
@@ -292,12 +289,12 @@ class PlayField extends flixel.group.FlxGroup {
 
 				if (!oldNote.isSustain) continue;
 
-				oldNote.scale.y *= 44 / oldNote.frameHeight;
+				//oldNote.scale.y *= 44 / oldNote.frameHeight;
 				oldNote.scale.y /= rate;
 				oldNote.resizeByRatio(curStepCrotchet / Conductor.stepCrotchet);
 			}
 
-			oldNote = swagNote;
+			oldNote = swagNote; 
 		}
 
 		// forces sustains to be behind notes
@@ -338,7 +335,7 @@ class PlayField extends flixel.group.FlxGroup {
 		} 
 
 		if (Settings.data.pressAnimOnTap) currentPlayer.members[dir].playAnim('notePressed');
-		playerNoteHit(noteToHit);
+		noteHit(currentPlayer, noteToHit);
 		noteToHit.wasHit = true;
 		noteToHit.destroy();
 		notes.remove(noteToHit);

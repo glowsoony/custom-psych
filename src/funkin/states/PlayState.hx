@@ -223,6 +223,7 @@ class PlayState extends MusicState {
 		playfield.modifiers = true;
 		playfield.playerID = Settings.data.gameplaySettings['opponentMode'] ? 0 : 1;
 		playfield.rate = Settings.data.gameplaySettings['playbackRate'];
+		
 		loadSong();
 
 		playfield.scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
@@ -233,11 +234,10 @@ class PlayState extends MusicState {
 		
 		// i hate having to make a seperate function for this but
 		// it's the only way it'll work for dynamic functions
-		playfield.playerNoteHit = function(note:Note) playerNoteHit(note);
-		playfield.sustainHit = function(sustain:Note) sustainHit(sustain);
+		playfield.noteHit = function(strumline:Strumline, note:Note) noteHit(strumline, note);
 		playfield.noteMiss = function(note:Note) noteMiss(note);
+		playfield.sustainHit = function(sustain:Note) sustainHit(sustain);
 		playfield.ghostTap = function() ghostTap();
-		playfield.opponentNoteHit = opponentNoteHit;
 
 		add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
 		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
@@ -292,6 +292,8 @@ class PlayState extends MusicState {
 		hud.cameras = [camHUD];
 
 		loadHUD();
+
+		botplay = Settings.data.gameplaySettings['botplay'];
 
 		hud.add(countdown = new Countdown());
 		countdown.screenCenter();
@@ -404,20 +406,17 @@ class PlayState extends MusicState {
 		updateScoreTxt();
 	}
 
-	function opponentNoteHit(note:Note) {
-		if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
-		(playfield.playerID == 0 ? bf : dad).playAnim('sing${Note.directions[note.lane].toUpperCase()}');
-	}
-
 	function sustainHit(note:Note) {
 		playfield.currentPlayer.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 	}
 
-	dynamic function playerNoteHit(note:Note) {
-		final strumline:Strumline = playfield.currentPlayer;
-		final strum:Receptor = strumline.members[note.lane];
+	dynamic function noteHit(strumline:Strumline, note:Note):Void {
+		if (note.player != playfield.playerID) {
+			strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+			if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
-		if (playfield.botplay) {
+			return;
+		} else if (botplay) {
 			strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
 			if (note.isSustain) return;
 
@@ -429,11 +428,16 @@ class PlayState extends MusicState {
 			judge.hits++;
 			comboNumbers.display(++combo);
 			updateJudgeCounter();
-			
+
 			return;
 		}
 
-		final adjustedHitTime:Float = note.rawHitTime / playfield.rate;
+		judgeHit(strumline.members[note.lane], note);
+		strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+	}
+
+	dynamic function judgeHit(strum:Receptor, note:Note) {
+		final adjustedHitTime:Float = note.rawHitTime / Conductor.rate;
 		var judgeID:Int = Judgement.getIDFromTiming(adjustedHitTime);
 		var judge:Judgement = Judgement.list[judgeID];
 
@@ -468,17 +472,15 @@ class PlayState extends MusicState {
 		grade = updateGrade();
 		clearType = updateClearType();
 
-		strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
-
-		if (Settings.data.noteSplashSkin != 'None' && judge.splashes && note.splashes) {
-			noteSplashes.members[note.lane].hit(strum);
-		}
-
 		updateScoreTxt();
 		updateJudgeCounter();
 		if (song.meta.hasVocals) {
 			if (Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 			else Conductor.vocals.members[playfield.playerID].volume = 1;
+		}
+
+		if (Settings.data.noteSplashSkin != 'None' && judge.splashes && note.splashes) {
+			noteSplashes.members[note.lane].hit(strum);
 		}
 
 		if (!note.breakOnHit) {
