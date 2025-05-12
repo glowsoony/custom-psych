@@ -24,6 +24,10 @@ class Conductor extends flixel.FlxBasic {
     public static var crotchet:Float = (60 / bpm) * 1000;
     public static var stepCrotchet:Float = crotchet * 0.25;
 
+	// the amount of time in milliseconds the game requires to reset song time
+	// in cases of massive lagspikes
+	public static inline final AUDIO_REBOUND_TIME:Float = 150;
+
 	public static var beatsPerMeasure(default, set):Int = 4;
     
     public static var songOffset:Float = 0.0;
@@ -117,23 +121,73 @@ class Conductor extends flixel.FlxBasic {
         syncBeats();
     }
 
+	/* for the people that can't read comments (me)
+		if (!playing) return;
+		
+		final addition:Float = delta * 1000;
+		if (inst == null || !inst.playing) {
+			visualTime = rawTime += addition;
+			return;
+		}
+
+		if (inst.time == _lastTime) _resyncTimer += addition;
+		else _resyncTimer = 0;
+
+		if (delta >= AUDIO_REBOUND_TIME) {
+			inst.time = _lastTime;
+			_resyncTimer = 0;
+		}
+		_lastTime = inst.time;
+
+		rawTime = inst.time - songOffset;
+		visualTime = rawTime + _resyncTimer;
+	*/
     static var _lastTime:Float = 0.0;
     static var _resyncTimer:Float = 0.0;
     public static dynamic function syncTime(delta:Float):Void {
-        if (!playing) return;
-        
-        final addition:Float = delta * 1000;
-        if (inst == null || !inst.playing) {
-            visualTime = rawTime += addition * rate;
-            return;
-        }
+		if (!playing) return;
+		
+		var addition:Float = delta * 1000;
+		if (inst == null || !inst.playing) {
+			visualTime = rawTime += addition;
+			return;
+		}
 
-        if (inst.time == _lastTime) _resyncTimer += addition;
-        else _resyncTimer = 0;
-        _lastTime = inst.time;
+		// because fuck it :fire:
+		@:privateAccess
+		addition = FlxG.game._elapsedMS;
 
-        rawTime = inst.time - songOffset;
-        visualTime = rawTime + _resyncTimer;
+		// if the sound time was unchanged from the last frame
+		// increase by the delta time from the last frame
+		// to prevent the notes looking jittery/unsmooth
+		// see https://github.com/stepmania/stepmania/blob/5_1-new/src/GameState.cpp#L1253
+		if (inst.time == _lastTime) _resyncTimer += addition;
+
+		// else just use the raw time
+		else _resyncTimer = 0;
+
+		// if the last frame was 1.5 seconds ago
+		// force the audio time to the last point it was updated
+		// to prevent missing because of lag spikes
+
+		// in most cases this is something you should NEVER do because it sounds like shit and can be buggy
+		// but this is a last resort scenario
+		// that involves you losing a run
+		if (addition >= AUDIO_REBOUND_TIME) {	
+			inst.time = _lastTime;
+			_resyncTimer = 0; // set this to 0 just in case
+		}
+
+		_lastTime = inst.time;
+
+		// we seperate time into 2 values because of modcharting capabilities
+		// makes it easier to fuck with scroll velocities and such
+
+		// USE THIS FOR JUDGEMENT MATH, **NOT FOR VISUAL POSITION**
+		rawTime = inst.time - songOffset;
+
+		// USE THIS FOR VISUAL POSITION, **NOT FOR JUDGEMENT MATH (ie note.rawHitTime)**
+		visualTime = rawTime + _resyncTimer;
     }
 
     public static dynamic function syncVocals() {
