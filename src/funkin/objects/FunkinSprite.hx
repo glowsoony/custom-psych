@@ -35,7 +35,7 @@ class FunkinSprite extends flixel.FlxSprite {
 
 		animation.play(name, forced);
 		active = animation.curAnim != null ? animation.curAnim.frames.length > 1 : false;
-		frameOffset.set(offsetsForAnim[0] * scale.x, offsetsForAnim[1] * scale.y);
+		frameOffset.set(offsetsForAnim[0], offsetsForAnim[1]);
 	}
 
 	override function drawComplex(camera:FlxCamera) {

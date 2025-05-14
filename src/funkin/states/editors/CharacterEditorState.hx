@@ -118,8 +118,8 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 			updateText();
 
 			// ????????
-			character.x /= _characterFile.scale;
-			character.y /= _characterFile.scale;
+			// character.x /= _characterFile.scale;
+			// character.y /= _characterFile.scale;
 		}
 
 		if (character.animation.curAnim != null) {
@@ -152,7 +152,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 				if (sender == scaleStepper) {
 					_characterFile.scale = scaleStepper.value;
 					character.scale.set(scaleStepper.value, scaleStepper.value);
-					//character.updateHitbox();
+					character.updateHitbox();
 				}
 
 				if (sender == singDurationStepper) {
@@ -208,19 +208,16 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 			ghost.flipX = _characterFile.flipX;
 			ghost.alpha = ghostAlpha;
 
-			ghost.scale.set(_characterFile.scale, _characterFile.scale);
 			ghost.setPosition(character.x, character.y);
-			
-			//ghost.updateHitbox();
-
-			ghost.loadGraphic(character.graphic);
+			ghost.scale.set(_characterFile.scale, _characterFile.scale);
+			ghost.loadGraphicFromSprite(character);
 			ghost.visible = true;
+
+			ghost.updateHitbox();
 
 			if (character.animation.curAnim == null) return;
 
-			ghost.offset.set(anim.offsets[0] * ghost.scale.x, anim.offsets[1] * ghost.scale.y);
-			ghost.frames.frames = character.frames.frames;
-			ghost.animation.copyFrom(character.animation);
+			ghost.frameOffset.set(anim.offsets[0], anim.offsets[1]);
 			ghost.animation.play(character.animation.curAnim.name, true, false, character.animation.curAnim.curFrame);
 			ghost.animation.pause();
 		}));
@@ -509,6 +506,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		// because sometimes some stuff won't update properly
 		icon.change(iconInputText.text);
 		character.scale.set(scaleStepper.value, scaleStepper.value);
+		character.updateHitbox();
 		character.flipX = flipXCheckBox.checked;
 		character.antialiasing = antialiasingCheckBox.checked;
 		healthBar.rightBar.color = _characterFile.healthColor;
