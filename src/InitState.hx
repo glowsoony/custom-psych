@@ -15,7 +15,7 @@ class InitState extends flixel.FlxState {
 		DiscordClient.prepare();
 		#end
 
-		FlxG.plugins.add(new funkin.backend.Conductor());
+		FlxG.plugins.add(new Conductor());
 
 		FlxG.fullscreen = Settings.data.fullscreen;
 		FlxG.fixedTimestep = false;

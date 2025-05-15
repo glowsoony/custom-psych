@@ -316,6 +316,7 @@ class PlayState extends MusicState {
 
 		ScriptHandler.call('create');
 		persistentUpdate = true;
+		Conductor.audioResync = true;
 	}
 
 	function loadHUD():Void {
@@ -556,7 +557,7 @@ class PlayState extends MusicState {
 						score: score,
 						accuracy: accuracy,
 
-						modifiers: Settings.data.gameplaySettings
+						modifiers: Settings.data.gameplaySettings.copy()
 					});
 				//}
 
