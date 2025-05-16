@@ -6,7 +6,7 @@ import funkin.backend.Meta;
 import moonchart.formats.OsuMania;
 import moonchart.formats.StepMania;
 import moonchart.formats.StepManiaShark;
-import moonchart.formats.fnf.legacy.FNFLegacy;
+import moonchart.formats.BasicFormat.BasicNoteType;
 
 // just to make sure chart parsing doesn't kill itself
 typedef JsonChart = {
@@ -27,6 +27,17 @@ typedef Section = {
 	var mustHitSection:Bool;
 	var gfSection:Bool;
 	var altAnim:Bool;
+}
+
+class FNFChart extends moonchart.formats.fnf.legacy.FNFLegacy {
+ 	public function new() {
+    	this.indexedTypes = false;
+    	this.bakedOffset = false;
+    	this.offsetHolds = false;
+    
+    	super();
+    	noteTypeResolver.register("Hurt Note", BasicNoteType.MINE);
+  	}
 }
 
 class Song {
@@ -54,21 +65,15 @@ class Song {
 				cast Json.parse(File.getContent(path)).song;
 
 			case 'sm':
-				var fnf:FNFLegacy = new FNFLegacy();
-				fnf.bakedOffset = false;
-				fnf.offsetHolds = false;
+				var fnf:FNFChart = new FNFChart();
 				cast fnf.fromFormat(new StepMania().fromFile(path)).data.song;
 
 			case 'ssc':
-				var fnf:FNFLegacy = new FNFLegacy();
-				fnf.bakedOffset = false;
-				fnf.offsetHolds = false;
+				var fnf:FNFChart = new FNFChart();
 				cast fnf.fromFormat(new StepManiaShark().fromFile(path)).data.song;
 
 			case 'osu':
-				var fnf:FNFLegacy = new FNFLegacy();
-				fnf.bakedOffset = false;
-				fnf.offsetHolds = false;
+				var fnf:FNFChart = new FNFChart();
 				cast fnf.fromFormat(new OsuMania().fromFile(path)).data.song;
 
 			default: null;
