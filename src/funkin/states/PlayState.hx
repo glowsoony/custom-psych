@@ -232,6 +232,7 @@ class PlayState extends MusicState {
 				}
 
 				line.visible = false;
+				line.alpha = 0;
 			}
 		}
 		
