@@ -18,3 +18,7 @@ pull requests and issues are open, i'm free for suggestions/changes as it takes 
 as i also have other projects going on at the moment
 
 # This will never be classified as its own seperate engine, it is simply a fork of Psych Engine I enjoy working on.
+
+if you want a similar project to this but more developed, i suggest looking into [troll engine](https://github.com/riconuts/FNF-Troll-Engine)   
+co-developed by the same person that made andromeda  
+and is more in-line with stuff like NotITG
