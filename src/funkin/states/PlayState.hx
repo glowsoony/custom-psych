@@ -223,6 +223,17 @@ class PlayState extends MusicState {
 		playfield.modifiers = true;
 		playfield.playerID = Settings.data.gameplaySettings['opponentMode'] ? 0 : 1;
 		playfield.rate = Settings.data.gameplaySettings['playbackRate'];
+
+		if (Settings.data.centeredNotes) {
+			for (i => line in playfield.strumlines.members) {
+				if (i == playfield.playerID) {
+					line.screenCenter(X);
+					continue;
+				}
+
+				line.visible = false;
+			}
+		}
 		
 		loadSong();
 

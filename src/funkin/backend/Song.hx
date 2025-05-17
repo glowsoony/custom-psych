@@ -31,11 +31,12 @@ typedef Section = {
 
 class FNFChart extends moonchart.formats.fnf.legacy.FNFLegacy {
  	public function new() {
+    	super();
+
     	this.indexedTypes = false;
     	this.bakedOffset = false;
     	this.offsetHolds = false;
-    
-    	super();
+
     	noteTypeResolver.register("Hurt Note", BasicNoteType.MINE);
   	}
 }
