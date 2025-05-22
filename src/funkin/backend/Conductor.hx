@@ -1,6 +1,7 @@
 package funkin.backend;
 
 import flixel.sound.FlxSoundGroup;
+import haxe.Timer;
 
 @:structInit
 class TimingPoint {
@@ -135,10 +136,6 @@ class Conductor extends flixel.FlxBasic {
 		if (inst.time == _lastTime) _resyncTimer += deltaTime;
 		else _resyncTimer = 0;
 
-		if (deltaTime >= AUDIO_REBOUND_TIME && audioResync) {
-			inst.time = _lastTime;
-			_resyncTimer = 0;
-		}
 		_lastTime = inst.time;
 
 		rawTime = inst.time - songOffset;
@@ -146,12 +143,13 @@ class Conductor extends flixel.FlxBasic {
 	*/
     static var _lastTime:Float = 0.0;
     static var _resyncTimer:Float = 0.0;
+	static var _lastTimestamp:Float = 0.0;
     public static dynamic function syncTime(deltaTime:Float):Void {
 		if (!playing) return;
 		
 		deltaTime *= 1000;
 		if (inst == null || !inst.playing) {
-			visualTime = rawTime += deltaTime;
+			visualTime = rawTime += deltaTime * rate;
 			return;
 		}
 
@@ -168,24 +166,13 @@ class Conductor extends flixel.FlxBasic {
 		// else just use the raw time
 		else _resyncTimer = 0;
 
-		// if the last frame was a certain amount of seconds ago
-		// force the audio time to the last point it was updated
-		// to prevent missing because of lag spikes
-
-		// in most cases this is something you should NEVER do because it sounds like shit and can be buggy
-		// but this is a last resort scenario
-		// that involves you losing a run
-		if (deltaTime >= AUDIO_REBOUND_TIME && audioResync) {	
-			inst.time = _lastTime;
-			_resyncTimer = 0; // set this to 0 just in case
-		}
-
 		_lastTime = inst.time;
 
 		// we seperate time into 2 values because of modcharting capabilities
 		// makes it easier to fuck with scroll velocities and such
 
 		// USE THIS FOR JUDGEMENT MATH, **NOT FOR VISUAL POSITION**
+		var currentTimestamp:Float = Timer.stamp();
 		rawTime = inst.time - songOffset;
 
 		// USE THIS FOR VISUAL POSITION, **NOT FOR JUDGEMENT MATH (ie note.rawHitTime)**
