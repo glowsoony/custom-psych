@@ -3,6 +3,7 @@
 	"composer": "Kawai Sprite",
 	"enemy": "darnell",
 	"player": "pico",
+	"spectator": "nene",
 	"timingPoints": [
 		{
 			"time": 0,

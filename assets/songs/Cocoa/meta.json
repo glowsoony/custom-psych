@@ -2,6 +2,8 @@
 	"songName": "Cocoa",
 	"composer": "Kawai Sprite",
 	"enemy": "parents",
+	"player": "bf-christmas",
+	"spectator": "gf-christmas",
 	"timingPoints": [
 		{
 			"time": 0,

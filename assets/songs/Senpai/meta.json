@@ -2,6 +2,9 @@
 	"songName": "Senpai",
 	"composer": "Kawai Sprite",
 	"enemy": "senpai",
+	"player": "bf-pixel",
+	"spectator": "gf-pixel",
+	"stage": "school",
 	"timingPoints": [
 		{
 			"time": 0,

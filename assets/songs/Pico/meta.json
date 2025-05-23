@@ -2,6 +2,7 @@
 	"songName": "Pico",
 	"composer": "Kawai Sprite",
 	"enemy": "pico",
+	"spectator": "gf",
 	"timingPoints": [
 		{
 			"time": 0,

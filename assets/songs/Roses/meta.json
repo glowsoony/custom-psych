@@ -1,7 +1,9 @@
 {
 	"songName": "Roses",
 	"composer": "Kawai Sprite",
-	"enemy": "senpai",
+	"enemy": "senpai-angry",
+	"spectator": "gf-pixel",
+	"player": "bf-pixel",
 	"timingPoints": [
 		{
 			"time": 0,

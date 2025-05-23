@@ -1,87 +1,75 @@
 {
 	animations: [
 		{
+			offsets: [
+				0,
+				0,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Angry Senpai Idle instance 1',
 			name: 'idle',
-			id: 'BF idle dance', 
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [0, 0]
 		},
 		{
+			offsets: [
+				3,
+				1,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Angry Senpai LEFT NOTE instance 1',
 			name: 'singLEFT',
-			id: 'BF NOTE LEFT0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [11, -7]
 		},
 		{
+			offsets: [
+				1,
+				1,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Angry Senpai DOWN NOTE instance 1',
 			name: 'singDOWN',
-			id: 'BF NOTE DOWN0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-13, -52]
 		},
 		{
+			offsets: [
+				0,
+				6,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Angry Senpai UP NOTE instance 1',
 			name: 'singUP',
-			id: 'BF NOTE UP0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-41, 28]
 		},
 		{
+			offsets: [
+				0,
+				0,
+			],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'Angry Senpai RIGHT NOTE instance 1',
 			name: 'singRIGHT',
-			id: 'BF NOTE RIGHT0',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-45, -6]
 		},
-		{
-			name: 'missLEFT',
-			id: 'BF NOTE LEFT MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [8, 18]
-		},
-		{
-			name: 'missDOWN',
-			id: 'BF NOTE DOWN MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-13, -22]
-		},
-		{
-			name: 'missUP',
-			id: 'BF NOTE UP MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-38, 24]
-		},
-		{
-			name: 'missRIGHT',
-			id: 'BF NOTE RIGHT MISS',
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [-40, 21]
-		}
 	],
-
-	antialiasing: true,
-	singDuration: 4,
-	scale: 6
 	healthColor: 0xFFFFAA6F,
-	sheets: 'characters/senpai-angry',
-	icon: 'senpai',
-	cameraOffset: [100, -100],
-	positionOffset: [150, 360],
-	
-	flipX: true
+	positionOffset: [
+		0,
+		0,
+	],
+	singDuration: 4,
+	flipX: false,
+	sheets: 'characters/senpaiAngry',
+	danceInterval: 2,
+	cameraOffset: [
+		0,
+		0,
+	],
+	icon: 'senpai-angry',
+	antialiasing: false,
+	scale: 6,
 }

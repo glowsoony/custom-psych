@@ -1,6 +1,8 @@
 {
 	"songName": "Test",
 	"composer": "Kawai Sprite",
+	"enemy": "bf-pixel-opponent",
+	"spectator": "gf",
 	"timingPoints": [
 		{
 			"time": 0,

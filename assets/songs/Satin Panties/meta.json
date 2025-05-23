@@ -2,6 +2,8 @@
 	"songName": "Satin Panties",
 	"composer": "Kawai Sprite",
 	"enemy": "mom",
+	"spectator": "gf-car",
+	"player": "bf-car",
 	"timingPoints": [
 		{
 			"time": 0,

@@ -2,6 +2,9 @@
 	"songName": "Thorns",
 	"composer": "Kawai Sprite",
 	"enemy": "spirit",
+	"player": "bf-pixel",
+	"spectator": "gf-pixel",
+	"stage": "school-evil",
 	"timingPoints": [
 		{
 			"time": 0,

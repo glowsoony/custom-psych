@@ -2,6 +2,7 @@
 	"songName": "South",
 	"composer": "Kawai Sprite",
 	"enemy": "kids",
+	"spectator": "gf",
 	"timingPoints": [
 		{
 			"time": 0,

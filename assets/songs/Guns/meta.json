@@ -2,6 +2,7 @@
 	"songName": "Guns",
 	"composer": "Kawai Sprite",
 	"enemy": "tankman",
+	"spectator": "gf-tankman",
 	"timingPoints": [
 		{
 			"time": 0,
