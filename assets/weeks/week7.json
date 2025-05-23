@@ -19,7 +19,7 @@
 
 	name: 'Tankman',
 	weekBefore: 'week6',
-	background: 'stage',
+	background: 'warzone',
 	characters: ['tankman', 'gf', 'bf'],
 	unlocked: true,
 

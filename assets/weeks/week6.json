@@ -19,7 +19,7 @@
 
 	name: 'Hating Simulator (ft. Moawling)',
 	weekBefore: 'week5',
-	background: 'stage',
+	background: 'school',
 	characters: ['senpai', 'gf', 'bf'],
 	unlocked: true,
 

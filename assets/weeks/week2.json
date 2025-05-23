@@ -19,7 +19,7 @@
 
 	name: 'Spooky Kids',
 	weekBefore: 'week1',
-	background: 'stage',
+	background: 'mansion',
 	characters: ['kids', 'gf', 'bf'],
 	unlocked: true,
 

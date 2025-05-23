@@ -44,7 +44,7 @@ class StoryMenuState extends MusicState {
 			characters.add(new MenuCharacter((FlxG.width - 960) * i - 150, 70));
 		}
 
-		add(tracksSprite = new FlxSprite(0, bgSprite.y + 425).loadGraphic(Paths.image('menus/story/tracks')));
+		add(tracksSprite = new FlxSprite(0, bgSprite.y + 425).loadGraphic(Paths.image('story/tracks')));
 		tracksSprite.antialiasing = Settings.data.antialiasing;
 		tracksSprite.x = 190 - (tracksSprite.width * 0.5);
 
@@ -53,10 +53,9 @@ class StoryMenuState extends MusicState {
 		tracklist.font = Paths.font('vcr.ttf');
 		tracklist.color = 0xFFE55777;
 
-
 		leftArrow = new FlxSprite(850, 462);
 		leftArrow.antialiasing = Settings.data.antialiasing;
-		leftArrow.frames = Paths.sparrowAtlas('menus/story/ui');
+		leftArrow.frames = Paths.sparrowAtlas('story/ui');
 		leftArrow.animation.addByPrefix('idle', "arrow left");
 		leftArrow.animation.addByPrefix('press', "arrow push left");
 		leftArrow.animation.play('idle');
@@ -68,7 +67,7 @@ class StoryMenuState extends MusicState {
 
 		rightArrow = new FlxSprite(leftArrow.x + 376, leftArrow.y);
 		rightArrow.antialiasing = Settings.data.antialiasing;
-		rightArrow.frames = Paths.sparrowAtlas('menus/story/ui');
+		rightArrow.frames = Paths.sparrowAtlas('story/ui');
 		rightArrow.animation.addByPrefix('idle', 'arrow right');
 		rightArrow.animation.addByPrefix('press', "arrow push right", 24, false);
 		rightArrow.animation.play('idle');
@@ -154,6 +153,11 @@ class StoryMenuState extends MusicState {
 		for (index => item in characters.members) {
 			item.name = curWeekFile.characters[index];
 		}
+
+		if (curWeekFile.background.length != 0) {
+			bgSprite.visible = true;
+			bgSprite.loadGraphic(Paths.image('story/backgrounds/${curWeekFile.background}'));
+		} else bgSprite.visible = false;
 		
 		curDiffSelected = curWeekFile.difficulties.indexOf(curDiffName);
 		if (curDiffSelected == -1) curDiffSelected = 0;

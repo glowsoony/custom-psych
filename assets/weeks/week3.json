@@ -19,7 +19,7 @@
 
 	name: 'Pico',
 	weekBefore: 'week2',
-	background: 'stage',
+	background: 'philly',
 	characters: ['pico', 'gf', 'bf'],
 	unlocked: true,
 

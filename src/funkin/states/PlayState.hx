@@ -680,7 +680,8 @@ class PlayState extends MusicState {
 		iconP2.centerOrigin();
 	}
 
-	public function endSong():Void {
+	// forceLeave:Bool - forces you to leave to the main menu
+	public function endSong(?forceLeave:Bool = false):Void {
 		ScriptHandler.call('endSong');
 
 		Conductor.stop();
@@ -692,7 +693,7 @@ class PlayState extends MusicState {
 			++currentLevel < songList.length ? MusicState.resetState() : exitToMenu = true;
 		}
 
-		if (exitToMenu) {
+		if (exitToMenu || forceLeave) {
 			persistentUpdate = true;
 			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
 			Conductor.play();

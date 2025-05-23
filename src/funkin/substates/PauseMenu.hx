@@ -124,7 +124,7 @@ class PauseMenu extends flixel.FlxSubState {
 
 				case 'Exit to Menu': 
 					destroyMusic();
-					PlayState.self.endSong();
+					PlayState.self.endSong(true);
 			}
 		}
 	}

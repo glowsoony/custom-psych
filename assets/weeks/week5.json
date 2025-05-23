@@ -19,7 +19,7 @@
 
 	name: '',
 	weekBefore: 'week4',
-	background: 'stage',
+	background: 'mall',
 	characters: ['parents', 'gf', 'bf'],
 	unlocked: true,
 
