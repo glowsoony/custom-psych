@@ -7,6 +7,8 @@ class StoryMenuState extends MusicState {
 	var bgSprite:FlxSprite;
 	var tracksSprite:FlxSprite;
 	var tracklist:FlxText;
+	var scoreTxt:FlxText;
+	var weekTitle:FlxText;
 
 	var diffSprite:FlxSprite;
 	var leftArrow:FlxSprite;
@@ -38,6 +40,14 @@ class StoryMenuState extends MusicState {
 		add(bgYellow);
 
 		add(bgSprite = new FlxSprite(bgYellow.x, bgYellow.y));
+
+		add(scoreTxt = new FlxText(10, 10, 0, 'WEEK SCORE: 0', 32));
+		scoreTxt.font = Paths.font('vcr.ttf');
+
+		add(weekTitle = new FlxText(0, 10, 750, '', 32));
+		weekTitle.font = Paths.font('vcr.ttf');
+		weekTitle.alignment = 'right';
+		weekTitle.alpha = 0.7;
 
 		add(characters = new FlxTypedSpriteGroup<MenuCharacter>());
 		for (i in 1...4) {
@@ -77,12 +87,21 @@ class StoryMenuState extends MusicState {
 	}
 
 	var allowInput:Bool = true;
+	var lerpScore:Int = 0;
+	var intendedScore:Int = 0;
 	override function update(delta:Float):Void {
 		super.update(delta);
 
 		var offsetY:Float = weekSprGroup.members[curSelected].targetY;
 		for (item in weekSprGroup.members)
 			item.y = FlxMath.lerp(item.targetY - offsetY + 480, item.y, Math.exp(-delta * 10.2));
+
+		lerpScore = Math.floor(FlxMath.lerp(intendedScore, lerpScore, Math.exp(-delta * 24)));
+
+		if (intendedScore != lerpScore) {
+			if (Math.abs(lerpScore - intendedScore) <= 10) lerpScore = intendedScore;
+			scoreTxt.text = 'WEEK SCORE: $lerpScore';
+		}
 
 		if (!allowInput) return;
 
@@ -104,6 +123,7 @@ class StoryMenuState extends MusicState {
 			}
 
 			PlayState.songList = [for (song in curWeekFile.songs) song.name];
+			PlayState.weekData = curWeekFile;
 			PlayState.storyMode = true;
 
 			Difficulty.list = curWeekFile.difficulties;
@@ -158,6 +178,11 @@ class StoryMenuState extends MusicState {
 			bgSprite.visible = true;
 			bgSprite.loadGraphic(Paths.image('story/backgrounds/${curWeekFile.background}'));
 		} else bgSprite.visible = false;
+
+		weekTitle.text = curWeekFile.name.toUpperCase();
+		weekTitle.x = FlxG.width - (weekTitle.width + 10);
+
+		intendedScore = Scores.weekList[curWeekFile.fileName];
 		
 		curDiffSelected = curWeekFile.difficulties.indexOf(curDiffName);
 		if (curDiffSelected == -1) curDiffSelected = 0;

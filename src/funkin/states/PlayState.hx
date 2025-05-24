@@ -27,8 +27,9 @@ class PlayState extends MusicState {
 	public static var songList:Array<String> = [];
 	public static var storyMode:Bool = false;
 	public static var currentLevel:Int = 0;
+	public static var weekData:WeekFile;
 
-	@:unreflective var disqualified:Bool = false;
+	@:unreflective static var disqualified:Bool = false;
 
 	@:isVar var botplay(get, set):Bool = false;
 	function get_botplay():Bool {
@@ -103,6 +104,8 @@ class PlayState extends MusicState {
 	var comboBreaks:Int = 0;
 	var score:Int = 0;
 	var accuracy:Float = 0.0;
+
+	static var storyScore:Int = 0;
 
 	var totalNotesPlayed:Float = 0.0;
 	var totalNotesHit:Int = 0;
@@ -561,7 +564,7 @@ class PlayState extends MusicState {
 		try {
 			Conductor.inst = FlxG.sound.load(Paths.audio('songs/$songID/Inst'));
 			Conductor.inst.onComplete = function() {
-				//if (!disqualified) {
+				if (!disqualified) {
 					Scores.set({
 						songID: songID,
 						difficulty: Difficulty.current,
@@ -571,7 +574,16 @@ class PlayState extends MusicState {
 
 						modifiers: Settings.data.gameplaySettings.copy()
 					});
-				//}
+
+					if (storyMode) {
+						storyScore += score;
+						if (currentLevel == songList.length - 1) {
+							Scores.weekList.set(weekData.fileName, storyScore);
+							weekData = null;
+							storyScore = 0;
+						}
+					}
+				}
 
 				endSong();
 				Scores.save();
@@ -703,6 +715,7 @@ class PlayState extends MusicState {
 			songList.resize(0);
 			storyMode = false;
 			currentLevel = 0;
+			disqualified = false;
 		} else prevCamFollow = camFollow;
 
 		Sys.println('');

@@ -18,6 +18,7 @@ class PlayData {
 
 class Scores {
 	public static var list:Array<PlayData> = [];
+	public static var weekList:Map<String, Int> = [];
 
 	static var _save:FlxSave;
 
@@ -25,11 +26,13 @@ class Scores {
 		_save = new FlxSave();
 		_save.bind('scores', Util.getSavePath());
 
-		if (_save.data.list != null) list = _save.data.list;
+		if (_save.data.list != null) list = _save.data.list.copy();
+		if (_save.data.weekList != null) weekList = _save.data.weekList.copy();
 	}
 
 	public static function save():Void {
-		_save.data.list = list;
+		_save.data.list = list.copy();
+		_save.data.weekList = weekList.copy();
 		_save.flush();
 	}
 
