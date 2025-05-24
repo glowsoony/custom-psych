@@ -25,8 +25,8 @@ class StoryMenuState extends MusicState {
 
 	var weekSprGroup:FlxTypedSpriteGroup<WeekSprite>;
 	var characters:FlxTypedSpriteGroup<MenuCharacter>;
-	var curSelected:Int = 0;
-	var curDiffSelected:Int = 0;
+	static var curSelected:Int = 0;
+	static var curDiffSelected:Int = Difficulty.list.indexOf(Difficulty.current);
 
 	override function create():Void {
 		super.create();

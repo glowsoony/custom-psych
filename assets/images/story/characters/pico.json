@@ -1,0 +1,7 @@
+{
+	idle: "M Pico Idle",
+	image: "Menu_Pico",
+	offset: [0, -120],
+	scale: 1,
+	antialiasing: true
+}

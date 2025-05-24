@@ -1,0 +1,7 @@
+{
+	idle: "M Tankman Idle",
+	image: "Menu_Tankman",
+	offset: [0, -95],
+	scale: 1,
+	antialiasing: true
+}

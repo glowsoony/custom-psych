@@ -20,7 +20,7 @@
 	name: 'Daddy Dearest',
 	weekBefore: 'tutorial',
 	background: 'stage',
-	characters: ['dad', 'gf', 'bf'],
+	characters: ['dad', 'bf', 'gf'],
 	unlocked: true,
 
 	hideStoryMode: false,

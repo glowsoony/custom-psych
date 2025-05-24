@@ -25,7 +25,7 @@
 	name: 'Due Debts',
 	weekBefore: 'week7',
 	background: 'phillystreets',
-	characters: ['darnell', 'nene', 'pico'],
+	characters: ['darnell', 'pico-player', 'nene'],
 	unlocked: true,
 
 	hideStoryMode: false,

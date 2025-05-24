@@ -129,16 +129,14 @@ class FreeplayState extends MusicState {
 		lerpScore = Math.floor(FlxMath.lerp(intendedScore, lerpScore, Math.exp(-elapsed * 24)));
 		lerpAccuracy = FlxMath.lerp(intendedAccuracy, lerpAccuracy, Math.exp(-elapsed * 12));
 
-		if (intendedScore != lerpScore || intendedAccuracy != lerpAccuracy) {
-			if (Math.abs(lerpScore - intendedScore) <= 10) lerpScore = intendedScore;
-			if (Math.abs(lerpAccuracy - intendedAccuracy) <= 0.01) lerpAccuracy = intendedAccuracy;
+		if (Math.abs(lerpScore - intendedScore) <= 10) lerpScore = intendedScore;
+		if (Math.abs(lerpAccuracy - intendedAccuracy) <= 0.01) lerpAccuracy = intendedAccuracy;
 
-			var accuracy:Array<String> = '${Util.truncateFloat(lerpAccuracy, 2)}'.split('.');
-			if (accuracy.length < 2) accuracy.push(''); // No decimals, add an empty space
-			while (accuracy[1].length < 2) accuracy[1] += '0'; // Less than 2 decimals in it, add decimals then
+		var accuracy:Array<String> = '${Util.truncateFloat(lerpAccuracy, 2)}'.split('.');
+		if (accuracy.length < 2) accuracy.push(''); // No decimals, add an empty space
+		while (accuracy[1].length < 2) accuracy[1] += '0'; // Less than 2 decimals in it, add decimals then
 			
-			scoreText.text = 'PERSONAL BEST: $lerpScore (${accuracy.join('.')}%)';
-		}
+		scoreText.text = 'PERSONAL BEST: $lerpScore (${accuracy.join('.')}%)';
 
 		positionStats();
 

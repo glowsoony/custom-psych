@@ -20,7 +20,7 @@
 	name: 'Pico',
 	weekBefore: 'week2',
 	background: 'philly',
-	characters: ['pico', 'gf', 'bf'],
+	characters: ['pico', 'bf', 'gf'],
 	unlocked: true,
 
 	hideStoryMode: false,

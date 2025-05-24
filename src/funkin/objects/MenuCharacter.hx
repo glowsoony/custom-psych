@@ -39,7 +39,7 @@ class MenuCharacter extends FlxSprite {
 
 		hasConfirmAnimation = false;
 		var filePath:String = '$value.json';
-		var path:String = 'images/menus/story/characters';
+		var path:String = 'images/story/characters';
 		if (!FileSystem.exists(Paths.get('$path/$filePath'))) {
 			filePath = '$DEFAULT_CHARACTER.json'; // If a character couldn't be found, change him to BF just to prevent a crash
 			color = FlxColor.BLACK;
@@ -52,7 +52,7 @@ class MenuCharacter extends FlxSprite {
 			trace('Error loading menu character file of "$value": $e');
 		}
 
-		frames = Paths.sparrowAtlas('menus/story/characters/${_file.image}');
+		frames = Paths.sparrowAtlas('story/characters/${_file.image}');
 		animation.addByPrefix('idle', _file.idle, 24);
 
 		var confirmAnim:String = _file.confirm;
@@ -61,7 +61,7 @@ class MenuCharacter extends FlxSprite {
 			if (animation.getByName('confirm') != null) // check for invalid animation
 				hasConfirmAnimation = true;
 		}
-		flipX = _file.flipX == true;
+		flipX = _file.flipX;
 
 		if (_file.scale != 1) {
 			scale.set(_file.scale, _file.scale);

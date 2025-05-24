@@ -1,0 +1,7 @@
+{
+	idle: 'idle',
+	image: 'darnell',
+	offset: [-20, -90],
+	antialiasing: true,
+	scale: 1,
+}

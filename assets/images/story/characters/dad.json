@@ -1,0 +1,7 @@
+{
+	image: 'Menu_Dad',
+	offset: [0, 0],
+	scale: 1,
+	idle: 'M Dad Idle',
+	antialiasing: true
+}

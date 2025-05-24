@@ -1,0 +1,7 @@
+{
+	idle: "M Parents Idle",
+	image: "Menu_Parents",
+	offset: [110, 10],
+	scale: 1,
+	antialiasing: true
+}

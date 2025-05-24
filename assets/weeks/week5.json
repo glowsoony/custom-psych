@@ -20,7 +20,7 @@
 	name: '',
 	weekBefore: 'week4',
 	background: 'mall',
-	characters: ['parents', 'gf', 'bf'],
+	characters: ['parents', 'bf', 'gf'],
 	unlocked: true,
 
 	hideStoryMode: false,

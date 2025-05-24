@@ -1,0 +1,8 @@
+{
+	confirm: "confirm",
+	antialiasing: true,
+	idle: "idle",
+	offset: [20, 0],
+	scale: 1,
+	image: "pico-player",
+}

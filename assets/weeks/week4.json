@@ -20,7 +20,7 @@
 	name: 'Mommy Mearest',
 	weekBefore: 'week3',
 	background: 'limo',
-	characters: ['mom', 'gf', 'bf'],
+	characters: ['mom', 'bf', 'gf'],
 	unlocked: true,
 
 	hideStoryMode: false,

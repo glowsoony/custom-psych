@@ -1,0 +1,7 @@
+{
+	idle: "M Senpai Idle",
+	image: "Menu_Senpai",
+	offset: [60, -70],
+	scale: 1,
+	antialiasing: true
+}

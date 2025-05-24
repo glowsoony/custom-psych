@@ -1,0 +1,7 @@
+{
+	idle: "M Spooky Kids Idle",
+	image: "Menu_Spooky_Kids",
+	offset: [0, -80],
+	scale: 1,
+	antialiasing: true
+}
