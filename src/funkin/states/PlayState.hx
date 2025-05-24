@@ -258,8 +258,6 @@ class PlayState extends MusicState {
 		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
 		noteSplashes.cameras = [camHUD];
 
-		moveCamera();
-
 		stage = switch stageName {
 			case 'stage': new StageWeek1();
 			case _: new Stage(stageName);
@@ -299,6 +297,8 @@ class PlayState extends MusicState {
 
 		add(bf = new Character(stage.player.x, stage.player.y, song.meta.player));
 		rightStrumline.character = bf;
+
+		moveCamera();
 
 		stage.create();
 
