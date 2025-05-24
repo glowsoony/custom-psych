@@ -1,7 +1,9 @@
 package funkin.states;
 
 import funkin.objects.MenuCharacter;
+import funkin.options.GameplayChangersSubstate;
 import flixel.graphics.FlxGraphic;
+import funkin.backend.Scores.WeekPlayData;
 
 class StoryMenuState extends MusicState {
 	var bgSprite:FlxSprite;
@@ -132,8 +134,28 @@ class StoryMenuState extends MusicState {
 			new FlxTimer().start(1, function(_) MusicState.switchState(new PlayState()));
 		}
 
+		if (FlxG.keys.justPressed.CONTROL) {
+			persistentUpdate = false;
+			openSubState(new GameplayChangersSubstate());
+		}
+
 		leftArrow.animation.play(Controls.pressed('ui_left') ? 'press' : 'idle');
 		rightArrow.animation.play(Controls.pressed('ui_right') ? 'press' : 'idle');
+	}
+
+	// regenerate the current score
+	// to accomodate possible modifier changes
+	override function closeSubState():Void {
+		super.closeSubState();
+
+		var play:WeekPlayData = Scores.getWeekPlay(curWeekFile.fileName, curDiffName);
+		intendedScore = play.score;
+
+		info('current modifiers just in case you forget somehow:');
+		for (key => value in Settings.data.gameplaySettings) {
+			Sys.println('$key: $value');
+		}
+		Sys.println('');
 	}
 
 	function changeDifficulty(?dir:Int = 0) {
@@ -182,7 +204,8 @@ class StoryMenuState extends MusicState {
 		weekTitle.text = curWeekFile.name.toUpperCase();
 		weekTitle.x = FlxG.width - (weekTitle.width + 10);
 
-		intendedScore = Scores.weekList[curWeekFile.fileName];
+		var play:WeekPlayData = Scores.getWeekPlay(curWeekFile.fileName, curDiffName);
+		intendedScore = play.score;
 		
 		curDiffSelected = curWeekFile.difficulties.indexOf(curDiffName);
 		if (curDiffSelected == -1) curDiffSelected = 0;

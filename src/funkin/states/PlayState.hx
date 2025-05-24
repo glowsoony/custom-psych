@@ -565,7 +565,7 @@ class PlayState extends MusicState {
 			Conductor.inst = FlxG.sound.load(Paths.audio('songs/$songID/Inst'));
 			Conductor.inst.onComplete = function() {
 				if (!disqualified) {
-					Scores.set({
+					Scores.setPlay({
 						songID: songID,
 						difficulty: Difficulty.current,
 
@@ -578,7 +578,12 @@ class PlayState extends MusicState {
 					if (storyMode) {
 						storyScore += score;
 						if (currentLevel == songList.length - 1) {
-							Scores.weekList.set(weekData.fileName, storyScore);
+							Scores.setWeekPlay({
+								weekID: weekData.fileName,
+								difficulty: Difficulty.current,
+								score: score,
+								modifiers: Settings.data.gameplaySettings.copy()
+							});
 							weekData = null;
 							storyScore = 0;
 						}

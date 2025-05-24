@@ -16,9 +16,19 @@ class PlayData {
 	public var modifiers:Map<String, Dynamic>;
 }
 
+@:structInit
+class WeekPlayData {
+	public var weekID:String;
+	public var difficulty:String;
+	public var score:Int;
+	public var modifiers:Map<String, Dynamic>;
+}
+
 class Scores {
 	public static var list:Array<PlayData> = [];
-	public static var weekList:Map<String, Int> = [];
+	public static var weekList:Array<WeekPlayData> = [];
+
+	public static final changeableModifiers:Array<String> = ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode', 'blind'];
 
 	static var _save:FlxSave;
 
@@ -36,10 +46,60 @@ class Scores {
 		_save.flush();
 	}
 
-	public static function get(songID:String, ?difficulty:String):PlayData {
+	public static function getWeekPlay(weekID:String, ?difficulty:String):WeekPlayData {
 		difficulty ??= Difficulty.current;
 
-		var plays:Array<PlayData> = filter(list, songID, difficulty);
+		var plays:Array<WeekPlayData> = filterWeekPlays(weekList, weekID, difficulty);
+		if (plays.length == 0) {
+			return {
+				weekID: weekID,
+				difficulty: difficulty,
+				score: 0,
+
+				modifiers: Settings.default_data.gameplaySettings.copy()
+			}
+		}
+
+		return plays[0];
+	}
+
+	public static function setWeekPlay(data:WeekPlayData):Void {
+		var filteredList:Array<WeekPlayData> = filterWeekPlays(weekList, data.weekID, data.difficulty);
+
+		info('current modifiers for "${data.weekID} - ${data.difficulty}":');
+		for (key => value in data.modifiers) Sys.println('$key: $value');
+		Sys.println('');
+
+		if (filteredList.length == 0) {
+			weekList.push(data);
+			return;
+		}
+
+		var oldPlay:WeekPlayData = weekList[weekList.indexOf(filteredList[0])];
+		if (oldPlay.score < data.score) oldPlay.score = data.score;
+	}
+
+	public static function filterWeekPlays(plays:Array<WeekPlayData>, weekID:String, difficulty:String):Array<WeekPlayData> {
+		var modifiers:Map<String, Dynamic> = Settings.data.gameplaySettings;
+
+		return plays.filter(function(play:WeekPlayData) {
+			for (m in changeableModifiers) {
+				if (!modifiers.exists(m)) return false;
+				if (play.modifiers[m] != modifiers[m]) return false;
+			}
+
+			return play.weekID == weekID && play.difficulty == difficulty;
+		});
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public static function getPlay(songID:String, ?difficulty:String):PlayData {
+		difficulty ??= Difficulty.current;
+
+		var plays:Array<PlayData> = filterPlays(list, songID, difficulty);
 		if (plays.length == 0) {
 			return {
 				songID: songID,
@@ -47,15 +107,15 @@ class Scores {
 				score: 0,
 				accuracy: 0.0,
 
-				modifiers: Settings.default_data.gameplaySettings
+				modifiers: Settings.default_data.gameplaySettings.copy()
 			}
 		}
 
 		return plays[0];
 	}
 
-	public static function set(data:PlayData):Void {
-		var filteredList:Array<PlayData> = filter(list, data.songID, data.difficulty);
+	public static function setPlay(data:PlayData):Void {
+		var filteredList:Array<PlayData> = filterPlays(list, data.songID, data.difficulty);
 
 		info('current modifiers for "${data.songID} - ${data.difficulty}":');
 		for (key => value in data.modifiers) Sys.println('$key: $value');
@@ -77,11 +137,11 @@ class Scores {
 		}
 	}
 
-	public static function filter(plays:Array<PlayData>, songID:String, difficulty:String):Array<PlayData> {
+	public static function filterPlays(plays:Array<PlayData>, songID:String, difficulty:String):Array<PlayData> {
 		var modifiers:Map<String, Dynamic> = Settings.data.gameplaySettings;
 
 		return plays.filter(function(play:PlayData) {
-			for (m in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode', 'blind']) {
+			for (m in changeableModifiers) {
 				if (!modifiers.exists(m)) return false;
 				if (play.modifiers[m] != modifiers[m]) return false;
 			}

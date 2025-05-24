@@ -194,14 +194,12 @@ class FreeplayState extends MusicState {
 	override function closeSubState():Void {
 		super.closeSubState();
 
-		var play:PlayData = Scores.get(songList[curSelected].id, curDiffName);
+		var play:PlayData = Scores.getPlay(songList[curSelected].id, curDiffName);
 		intendedScore = play.score;
 		intendedAccuracy = play.accuracy;
 
 		info('current modifiers just in case you forget somehow:');
-		for (i in ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains']) {
-			Sys.println('$i: ${Settings.data.gameplaySettings[i]}');
-		}
+		for (key => value in Settings.data.gameplaySettings) Sys.println('$key: $value');
 		Sys.println('');
 	}
 
@@ -211,7 +209,7 @@ class FreeplayState extends MusicState {
 		if (FlxG.keys.justPressed.HOME) {
 			curSelected = 0;
 			changeSelection();
-			holdTime = 0;	
+			holdTime = 0;
 		} else if (FlxG.keys.justPressed.END) {
 			curSelected = songList.length - 1;
 			changeSelection();
@@ -286,7 +284,7 @@ class FreeplayState extends MusicState {
 		var displayDiff:String = curDiffName.toUpperCase();
 		difficultyText.text = curDiffs.length == 1 ? displayDiff : '< $displayDiff >';
 
-		var play:PlayData = Scores.get(songList[curSelected].id, curDiffName);
+		var play:PlayData = Scores.getPlay(songList[curSelected].id, curDiffName);
 		intendedScore = play.score;
 		intendedAccuracy = play.accuracy;
 
