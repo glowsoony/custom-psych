@@ -226,6 +226,7 @@ class StoryMenuState extends MusicState {
 
 			weekList.push(week);
 
+			Mods.current = week.folder;
 			var weekSprite:WeekSprite = new WeekSprite(week.fileName);
 			weekSprite.screenCenter(X);
 			weekSprite.y = (bgSprite.y + 396) + ((weekSprite.height + 20) * index);
@@ -246,6 +247,6 @@ private class WeekSprite extends FlxSprite {
 
 	public function new(name:String) {
 		super();
-		loadGraphic(Paths.image('menus/story/$name'));
+		loadGraphic(Paths.image('story/weeks/$name'));
 	}	
 }
