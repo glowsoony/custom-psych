@@ -91,7 +91,7 @@ class Character extends FunkinSprite {
 
 	public var dancing(get, never):Bool;
 	function get_dancing():Bool {
-		return animation.curAnim != null && danceList.contains(animation.curAnim.name);
+		return animation.curAnim != null && (danceList.contains(animation.curAnim.name) || loopDanceList.contains(animation.curAnim.name));
 	}
 
 	var _singTimer:Float = 0.0;
@@ -119,12 +119,19 @@ class Character extends FunkinSprite {
 	}
 
 	var animIndex:Int = 0;
-	var danceList:Array<String> = ['idle'];
+	var danceList(default, set):Array<String> = ['idle'];
+	var loopDanceList:Array<String> = ['idle-loop']; 
+	// there could be a better way of detecting looped dancing butttttt
+	function set_danceList(value:Array<String>):Array<String> {
+		loopDanceList = [for (anim in value) '$anim-loop'];
+		return danceList = value;
+	}
+
 	public function dance(?forced:Bool = false) {
 		// support for gf/spooky kids characters
 		if (dancer && !forced) forced = dancing;
 
-		if (inEditor || !forced && (animation.curAnim == null || !animation.curAnim.finished)) return;
+		if (inEditor || !forced && (animation.curAnim == null || !(animation.curAnim.looped || animation.curAnim.finished))) return;
 
 		playAnim(danceList[animIndex]);
 		animIndex = FlxMath.wrap(animIndex + 1, 0, danceList.length - 1);
