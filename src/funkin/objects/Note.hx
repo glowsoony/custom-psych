@@ -113,6 +113,7 @@ class Note extends FlxSprite {
 
 			case 'Alt Anim':
 				animSuffix = '-alt';
+				texture = '';
 
 			default:
 				texture = '';
