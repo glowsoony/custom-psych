@@ -59,15 +59,15 @@ class Note extends FlxSprite {
 	public var canHit:Bool = true;
 	public var inHitRange(get, never):Bool;
 	function get_inHitRange():Bool {
-		final early:Bool = time < (Conductor.rawTime + ((Judgement.maxHitWindow * earlyHitMult) * Conductor.rate));
-		final late:Bool = time > (Conductor.rawTime - ((Judgement.maxHitWindow * lateHitMult) * Conductor.rate));
+		final early:Bool = time < Conductor.rawTime + (Judgement.max.timing * earlyHitMult * Conductor.rate);
+		final late:Bool = time > Conductor.rawTime - (Judgement.max.timing * lateHitMult * Conductor.rate);
 
 		return early && late;
 	}
 
 	public var tooLate(get, never):Bool;
 	function get_tooLate():Bool {
-		return rawHitTime < -((Judgement.maxHitWindow + 25));
+		return rawHitTime < -((Judgement.max.timing + 25));
 	}
 
 	public var hittable(get, never):Bool;
@@ -108,8 +108,8 @@ class Note extends FlxSprite {
 				texture = 'hurtNote';
 				ignore = true;
 				breakOnHit = true;
-				earlyHitMult = 0.8;
-				lateHitMult = 0.8;
+				earlyHitMult = 0.4;
+				lateHitMult = 0.4;
 
 			default:
 				texture = '';

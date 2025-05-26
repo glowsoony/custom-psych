@@ -316,14 +316,16 @@ class PlayField extends flixel.group.FlxGroup {
 		if (dir == -1 || keysHeld[dir] || FlxG.state.subState != null) return;
 		keysHeld[dir] = true;
 
-		var lowestTime:Float = Math.POSITIVE_INFINITY;
+		var closestDistance:Float = Math.POSITIVE_INFINITY;
 		var noteToHit:Note = null;
 		for (note in notes.members) {
 			if (note == null || !note.exists || !note.alive) continue;
 			if (note.player != playerID || !note.hittable || note.lane != dir || note.isSustain) continue;
-			if (note.time >= lowestTime) continue;
+			
+			var distance:Float = Math.abs(note.rawHitTime);
+			if (distance < closestDistance) closestDistance = distance;
+			else continue;
 
-			lowestTime = note.time;
 			noteToHit = note;
 		}
 
