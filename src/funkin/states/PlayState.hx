@@ -423,17 +423,17 @@ class PlayState extends MusicState {
 	}
 
 	function sustainHit(note:Note) {
-		playfield.currentPlayer.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+		playCharacterAnim(playfield.currentPlayer.character, note, 'sing');
 	}
 
 	dynamic function noteHit(strumline:Strumline, note:Note):Void {
 		if (note.player != playfield.playerID) {
-			strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+			playCharacterAnim(strumline.character, note, 'sing');
 			if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
 			return;
 		} else if (botplay) {
-			strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+			playCharacterAnim(strumline.character, note, 'sing');
 			if (note.isSustain) return;
 
 			final judge:Judgement = Judgement.min;
@@ -449,7 +449,11 @@ class PlayState extends MusicState {
 		}
 
 		judgeHit(strumline.members[note.lane], note);
-		strumline.character.playAnim('sing${Note.directions[note.lane].toUpperCase()}');
+		playCharacterAnim(strumline.character, note, 'sing');
+	}
+
+	inline function playCharacterAnim(character:Character, note:Note, prefix:String) {
+		character.playAnim('$prefix${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
 	}
 
 	dynamic function judgeHit(strum:Receptor, note:Note) {
@@ -539,8 +543,7 @@ class PlayState extends MusicState {
 			else Conductor.vocals.members[playfield.playerID].volume = 0;
 		}
 
-		playfield.currentPlayer.character.playAnim('miss${Note.directions[note.lane].toUpperCase()}');
-
+		playCharacterAnim(playfield.currentPlayer.character, note, 'miss');
 		updateScoreTxt();
 	}
 

@@ -111,6 +111,9 @@ class Note extends FlxSprite {
 				earlyHitMult = 0.4;
 				lateHitMult = 0.4;
 
+			case 'Alt Anim':
+				animSuffix = '-alt';
+
 			default:
 				texture = '';
 		}
