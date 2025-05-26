@@ -171,7 +171,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		}
 
 		add(character = new Character(0, 0, name));
-		character.autoIdle = false;
+		character.inEditor = true;
 
 		_characterFile = character.file;
 		healthBar.rightBar.color = _characterFile.healthColor;

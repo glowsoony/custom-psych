@@ -36,6 +36,7 @@ class Character extends FunkinSprite {
 	public var cameraOffset:FlxPoint = FlxPoint.get(0, 0);
 	public var dancer:Bool = false;
 	public var autoIdle:Bool = true;
+	public var inEditor:Bool = false;
 
 	public var file:CharacterFile;
 
@@ -71,6 +72,7 @@ class Character extends FunkinSprite {
 				animation.addByPrefix(anim.name, anim.id, anim.framerate, anim.looped);
 			} else {
 				animation.addByIndices(anim.name, anim.id, anim.indices, '', anim.framerate, anim.looped);
+				trace(anim.indices);
 			}
 
 			offsetMap.set(anim.name, anim.offsets);
@@ -84,11 +86,6 @@ class Character extends FunkinSprite {
 			dancer = true;
 		}
 
-		animation.finishCallback = anim -> {
-			if (!animation.exists('$anim-loop')) return;
-			playAnim('$anim-loop');
-		}
-
 		dance(true);
 	}
 
@@ -100,10 +97,25 @@ class Character extends FunkinSprite {
 	var _singTimer:Float = 0.0;
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-		if (!autoIdle || dancing) return;
+		if (animation.curAnim != null) {
+			var animName:String = animation.curAnim.name;
+			if (animation.curAnim.finished && animation.exists('$animName-loop')) {
+				animation.play('$animName-loop');
+			}
+		}
+
+		if (inEditor || !autoIdle || dancing) return;
 
 		_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
 		if (_singTimer <= 0.0) dance(true);
+
+		if (animation.curAnim == null) return;
+
+
+/*		animation.finishCallback = anim -> {
+			if (!animation.exists('$anim-loop') || inEditor) return;
+			animation.play('$anim-loop');
+		}*/
 	}
 
 	var animIndex:Int = 0;
@@ -112,7 +124,7 @@ class Character extends FunkinSprite {
 		// support for gf/spooky kids characters
 		if (dancer && !forced) forced = dancing;
 
-		if (!forced && (animation.curAnim == null || !animation.curAnim.finished)) return;
+		if (inEditor || !forced && (animation.curAnim == null || !animation.curAnim.finished)) return;
 
 		playAnim(danceList[animIndex]);
 		animIndex = FlxMath.wrap(animIndex + 1, 0, danceList.length - 1);
