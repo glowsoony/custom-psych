@@ -72,7 +72,6 @@ class Character extends FunkinSprite {
 				animation.addByPrefix(anim.name, anim.id, anim.framerate, anim.looped);
 			} else {
 				animation.addByIndices(anim.name, anim.id, anim.indices, '', anim.framerate, anim.looped);
-				trace(anim.indices);
 			}
 
 			offsetMap.set(anim.name, anim.offsets);
@@ -86,6 +85,11 @@ class Character extends FunkinSprite {
 			dancer = true;
 		}
 
+		animation.finishCallback = anim -> {
+			if (!animation.exists('$anim-loop') || inEditor) return;
+			animation.play('$anim-loop');
+		}
+
 		dance(true);
 	}
 
@@ -97,12 +101,6 @@ class Character extends FunkinSprite {
 	var _singTimer:Float = 0.0;
 	override function update(elapsed:Float) {
 		super.update(elapsed);
-		if (animation.curAnim != null) {
-			var animName:String = animation.curAnim.name;
-			if (animation.curAnim.finished && animation.exists('$animName-loop')) {
-				animation.play('$animName-loop');
-			}
-		}
 
 		if (inEditor || !autoIdle || dancing) return;
 
@@ -110,12 +108,6 @@ class Character extends FunkinSprite {
 		if (_singTimer <= 0.0) dance(true);
 
 		if (animation.curAnim == null) return;
-
-
-/*		animation.finishCallback = anim -> {
-			if (!animation.exists('$anim-loop') || inEditor) return;
-			animation.play('$anim-loop');
-		}*/
 	}
 
 	var animIndex:Int = 0;
