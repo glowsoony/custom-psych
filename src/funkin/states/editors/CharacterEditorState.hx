@@ -582,7 +582,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	}
 
 	function updateCameraPointer(?snap:Bool = false) {
-		var xPos:Float = character.getMidpoint().x - _characterFile.cameraOffset[0];
+		var xPos:Float = character.getMidpoint().x + _characterFile.cameraOffset[0];
 		var yPos:Float = character.getMidpoint().y + _characterFile.cameraOffset[1];
 		cameraFollowPointer.setPosition(xPos, yPos);
 

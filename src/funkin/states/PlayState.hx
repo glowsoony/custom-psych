@@ -814,7 +814,7 @@ class PlayState extends MusicState {
 		
 		if (bf == null) return;
 		camFollow.setPosition(bf.getMidpoint().x, bf.getMidpoint().y);
-		camFollow.x -= bf.cameraOffset.x;
+		camFollow.x += bf.cameraOffset.x;
 		camFollow.y += bf.cameraOffset.y;
 	}
 
