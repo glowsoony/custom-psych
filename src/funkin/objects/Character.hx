@@ -123,7 +123,7 @@ class Character extends FunkinSprite {
 		// support for gf/spooky kids characters
 		if (dancer && !forced) forced = dancing;
 
-		if (!forced && (animation.curAnim.looped || _singTimer > 0.0)) return;
+		if (!forced && _singTimer > 0.0) return;
 
 		playAnim(danceList[animIndex]);
 		animIndex = FlxMath.wrap(animIndex + 1, 0, danceList.length - 1);
