@@ -4,6 +4,7 @@
 	"enemy": "monster-christmas",
 	"spectator": "gf-christmas",
 	"player": "bf-christmas",
+	"stage": "mall-evil",
 	"timingPoints": [
 		{
 			"time": 0,

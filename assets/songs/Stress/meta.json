@@ -4,6 +4,7 @@
 	"enemy": "tankman",
 	"spectator": "pico-tankman",
 	"player": "bf-holding-gf",
+	"stage": "warzone",
 	"timingPoints": [
 		{
 			"time": 0,

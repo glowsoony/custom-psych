@@ -3,6 +3,7 @@
 	"composer": "Kawai Sprite",
 	"enemy": "tankman",
 	"spectator": "gf-tankman",
+	"stage": "warzone",
 	"timingPoints": [
 		{
 			"time": 0,

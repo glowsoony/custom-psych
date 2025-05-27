@@ -4,6 +4,7 @@
 	"enemy": "parents",
 	"player": "bf-christmas",
 	"spectator": "gf-christmas",
+	"stage": "mall",
 	"timingPoints": [
 		{
 			"time": 0,

@@ -4,6 +4,7 @@
 	"enemy": "mom",
 	"player": "bf-car",
 	"spectator": "gf-car",
+	"stage": "limo",
 	"timingPoints": [
 		{
 			"time": 0,

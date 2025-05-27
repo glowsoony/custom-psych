@@ -260,21 +260,19 @@ class PlayState extends MusicState {
 
 		stage = switch stageName {
 			case 'stage': new StageWeek1();
-			case _: new Stage(stageName);
-/*			
-			case 'spooky': new Spooky();
+			case 'mansion': new Mansion();
 			case 'philly': new Philly();
 			case 'limo': new Limo();
 			case 'mall': new Mall();
-			case 'mallEvil': new MallEvil();
+			case 'mall-evil': new MallEvil();
 			case 'school': new School();
-			case 'schoolEvil': new SchoolEvil();
-			case 'tank': new Tank();
-			case 'phillyStreets': new PhillyStreets();
-			case 'phillyBlazin': new PhillyBlazin();
-			*/
+			case 'school-evil': new SchoolEvil();
+			case 'warzone': new Warzone();
+			case 'philly-street': new PhillyStreet();
+			//case 'phillyBlazin': new PhillyBlazin();
+
+			case _: new Stage(stageName);
 		}
-		//ScriptHandler.loadFile('stages/$stageName.lua');
 		ScriptHandler.loadFile('stages/$stageName.hx');
 
 		cameraSpeed = stage.cameraSpeed;

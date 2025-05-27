@@ -4,6 +4,7 @@
 	"enemy": "darnell",
 	"player": "pico-playable",
 	"spectator": "nene",
+	"stage": "philly-street",
 	"timingPoints": [
 		{
 			"time": 0,

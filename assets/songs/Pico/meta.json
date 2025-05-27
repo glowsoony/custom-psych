@@ -3,6 +3,7 @@
 	"composer": "Kawai Sprite",
 	"enemy": "pico",
 	"spectator": "gf",
+	"stage": "philly",
 	"timingPoints": [
 		{
 			"time": 0,

@@ -4,6 +4,7 @@
 	"enemy": "senpai-angry",
 	"spectator": "gf-pixel",
 	"player": "bf-pixel",
+	"stage": "school",
 	"timingPoints": [
 		{
 			"time": 0,
