@@ -330,17 +330,17 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		tabMenu.add(reloadImage);
 
 		// Position Offset
-		tabMenu.add(positionOffsetXStepper = new PsychUINumericStepper(15, 230, 5, _characterFile.offset[0], 0, 5000, 0));
+		tabMenu.add(positionOffsetXStepper = new PsychUINumericStepper(15, 230, 5, _characterFile.offset[0], -5000, 5000, 0));
 		tabMenu.add(new FlxText(positionOffsetXStepper.x, positionOffsetXStepper.y - 14, 100, 'Position Offset (X):'));
 
-		tabMenu.add(positionOffsetYStepper = new PsychUINumericStepper(15, 265, 5, _characterFile.offset[1], 0, 5000, 0));
+		tabMenu.add(positionOffsetYStepper = new PsychUINumericStepper(15, 265, 5, _characterFile.offset[1], -5000, 5000, 0));
 		tabMenu.add(new FlxText(positionOffsetYStepper.x, positionOffsetYStepper.y - 14, 100, 'Position Offset (Y):'));
 
 		// Camera Offset
-		tabMenu.add(cameraOffsetXStepper = new PsychUINumericStepper(125, 230, 5, _characterFile.cameraOffset[0], 0, 5000, 0));
+		tabMenu.add(cameraOffsetXStepper = new PsychUINumericStepper(125, 230, 5, _characterFile.cameraOffset[0], -5000, 5000, 0));
 		tabMenu.add(new FlxText(cameraOffsetXStepper.x, cameraOffsetXStepper.y - 14, 100, 'Camera Offset (X):'));
 
-		tabMenu.add(cameraOffsetYStepper = new PsychUINumericStepper(125, 265, 5, _characterFile.cameraOffset[1], 0, 5000, 0));
+		tabMenu.add(cameraOffsetYStepper = new PsychUINumericStepper(125, 265, 5, _characterFile.cameraOffset[1], -5000, 5000, 0));
 		tabMenu.add(new FlxText(cameraOffsetYStepper.x, cameraOffsetYStepper.y - 14, 100, 'Camera Offset (Y):'));
 
 		// Dance Interval
