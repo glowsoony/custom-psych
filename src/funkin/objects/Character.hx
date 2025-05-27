@@ -37,6 +37,7 @@ class Character extends FunkinSprite {
 	public var dancer:Bool = false;
 	public var autoIdle:Bool = true;
 	public var inEditor:Bool = false;
+	public var specialAnim:Bool = false;
 
 	public var file:CharacterFile;
 
@@ -86,6 +87,7 @@ class Character extends FunkinSprite {
 		}
 
 		animation.finishCallback = anim -> {
+			if (specialAnim) specialAnim = false;
 			if (!animation.exists('$anim-loop') || inEditor) return;
 			animation.play('$anim-loop');
 		}
@@ -102,7 +104,7 @@ class Character extends FunkinSprite {
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (inEditor || !autoIdle || dancing) return;
+		if (inEditor || specialAnim || !autoIdle || dancing) return;
 
 		_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
 		if (_singTimer <= 0.0) dance(true);

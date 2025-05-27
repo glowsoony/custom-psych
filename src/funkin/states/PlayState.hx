@@ -448,8 +448,8 @@ class PlayState extends MusicState {
 
 		judgeHit(strumline.members[note.lane], note);
 		
-		if (note.type == 'Hey!' && strumline.character.animation.exists('hey')) {
-			strumline.character.playAnim('hey');
+		if (note.type == 'Hey!' && strumline.character.animation.exists('cheer')) {
+			strumline.character.playAnim('cheer');
 		} else playCharacterAnim(strumline.character, note, 'sing');
 	}
 
@@ -623,6 +623,70 @@ class PlayState extends MusicState {
 
 	function eventTriggered(event:Event):Void {
 		ScriptHandler.call('eventTriggered', [event.name, event.args]);
+
+		switch (event.name) {
+			case 'Hey!':
+				var character:Character = switch Std.parseInt(event.args[0]) {
+					case 0: dad;
+					case 1: gf;
+					case 2: bf;
+
+					case _: bf;
+				}
+
+				if (character.animation.exists('cheer')) {
+					character.playAnim('cheer', true);
+					character.specialAnim = true;
+				}
+
+			case 'Play Animation':
+				var animName:String = event.args[1];
+				var character:Character = switch Std.parseInt(event.args[0]) {
+					case 0: dad;
+					case 1: gf;
+					case 2: bf;
+
+					case _: bf;
+				}
+
+				if (character.animation.exists(animName)) {
+					character.playAnim(animName, true);
+					character.specialAnim = true;
+				}
+
+			case 'Set GF Speed':
+				gfSpeed = Math.floor(Math.max(Std.parseInt(event.args[0]), 1));
+
+			case 'Play Sound':
+				FlxG.sound.play(Paths.sound(event.args[0]), Std.parseFloat(event.args[1]));
+
+			case 'Add Camera Zoom':
+				if (Settings.data.cameraZooms && camGame.zoom < 1.35) {
+					camGame.zoom += Std.parseFloat(event.args[0]);
+					camHUD.zoom += Std.parseFloat(event.args[1]);
+				}
+
+			case 'Screen Shake':
+				var camerasToTarget:Array<FlxCamera> = [camGame, camHUD];
+				for (i => cam in camerasToTarget) {
+					var duration:Float = Std.parseFloat(event.args[0].split(',')[i]);
+					var intensity:Float = Std.parseFloat(event.args[1].split(',')[i]);
+
+					if (duration <= 0 || intensity <= 0) continue;
+					cam.shake(intensity, duration);
+				}
+
+			case 'Change Scroll Speed':
+				if (Settings.data.gameplaySettings['scrollType'] != 'constant') {
+					var originalSpeed:Float = Settings.data.gameplaySettings['scrollSpeed'];
+					var duration:Float = Std.parseFloat(event.args[1]);
+					var value:Float = song.speed * originalSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
+
+					if (duration <= 0) playfield.scrollSpeed = value;
+					else FlxTween.tween(playfield, {scrollSpeed: value}, duration / playfield.rate);
+				}
+		}
+
 		stage.eventTriggered(event);
 	}
 
