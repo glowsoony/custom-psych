@@ -569,7 +569,6 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		cameraOffsetXStepper.value = _characterFile.cameraOffset[0];
 		cameraOffsetYStepper.value = _characterFile.cameraOffset[1];
 		danceIntervalStepper.value = _characterFile.danceInterval;
-		updateCameraPointer();
 
 		// because sometimes some stuff won't update properly
 		icon.change(iconInputText.text);
@@ -579,6 +578,8 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		character.antialiasing = antialiasingCheckBox.checked;
 		character.offset.set(positionOffsetXStepper.value * scaleStepper.value, positionOffsetYStepper.value * scaleStepper.value);
 		healthBar.rightBar.color = _characterFile.healthColor;
+
+		updateCameraPointer();
 	}
 
 	function updateCameraPointer(?snap:Bool = false) {
