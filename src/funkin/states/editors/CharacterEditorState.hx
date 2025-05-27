@@ -236,6 +236,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 			ghost.visible = true;
 
 			ghost.updateHitbox();
+			ghost.offset.copyFrom(character.offset);
 
 			if (character.animation.curAnim == null) return;
 
