@@ -559,6 +559,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		character.updateHitbox();
 		character.flipX = flipXCheckBox.checked;
 		character.antialiasing = antialiasingCheckBox.checked;
+		character.offset.set(_characterFile.offset[0], _characterFile.offset[1]); // ??????? idk why i have to set this again but whatever
 		healthBar.rightBar.color = _characterFile.healthColor;
 	}
 
