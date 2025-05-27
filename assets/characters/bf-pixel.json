@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF IDLE instance 1',
 			name: 'idle',
+			id: 'BF IDLE instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF LEFT NOTE instance 1',
 			name: 'singLEFT',
+			id: 'BF LEFT NOTE instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF DOWN NOTE instance 1',
 			name: 'singDOWN',
+			id: 'BF DOWN NOTE instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF UP NOTE instance 1',
 			name: 'singUP',
+			id: 'BF UP NOTE instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF RIGHT NOTE instance 1',
 			name: 'singRIGHT',
+			id: 'BF RIGHT NOTE instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -61,10 +61,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF LEFT MISS instance 1',
 			name: 'missLEFT',
+			id: 'BF LEFT MISS instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -72,10 +72,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF DOWN MISS instance 1',
 			name: 'missDOWN',
+			id: 'BF DOWN MISS instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -83,10 +83,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF UP MISS instance 1',
 			name: 'missUP',
+			id: 'BF UP MISS instance 1',
+			looped: false,
+			indices: [],
 		},
 		{
 			offsets: [
@@ -94,10 +94,10 @@
 				0,
 			],
 			framerate: 24,
+			name: 'missRIGHT',
+			id: 'BF RIGHT MISS instance 1',
 			looped: false,
 			indices: [],
-			id: 'BF RIGHT MISS instance 1',
-			name: 'missRIGHT',
 		},
 	],
 	healthColor: -8661258,
@@ -106,8 +106,8 @@
 	sheets: 'characters/bfPixel',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
-		-100,
+		-275,
+		175,
 	],
 	icon: 'bf-pixel',
 	antialiasing: false,

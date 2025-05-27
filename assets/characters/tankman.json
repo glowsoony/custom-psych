@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
-			indices: [],
 			id: 'Tankman Idle Dance 1',
-			looped: false,
+			indices: [],
 			name: 'idle',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				-13,
 			],
 			framerate: 24,
-			indices: [],
 			id: 'Tankman Note Left 1',
-			looped: false,
+			indices: [],
 			name: 'singLEFT',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				-110,
 			],
 			framerate: 24,
-			indices: [],
 			id: 'Tankman DOWN note 1',
-			looped: false,
+			indices: [],
 			name: 'singDOWN',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				49,
 			],
 			framerate: 24,
-			indices: [],
 			id: 'Tankman UP note 1',
-			looped: false,
+			indices: [],
 			name: 'singUP',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				-28,
 			],
 			framerate: 24,
-			indices: [],
 			id: 'Tankman Right Note 1',
-			looped: false,
+			indices: [],
 			name: 'singRIGHT',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -61,10 +61,10 @@
 				-9,
 			],
 			framerate: 24,
-			indices: [],
 			id: 'TANKMAN UGH 1',
-			looped: false,
+			indices: [],
 			name: 'ugh',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -72,10 +72,10 @@
 				16,
 			],
 			framerate: 24,
-			indices: [],
 			id: 'PRETTY GOOD tankman 1',
-			looped: false,
+			indices: [],
 			name: 'pretty good',
+			looped: false,
 		},
 	],
 	healthColor: -1,
@@ -84,8 +84,8 @@
 	sheets: 'characters/tankman',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
-		-100,
+		95,
+		125,
 	],
 	icon: 'tankman',
 	antialiasing: true,

@@ -6,7 +6,8 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
+			id: 'spooky dance idle',
+			name: 'danceLeft',
 			indices: [
 				0,
 				1,
@@ -17,8 +18,7 @@
 				6,
 				7,
 			],
-			id: 'spooky dance idle',
-			name: 'danceLeft',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -26,7 +26,8 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
+			id: 'spooky dance idle',
+			name: 'danceRight',
 			indices: [
 				8,
 				9,
@@ -37,8 +38,7 @@
 				14,
 				15,
 			],
-			id: 'spooky dance idle',
-			name: 'danceRight',
+			looped: false,
 		},
 		{
 			offsets: [
@@ -46,10 +46,10 @@
 				-20,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
 			id: 'note sing left',
 			name: 'singLEFT',
+			indices: [],
+			looped: false,
 		},
 		{
 			offsets: [
@@ -57,10 +57,10 @@
 				-148,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
 			id: 'spooky DOWN note',
 			name: 'singDOWN',
+			indices: [],
+			looped: false,
 		},
 		{
 			offsets: [
@@ -68,10 +68,10 @@
 				20,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
 			id: 'spooky UP NOTE',
 			name: 'singUP',
+			indices: [],
+			looped: false,
 		},
 		{
 			offsets: [
@@ -79,20 +79,20 @@
 				-18,
 			],
 			framerate: 24,
-			looped: false,
-			indices: [],
 			id: 'spooky sing right',
 			name: 'singRIGHT',
+			indices: [],
+			looped: false,
 		},
 	],
 	healthColor: -2785792,
-	singDuration: 4,
+	singDuration: 10,
 	flipX: false,
 	sheets: 'characters/kids',
 	danceInterval: 1,
 	cameraOffset: [
-		100,
-		-100,
+		-5,
+		95,
 	],
 	icon: 'kids',
 	antialiasing: true,

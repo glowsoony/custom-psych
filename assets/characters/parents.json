@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Christmas Idle',
+			looped: false,
 			name: 'idle',
+			id: 'Parent Christmas Idle',
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				20,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Left Note Dad',
+			looped: false,
 			name: 'singLEFT',
+			id: 'Parent Left Note Dad',
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				-24,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Down Note Dad',
+			looped: false,
 			name: 'singDOWN',
+			id: 'Parent Down Note Dad',
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				24,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Up Note Dad',
+			looped: false,
 			name: 'singUP',
+			id: 'Parent Up Note Dad',
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				-20,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Right Note Dad',
+			looped: false,
 			name: 'singRIGHT',
+			id: 'Parent Right Note Dad',
 		},
 		{
 			offsets: [
@@ -61,10 +61,10 @@
 				18,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Left Note Mom',
+			looped: false,
 			name: 'singLEFT-alt',
+			id: 'Parent Left Note Mom',
 		},
 		{
 			offsets: [
@@ -72,10 +72,10 @@
 				-24,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Down Note Mom',
+			looped: false,
 			name: 'singDOWN-alt',
+			id: 'Parent Down Note Mom',
 		},
 		{
 			offsets: [
@@ -83,10 +83,10 @@
 				26,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Up Note Mom',
+			looped: false,
 			name: 'singUP-alt',
+			id: 'Parent Up Note Mom',
 		},
 		{
 			offsets: [
@@ -94,10 +94,10 @@
 				-19,
 			],
 			framerate: 24,
-			looped: false,
 			indices: [],
-			id: 'Parent Right Note Mom',
+			looped: false,
 			name: 'singRIGHT-alt',
+			id: 'Parent Right Note Mom',
 		},
 	],
 	healthColor: -3907922,
@@ -106,7 +106,7 @@
 	sheets: 'characters/parents',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
+		-125,
 		-100,
 	],
 	icon: 'parents',

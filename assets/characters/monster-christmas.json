@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
+			name: 'idle',
+			id: 'monster idle',
 			looped: false,
 			indices: [],
-			id: 'monster idle',
-			name: 'idle',
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				9,
 			],
 			framerate: 24,
+			name: 'singLEFT',
+			id: 'Monster Right note',
 			looped: false,
 			indices: [],
-			id: 'Monster Right note',
-			name: 'singLEFT',
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				-88,
 			],
 			framerate: 24,
+			name: 'singDOWN',
+			id: 'monster down',
 			looped: false,
 			indices: [],
-			id: 'monster down',
-			name: 'singDOWN',
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				58,
 			],
 			framerate: 24,
+			name: 'singUP',
+			id: 'monster up note',
 			looped: false,
 			indices: [],
-			id: 'monster up note',
-			name: 'singUP',
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				12,
 			],
 			framerate: 24,
+			name: 'singRIGHT',
+			id: 'Monster left note',
 			looped: false,
 			indices: [],
-			id: 'Monster left note',
-			name: 'singRIGHT',
 		},
 	],
 	healthColor: -786578,
@@ -62,8 +62,8 @@
 	sheets: 'characters/monsterChristmas',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
-		-100,
+		10,
+		-60,
 	],
 	icon: 'monster',
 	antialiasing: true,

@@ -62,8 +62,8 @@
 	sheets: 'characters/senpai',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
-		-100,
+		-105,
+		-145,
 	],
 	icon: 'senpai',
 	antialiasing: false,

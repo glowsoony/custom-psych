@@ -128,8 +128,8 @@
 	sheets: 'characters/bf',
 	danceInterval: 2,
 	cameraOffset: [
-		0,
-		0,
+		-250,
+		210,
 	],
 	icon: 'bf',
 	antialiasing: true,

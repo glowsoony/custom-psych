@@ -106,8 +106,8 @@
 	sheets: 'characters/bfPixel',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
-		-100,
+		50,
+		155,
 	],
 	icon: 'bf-pixel',
 	antialiasing: false,

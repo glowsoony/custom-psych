@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
+			name: 'idle',
+			id: 'idle spirit_',
 			looped: false,
 			indices: [],
-			id: 'idle spirit_',
-			name: 'idle',
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				-1,
 			],
 			framerate: 24,
+			name: 'singLEFT',
+			id: 'left_',
 			looped: false,
 			indices: [],
-			id: 'left_',
-			name: 'singLEFT',
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				0,
 			],
 			framerate: 24,
+			name: 'singDOWN',
+			id: 'spirit down_',
 			looped: false,
 			indices: [],
-			id: 'spirit down_',
-			name: 'singDOWN',
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				20,
 			],
 			framerate: 24,
+			name: 'singUP',
+			id: 'up_',
 			looped: false,
 			indices: [],
-			id: 'up_',
-			name: 'singUP',
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				4,
 			],
 			framerate: 24,
+			name: 'singRIGHT',
+			id: 'right_',
 			looped: false,
 			indices: [],
-			id: 'right_',
-			name: 'singRIGHT',
 		},
 	],
 	healthColor: -50066,
@@ -62,14 +62,14 @@
 	sheets: 'characters/spirit',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
-		-100,
+		165,
+		-20,
 	],
 	icon: 'spirit',
 	antialiasing: false,
 	offset: [
 		-32,
-		-50,
+		-70,
 	],
 	scale: 6,
 }

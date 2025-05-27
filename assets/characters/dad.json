@@ -1,71 +1,75 @@
 {
-	"animations": [
+	animations: [
 		{
-			"offsets": [
+			offsets: [
 				0,
-				0
+				0,
 			],
-			"framerate": 24,
-			"looped": false,
-			"name": "idle",
-			"id": "idle",
-			"indices": []
+			framerate: 24,
+			name: 'idle',
+			looped: false,
+			indices: [],
+			id: 'idle',
 		},
 		{
-			"offsets": [
+			offsets: [
 				-10,
-				9
+				9,
 			],
-			"framerate": 24,
-			"looped": false,
-			"name": "singLEFT",
-			"id": "singLEFT",
-			"indices": []
+			framerate: 24,
+			name: 'singLEFT',
+			looped: false,
+			indices: [],
+			id: 'singLEFT',
 		},
 		{
-			"offsets": [
+			offsets: [
 				2,
-				-31
+				-31,
 			],
-			"framerate": 24,
-			"looped": false,
-			"name": "singDOWN",
-			"id": "singDOWN",
-			"indices": []
+			framerate: 24,
+			name: 'singDOWN',
+			looped: false,
+			indices: [],
+			id: 'singDOWN',
 		},
 		{
-			"offsets": [
+			offsets: [
 				-9,
-				47
+				47,
 			],
-			"framerate": 24,
-			"looped": false,
-			"name": "singUP",
-			"id": "singUP",
-			"indices": []
+			framerate: 24,
+			name: 'singUP',
+			looped: false,
+			indices: [],
+			id: 'singUP',
 		},
 		{
-			"offsets": [
+			offsets: [
 				-3,
-				26
+				26,
 			],
-			"framerate": 24,
-			"looped": false,
-			"name": "singRIGHT",
-			"id": "singRIGHT",
-			"indices": []
-		}
+			framerate: 24,
+			name: 'singRIGHT',
+			looped: false,
+			indices: [],
+			id: 'singRIGHT',
+		},
 	],
-	"healthColor": -5282098,
-	"singDuration": 4,
-	"flipX": false,
-	"sheets": "characters/daddyDearest",
-	"danceInterval": 2,
-	"cameraOffset": [
-		100,
-		-100
+	healthColor: -5282098,
+	singDuration: 4,
+	flipX: false,
+	sheets: 'characters/daddyDearest',
+	danceInterval: 2,
+	cameraOffset: [
+		160,
+		-105,
 	],
-	"icon": "dad",
-	"antialiasing": true,
-	"scale": 1
+	icon: 'dad',
+	antialiasing: true,
+	offset: [
+		0,
+		0,
+	],
+	scale: 1,
 }

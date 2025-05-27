@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
-			name: 'idle',
 			id: 'Pico Idle Dance',
-			looped: false,
+			name: 'idle',
 			indices: [],
+			looped: false,
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				-12,
 			],
 			framerate: 24,
-			name: 'singLEFT',
 			id: 'Pico NOTE LEFT0',
-			looped: false,
+			name: 'singLEFT',
 			indices: [],
+			looped: false,
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				-86,
 			],
 			framerate: 24,
-			name: 'singDOWN',
 			id: 'Pico Down Note0',
-			looped: false,
+			name: 'singDOWN',
 			indices: [],
+			looped: false,
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				26,
 			],
 			framerate: 24,
-			name: 'singUP',
 			id: 'pico Up note0',
-			looped: false,
+			name: 'singUP',
 			indices: [],
+			looped: false,
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				1,
 			],
 			framerate: 24,
-			name: 'singRIGHT',
 			id: 'Pico Note Right0',
-			looped: false,
+			name: 'singRIGHT',
 			indices: [],
+			looped: false,
 		},
 	],
 	healthColor: -4728747,
@@ -62,8 +62,8 @@
 	sheets: 'characters/pico',
 	danceInterval: 2,
 	cameraOffset: [
-		100,
-		-100,
+		-300,
+		205,
 	],
 	icon: 'pico',
 	antialiasing: true,
