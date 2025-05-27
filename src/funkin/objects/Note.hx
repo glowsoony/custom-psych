@@ -111,7 +111,7 @@ class Note extends FlxSprite {
 				earlyHitMult = 0.4;
 				lateHitMult = 0.4;
 
-			case 'Alt Anim':
+			case 'Alt Animation':
 				animSuffix = '-alt';
 				texture = '';
 
@@ -160,7 +160,7 @@ class Note extends FlxSprite {
 		this.player = data.player;
 		this.type = data.type;
 		this.sustainLength = data.length;
-		this.animSuffix = data.altAnim ? '-alt' : '';
+		//this.animSuffix = data.altAnim ? '-alt' : '';
 
 		if (!isSustain && lane < colours.length) { // Doing this 'if' check to fix the warnings on Senpai songs
 			animation.play('default');

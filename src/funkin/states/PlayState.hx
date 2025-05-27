@@ -449,7 +449,10 @@ class PlayState extends MusicState {
 		}
 
 		judgeHit(strumline.members[note.lane], note);
-		playCharacterAnim(strumline.character, note, 'sing');
+		
+		if (note.type == 'Hey!' && strumline.character.animation.exists('hey')) {
+			strumline.character.playAnim('hey');
+		} else playCharacterAnim(strumline.character, note, 'sing');
 	}
 
 	inline function playCharacterAnim(character:Character, note:Note, prefix:String) {
