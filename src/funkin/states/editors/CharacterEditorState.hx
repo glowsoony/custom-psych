@@ -569,7 +569,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		cameraOffsetXStepper.value = _characterFile.cameraOffset[0];
 		cameraOffsetYStepper.value = _characterFile.cameraOffset[1];
 		danceIntervalStepper.value = _characterFile.danceInterval;
-		cameraFollowPointer.setPosition(_characterFile.cameraOffset[0], _characterFile.cameraOffset[1]);
+		updateCameraPointer();
 
 		// because sometimes some stuff won't update properly
 		icon.change(iconInputText.text);
