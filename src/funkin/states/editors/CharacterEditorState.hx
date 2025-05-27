@@ -160,6 +160,28 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 					character.singDuration = singDurationStepper.value;
 				}
 
+				if (sender == danceIntervalStepper) {
+					_characterFile.danceInterval = Math.floor(danceIntervalStepper.value);
+				}
+
+				if (sender == positionOffsetXStepper) {
+					_characterFile.offset[0] = positionOffsetXStepper.value;
+					character.offset.x = positionOffsetXStepper.value;
+				}
+
+				if (sender == positionOffsetYStepper) {
+					_characterFile.offset[1] = positionOffsetYStepper.value;
+					character.offset.y = positionOffsetYStepper.value;
+				}
+
+				if (sender == cameraOffsetXStepper) {
+					_characterFile.cameraOffset[0] = cameraOffsetXStepper.value;
+				}
+
+				if (sender == cameraOffsetYStepper) {
+					_characterFile.cameraOffset[1] = cameraOffsetYStepper.value;
+				}
+
 			case _:
 		}
 	}
@@ -180,7 +202,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	}
 
 	function makeUI():Void {
-		add(characterUIBox = new PsychUIBox((FlxG.width - 275) - 100, 155, 350, 280, ['Character', 'Animations']));
+		add(characterUIBox = new PsychUIBox((FlxG.width - 275) - 100, 155, 350, 310, ['Character', 'Animations']));
 		characterUIBox.scrollFactor.set();
 		characterUIBox.cameras = [camHUD];
 		characterUIBox.canMinimize = false;
@@ -288,6 +310,11 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	var healthColourInputText:PsychUIInputText;
 	var flipXCheckBox:PsychUICheckBox;
 	var antialiasingCheckBox:PsychUICheckBox;
+	var positionOffsetXStepper:PsychUINumericStepper;
+	var positionOffsetYStepper:PsychUINumericStepper;
+	var cameraOffsetXStepper:PsychUINumericStepper;
+	var cameraOffsetYStepper:PsychUINumericStepper;
+	var danceIntervalStepper:PsychUINumericStepper;
 	function addCharacterTab():Void {
 		var tabMenu:FlxSpriteGroup = characterUIBox.getTab('Character').menu;
 
@@ -301,6 +328,24 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 			reloadCharacterImage();
 		});
 		tabMenu.add(reloadImage);
+
+		// Position Offset
+		tabMenu.add(positionOffsetXStepper = new PsychUINumericStepper(15, 230, 5, _characterFile.offset[0], 0, 5000, 0));
+		tabMenu.add(new FlxText(positionOffsetXStepper.x, positionOffsetXStepper.y - 14, 100, 'Position Offset (X):'));
+
+		tabMenu.add(positionOffsetYStepper = new PsychUINumericStepper(15, 265, 5, _characterFile.offset[1], 0, 5000, 0));
+		tabMenu.add(new FlxText(positionOffsetYStepper.x, positionOffsetYStepper.y - 14, 100, 'Position Offset (Y):'));
+
+		// Camera Offset
+		tabMenu.add(cameraOffsetXStepper = new PsychUINumericStepper(125, 230, 5, _characterFile.cameraOffset[0], 0, 5000, 0));
+		tabMenu.add(new FlxText(cameraOffsetXStepper.x, cameraOffsetXStepper.y - 14, 100, 'Camera Offset (X):'));
+
+		tabMenu.add(cameraOffsetYStepper = new PsychUINumericStepper(125, 265, 5, _characterFile.cameraOffset[1], 0, 5000, 0));
+		tabMenu.add(new FlxText(cameraOffsetYStepper.x, cameraOffsetYStepper.y - 14, 100, 'Camera Offset (Y):'));
+
+		// Dance Interval
+		tabMenu.add(danceIntervalStepper = new PsychUINumericStepper(125, 180, 1, _characterFile.danceInterval, 0, 8, 0));
+		tabMenu.add(new FlxText(danceIntervalStepper.x, danceIntervalStepper.y - 14, 100, 'Dance Interval:'));
 
 		// Icon
 		tabMenu.add(iconInputText = new PsychUIInputText(15, 66, 75, icon.name, 8));
@@ -502,6 +547,11 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		scaleStepper.value = _characterFile.scale;
 		flipXCheckBox.checked = _characterFile.flipX;
 		antialiasingCheckBox.checked = _characterFile.antialiasing;
+		positionOffsetXStepper.value = _characterFile.offset[0];
+		positionOffsetYStepper.value = _characterFile.offset[1];
+		cameraOffsetXStepper.value = _characterFile.cameraOffset[0];
+		cameraOffsetYStepper.value = _characterFile.cameraOffset[1];
+		danceIntervalStepper.value = _characterFile.danceInterval;
 
 		// because sometimes some stuff won't update properly
 		icon.change(iconInputText.text);

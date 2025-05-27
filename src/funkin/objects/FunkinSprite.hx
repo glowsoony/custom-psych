@@ -5,14 +5,13 @@ import flixel.graphics.frames.FlxFrame;
 
 class FunkinSprite extends flixel.FlxSprite {
 	public var offsetMap:Map<String, Array<Float>> = [];
-	public var frameOffset:FlxPoint;
+	public var frameOffset:FlxPoint = FlxPoint.get();
 
 	public function new(?x:Float, ?y:Float, ?graphic:FlxGraphicAsset) {
 		super(x, y, graphic);
 		moves = false;
 		active = false;
 		antialiasing = Settings.data.antialiasing;
-		frameOffset = new FlxPoint();
 	}
 
 	// knew this was gonna get to me eventually lol

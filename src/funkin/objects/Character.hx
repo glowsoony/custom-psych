@@ -8,7 +8,7 @@ typedef CharacterFile = {
 	var singDuration:Float;
 	var healthColor:FlxColor;
 	var sheets:String;
-	var positionOffset:Array<Float>;
+	var offset:Array<Float>;
 	var cameraOffset:Array<Float>;
 	var danceInterval:Int;
 
@@ -54,8 +54,6 @@ class Character extends FunkinSprite {
 		file = getFile(path);
 
 		this.name = name;
-		this.x += file.positionOffset[0];
-		this.y += file.positionOffset[1];
 		this.singDuration = file.singDuration;
 		this.healthColor = file.healthColor;
 		this.sheets = file.sheets.split(',');
@@ -79,6 +77,8 @@ class Character extends FunkinSprite {
 
 		scale.set(file.scale, file.scale);
 		updateHitbox();
+
+		offset.set(file.offset[0] * file.scale, file.offset[1] * file.scale);
 
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
 			danceList = ['danceLeft', 'danceRight'];
@@ -148,7 +148,7 @@ class Character extends FunkinSprite {
 			danceInterval: 2,
 			sheets: 'characters/bf',
 			cameraOffset: [0, 0],
-			positionOffset: [0, 0],
+			offset: [0, 0],
 
 			animations: [
 				{
