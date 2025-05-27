@@ -166,12 +166,12 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 				if (sender == positionOffsetXStepper) {
 					_characterFile.offset[0] = positionOffsetXStepper.value;
-					character.offset.x = positionOffsetXStepper.value;
+					character.offset.x = positionOffsetXStepper.value * _characterFile.scale;
 				}
 
 				if (sender == positionOffsetYStepper) {
 					_characterFile.offset[1] = positionOffsetYStepper.value;
-					character.offset.y = positionOffsetYStepper.value;
+					character.offset.y = positionOffsetYStepper.value * _characterFile.scale;
 				}
 
 				if (sender == cameraOffsetXStepper) {
