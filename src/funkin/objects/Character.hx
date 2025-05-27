@@ -106,8 +106,6 @@ class Character extends FunkinSprite {
 
 		_singTimer -= elapsed * (singDuration * (Conductor.stepCrotchet * 0.25));
 		if (_singTimer <= 0.0) dance(true);
-
-		if (animation.curAnim == null) return;
 	}
 
 	var animIndex:Int = 0;
@@ -120,10 +118,12 @@ class Character extends FunkinSprite {
 	}
 
 	public function dance(?forced:Bool = false) {
+		if ((!forced && animation.curAnim == null) || inEditor) return;
+
 		// support for gf/spooky kids characters
 		if (dancer && !forced) forced = dancing;
 
-		if (inEditor || !forced && (animation.curAnim == null || !(animation.curAnim.looped || animation.curAnim.finished))) return;
+		if (!forced && (animation.curAnim.looped || _singTimer > 0.0)) return;
 
 		playAnim(danceList[animIndex]);
 		animIndex = FlxMath.wrap(animIndex + 1, 0, danceList.length - 1);
