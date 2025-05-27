@@ -2,7 +2,7 @@
 	directory: 'week1',
 	zoom: 0.9,
 
-	playerPos: [770, 100],
-	spectatorPos: [400, 130],
-	opponentPos: [100, 100]
+	playerPos: [900, 100],
+	spectatorPos: [530, -50],
+	opponentPos: [200, 100]
 }

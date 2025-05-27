@@ -179,9 +179,9 @@ class Stage {
 			cameraSpeed: 1,
 			isSpectatorVisible: true,
 
-			playerPos: [750, 225],
-			spectatorPos: [350, 0],
-			opponentPos: [100, 225],
+			playerPos: [900, 100],
+			spectatorPos: [530, -50],
+			opponentPos: [200, 100],
 
 			playerCameraOffset: [0, 0],
 			spectatorCameraOffset: [0, 0],
