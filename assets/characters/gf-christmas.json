@@ -3,21 +3,22 @@
 		{
 			offsets: [
 				0,
-				0,
+				9,
 			],
 			framerate: 24,
-			id: 'GF Cheer',
-			indices: [],
 			looped: false,
 			name: 'cheer',
+			indices: [],
+			id: 'GF Cheer',
 		},
 		{
 			offsets: [
 				0,
-				-21,
+				-12,
 			],
 			framerate: 24,
-			id: 'gf sad',
+			looped: false,
+			name: 'sad',
 			indices: [
 				0,
 				1,
@@ -33,16 +34,16 @@
 				11,
 				12,
 			],
-			looped: false,
-			name: 'sad',
+			id: 'gf sad',
 		},
 		{
 			offsets: [
 				0,
-				-9,
+				0,
 			],
 			framerate: 24,
-			id: 'GF Dancing Beat',
+			looped: false,
+			name: 'danceLeft',
 			indices: [
 				30,
 				0,
@@ -61,16 +62,16 @@
 				13,
 				14,
 			],
-			looped: false,
-			name: 'danceLeft',
+			id: 'GF Dancing Beat',
 		},
 		{
 			offsets: [
 				0,
-				-9,
+				0,
 			],
 			framerate: 24,
-			id: 'GF Dancing Beat',
+			looped: false,
+			name: 'danceRight',
 			indices: [
 				15,
 				16,
@@ -88,15 +89,10 @@
 				28,
 				29,
 			],
-			looped: false,
-			name: 'danceRight',
+			id: 'GF Dancing Beat',
 		},
 	],
 	healthColor: -5963699,
-	positionOffset: [
-		0,
-		0,
-	],
 	singDuration: 4,
 	flipX: false,
 	sheets: 'characters/gfChristmas',
@@ -107,5 +103,9 @@
 	],
 	icon: 'gf',
 	antialiasing: true,
+	offset: [
+		269,
+		-124,
+	],
 	scale: 1,
 }

@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
+			name: 'idle',
+			id: 'Angry Senpai Idle instance 1',
 			looped: false,
 			indices: [],
-			id: 'Angry Senpai Idle instance 1',
-			name: 'idle',
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				1,
 			],
 			framerate: 24,
+			name: 'singLEFT',
+			id: 'Angry Senpai LEFT NOTE instance 1',
 			looped: false,
 			indices: [],
-			id: 'Angry Senpai LEFT NOTE instance 1',
-			name: 'singLEFT',
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				1,
 			],
 			framerate: 24,
+			name: 'singDOWN',
+			id: 'Angry Senpai DOWN NOTE instance 1',
 			looped: false,
 			indices: [],
-			id: 'Angry Senpai DOWN NOTE instance 1',
-			name: 'singDOWN',
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				6,
 			],
 			framerate: 24,
+			name: 'singUP',
+			id: 'Angry Senpai UP NOTE instance 1',
 			looped: false,
 			indices: [],
-			id: 'Angry Senpai UP NOTE instance 1',
-			name: 'singUP',
 		},
 		{
 			offsets: [
@@ -50,17 +50,13 @@
 				0,
 			],
 			framerate: 24,
+			name: 'singRIGHT',
+			id: 'Angry Senpai RIGHT NOTE instance 1',
 			looped: false,
 			indices: [],
-			id: 'Angry Senpai RIGHT NOTE instance 1',
-			name: 'singRIGHT',
 		},
 	],
-	healthColor: 0xFFFFAA6F,
-	positionOffset: [
-		0,
-		0,
-	],
+	healthColor: -21905,
 	singDuration: 4,
 	flipX: false,
 	sheets: 'characters/senpaiAngry',
@@ -71,5 +67,9 @@
 	],
 	icon: 'senpai-angry',
 	antialiasing: false,
+	offset: [
+		-20,
+		-48,
+	],
 	scale: 6,
 }

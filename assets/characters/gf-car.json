@@ -3,7 +3,7 @@
 		{
 			offsets: [
 				0,
-				-9,
+				0,
 			],
 			framerate: 24,
 			looped: false,
@@ -31,7 +31,7 @@
 		{
 			offsets: [
 				0,
-				-9,
+				0,
 			],
 			framerate: 24,
 			looped: false,
@@ -58,37 +58,33 @@
 		{
 			offsets: [
 				0,
-				-9,
+				0,
 			],
+			framerate: 24,
+			id: 'GF Dancing Beat Hair blowing CAR',
+			name: 'danceLeft-loop',
 			indices: [
 				13,
 				14,
 			],
-			id: 'GF Dancing Beat Hair blowing CAR',
-			name: 'danceLeft-loop',
-			framerate: 24,
 			looped: true,
 		},
 		{
 			offsets: [
 				0,
-				-9,
+				0,
 			],
+			framerate: 24,
+			id: 'GF Dancing Beat Hair blowing CAR',
+			name: 'danceRight-loop',
 			indices: [
 				13,
 				14,
 			],
-			id: 'GF Dancing Beat Hair blowing CAR',
-			name: 'danceRight-loop',
-			framerate: 24,
 			looped: true,
 		},
 	],
 	healthColor: -5963699,
-	positionOffset: [
-		0,
-		0,
-	],
 	singDuration: 4,
 	flipX: false,
 	sheets: 'characters/gfCar',
@@ -99,5 +95,9 @@
 	],
 	icon: 'gf',
 	antialiasing: true,
+	offset: [
+		188,
+		-123,
+	],
 	scale: 1,
 }

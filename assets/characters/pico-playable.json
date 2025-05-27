@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
+			name: 'idle',
+			id: 'Pico Idle Dance',
 			looped: false,
 			indices: [],
-			id: 'Pico Idle Dance',
-			name: 'idle',
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				-12,
 			],
 			framerate: 24,
+			name: 'singLEFT',
+			id: 'Pico NOTE LEFT0',
 			looped: false,
 			indices: [],
-			id: 'Pico NOTE LEFT0',
-			name: 'singLEFT',
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				-86,
 			],
 			framerate: 24,
+			name: 'singDOWN',
+			id: 'Pico Down Note0',
 			looped: false,
 			indices: [],
-			id: 'Pico Down Note0',
-			name: 'singDOWN',
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				26,
 			],
 			framerate: 24,
+			name: 'singUP',
+			id: 'pico Up note0',
 			looped: false,
 			indices: [],
-			id: 'pico Up note0',
-			name: 'singUP',
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				1,
 			],
 			framerate: 24,
+			name: 'singRIGHT',
+			id: 'Pico Note Right0',
 			looped: false,
 			indices: [],
-			id: 'Pico Note Right0',
-			name: 'singRIGHT',
 		},
 	],
 	healthColor: -4728747,
@@ -65,11 +65,11 @@
 		100,
 		-100,
 	],
-	positionOffset: [
-		0,
-		300
-	],
 	icon: 'pico',
 	antialiasing: true,
+	offset: [
+		50,
+		-320,
+	],
 	scale: 1,
 }

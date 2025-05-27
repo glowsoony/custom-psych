@@ -1,104 +1,141 @@
 {
 	animations: [
 		{
+			offsets: [
+				0,
+				0,
+			],
+			framerate: 24,
+			indices: [],
+			id: 'idle',
+			looped: false,
 			name: 'idle',
-			id: 'idle', 
-			indices: [],
-			framerate: 24,
-			looped: false,
-			offsets: [0, 0]
 		},
 		{
-			name: 'singLEFT',
+			offsets: [
+				11,
+				-7,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'sing left',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [11, -7]
+			name: 'singLEFT',
 		},
 		{
-			name: 'singDOWN',
+			offsets: [
+				-13,
+				-52,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'sing down',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [-13, -52]
+			name: 'singDOWN',
 		},
 		{
-			name: 'singUP',
+			offsets: [
+				-41,
+				28,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'sing up',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [-41, 28]
+			name: 'singUP',
 		},
 		{
-			name: 'singRIGHT',
+			offsets: [
+				-45,
+				-6,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'sing right',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [-45, -6]
+			name: 'singRIGHT',
 		},
 		{
-			name: 'missLEFT',
+			offsets: [
+				8,
+				18,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'miss left',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [8, 18]
+			name: 'missLEFT',
 		},
 		{
-			name: 'missDOWN',
+			offsets: [
+				-13,
+				-22,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'miss down',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [-13, -22]
+			name: 'missDOWN',
 		},
 		{
-			name: 'missUP',
+			offsets: [
+				-38,
+				24,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'miss up',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [-38, 24]
+			name: 'missUP',
 		},
 		{
-			name: 'missRIGHT',
+			offsets: [
+				-40,
+				21,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'miss right',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [-40, 21]
+			name: 'missRIGHT',
 		},
 		{
-			name: 'hey',
+			offsets: [
+				3,
+				5,
+			],
+			framerate: 24,
+			indices: [],
 			id: 'hey',
-			indices: [],
-			framerate: 24,
 			looped: false,
-			offsets: [3, 5]
+			name: 'hey',
 		},
 		{
-			name: 'shaking',
-			id: 'shaking',
-			indices: [],
+			offsets: [
+				0,
+				0,
+			],
 			framerate: 24,
+			indices: [],
+			id: 'shaking',
 			looped: true,
-			offsets: [0, 0]
-		}
+			name: 'shaking',
+		},
 	],
-
-	antialiasing: true,
+	healthColor: -13520687,
 	singDuration: 4,
-	scale: 1,
-	danceInterval: 2,
-	healthColor: 0xFF31B0D1,
+	flipX: false,
 	sheets: 'characters/bf',
+	danceInterval: 2,
+	cameraOffset: [
+		0,
+		0,
+	],
 	icon: 'bf',
-	cameraOffset: [100, -100],
-	offset: [0, 350],
-	
-	flipX: false
+	antialiasing: true,
+	offset: [
+		40,
+		-350,
+	],
+	scale: 1,
 }

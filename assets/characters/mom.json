@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
+			name: 'idle',
+			id: 'Mom Idle',
 			looped: false,
 			indices: [],
-			id: 'Mom Idle',
-			name: 'idle',
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				-5,
 			],
 			framerate: 24,
+			name: 'singLEFT',
+			id: 'Mom Left Pose',
 			looped: false,
 			indices: [],
-			id: 'Mom Left Pose',
-			name: 'singLEFT',
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				-160,
 			],
 			framerate: 24,
+			name: 'singDOWN',
+			id: 'MOM DOWN POSE',
 			looped: false,
 			indices: [],
-			id: 'MOM DOWN POSE',
-			name: 'singDOWN',
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				82,
 			],
 			framerate: 24,
+			name: 'singUP',
+			id: 'Mom Up Pose',
 			looped: false,
 			indices: [],
-			id: 'Mom Up Pose',
-			name: 'singUP',
 		},
 		{
 			offsets: [
@@ -50,16 +50,18 @@
 				-40,
 			],
 			framerate: 24,
+			name: 'singRIGHT',
+			id: 'Mom Pose Left',
 			looped: false,
 			indices: [],
-			id: 'Mom Pose Left',
-			name: 'singRIGHT',
 		},
 		{
 			offsets: [
 				0,
 				0,
 			],
+			framerate: 24,
+			looped: true,
 			indices: [
 				10,
 				11,
@@ -68,14 +70,14 @@
 			],
 			id: 'Mom Idle',
 			name: 'idle-loop',
-			framerate: 24,
-			looped: true,
 		},
 		{
 			offsets: [
 				140,
 				-5,
 			],
+			framerate: 24,
+			looped: true,
 			indices: [
 				6,
 				7,
@@ -84,14 +86,14 @@
 			],
 			id: 'Mom Left Pose',
 			name: 'singLEFT-loop',
-			framerate: 24,
-			looped: true,
 		},
 		{
 			offsets: [
 				0,
 				-160,
 			],
+			framerate: 24,
+			looped: true,
 			indices: [
 				11,
 				12,
@@ -100,14 +102,14 @@
 			],
 			id: 'MOM DOWN POSE',
 			name: 'singDOWN-loop',
-			framerate: 24,
-			looped: true,
 		},
 		{
 			offsets: [
 				33,
 				82,
 			],
+			framerate: 24,
+			looped: true,
 			indices: [
 				11,
 				12,
@@ -116,14 +118,14 @@
 			],
 			id: 'Mom Up Pose',
 			name: 'singUP-loop',
-			framerate: 24,
-			looped: true,
 		},
 		{
 			offsets: [
 				40,
 				-40,
 			],
+			framerate: 24,
+			looped: true,
 			indices: [
 				6,
 				7,
@@ -132,16 +134,10 @@
 			],
 			id: 'Mom Pose Left',
 			name: 'singRIGHT-loop',
-			framerate: 24,
-			looped: true,
 		},
 	],
 	healthColor: -2599538,
-	positionOffset: [
-		0,
-		0,
-	],
-	singDuration: 4,
+	singDuration: 1000,
 	flipX: false,
 	sheets: 'characters/mommyMearest',
 	danceInterval: 2,
@@ -151,5 +147,9 @@
 	],
 	icon: 'mom',
 	antialiasing: true,
+	offset: [
+		0,
+		15,
+	],
 	scale: 1,
 }

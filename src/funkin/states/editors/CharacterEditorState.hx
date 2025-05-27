@@ -6,6 +6,8 @@ import funkin.objects.Bar;
 import funkin.backend.ui.*;
 import openfl.net.FileReference;
 import openfl.events.Event;
+import flixel.graphics.FlxGraphic;
+import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
 import openfl.events.IOErrorEvent;
 
 class CharacterEditorState extends MusicState implements PsychUIEventHandler.PsychUIEvent {
@@ -23,6 +25,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	var animsTxt:FlxText;
 	var curAnim:Int = 0;
 	var selectedFormat:FlxTextFormat = new FlxTextFormat(FlxColor.LIME);
+	var cameraFollowPointer:FlxSprite;
 
 	var anims(get, never):Array<CharacterAnim>;
 	function get_anims():Array<CharacterAnim> return _characterFile.animations;
@@ -33,6 +36,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
         Conductor.stop();
 		FlxG.autoPause = false;
         FlxG.sound.playMusic(Paths.music('artisticExpression'), 1, true);
+		FlxG.camera.bgColor = 0xFF4C4C4C;
 
 		camHUD = FlxG.cameras.add(new FlxCamera(), false);
 		camHUD.bgColor.alpha = 0;
@@ -40,6 +44,10 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		add(ghost = new FunkinSprite());
 		ghost.visible = false;
 		ghost.alpha = ghostAlpha;
+
+		add(new FlxSprite().loadGraphic(Paths.image('silhouette')));
+
+
 
 		add(healthBar = new Bar(30, FlxG.height - 75));
 		healthBar.scrollFactor.set();
@@ -57,6 +65,11 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 		reloadCharacter();
 		makeUI();
+
+		add(cameraFollowPointer = new FlxSprite().loadGraphic(FlxGraphic.fromClass(GraphicCursorCross)));
+		cameraFollowPointer.setGraphicSize(40, 40);
+		cameraFollowPointer.updateHitbox();
+		updateCameraPointer(true);
 	}
 
     override function update(delta:Float):Void {
@@ -133,6 +146,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		Conductor.play();
 		FlxG.autoPause = Settings.data.autoPause;
         super.destroy();
+		FlxG.camera.bgColor = 0xFF000000;
     }
 
 	public function UIEvent(id:String, sender:Dynamic) {
@@ -176,10 +190,12 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 
 				if (sender == cameraOffsetXStepper) {
 					_characterFile.cameraOffset[0] = cameraOffsetXStepper.value;
+					updateCameraPointer();
 				}
 
 				if (sender == cameraOffsetYStepper) {
 					_characterFile.cameraOffset[1] = cameraOffsetYStepper.value;
+					updateCameraPointer();
 				}
 
 			case _:
@@ -553,6 +569,7 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		cameraOffsetXStepper.value = _characterFile.cameraOffset[0];
 		cameraOffsetYStepper.value = _characterFile.cameraOffset[1];
 		danceIntervalStepper.value = _characterFile.danceInterval;
+		cameraFollowPointer.setPosition(_characterFile.cameraOffset[0], _characterFile.cameraOffset[1]);
 
 		// because sometimes some stuff won't update properly
 		icon.change(iconInputText.text);
@@ -562,6 +579,17 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		character.antialiasing = antialiasingCheckBox.checked;
 		character.offset.set(positionOffsetXStepper.value * scaleStepper.value, positionOffsetYStepper.value * scaleStepper.value);
 		healthBar.rightBar.color = _characterFile.healthColor;
+	}
+
+	function updateCameraPointer(?snap:Bool = false) {
+		var xPos:Float = character.getMidpoint().x - _characterFile.cameraOffset[0];
+		var yPos:Float = character.getMidpoint().y + _characterFile.cameraOffset[1];
+		cameraFollowPointer.setPosition(xPos, yPos);
+
+		if (snap) {
+			FlxG.camera.scroll.x = cameraFollowPointer.getMidpoint().x - FlxG.width / 2;
+			FlxG.camera.scroll.y = cameraFollowPointer.getMidpoint().y - FlxG.height / 2;
+		}
 	}
 
 	function updateText() {

@@ -6,10 +6,10 @@
 				0,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'idle',
-			id: 'BF idle dance w gf',
+			looped: false,
 			indices: [],
+			id: 'BF idle dance w gf',
 		},
 		{
 			offsets: [
@@ -17,10 +17,10 @@
 				2,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'singLEFT',
-			id: 'sing left',
+			looped: false,
 			indices: [],
+			id: 'sing left',
 		},
 		{
 			offsets: [
@@ -28,10 +28,10 @@
 				-12,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'singDOWN',
-			id: 'sing down',
+			looped: false,
 			indices: [],
+			id: 'sing down',
 		},
 		{
 			offsets: [
@@ -39,10 +39,10 @@
 				9,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'singUP',
-			id: 'sing up',
+			looped: false,
 			indices: [],
+			id: 'sing up',
 		},
 		{
 			offsets: [
@@ -50,10 +50,10 @@
 				20,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'singRIGHT',
-			id: 'sing right',
+			looped: false,
 			indices: [],
+			id: 'sing right',
 		},
 		{
 			offsets: [
@@ -61,10 +61,10 @@
 				2,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'missLEFT',
-			id: 'miss left',
+			looped: false,
 			indices: [],
+			id: 'miss left',
 		},
 		{
 			offsets: [
@@ -72,10 +72,10 @@
 				-13,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'missDOWN',
-			id: 'miss down',
+			looped: false,
 			indices: [],
+			id: 'miss down',
 		},
 		{
 			offsets: [
@@ -83,10 +83,10 @@
 				3,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'missUP',
-			id: 'miss up',
+			looped: false,
 			indices: [],
+			id: 'miss up',
 		},
 		{
 			offsets: [
@@ -94,21 +94,10 @@
 				35,
 			],
 			framerate: 24,
-			looped: false,
 			name: 'missRIGHT',
-			id: 'miss right',
-			indices: [],
-		},
-		{
-			offsets: [
-				4,
-				90,
-			],
-			framerate: 24,
 			looped: false,
-			name: 'hey',
-			id: 'BF hey w gf',
 			indices: [],
+			id: 'miss right',
 		},
 		{
 			offsets: [
@@ -116,10 +105,21 @@
 				90,
 			],
 			framerate: 24,
-			looped: true,
-			name: 'catch',
-			id: 'BF catches GF',
+			name: 'hey',
+			looped: false,
 			indices: [],
+			id: 'BF hey w gf',
+		},
+		{
+			offsets: [
+				4,
+				90,
+			],
+			framerate: 24,
+			name: 'catch',
+			looped: true,
+			indices: [],
+			id: 'BF catches GF',
 		},
 	],
 	healthColor: -13520687,
@@ -131,11 +131,11 @@
 		100,
 		-100,
 	],
-	positionOffset: [
-		0,
-		350
-	],
 	icon: 'bf',
 	antialiasing: true,
+	offset: [
+		30,
+		-350,
+	],
 	scale: 1,
 }

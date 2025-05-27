@@ -1,35 +1,53 @@
 {
 	animations: [
 		{
-			offsets: [0, 0],
-			indices: [],
+			offsets: [
+				0,
+				0,
+			],
 			framerate: 24,
 			name: 'idle',
+			indices: [],
+			id: 'BF dies',
 			looped: false,
-			id: 'BF dies'
 		},
 		{
-			offsets: [0, -6],
-			indices: [],
+			offsets: [
+				0,
+				-6,
+			],
 			framerate: 24,
 			name: 'loop',
+			indices: [],
+			id: 'BF Dead Loop',
 			looped: false,
-			id: 'BF Dead Loop'
 		},
 		{
-			offsets: [0, 58],
-			indices: [],
+			offsets: [
+				0,
+				58,
+			],
 			framerate: 24,
 			name: 'confirm',
+			indices: [],
+			id: 'BF Dead confirm',
 			looped: false,
-			id: 'BF Dead confirm'
-		}
+		},
 	],
-	antialiasing: true,
-	sheets: 'characters/bf-dead',
-	icon: 'face',
+	healthColor: -6184543,
+	singDuration: 4,
 	flipX: false,
-	cameraOffset: [0, 0],
-	positionOffset: [0, 350],
-	scale: 1
+	sheets: 'characters/bf-dead',
+	danceInterval: 2,
+	cameraOffset: [
+		0,
+		0,
+	],
+	icon: 'face',
+	antialiasing: true,
+	offset: [
+		55,
+		-350,
+	],
+	scale: 1,
 }

@@ -5,17 +5,19 @@
 				0,
 				-18,
 			],
+			framerate: 24,
+			looped: true,
 			indices: [],
 			id: 'GF Crying at Gunpoint',
 			name: 'sad',
-			framerate: 24,
-			looped: true,
 		},
 		{
 			offsets: [
 				0,
 				0,
 			],
+			framerate: 24,
+			looped: false,
 			indices: [
 				30,
 				0,
@@ -36,14 +38,14 @@
 			],
 			id: 'GF Dancing at Gunpoint',
 			name: 'danceLeft',
-			framerate: 24,
-			looped: false,
 		},
 		{
 			offsets: [
 				0,
 				0,
 			],
+			framerate: 24,
+			looped: false,
 			indices: [
 				15,
 				16,
@@ -63,15 +65,9 @@
 			],
 			id: 'GF Dancing at Gunpoint',
 			name: 'danceRight',
-			framerate: 24,
-			looped: false,
 		},
 	],
 	healthColor: -5963699,
-	positionOffset: [
-		0,
-		0,
-	],
 	singDuration: 4,
 	flipX: false,
 	sheets: 'characters/gfTankman',
@@ -82,5 +78,9 @@
 	],
 	icon: 'gf',
 	antialiasing: true,
+	offset: [
+		298,
+		-124,
+	],
 	scale: 1,
 }
