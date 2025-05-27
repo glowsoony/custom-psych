@@ -1,109 +1,15 @@
 {
 	animations: [
 		{
-			offsets: [
-				0,
-				0,
-			],
+			offsets: [0, 0],
 			framerate: 24,
 			looped: false,
 			indices: [],
 			id: 'BF idle dance',
-			name: 'idle',
+			name: 'idle'
 		},
 		{
-			offsets: [
-				11,
-				-7,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE LEFT0',
-			name: 'singLEFT',
-		},
-		{
-			offsets: [
-				-13,
-				-52,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE DOWN0',
-			name: 'singDOWN',
-		},
-		{
-			offsets: [
-				-41,
-				28,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE UP0',
-			name: 'singUP',
-		},
-		{
-			offsets: [
-				-45,
-				-6,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE RIGHT0',
-			name: 'singRIGHT',
-		},
-		{
-			offsets: [
-				8,
-				18,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE LEFT MISS',
-			name: 'missLEFT',
-		},
-		{
-			offsets: [
-				-13,
-				-22,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE DOWN MISS0',
-			name: 'missDOWN',
-		},
-		{
-			offsets: [
-				-38,
-				24,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE UP MISS0',
-			name: 'missUP',
-		},
-		{
-			offsets: [
-				-40,
-				21,
-			],
-			framerate: 24,
-			looped: false,
-			indices: [],
-			id: 'BF NOTE RIGHT MISS',
-			name: 'missRIGHT',
-		},
-		{
-			offsets: [
-				0,
-				0,
-			],
+			offsets: [0, 0],
 			indices: [
 				10,
 				11,
@@ -113,8 +19,124 @@
 			id: 'BF idle dance',
 			name: 'idle-loop',
 			framerate: 24,
-			looped: true,
+			looped: true
 		},
+		{
+			offsets: [11, -7],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE LEFT0',
+			name: 'singLEFT'
+		},
+		{
+			offsets: [11, -7],
+			indices: [
+				12,
+				13,
+				14,
+				15
+			],
+			framerate: 24,
+			name: "singLEFT-loop",
+			looped: true,
+			id: "BF NOTE LEFT0"
+		},
+		{
+			offsets: [-13, -52],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE DOWN0',
+			name: 'singDOWN'
+		},
+		{
+			offsets: [-13, -52],
+			indices: [
+				26,
+				27,
+				28,
+				29
+			],
+			framerate: 24,
+			name: "singDOWN-loop",
+			looped: true,
+			id: "BF NOTE DOWN0"
+		},
+		{
+			offsets: [-41, 28],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE UP0',
+			name: 'singUP'
+		},
+		{
+			offsets: [-41, 28],
+			indices: [
+				11,
+				12,
+				13,
+				14
+			],
+			framerate: 24,
+			name: "singUP-loop",
+			looped: true,
+			id: "BF NOTE UP0"
+		},
+		{
+			offsets: [-45, -6],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE RIGHT0',
+			name: 'singRIGHT'
+		},
+		{
+			offsets: [-45, -6],
+			indices: [
+				58,
+				59,
+				60,
+				61
+			],
+			framerate: 24,
+			name: "singRIGHT-loop",
+			looped: true,
+			id: "BF NOTE RIGHT0"
+		},
+		{
+			offsets: [8, 18],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE LEFT MISS',
+			name: 'missLEFT'
+		},
+		{
+			offsets: [-13, -22],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE DOWN MISS0',
+			name: 'missDOWN'
+		},
+		{
+			offsets: [-38, 24],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE UP MISS0',
+			name: 'missUP'
+		},
+		{
+			offsets: [-40, 21],
+			framerate: 24,
+			looped: false,
+			indices: [],
+			id: 'BF NOTE RIGHT MISS',
+			name: 'missRIGHT'
+		}
 	],
 	healthColor: -13520687,
 	positionOffset: [

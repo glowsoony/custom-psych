@@ -2,7 +2,7 @@
 	"songName": "2hot",
 	"composer": "Kawai Sprite",
 	"enemy": "darnell",
-	"player": "pico",
+	"player": "pico-playable",
 	"spectator": "nene",
 	"timingPoints": [
 		{

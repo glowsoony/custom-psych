@@ -1,0 +1,75 @@
+{
+	animations: [
+		{
+			offsets: [
+				0,
+				0,
+			],
+			indices: [],
+			id: 'monster idle',
+			name: 'idle',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-52,
+				9,
+			],
+			indices: [],
+			id: 'Monster Right note',
+			name: 'singLEFT',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-48,
+				-88,
+			],
+			indices: [],
+			id: 'monster down',
+			name: 'singDOWN',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-26,
+				58,
+			],
+			indices: [],
+			id: 'monster up note',
+			name: 'singUP',
+			framerate: 24,
+			looped: false,
+		},
+		{
+			offsets: [
+				-35,
+				12,
+			],
+			indices: [],
+			id: 'Monster left note',
+			name: 'singRIGHT',
+			framerate: 24,
+			looped: false,
+		},
+	],
+	healthColor: -786578,
+	positionOffset: [
+		0,
+		100,
+	],
+	singDuration: 4,
+	flipX: false,
+	sheets: 'characters/monsterChristmas',
+	danceInterval: 2,
+	cameraOffset: [
+		100,
+		-100,
+	],
+	icon: 'monster',
+	antialiasing: true,
+	scale: 1,
+}

@@ -3,6 +3,7 @@
 	"composer": "Kawai Sprite",
 	"enemy": "tankman",
 	"spectator": "pico-tankman",
+	"player": "bf-holding-gf",
 	"timingPoints": [
 		{
 			"time": 0,
