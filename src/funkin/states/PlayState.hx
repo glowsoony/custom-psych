@@ -320,7 +320,7 @@ class PlayState extends MusicState {
 			ScriptHandler.call('onSongStart');
 		}
 
-		Conductor.rawTime = (Conductor.crotchet * -5) - Conductor.songOffset;
+		Conductor.rawTime = (Conductor.crotchet * -5);
 		countdown.start();
 
 		FlxG.mouse.visible = false;
@@ -329,7 +329,6 @@ class PlayState extends MusicState {
 
 		ScriptHandler.call('create');
 		persistentUpdate = true;
-		Conductor.audioResync = true;
 	}
 
 	function loadHUD():Void {
@@ -560,7 +559,7 @@ class PlayState extends MusicState {
 
 		Conductor.timingPoints = song.meta.timingPoints;
 		Conductor.bpm = Conductor.timingPoints[0].bpm;
-		Conductor.songOffset = song.meta.offset;
+		Conductor.offset = song.meta.offset;
 		songName = song.meta.songName;
 		stageName = song.meta.stage;
 

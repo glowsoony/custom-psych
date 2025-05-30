@@ -7,7 +7,7 @@ import haxe.Timer;
 class TimingPoint {
 	public var time:Float = 0;
 	public var offsettedTime(get, never):Float;
-	function get_offsettedTime():Float return time - Conductor.songOffset;
+	function get_offsettedTime():Float return time + Conductor.offset;
 
 	public var bpm:Float = 120;
 	public var beatsPerMeasure:Int = 4;
@@ -25,20 +25,19 @@ class Conductor extends flixel.FlxBasic {
     public static var crotchet:Float = (60 / bpm) * 1000;
     public static var stepCrotchet:Float = crotchet * 0.25;
 
-	// the amount of time in milliseconds the game requires to reset song time
-	// in cases of massive lagspikes
-	public static inline final AUDIO_REBOUND_TIME:Float = 150;
-	public static var audioResync:Bool = false; // if you want the conductor to `inst.time = value;` for very bad lag spikes
-
 	public static var beatsPerMeasure(default, set):Int = 4;
     
-    public static var songOffset:Float = 0.0;
+    public static var offset:Float = 0.0;
 
     public static var rate(default, set):Float = 1.0;
     public static var volume(default, set):Float = 1.0;
 
     public static var visualTime:Float = 0.0;
-    public static var rawTime:Float = 0.0;
+    public static var rawTime(default, set):Float = 0.0;
+	static function set_rawTime(value:Float):Float {
+		if (inst != null && inst.playing) return inst.time = value;
+		return _time = value;
+	}
 
     public static var timingPoints(default, set):Array<TimingPoint> = [];
     static function set_timingPoints(value:Array<TimingPoint>):Array<TimingPoint> {
@@ -99,7 +98,10 @@ class Conductor extends flixel.FlxBasic {
 
     public static function reset() {
         playing = false;
-        visualTime = rawTime = 0.0;
+		@:bypassAccessor
+		rawTime = 0.0;
+		visualTime = 0.0;
+        _time = 0.0;
         _fStep = step = 0;
         _fBeat = beat = 0;
         _fMeasure = measure = 0;
@@ -107,9 +109,8 @@ class Conductor extends flixel.FlxBasic {
 		timingPoints = null;
 		beatsPerMeasure = 4;
 		bpm = 120;
-		audioResync = false; // in most menus you won't need to worry about lagspikes fucking up your rhythm
 
-        songOffset = 0.0;
+        offset = 0.0;
     }
 
     override function update(elapsed:Float) {
@@ -138,18 +139,24 @@ class Conductor extends flixel.FlxBasic {
 
 		_lastTime = inst.time;
 
-		rawTime = inst.time - songOffset;
+		rawTime = inst.time - offset;
 		visualTime = rawTime + _resyncTimer;
 	*/
+
+	static var _time:Float = 0.0;
     static var _lastTime:Float = 0.0;
     static var _resyncTimer:Float = 0.0;
 	static var _lastTimestamp:Float = 0.0;
+	
     public static dynamic function syncTime(deltaTime:Float):Void {
 		if (!playing) return;
 		
 		deltaTime *= 1000;
 		if (inst == null || !inst.playing) {
-			visualTime = rawTime += deltaTime * rate;
+			_time += deltaTime * rate;
+			@:bypassAccessor
+			rawTime = _time + offset;
+			visualTime = rawTime;
 			return;
 		}
 
@@ -172,8 +179,9 @@ class Conductor extends flixel.FlxBasic {
 		// makes it easier to fuck with scroll velocities and such
 
 		// USE THIS FOR JUDGEMENT MATH, **NOT FOR VISUAL POSITION**
-		var currentTimestamp:Float = Timer.stamp();
-		rawTime = inst.time - songOffset;
+		_time = inst.time;
+		@:bypassAccessor
+		rawTime = _time + offset;
 
 		// USE THIS FOR VISUAL POSITION, **NOT FOR JUDGEMENT MATH (ie note.rawHitTime)**
 		visualTime = rawTime + _resyncTimer;
@@ -194,8 +202,6 @@ class Conductor extends flixel.FlxBasic {
     }
 
     public static dynamic function syncBeats() {
-		if (rawTime < 0) return;
-
         var point:TimingPoint = getPointFromTime(rawTime);
         if (point.bpm != bpm) bpm = point.bpm;
 
@@ -320,7 +326,7 @@ class Conductor extends flixel.FlxBasic {
 		if (timingPoints.length <= 1) return beatFromTime;
 
         var curBPM:Float = timingPoints[0].bpm;
-		var lastPointTime:Float = songOffset * -1;
+		var lastPointTime:Float = 0;
 
         for (point in timingPoints) {
 			if (timeAt >= point.offsettedTime) {

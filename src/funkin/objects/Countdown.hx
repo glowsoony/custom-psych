@@ -34,28 +34,42 @@ class Countdown extends FunkinSprite {
 
 		alpha = 0;
 		active = false;
-		_lastTick = ticks + 1;
+		curTick = ticks;
+		_lastBeat = ticks + 1;
 	}
 
 	public function start():Void {
 		finished = false;
 		active = true;
 		_time = (Conductor.crotchet * -(ticks + 1));
+
+/*		// give the game time to start it correctly on positive offsets
+		var extraTime:Float = Math.floor((Conductor.offset * -1) / Conductor.crotchet);
+		if (extraTime > 0) _time -= Conductor.crotchet * extraTime;
+*/
 		onStart();
 	}
 
-	var _lastTick:Int;
+	var _lastBeat:Int = 0;
 	var _time:Float;
+	var curTick:Int;
 	override function update(elapsed:Float):Void {
 		if (finished) return;
 		alpha -= elapsed / (Conductor.crotchet * 0.001);
 
 		_time += (elapsed * 1000) * Conductor.rate;
 
-		var nextTick:Int = Math.floor(_time / Conductor.calculateCrotchet(Conductor.bpm)) * -1;
-		if (nextTick < _lastTick) {
-			beat(nextTick);
-			_lastTick = nextTick;
+		var possibleBeat:Int = Math.floor((_time + Conductor.offset) / Conductor.crotchet) * -1;
+		if (possibleBeat != _lastBeat && curTick >= 1) {
+			beat(curTick--);
+			_lastBeat = possibleBeat;
+		}
+
+		if (_time >= 0) {
+			finished = true;
+			active = false;
+			alpha = 0;
+			onFinish();
 		}
 	}
 
@@ -64,13 +78,6 @@ class Countdown extends FunkinSprite {
 
 		onTick(curTick);
 		alpha = 1;
-
-		if (curTick <= 0) {
-			finished = true;
-			active = false;
-			alpha = 0;
-			onFinish();
-		}
 	}
 
 	public function stop():Void {
