@@ -130,16 +130,25 @@ class Conductor extends flixel.FlxBasic {
 		
 		deltaTime *= 1000;
 		if (inst == null || !inst.playing) {
-			visualTime = rawTime += deltaTime;
+			_time += deltaTime * rate;
+			@:bypassAccessor
+			rawTime = _time + offset;
+			visualTime = rawTime;
 			return;
 		}
+		
+		@:privateAccess
+		deltaTime = FlxG.game._elapsedMS;
 
 		if (inst.time == _lastTime) _resyncTimer += deltaTime;
 		else _resyncTimer = 0;
 
 		_lastTime = inst.time;
+		
+		_time = inst.time;
+		@:bypassAccessor
+		rawTime = _time + offset;
 
-		rawTime = inst.time - offset;
 		visualTime = rawTime + _resyncTimer;
 	*/
 
