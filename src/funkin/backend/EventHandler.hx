@@ -51,7 +51,7 @@ class EventHandler {
         if (index >= list.length) return;
 
         final nextEvent:Event = list[index];
-        if (nextEvent.time > Conductor.rawTime + Conductor.offset) return;
+        if (nextEvent.time > Conductor.rawTime - Conductor.offset) return;
         triggered(nextEvent);
         index++;
     }
