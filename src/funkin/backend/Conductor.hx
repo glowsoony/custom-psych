@@ -335,7 +335,7 @@ class Conductor extends flixel.FlxBasic {
 		if (timingPoints.length <= 1) return beatFromTime;
 
         var curBPM:Float = timingPoints[0].bpm;
-		var lastPointTime:Float = 0;
+		var lastPointTime:Float = offset * -1;
 
         for (point in timingPoints) {
 			if (timeAt >= point.offsettedTime) {
