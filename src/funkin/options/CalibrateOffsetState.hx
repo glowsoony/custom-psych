@@ -85,7 +85,7 @@ class CalibrateOffsetState extends MusicState {
 	}
 
 	function finish():Void {
-		finalOffset = Math.floor(totalNoteDifference / notesHit) * -1;
+		finalOffset = Math.floor(totalNoteDifference / notesHit);
 		introText.text = 'Your offset is: $finalOffset millisecond${Math.abs(finalOffset) != 1 ? 's' : ''} (${finalOffset > 0 ? 'later' : 'earlier'})\n\nPress Accept to confirm\nPress Back to retry';
 		introText.screenCenter();
 
@@ -109,23 +109,25 @@ class CalibrateOffsetState extends MusicState {
 		FlxTween.tween(introText, {alpha: 0}, 0.5);
 	}
 
+	function leave():Void {
+		MusicState.switchState(new funkin.options.OptionsState());
+		Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'));
+		Conductor.bpm = 102;
+		Conductor.inst.play();
+	}
+
 	override function update(delta:Float):Void {
 		super.update(delta);
 
 		if (finished && Controls.justPressed('accept')) {
 			Settings.data.noteOffset = finalOffset;
-
-			MusicState.switchState(new funkin.options.OptionsState());
-			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'));
-			Conductor.bpm = 102;
-			Conductor.inst.play();
+			leave();
 		}
 
-		if (!Conductor.playing) {
-			if (finished && Controls.justPressed('back')) {
-				FlxG.switchState(new CalibrateOffsetState(true));
-			} else if (Controls.justPressed('accept')) start();
-		}
+		if (Controls.justPressed('back')) {
+			if (finished) FlxG.switchState(new CalibrateOffsetState(true));
+			else leave();
+		} else if (!Conductor.playing && !finished && Controls.justPressed('accept')) start();
 	}
 
 	function noteHit(_, note:Note):Void {
