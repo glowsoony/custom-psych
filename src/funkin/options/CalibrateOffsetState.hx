@@ -58,7 +58,7 @@ class CalibrateOffsetState extends MusicState {
 		introBG.alpha = skipIntro ? 0 : 1;
 
 		add(introText = new FlxText(0, 0, FlxG.width, '
-			Welcome to the calibration offset menu!\n\nIt\'s designed to make your taps more synced to the music.\nRemember to relax as much as possible, and focus on how close the notes are to the music, not the strums.\n\nKeep in mind that human error is always a thing,\nso the offset given might not exactly work.\nDon\'t stress it!
+			Welcome to the calibration offset menu!\n\nIt\'s designed to make your taps more synced to the music.\nRemember to relax as much as possible, and focus on how close the notes are to the music, not the strums.\n\nKeep in mind that human error is always a thing,\nso the offset given might not exactly work.\nDon\'t stress it!\n\nPress Accept to start
 		', 20));
 		introText.font = Paths.font('vcr.ttf');
 		introText.alignment = 'center';
