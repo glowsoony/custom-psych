@@ -15,8 +15,8 @@ class PlayField extends flixel.group.FlxGroup {
 	public var modifiers:Bool = false;
 
 	public var unspawnedNotes:Array<Note> = [];
-	var noteSpawnIndex:Int = 0;
-	var noteSpawnDelay:Float = 1500;
+	public var noteSpawnIndex:Int = 0;
+	public var noteSpawnDelay:Float = 1500;
 
 	var keys:Array<String> = [
 		'note_left',
@@ -239,6 +239,9 @@ class PlayField extends flixel.group.FlxGroup {
 		for (i => note in parsedNotes) {
 			// thanks shubs /s
 			if (note.lane < 0) continue;
+
+			// fixes a crash when loading a chart with only one strumline in the playfield
+			note.player = Std.int(Math.min(note.player, strumlines.length - 1));
 
 			// stepmania shuffle
 			// instead of randomizing every note's lane individually
