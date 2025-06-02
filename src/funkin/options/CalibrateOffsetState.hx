@@ -86,7 +86,7 @@ class CalibrateOffsetState extends MusicState {
 
 	function finish():Void {
 		finalOffset = Math.floor(totalNoteDifference / notesHit) * -1;
-		introText.text = 'Your offset is: $finalOffset millisecond${Math.abs(finalOffset) != 1 ? 's' : ''} (${finalOffset > 0 ? 'earlier' : 'later'})\n\nPress Accept to confirm\nPress Back to retry';
+		introText.text = 'Your offset is: $finalOffset millisecond${Math.abs(finalOffset) != 1 ? 's' : ''} (${finalOffset > 0 ? 'later' : 'earlier'})\n\nPress Accept to confirm\nPress Back to retry';
 		introText.screenCenter();
 
 		finished = true;
