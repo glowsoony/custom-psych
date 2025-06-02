@@ -32,7 +32,7 @@ class Note extends FlxSprite {
 	public var extraData:Map<String, Dynamic> = [];
 
 	public var time(get, never):Float;
-	function get_time():Float return rawTime + Settings.data.noteOffset;
+	function get_time():Float return rawTime - Settings.data.noteOffset;
 
 	public var rawTime:Float = 0;
 
