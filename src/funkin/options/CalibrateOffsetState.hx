@@ -111,7 +111,7 @@ class CalibrateOffsetState extends MusicState {
 
 	function leave():Void {
 		MusicState.switchState(new funkin.options.OptionsState());
-		Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'));
+		Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
 		Conductor.bpm = 102;
 		Conductor.inst.play();
 	}
