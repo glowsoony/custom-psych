@@ -42,12 +42,16 @@ class Character extends FunkinSprite {
 	public var file:CharacterFile;
 
 	public function new(?x:Float, ?y:Float, ?name:String, ?player:Bool = true) {
-		name ??= default_name;
 		super(x, y);
+		change(name);
+	}
+
+	public function change(name:String) {
+		name ??= default_name;
 
 		var path:String = Paths.get('characters/$name.json');
 		if (!FileSystem.exists(path)) {
-			warn('Character "$path" doesn\'t exist.');
+			warn('Character "$name" doesn\'t exist.');
 			name = default_name;
 		}
 		path = Paths.get('characters/$name.json');
@@ -84,14 +88,9 @@ class Character extends FunkinSprite {
 		if (animation.exists('danceLeft') || animation.exists('danceRight')) {
 			danceList = ['danceLeft', 'danceRight'];
 			dancer = true;
-		}
+		} else danceList = ['idle'];
 
-		animation.finishCallback = anim -> {
-			if (specialAnim) specialAnim = false;
-			if (!animation.exists('$anim-loop') || inEditor) return;
-			animation.play('$anim-loop');
-		}
-
+		specialAnim = false;
 		dance(true);
 	}
 
@@ -111,8 +110,8 @@ class Character extends FunkinSprite {
 	}
 
 	var animIndex:Int = 0;
-	var danceList(default, set):Array<String> = ['idle'];
-	var loopDanceList:Array<String> = ['idle-loop']; 
+	var danceList(default, set):Array<String>;
+	var loopDanceList:Array<String>;
 	// there could be a better way of detecting looped dancing butttttt
 	function set_danceList(value:Array<String>):Array<String> {
 		loopDanceList = [for (anim in value) '$anim-loop'];

@@ -624,6 +624,18 @@ class PlayState extends MusicState {
 		ScriptHandler.call('eventTriggered', [event.name, event.args]);
 
 		switch (event.name) {
+			case 'Change Character':
+				var character:Character = switch Std.parseInt(event.args[0]) {
+					case 0: dad;
+					case 1: gf;
+					case 2: bf;
+
+					case _: bf;
+				}
+				var name:String = event.args[1];
+
+				// TODO: FUCK
+				
 			case 'Hey!':
 				var character:Character = switch Std.parseInt(event.args[0]) {
 					case 0: dad;
