@@ -2,6 +2,7 @@ package funkin.backend;
 
 class EventHandler {
     public dynamic function triggered(event:Event) {}
+	public dynamic function pushed(event:Event) {}
 
 	// just so it doesn't yell at me
 	public function new() {}
@@ -27,6 +28,7 @@ class EventHandler {
 				};
 
 				list.push(eventToPush);
+				pushed(eventToPush);
 			} else if (Std.isOfType(event[1], Array)) { // modern events
 				// [time, [ [name, value1, value2] ]]
 				var subEvents:Array<Dynamic> = event[1];
@@ -37,6 +39,7 @@ class EventHandler {
 						args: [subEvent[1], subEvent[2]]
 					};
 					list.push(eventToPush);
+					pushed(eventToPush);
 				}
 			}
         }

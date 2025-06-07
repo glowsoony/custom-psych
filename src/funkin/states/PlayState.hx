@@ -48,6 +48,8 @@ class PlayState extends MusicState {
 		return value;
 	}
 
+	var characterCache:Map<String, Character> = [];
+
 	var songName:String;
 	var stageName:String;
 
@@ -189,7 +191,7 @@ class PlayState extends MusicState {
 
 		eventHandler = new EventHandler();
 		eventHandler.triggered = eventTriggered;
-		eventHandler.load(songID);
+		eventHandler.pushed = eventPushed;
 
 		ScriptHandler.loadFromDir('songs/$songID');
 
@@ -296,6 +298,7 @@ class PlayState extends MusicState {
 		add(bf = new Character(stage.player.x, stage.player.y, song.meta.player));
 		rightStrumline.character = bf;
 
+		eventHandler.load(songID);
 		moveCamera();
 
 		stage.create();
@@ -622,33 +625,54 @@ class PlayState extends MusicState {
 
 	function eventTriggered(event:Event):Void {
 		ScriptHandler.call('eventTriggered', [event.name, event.args]);
+		stage.eventTriggered(event);
 
-		switch (event.name) {
+		switch event.name {
 			case 'Change Character':
-				var character:Character = switch Std.parseInt(event.args[0]) {
+				var type:Int = Std.parseInt(event.args[0]);
+				var character:Character = switch type {
 					case 0: dad;
 					case 1: gf;
 					case 2: bf;
 
-					case _: bf;
+					default: null;
 				}
 				var name:String = event.args[1];
+				if (character == null || character.name == name) return;
 
-				// TODO: FUCK
+				var newCharacter:Character = characterCache[name];
+				if (newCharacter == null) return;
+
+				newCharacter.alpha = character.alpha;
+				newCharacter.visible = character.visible;
+				newCharacter.setPosition(character.x, character.y);
 				
+
+				if (type == 0) {
+					dad = newCharacter;
+					iconP2.change(name);
+				} else if (type == 1) {
+					gf = newCharacter;
+				} else if (type == 2) {
+					bf = newCharacter;
+					iconP1.change(name);
+				}
+
+				healthBar.setColors(dad.healthColor, bf.healthColor);
+
 			case 'Hey!':
 				var character:Character = switch Std.parseInt(event.args[0]) {
 					case 0: dad;
 					case 1: gf;
 					case 2: bf;
 
-					case _: bf;
+					default: null;
 				}
 
-				if (character.animation.exists('cheer')) {
-					character.playAnim('cheer', true);
-					character.specialAnim = true;
-				}
+				if (character == null || !character.animation.exists('cheer')) return;
+
+				character.playAnim('cheer', true);
+				character.specialAnim = true;
 
 			case 'Play Animation':
 				var animName:String = event.args[1];
@@ -657,13 +681,13 @@ class PlayState extends MusicState {
 					case 1: gf;
 					case 2: bf;
 
-					case _: bf;
+					default: null;
 				}
 
-				if (character.animation.exists(animName)) {
-					character.playAnim(animName, true);
-					character.specialAnim = true;
-				}
+				if (character == null || !character.animation.exists(animName)) return;
+
+				character.playAnim(animName, true);
+				character.specialAnim = true;
 
 			case 'Set GF Speed':
 				gfSpeed = Math.floor(Math.max(Std.parseInt(event.args[0]), 1));
@@ -672,10 +696,10 @@ class PlayState extends MusicState {
 				FlxG.sound.play(Paths.sound(event.args[0]), Std.parseFloat(event.args[1]));
 
 			case 'Add Camera Zoom':
-				if (Settings.data.cameraZooms && camGame.zoom < 1.35) {
-					camGame.zoom += Std.parseFloat(event.args[0]);
-					camHUD.zoom += Std.parseFloat(event.args[1]);
-				}
+				if (!Settings.data.cameraZooms || camGame.zoom >= 1.35) return;
+
+				camGame.zoom += Std.parseFloat(event.args[0]);
+				camHUD.zoom += Std.parseFloat(event.args[1]);
 
 			case 'Screen Shake':
 				var camerasToTarget:Array<FlxCamera> = [camGame, camHUD];
@@ -688,17 +712,52 @@ class PlayState extends MusicState {
 				}
 
 			case 'Change Scroll Speed':
-				if (Settings.data.gameplaySettings['scrollType'] != 'constant') {
-					var originalSpeed:Float = Settings.data.gameplaySettings['scrollSpeed'];
-					var duration:Float = Std.parseFloat(event.args[1]);
-					var value:Float = song.speed * originalSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
+				if (Settings.data.gameplaySettings['scrollType'] == 'constant') return;
 
-					if (duration <= 0) playfield.scrollSpeed = value;
-					else FlxTween.tween(playfield, {scrollSpeed: value}, duration / playfield.rate);
-				}
+				var originalSpeed:Float = Settings.data.gameplaySettings['scrollSpeed'];
+				var duration:Float = Std.parseFloat(event.args[1]);
+				var value:Float = song.speed * originalSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
+
+				if (duration <= 0) playfield.scrollSpeed = value;
+				else FlxTween.tween(playfield, {scrollSpeed: value}, duration / playfield.rate);
+		}
+	}
+
+	var eventList:Array<String> = [];
+	function eventPushed(event:Event):Void {
+		eventPushedUnique(event);
+		if (eventList.contains(event.name)) return;
+
+		eventList.push(event.name);
+		stage.eventPushed(event);
+	}
+
+	function eventPushedUnique(event:Event):Void {
+		stage.eventPushedUnique(event);
+
+		switch event.name {
+			case 'Change Character':
+				cacheCharacter(Std.parseInt(event.args[0]), event.args[1]);
+		}
+	}
+
+	function cacheCharacter(type:Int, name:String):Character {
+		var linkedCharacter:Character = switch type {
+			case 0: dad;
+			case 1: gf;
+			case 2: bf;
+
+			default: null;
 		}
 
-		stage.eventTriggered(event);
+		if (linkedCharacter == null) return null;
+
+		var character:Character = new Character(0, 0, name);
+		character.alpha = 0.0001;
+		character.setPosition(linkedCharacter.x, linkedCharacter.y);
+		characterCache.set(name, character);
+
+		return character;
 	}
 
 	var canPause:Bool = true;

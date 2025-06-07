@@ -156,7 +156,8 @@ class Stage {
 	public function update(elapsed:Float):Void {}
 	public function destroy():Void {}
 
-	public function eventPreloaded(event:Event):Void {}
+	public function eventPushed(event:Event):Void {}
+	public function eventPushedUnique(event:Event):Void {}
 	public function eventTriggered(event:Event):Void {}
 
 	public static function getFile(path:String):StageFile {
