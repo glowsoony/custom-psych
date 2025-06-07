@@ -20,18 +20,23 @@ import funkin.substates.GameOverSubstate;
 class PlayState extends MusicState {
 	public static var self:PlayState;
 
-	// chart stuff
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// VSRG SPECIFIC
+	// VSRG SPECIFIC
+	// VSRG SPECIFIC
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	// chart shit
 	public static var song:Chart;
 	public static var songID:String;
+	var songName:String;
+	var songPercent:Float = 0.0;
+	var songLength:Float;
 
-	public static var songList:Array<String> = [];
-	public static var storyMode:Bool = false;
-	public static var currentLevel:Int = 0;
-	public static var weekData:WeekFile;
-
+	// gameplay
 	@:unreflective static var disqualified:Bool = false;
 
-	@:isVar var botplay(get, set):Bool = false;
+	@:isVar var botplay(get, set):Bool;
 	function get_botplay():Bool {
 		if (playfield == null) return false;
 
@@ -48,18 +53,38 @@ class PlayState extends MusicState {
 		return value;
 	}
 
-	var characterCache:Map<String, Character> = [];
+	@:isVar var playerID(get, set):Int;
+	function get_playerID():Int {
+		if (playfield == null) return 0;
+		return playfield.playerID;
+	}
 
-	var songName:String;
-	var stageName:String;
+	function set_playerID(value:Int):Int {
+		return playfield.playerID = value;
+	}
 
-	var downscroll:Bool;
-	var noFail:Bool;
-	var canReset:Bool;
+	@:isVar var rate(get, set):Float;
+	function get_rate():Float {
+		if (playfield == null) return 1.0;
+		return playfield.rate;
+	}
 
-	var clearType:String;
-	var grade:String;
+	function set_rate(value:Float):Float {
+		return playfield.rate = value;
+	}
 
+	var _rawScrollSpeed:Float = 1.0;
+	@:isVar var scrollSpeed(get, set):Float;
+	function get_scrollSpeed():Float {
+		if (playfield == null) return 1.0;
+		return playfield.scrollSpeed;
+	}
+
+	function set_scrollSpeed(value:Float):Float {
+		return playfield.scrollSpeed = value;
+	}
+
+	// stats 
 	static var gradeSet:Array<Array<Dynamic>> = [
 		["Perfect!!", 1],
 		["Sick!", 0.9],
@@ -74,9 +99,52 @@ class PlayState extends MusicState {
 		["WHAT THE FUCK", Math.NaN]
 	];
 
+	var combo:Int = 0;
+	var comboBreaks:Int = 0;
+	var score:Int = 0;
+	var accuracy:Float = 0.0;
+	var judgeData:Array<Judgement> = Judgement.list;
+
+	var totalNotesPlayed:Float = 0.0;
+	var totalNotesHit:Int = 0;
+
+	// objects
+	var playfield:PlayField;
+	var hud:FlxSpriteGroup;
+
+	var scoreTxt:FlxText;
+	var botplayTxt:FlxText;
+
+	var timeBar:Bar;
+	var timeTxt:FlxText;
+
+	var judgeSpr:JudgementSpr;
+	var comboNumbers:ComboNums;
+
+	var judgeCounter:FlxText;
+
+	var healthBar:Bar;
+
+	var leftStrumline:Strumline;
+	var rightStrumline:Strumline;
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// FNF SPECIFIC
+	// FNF SPECIFIC
+	// FNF SPECIFIC
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	public static var songList:Array<String> = [];
+	public static var storyMode:Bool = false;
+	public static var currentLevel:Int = 0;
+	public static var weekData:WeekFile;
+
+	var characterCache:Map<String, Character> = [];
+	
+	var stageName:String;
+
 	var health(default, set):Float = 50;
 	function set_health(value:Float):Float {
-		if (!noFail && ((playfield.playerID == 1 && value <= 0) || (playfield.playerID == 0 && value >= 100)))
+		if (!noFail && ((playerID == 1 && value <= 0) || (playerID == 0 && value >= 100)))
 			die();
 
 		value = FlxMath.bound(value, 0, 100);
@@ -91,31 +159,14 @@ class PlayState extends MusicState {
 		return health = value;
 	}
 
-	var judgeData:Array<Judgement> = Judgement.list;
-
 	var defaultCamZoom:Float = 1.05;
-
-	var songPercent:Float = 0.0;
-	var songLength:Float;
-
 	var botplayTxtSine:Float = 0.0;
-
 	var cameraSpeed:Float = 1;
-
-	var combo:Int = 0;
-	var comboBreaks:Int = 0;
-	var score:Int = 0;
-	var accuracy:Float = 0.0;
 
 	static var storyScore:Int = 0;
 
-	var totalNotesPlayed:Float = 0.0;
-	var totalNotesHit:Int = 0;
-
 	public var paused:Bool = false;
 	var updateTime:Bool = false;
-
-	var playfield:PlayField;
 
 	// objects
 	var stage:Stage;
@@ -127,29 +178,12 @@ class PlayState extends MusicState {
 	var camFollow:FlxObject;
 	static var prevCamFollow:FlxObject;
 
-	var hud:FlxSpriteGroup;
-
-	var scoreTxt:FlxText;
-	var botplayTxt:FlxText;
-
-	var timeBar:Bar;
-	var timeTxt:FlxText;
-
 	var eventHandler:EventHandler;
 
-	var judgeSpr:JudgementSpr;
-	var comboNumbers:ComboNums;
-
-	var judgeCounter:FlxText;
-
-	var healthBar:Bar;
 	var iconP1:CharIcon;
 	var iconP2:CharIcon;
 
 	var countdown:Countdown;
-
-	var leftStrumline:Strumline;
-	var rightStrumline:Strumline;
 
 	var noteSplashes:FlxTypedSpriteGroup<NoteSplash>;
 
@@ -158,7 +192,6 @@ class PlayState extends MusicState {
 	var camHUD:FlxCamera;
 	var camOther:FlxCamera;
 
-	// whatever variables i also need lmao
 	final iconSpacing:Float = 20;
 	var gfSpeed:Int = 1;
 
@@ -183,6 +216,8 @@ class PlayState extends MusicState {
 		noFail = Settings.data.gameplaySettings['noFail'];
 		canReset = Settings.data.canReset;
 		downscroll = Settings.data.downscroll;
+		scrollType = Settings.data.gameplaySettings['scrollType'];
+		_rawScrollSpeed = Settings.data.gameplaySettings['scrollSpeed'];
 
 		clearType = updateClearType();
 		grade = updateGrade();
@@ -219,6 +254,7 @@ class PlayState extends MusicState {
 		camOther = FlxG.cameras.add(new FlxCamera(), false);
 		camOther.bgColor.alpha = 0;
 
+		// start setting up the hud
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
 		leftStrumline = new Strumline(320, strumlineYPos);
 		rightStrumline = new Strumline(950, strumlineYPos);
@@ -226,12 +262,12 @@ class PlayState extends MusicState {
 		add(playfield = new PlayField([leftStrumline, rightStrumline]));
 		playfield.cameras = [camHUD];
 		playfield.modifiers = true;
-		playfield.playerID = Settings.data.gameplaySettings['opponentMode'] ? 0 : 1;
-		playfield.rate = Settings.data.gameplaySettings['playbackRate'];
+		playerID = Settings.data.gameplaySettings['opponentMode'] ? 0 : 1;
+		rate = Settings.data.gameplaySettings['playbackRate'];
 
 		if (Settings.data.centeredNotes) {
 			for (i => line in playfield.strumlines.members) {
-				if (i == playfield.playerID) {
+				if (i == playerID) {
 					line.screenCenter(X);
 					continue;
 				}
@@ -240,25 +276,25 @@ class PlayState extends MusicState {
 				line.alpha = 0;
 			}
 		}
-		
-		loadSong();
 
-		playfield.scrollSpeed = switch (Settings.data.gameplaySettings['scrollType']) {
-			case 'Constant': Settings.data.gameplaySettings['scrollSpeed'];
-			case 'Multiplied': song.speed * Settings.data.gameplaySettings['scrollSpeed'];
-			default: song.speed;
-		}
-		
+		add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
+		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
+		noteSplashes.cameras = [camHUD];
+
 		// i hate having to make a seperate function for this but
 		// it's the only way it'll work for dynamic functions
 		playfield.noteHit = function(strumline:Strumline, note:Note) noteHit(strumline, note);
 		playfield.noteMiss = function(note:Note) noteMiss(note);
 		playfield.sustainHit = function(sustain:Note) sustainHit(sustain);
 		playfield.ghostTap = function() ghostTap();
+		
+		loadSong();
 
-		add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
-		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
-		noteSplashes.cameras = [camHUD];
+		scrollSpeed = switch scrollType {
+			case 'Constant': _rawScrollSpeed;
+			case 'Multiplied': song.speed * _rawScrollSpeed;
+			default: song.speed;
+		}
 
 		stage = switch stageName {
 			case 'stage': new StageWeek1();
@@ -277,20 +313,9 @@ class PlayState extends MusicState {
 		}
 		ScriptHandler.loadFile('stages/$stageName.hx');
 
-		cameraSpeed = stage.cameraSpeed;
-		camGame.zoom = defaultCamZoom = stage.zoom;
-
 		// characters
 		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.meta.spectator, false));
 		gf.visible = stage.isSpectatorVisible;
-
-		// fix for the camera starting off in the stratosphere
-		camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
-		camFollow.x += gf.cameraOffset.x;
-		camFollow.y += gf.cameraOffset.y;
-
-		camGame.follow(camFollow, LOCKON, 0);
-		camGame.snapToTarget();
 
 		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.meta.enemy, false));
 		leftStrumline.character = dad;
@@ -298,15 +323,24 @@ class PlayState extends MusicState {
 		add(bf = new Character(stage.player.x, stage.player.y, song.meta.player));
 		rightStrumline.character = bf;
 
-		eventHandler.load(songID);
+		// fix for the camera starting off in the stratosphere
+		camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
+		camFollow.x += gf.cameraOffset.x;
+		camFollow.y += gf.cameraOffset.y;
+
+		cameraSpeed = stage.cameraSpeed;
+		camGame.zoom = defaultCamZoom = stage.zoom;
+		camGame.follow(camFollow, LOCKON, 0);
+		camGame.snapToTarget();
+		
 		moveCamera();
 
 		stage.create();
+		eventHandler.load(songID);
 
 		// set up hud elements
 		add(hud = new FlxSpriteGroup());
 		hud.cameras = [camHUD];
-
 		loadHUD();
 
 		botplay = Settings.data.gameplaySettings['botplay'];
@@ -414,7 +448,7 @@ class PlayState extends MusicState {
 
 	dynamic function ghostTap() {
 		score -= 20;
-		if (playfield.playerID == 0) health += 6;
+		if (playerID == 0) health += 6;
 		else health -= 6;
 
 		accuracy = updateAccuracy();
@@ -427,7 +461,7 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function noteHit(strumline:Strumline, note:Note):Void {
-		if (note.player != playfield.playerID) {
+		if (note.player != playerID) {
 			playCharacterAnim(strumline.character, note, 'sing');
 			if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
@@ -438,7 +472,7 @@ class PlayState extends MusicState {
 
 			final judge:Judgement = Judgement.min;
 
-			if (playfield.playerID == 0) health -= judge.health;
+			if (playerID == 0) health -= judge.health;
 			else health += judge.health;
 			if (!Settings.data.hideTightestJudge) judgeSpr.display(0);
 			judge.hits++;
@@ -470,7 +504,7 @@ class PlayState extends MusicState {
 	
 		if (!note.breakOnHit) {
 			totalNotesPlayed += judge.accuracy;
-			if (playfield.playerID == 0) health -= judge.health;
+			if (playerID == 0) health -= judge.health;
 			else health += judge.health;
 			// pbot1-ish scoring system
 			// cuz judgement based is boring :sob:
@@ -479,7 +513,7 @@ class PlayState extends MusicState {
 			combo++;
 		} else {
 			score -= 20;
-			if (playfield.playerID == 0) health += 6;
+			if (playerID == 0) health += 6;
 			else health -= 6;
 			combo = 0;
 			comboBreaks++;
@@ -499,7 +533,7 @@ class PlayState extends MusicState {
 		updateJudgeCounter();
 		if (song.meta.hasVocals) {
 			if (Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
-			else Conductor.vocals.members[playfield.playerID].volume = 1;
+			else Conductor.vocals.members[playerID].volume = 1;
 		}
 
 		if (Settings.data.noteSplashSkin != 'None' && judge.splashes && note.splashes) {
@@ -526,7 +560,7 @@ class PlayState extends MusicState {
 		comboBreaks++;
 		combo = 0;
 		score -= 20;
-		if (playfield.playerID == 0) health += 6;
+		if (playerID == 0) health += 6;
 		else health -= 6;
 
 		accuracy = updateAccuracy();
@@ -543,7 +577,7 @@ class PlayState extends MusicState {
 
 		if (song.meta.hasVocals) {
 			if (Conductor.opponentVocals == null) Conductor.mainVocals.volume = 0;
-			else Conductor.vocals.members[playfield.playerID].volume = 0;
+			else Conductor.vocals.members[playerID].volume = 0;
 		}
 
 		playCharacterAnim(playfield.currentPlayer.character, note, 'miss');
@@ -646,7 +680,6 @@ class PlayState extends MusicState {
 				newCharacter.alpha = character.alpha;
 				newCharacter.visible = character.visible;
 				newCharacter.setPosition(character.x, character.y);
-				
 
 				if (type == 0) {
 					dad = newCharacter;
@@ -712,14 +745,13 @@ class PlayState extends MusicState {
 				}
 
 			case 'Change Scroll Speed':
-				if (Settings.data.gameplaySettings['scrollType'] == 'constant') return;
+				if (scrollType == 'constant') return;
 
-				var originalSpeed:Float = Settings.data.gameplaySettings['scrollSpeed'];
 				var duration:Float = Std.parseFloat(event.args[1]);
-				var value:Float = song.speed * originalSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
+				var value:Float = song.speed * _rawScrollSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
 
-				if (duration <= 0) playfield.scrollSpeed = value;
-				else FlxTween.tween(playfield, {scrollSpeed: value}, duration / playfield.rate);
+				if (duration <= 0) scrollSpeed = value;
+				else FlxTween.tween(this, {scrollSpeed: value}, duration / rate);
 		}
 	}
 
