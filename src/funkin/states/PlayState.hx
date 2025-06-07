@@ -35,6 +35,11 @@ class PlayState extends MusicState {
 
 	// gameplay
 	@:unreflective static var disqualified:Bool = false;
+	var canPause:Bool = true;
+
+	var downscroll:Bool;
+	var canReset:Bool;
+	var noFail:Bool;
 
 	@:isVar var botplay(get, set):Bool;
 	function get_botplay():Bool {
@@ -74,6 +79,7 @@ class PlayState extends MusicState {
 	}
 
 	var _rawScrollSpeed:Float = 1.0;
+	var scrollType:String;
 	@:isVar var scrollSpeed(get, set):Float;
 	function get_scrollSpeed():Float {
 		if (playfield == null) return 1.0;
@@ -107,6 +113,8 @@ class PlayState extends MusicState {
 
 	var totalNotesPlayed:Float = 0.0;
 	var totalNotesHit:Int = 0;
+	var grade:String;
+	var clearType:String;
 
 	// objects
 	var playfield:PlayField;
@@ -162,6 +170,8 @@ class PlayState extends MusicState {
 	var defaultCamZoom:Float = 1.05;
 	var botplayTxtSine:Float = 0.0;
 	var cameraSpeed:Float = 1;
+	var iconSpacing:Float = 20;
+	var gfSpeed:Int = 1;
 
 	static var storyScore:Int = 0;
 
@@ -192,10 +202,10 @@ class PlayState extends MusicState {
 	var camHUD:FlxCamera;
 	var camOther:FlxCamera;
 
-	final iconSpacing:Float = 20;
-	var gfSpeed:Int = 1;
-
-	override function create() {
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// overrides
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	override function create():Void {
 		Language.reloadPhrases();
 
 		super.create();
@@ -222,13 +232,9 @@ class PlayState extends MusicState {
 		clearType = updateClearType();
 		grade = updateGrade();
 
-		ScriptHandler.loadFromDir('scripts');
-
 		eventHandler = new EventHandler();
 		eventHandler.triggered = eventTriggered;
 		eventHandler.pushed = eventPushed;
-
-		ScriptHandler.loadFromDir('songs/$songID');
 
 		// set up cameras
 		FlxG.cameras.reset(camGame = new FlxCamera());
@@ -282,7 +288,7 @@ class PlayState extends MusicState {
 		noteSplashes.cameras = [camHUD];
 
 		// i hate having to make a seperate function for this but
-		// it's the only way it'll work for dynamic functions
+		// it's the only way it'll work for functions
 		playfield.noteHit = function(strumline:Strumline, note:Note) noteHit(strumline, note);
 		playfield.noteMiss = function(note:Note) noteMiss(note);
 		playfield.sustainHit = function(sustain:Note) sustainHit(sustain);
@@ -311,7 +317,6 @@ class PlayState extends MusicState {
 
 			case _: new Stage(stageName);
 		}
-		ScriptHandler.loadFile('stages/$stageName.hx');
 
 		// characters
 		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.meta.spectator, false));
@@ -349,12 +354,10 @@ class PlayState extends MusicState {
 		countdown.screenCenter();
 		countdown.onStart = function() {
 			Conductor.playing = true;
-			ScriptHandler.call('countdownStarted');
 		}
 		countdown.onFinish = function() {
 			Conductor.play();
 			updateTime = true;
-			ScriptHandler.call('onSongStart');
 		}
 
 		Conductor.rawTime = (Conductor.crotchet * -5);
@@ -364,103 +367,79 @@ class PlayState extends MusicState {
 
 		DiscordClient.changePresence('$songName - ${Difficulty.current}', storyMode ? 'Story Mode' : 'Freeplay', dad.icon, true);
 
-		ScriptHandler.call('create');
 		persistentUpdate = true;
 	}
 
-	function loadHUD():Void {
-		if (hud == null) return;
-		hud.clear();
+	override function update(elapsed:Float):Void {
+		super.update(elapsed);
 
-		hud.add(timeBar = new Bar(0, downscroll ? FlxG.height - 30 : 15, 'timeBar', function() return songPercent, 0, 1));
-		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
-		timeBar.screenCenter(X);
+		if ((Controls.justPressed('reset') && canReset)) die();
 
-		// to make it fancy
-		// if you want it the generic psych way
-		// (black and white)
-		// then just take this long ass line out
-		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
-
-		hud.add(timeTxt = new FlxText(0, 0, timeBar.width, '$songName - 0:00', 16));
-		timeTxt.font = Paths.font('vcr.ttf');
-		timeTxt.alignment = CENTER;
-		timeTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
-		timeTxt.borderColor = FlxColor.BLACK;
-		timeTxt.borderSize = 1.25;
-		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
-
-		updateTime = Settings.data.timeBarType != 'Disabled';
-		timeBar.visible = Settings.data.timeBarType != 'Disabled';
-		timeTxt.visible = Settings.data.timeBarType != 'Disabled';
-
-		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
-		healthBar.alpha = Settings.data.healthBarAlpha;
-		healthBar.setColors(dad.healthColor, bf.healthColor);
-		healthBar.screenCenter(X);
-		healthBar.leftToRight = false;
-
-		hud.add(iconP1 = new CharIcon(bf.icon, true));
-		iconP1.alpha = Settings.data.healthBarAlpha;
-		iconP1.y = healthBar.y - (iconP1.height * 0.5);
-
-		hud.add(iconP2 = new CharIcon(dad.icon));
-		iconP2.alpha = Settings.data.healthBarAlpha;
-		iconP2.y = healthBar.y - (iconP2.height * 0.5);
-
+		updateCameraScale(elapsed);
+		updateIconScales(elapsed);
 		updateIconPositions();
+		updateTimeBar();
 
-		hud.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, '', 16));
-		scoreTxt.font = Paths.font('vcr.ttf');
-		scoreTxt.alignment = CENTER;
-		scoreTxt.alpha = Settings.data.scoreAlpha;
-		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
-		scoreTxt.borderColor = FlxColor.BLACK;
-		scoreTxt.borderSize = 1.25;
-		scoreTxt.screenCenter(X);
-		updateScoreTxt();
+		if (countdown.finished) eventHandler.update();
+		stage.update(elapsed);
 
-		hud.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
-		hud.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
+		if (FlxG.keys.justPressed.F8) botplay = !botplay;
 
-		hud.add(botplayTxt = new FlxText(0, downscroll ? FlxG.height - 115 : 85, FlxG.width - 800, 'BOTPLAY', 32));
-		botplayTxt.font = Paths.font('vcr.ttf');
-		botplayTxt.alignment = CENTER;
-		botplayTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
-		botplayTxt.borderColor = FlxColor.BLACK;
-		botplayTxt.borderSize = 1.25;
-		botplayTxt.visible = botplay;
-		botplayTxt.screenCenter(X);
+		if (botplayTxt.visible) {
+			botplayTxtSine += 180 * elapsed;
+			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplayTxtSine) / 180);
+		}
 
-		var opponentMode:Bool = Settings.data.gameplaySettings['opponentMode'];
-		hud.add(judgeCounter = new FlxText(0, 0, 500, '', 20));
-		judgeCounter.font = Paths.font('vcr.ttf');
-		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
-		judgeCounter.borderColor = FlxColor.BLACK;
-		judgeCounter.borderSize = 1.25;
-		judgeCounter.alignment = opponentMode ? 'right' : 'left';
-		updateJudgeCounter();
-		judgeCounter.screenCenter(Y);
-		judgeCounter.visible = Settings.data.judgementCounter;
+		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
-		judgeCounter.x = opponentMode ? (FlxG.width - judgeCounter.width) - 5 : 5;
+		camGame.followLerp = paused ? 0 : (0.04 * cameraSpeed * playfield.rate);
 	}
 
-	dynamic function ghostTap() {
-		score -= 20;
-		if (playerID == 0) health += 6;
-		else health -= 6;
+	override function destroy():Void {
+		closeSubState();
+		camGame.setFilters([]);
 
-		accuracy = updateAccuracy();
-		grade = updateGrade();
-		updateScoreTxt();
+		stage.destroy();
+		Judgement.resetHits();
+
+		Conductor.rate = 1;
+		FlxG.animationTimeScale = 1;
+
+		ScriptHandler.clear();
+
+		self = null;
+		super.destroy();
+
+		PauseMenu.openCount = 0;
 	}
 
-	function sustainHit(note:Note) {
-		playCharacterAnim(playfield.currentPlayer.character, note, 'sing');
+	override function stepHit(step:Int) {
+
 	}
 
-	dynamic function noteHit(strumline:Strumline, note:Note):Void {
+	override function beatHit(beat:Int) {
+		iconP1.scale.set(1.2, 1.2);
+		iconP1.updateHitbox();
+
+		iconP2.scale.set(1.2, 1.2);
+		iconP2.updateHitbox();
+
+		characterBopper(beat);
+	}
+
+	override function measureHit(measure:Int) {
+		if (Settings.data.cameraZooms) {
+			camGame.zoom += 0.03;
+			camHUD.zoom += 0.015;
+		}
+
+		moveCamera(measure);
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// input related
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	function noteHit(strumline:Strumline, note:Note):Void {
 		if (note.player != playerID) {
 			playCharacterAnim(strumline.character, note, 'sing');
 			if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
@@ -489,11 +468,11 @@ class PlayState extends MusicState {
 		} else playCharacterAnim(strumline.character, note, 'sing');
 	}
 
-	inline function playCharacterAnim(character:Character, note:Note, prefix:String) {
-		character.playAnim('$prefix${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
+	function sustainHit(note:Note) {
+		playCharacterAnim(playfield.currentPlayer.character, note, 'sing');
 	}
 
-	dynamic function judgeHit(strum:Receptor, note:Note) {
+	function judgeHit(strum:Receptor, note:Note) {
 		final adjustedHitTime:Float = note.rawHitTime / Conductor.rate;
 		var judgeID:Int = Judgement.getIDFromTiming(adjustedHitTime);
 		var judge:Judgement = Judgement.list[judgeID];
@@ -548,11 +527,9 @@ class PlayState extends MusicState {
 		}
 
 		judge = null;
-
-		ScriptHandler.call('noteHit', [note]);
 	}
 
-	dynamic function noteMiss(note:Note) {
+	function noteMiss(note:Note) {
 		if (note.ignore) return;
 
 		if (Settings.data.gameplaySettings['instakill'] || Settings.data.gameplaySettings['onlySicks']) die();
@@ -566,8 +543,6 @@ class PlayState extends MusicState {
 		accuracy = updateAccuracy();
 		grade = updateGrade();
 		clearType = updateClearType();
-
-		ScriptHandler.call('noteMiss', [note]);
 
 		note.missed = true;
 		for (piece in note.pieces) {
@@ -584,6 +559,71 @@ class PlayState extends MusicState {
 		updateScoreTxt();
 	}
 
+	function ghostTap() {
+		score -= 20;
+		if (playerID == 0) health += 6;
+		else health -= 6;
+
+		accuracy = updateAccuracy();
+		grade = updateGrade();
+		updateScoreTxt();
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// gameplay functionality
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	function updateAccuracy():Float {
+		if (totalNotesHit <= 0) return 0.0;
+		return totalNotesPlayed / (totalNotesHit + comboBreaks);
+	}
+
+	function updateClearType():String {
+		var sicks:Int = judgeData[0].hits;
+		var goods:Int = judgeData[1].hits;
+		var bads:Int = judgeData[2].hits;
+		var shits:Int = judgeData[3].hits;
+
+		var type:String = 'N/A';
+
+		if (comboBreaks == 0) {
+			if (bads > 0 || shits > 0) type = 'FC';
+			else if (goods > 0) {
+				if (goods == 1) type = 'BF';
+				else if (goods <= 9) type = 'SDG';
+				else if (goods >= 10) type = 'GFC';
+			} else if (sicks > 0) type = 'PFC';
+		} else {
+			if (comboBreaks == 1) type = 'MF';
+			else if (comboBreaks <= 9) type = 'SDCB';
+			else type = 'Clear';
+		}
+
+		return type;
+	}
+
+	// from troll engine
+	// lol luhmao
+	function updateGrade():String {
+		var type:String = '?';
+		if (totalNotesHit == 0) return type;
+		
+		final roundedAccuracy:Float = accuracy * 0.01;
+
+		if (roundedAccuracy >= 1) return gradeSet[0][0]; // Uses first string
+		else {
+			for (curGrade in gradeSet) {
+				if (roundedAccuracy <= curGrade[1]) continue;
+				type = curGrade[0];
+				break;
+			}
+		}
+		
+		return type;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// chart/song related
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	function loadSong():Void {
 		// load chart
 		try {
@@ -657,8 +697,10 @@ class PlayState extends MusicState {
 		playfield.loadNotes(song);
 	}
 
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// events
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	function eventTriggered(event:Event):Void {
-		ScriptHandler.call('eventTriggered', [event.name, event.args]);
 		stage.eventTriggered(event);
 
 		switch event.name {
@@ -773,56 +815,11 @@ class PlayState extends MusicState {
 		}
 	}
 
-	function cacheCharacter(type:Int, name:String):Character {
-		var linkedCharacter:Character = switch type {
-			case 0: dad;
-			case 1: gf;
-			case 2: bf;
-
-			default: null;
-		}
-
-		if (linkedCharacter == null) return null;
-
-		var character:Character = new Character(0, 0, name);
-		character.alpha = 0.0001;
-		character.setPosition(linkedCharacter.x, linkedCharacter.y);
-		characterCache.set(name, character);
-
-		return character;
-	}
-
-	var canPause:Bool = true;
-	override function update(elapsed:Float):Void {
-		ScriptHandler.call('update', [elapsed]);
-		super.update(elapsed);
-
-		if ((Controls.justPressed('reset') && canReset)) die();
-
-		updateCameraScale(elapsed);
-		updateIconScales(elapsed);
-		updateIconPositions();
-		updateTimeBar();
-
-		if (countdown.finished) eventHandler.update();
-		stage.update(elapsed);
-
-		if (FlxG.keys.justPressed.F8) botplay = !botplay;
-
-		if (botplayTxt.visible) {
-			botplayTxtSine += 180 * elapsed;
-			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplayTxtSine) / 180);
-		}
-
-		if (Controls.justPressed('pause') && canPause) openPauseMenu();
-
-		camGame.followLerp = paused ? 0 : (0.04 * cameraSpeed * playfield.rate);
-
-		ScriptHandler.call('updatePost', [elapsed]);
-	}
-
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// regarding objects
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	var _lastSeconds:Int = -1;
-	dynamic function updateTimeBar() {
+	function updateTimeBar() {
 		if (paused || !updateTime) return;
 
 		var curTime:Float = Math.max(0, Conductor.rawTime);
@@ -844,7 +841,7 @@ class PlayState extends MusicState {
 		_lastSeconds = seconds;
 	}
 
-	dynamic function updateCameraScale(elapsed:Float):Void {
+	function updateCameraScale(elapsed:Float):Void {
 		if (!Settings.data.cameraZooms) return;
 
 		final scalingMult:Float = Math.exp(-elapsed * 6 * playfield.rate);
@@ -852,12 +849,12 @@ class PlayState extends MusicState {
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
 	}
 
-	dynamic function updateIconPositions():Void {
+	function updateIconPositions():Void {
 		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconSpacing;
 		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconSpacing * 2;
 	}
 
-	dynamic function updateIconScales(elapsed:Float):Void {
+	function updateIconScales(elapsed:Float):Void {
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-elapsed * 9 * playfield.rate));
 		iconP1.scale.set(mult, mult);
 		iconP1.centerOrigin();
@@ -867,96 +864,7 @@ class PlayState extends MusicState {
 		iconP2.centerOrigin();
 	}
 
-	// forceLeave:Bool - forces you to leave to the main menu
-	public function endSong(?forceLeave:Bool = false):Void {
-		ScriptHandler.call('endSong');
-
-		Conductor.stop();
-		Conductor.vocals.destroy();
-		canPause = false;
-		// should automatically leave if you're not in story mode
-		var exitToMenu:Bool = !storyMode;
-		if (storyMode) {
-			++currentLevel < songList.length ? MusicState.resetState() : exitToMenu = true;
-		}
-
-		if (exitToMenu || forceLeave) {
-			persistentUpdate = true;
-			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
-			Conductor.play();
-			Difficulty.reset();
-			Mods.current = '';
-			MusicState.switchState(storyMode ? new StoryMenuState() : new FreeplayState());
-			songList.resize(0);
-			storyMode = false;
-			currentLevel = 0;
-			disqualified = false;
-		} else prevCamFollow = camFollow;
-
-		Sys.println('');
-	}
-
-	// you die
-	function die() {
-		persistentUpdate = false;
-		camGame.visible = false;
-		camHUD.visible = false;
-
-		countdown.stop();
-
-		var gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
-		gameOverSubstate.cameras = [camOther];
-		openSubState(gameOverSubstate);
-	}
-
-	override function beatHit(beat:Int) {
-		ScriptHandler.call('beatHit', [beat]);
-
-		iconP1.scale.set(1.2, 1.2);
-		iconP1.updateHitbox();
-
-		iconP2.scale.set(1.2, 1.2);
-		iconP2.updateHitbox();
-
-		characterBopper(beat);
-	}
-
-	function characterBopper(beat:Int):Void {
-		if (beat % Math.round(gfSpeed * gf.danceInterval) == 0)
-			gf.dance();
-		if (beat % bf.danceInterval == 0)
-			bf.dance();
-		if (beat % dad.danceInterval == 0)
-			dad.dance();
-	}
-
-	dynamic function updateJudgeCounter() {
-		if (!Settings.data.judgementCounter) return;
-		
-		var sicks:Int = judgeData[0].hits;
-		var goods:Int = judgeData[1].hits;
-		var bads:Int = judgeData[2].hits;
-		var shits:Int = judgeData[3].hits;
-
-		judgeCounter.text = 'Sicks: $sicks\nGoods: $goods\nBads: $bads\nShits: $shits';
-	}
-
-	override function stepHit(step:Int) {
-		ScriptHandler.call('stepHit', [step]);
-	}
-
-	override function measureHit(measure:Int) {
-		ScriptHandler.call('measureHit', [measure]);
-
-		if (Settings.data.cameraZooms) {
-			camGame.zoom += 0.03;
-			camHUD.zoom += 0.015;
-		}
-
-		moveCamera(measure);
-	}
-
-	public function moveCamera(?measure:Int = 0) {
+	function moveCamera(?measure:Int = 0) {
 		measure = Std.int(Math.max(0, measure));
 		if (song.notes[measure] == null) return;
 
@@ -982,69 +890,27 @@ class PlayState extends MusicState {
 		camFollow.y += bf.cameraOffset.y;
 	}
 
-	function openPauseMenu() {
-		persistentUpdate = false;
-		Conductor.pause();
-		paused = true;
-		FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if (!tmr.finished) tmr.active = false);
-		FlxTween.globalManager.forEach(function(twn:FlxTween) if (!twn.finished) twn.active = false);
-
-		var menu:PauseMenu = new PauseMenu(songName, Difficulty.current, 0);
-		openSubState(menu);
-		menu.camera = camOther;
+	function characterBopper(beat:Int):Void {
+		if (beat % Math.round(gfSpeed * gf.danceInterval) == 0)
+			gf.dance();
+		if (beat % bf.danceInterval == 0)
+			bf.dance();
+		if (beat % dad.danceInterval == 0)
+			dad.dance();
 	}
 
-	// in case someone wants to make their own accuracy calc
-	dynamic function updateAccuracy():Float {
-		if (totalNotesHit <= 0) return 0.0;
-		return totalNotesPlayed / (totalNotesHit + comboBreaks);
-	}
-
-	dynamic function updateClearType():String {
+	function updateJudgeCounter() {
+		if (!Settings.data.judgementCounter) return;
+		
 		var sicks:Int = judgeData[0].hits;
 		var goods:Int = judgeData[1].hits;
 		var bads:Int = judgeData[2].hits;
 		var shits:Int = judgeData[3].hits;
 
-		var type:String = 'N/A';
-
-		if (comboBreaks == 0) {
-			if (bads > 0 || shits > 0) type = 'FC';
-			else if (goods > 0) {
-				if (goods == 1) type = 'BF';
-				else if (goods <= 9) type = 'SDG';
-				else if (goods >= 10) type = 'GFC';
-			} else if (sicks > 0) type = 'PFC';
-		} else {
-			if (comboBreaks == 1) type = 'MF';
-			else if (comboBreaks <= 9) type = 'SDCB';
-			else type = 'Clear';
-		}
-
-		return type;
+		judgeCounter.text = 'Sicks: $sicks\nGoods: $goods\nBads: $bads\nShits: $shits';
 	}
 
-	// from troll engine
-	// lol luhmao
-	dynamic function updateGrade():String {
-		var type:String = '?';
-		if (totalNotesHit == 0) return type;
-		
-		final roundedAccuracy:Float = accuracy * 0.01;
-
-		if (roundedAccuracy >= 1) return gradeSet[0][0]; // Uses first string
-		else {
-			for (curGrade in gradeSet) {
-				if (roundedAccuracy <= curGrade[1]) continue;
-				type = curGrade[0];
-				break;
-			}
-		}
-		
-		return type;
-	}
-
-	dynamic function updateScoreTxt():Void {
+	function updateScoreTxt():Void {
 		var textToShow:String = '';
 		textToShow += 'Score: $score';
 
@@ -1059,22 +925,159 @@ class PlayState extends MusicState {
 		scoreTxt.text = textToShow;
 	}
 
-	override function destroy() {
-		ScriptHandler.call('destroy');
-		closeSubState();
-		camGame.setFilters([]);
+	function loadHUD():Void {
+		if (hud == null) return;
+		hud.clear();
 
-		stage.destroy();
-		Judgement.resetHits();
+		hud.add(timeBar = new Bar(0, downscroll ? FlxG.height - 30 : 15, 'timeBar', function() return songPercent, 0, 1));
+		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
+		timeBar.screenCenter(X);
 
-		Conductor.rate = 1;
-		FlxG.animationTimeScale = 1;
+		// to make it fancy
+		// if you want it the generic psych way
+		// (black and white)
+		// then just take this long ass line out
+		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
 
-		ScriptHandler.clear();
+		hud.add(timeTxt = new FlxText(0, 0, timeBar.width, '$songName - 0:00', 16));
+		timeTxt.font = Paths.font('vcr.ttf');
+		timeTxt.alignment = CENTER;
+		timeTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		timeTxt.borderColor = FlxColor.BLACK;
+		timeTxt.borderSize = 1.25;
+		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
 
-		self = null;
-		super.destroy();
+		updateTime = Settings.data.timeBarType != 'Disabled';
+		timeBar.visible = Settings.data.timeBarType != 'Disabled';
+		timeTxt.visible = Settings.data.timeBarType != 'Disabled';
 
-		PauseMenu.openCount = 0;
+		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
+		healthBar.alpha = Settings.data.healthBarAlpha;
+		healthBar.setColors(dad.healthColor, bf.healthColor);
+		healthBar.screenCenter(X);
+		healthBar.leftToRight = false;
+
+		hud.add(iconP1 = new CharIcon(bf.icon, true));
+		iconP1.alpha = Settings.data.healthBarAlpha;
+		iconP1.y = healthBar.y - (iconP1.height * 0.5);
+
+		hud.add(iconP2 = new CharIcon(dad.icon));
+		iconP2.alpha = Settings.data.healthBarAlpha;
+		iconP2.y = healthBar.y - (iconP2.height * 0.5);
+
+		updateIconPositions();
+
+		hud.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, '', 16));
+		scoreTxt.font = Paths.font('vcr.ttf');
+		scoreTxt.alignment = CENTER;
+		scoreTxt.alpha = Settings.data.scoreAlpha;
+		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		scoreTxt.borderColor = FlxColor.BLACK;
+		scoreTxt.borderSize = 1.25;
+		scoreTxt.screenCenter(X);
+		updateScoreTxt();
+
+		hud.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
+		hud.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
+
+		hud.add(botplayTxt = new FlxText(0, downscroll ? FlxG.height - 115 : 85, FlxG.width - 800, 'BOTPLAY', 32));
+		botplayTxt.font = Paths.font('vcr.ttf');
+		botplayTxt.alignment = CENTER;
+		botplayTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
+		botplayTxt.borderColor = FlxColor.BLACK;
+		botplayTxt.borderSize = 1.25;
+		botplayTxt.visible = botplay;
+		botplayTxt.screenCenter(X);
+
+		var opponentMode:Bool = Settings.data.gameplaySettings['opponentMode'];
+		hud.add(judgeCounter = new FlxText(0, 0, 500, '', 20));
+		judgeCounter.font = Paths.font('vcr.ttf');
+		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
+		judgeCounter.borderColor = FlxColor.BLACK;
+		judgeCounter.borderSize = 1.25;
+		judgeCounter.alignment = opponentMode ? 'right' : 'left';
+		updateJudgeCounter();
+		judgeCounter.screenCenter(Y);
+		judgeCounter.visible = Settings.data.judgementCounter;
+
+		judgeCounter.x = opponentMode ? (FlxG.width - judgeCounter.width) - 5 : 5;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	// any other miscellaneous functions i need
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	inline function playCharacterAnim(character:Character, note:Note, prefix:String) {
+		character.playAnim('$prefix${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
+	}
+
+	function openPauseMenu() {
+		persistentUpdate = false;
+		Conductor.pause();
+		paused = true;
+		FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if (!tmr.finished) tmr.active = false);
+		FlxTween.globalManager.forEach(function(twn:FlxTween) if (!twn.finished) twn.active = false);
+
+		var menu:PauseMenu = new PauseMenu(songName, Difficulty.current, 0);
+		openSubState(menu);
+		menu.camera = camOther;
+	}
+
+	function cacheCharacter(type:Int, name:String):Character {
+		var linkedCharacter:Character = switch type {
+			case 0: dad;
+			case 1: gf;
+			case 2: bf;
+
+			default: null;
+		}
+
+		if (linkedCharacter == null) return null;
+
+		var character:Character = new Character(0, 0, name);
+		character.alpha = 0.0001;
+		character.setPosition(linkedCharacter.x, linkedCharacter.y);
+		characterCache.set(name, character);
+
+		return character;
+	}
+
+	// you die
+	function die() {
+		persistentUpdate = false;
+		camGame.visible = false;
+		camHUD.visible = false;
+
+		countdown.stop();
+
+		var gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
+		gameOverSubstate.cameras = [camOther];
+		openSubState(gameOverSubstate);
+	}
+
+	// forceLeave:Bool - forces you to leave to the main menu
+	public function endSong(?forceLeave:Bool = false):Void {
+		Conductor.stop();
+		Conductor.vocals.destroy();
+		canPause = false;
+		// should automatically leave if you're not in story mode
+		var exitToMenu:Bool = !storyMode;
+		if (storyMode) {
+			++currentLevel < songList.length ? MusicState.resetState() : exitToMenu = true;
+		}
+
+		if (exitToMenu || forceLeave) {
+			persistentUpdate = true;
+			Conductor.inst = FlxG.sound.load(Paths.music('freakyMenu'), 0.7, true);
+			Conductor.play();
+			Difficulty.reset();
+			Mods.current = '';
+			MusicState.switchState(storyMode ? new StoryMenuState() : new FreeplayState());
+			songList.resize(0);
+			storyMode = false;
+			currentLevel = 0;
+			disqualified = false;
+		} else prevCamFollow = camFollow;
+
+		Sys.println('');
 	}
 }
