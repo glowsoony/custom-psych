@@ -44,6 +44,12 @@ class Character extends FunkinSprite {
 	public function new(?x:Float, ?y:Float, ?name:String, ?player:Bool = true) {
 		super(x, y);
 		change(name);
+
+		animation.finishCallback = anim -> {
+			if (specialAnim) specialAnim = false;
+			if (!animation.exists('$anim-loop') || inEditor) return;
+			animation.play('$anim-loop');
+		}
 	}
 
 	public function change(name:String) {
