@@ -3,6 +3,7 @@ package funkin.objects;
 class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	public static final keyCount:Int = 4;
 	public static var size:Float = Settings.data.strumlineSize;
+	public var healthMult:Float = 1;
 	public var skin(default, set):String;
 	public var character:Character;
 	public static inline var default_skin:String = 'noteSkins/funkin';

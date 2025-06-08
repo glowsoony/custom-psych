@@ -263,6 +263,7 @@ class PlayState extends MusicState {
 		// start setting up the hud
 		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
 		leftStrumline = new Strumline(320, strumlineYPos);
+		leftStrumline.healthMult = -1;
 		rightStrumline = new Strumline(950, strumlineYPos);
 
 		add(playfield = new PlayField([leftStrumline, rightStrumline]));
@@ -287,12 +288,11 @@ class PlayState extends MusicState {
 		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
 		noteSplashes.cameras = [camHUD];
 
-		// i hate having to make a seperate function for this but
-		// it's the only way it'll work for functions
-		playfield.noteHit = function(strumline:Strumline, note:Note) noteHit(strumline, note);
-		playfield.noteMiss = function(note:Note) noteMiss(note);
-		playfield.sustainHit = function(sustain:Note) sustainHit(sustain);
-		playfield.ghostTap = function() ghostTap();
+		playfield.noteHit = noteHit;
+		playfield.sustainHit = sustainHit;
+		playfield.noteMiss = noteMiss;
+		playfield.ghostTap = ghostTap;
+		playfield.noteSpawned = noteSpawned;
 		
 		loadSong();
 
@@ -396,6 +396,8 @@ class PlayState extends MusicState {
 	}
 
 	override function destroy():Void {
+		ScriptHandler.call('destroy');
+
 		closeSubState();
 		camGame.setFilters([]);
 
@@ -414,10 +416,12 @@ class PlayState extends MusicState {
 	}
 
 	override function stepHit(step:Int) {
-
+		ScriptHandler.call('stepHit', [step]);
 	}
 
 	override function beatHit(beat:Int) {
+		ScriptHandler.call('beatHit', [beat]);
+
 		iconP1.scale.set(1.2, 1.2);
 		iconP1.updateHitbox();
 
@@ -428,6 +432,8 @@ class PlayState extends MusicState {
 	}
 
 	override function measureHit(measure:Int) {
+		ScriptHandler.call('measureHit', [measure]);
+
 		if (Settings.data.cameraZooms) {
 			camGame.zoom += 0.03;
 			camHUD.zoom += 0.015;
@@ -440,6 +446,8 @@ class PlayState extends MusicState {
 	// input related
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	function noteHit(strumline:Strumline, note:Note):Void {
+		ScriptHandler.call('noteHit', [strumline, note]);
+
 		if (note.player != playerID) {
 			playCharacterAnim(strumline.character, note, 'sing');
 			if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
@@ -451,8 +459,7 @@ class PlayState extends MusicState {
 
 			final judge:Judgement = Judgement.min;
 
-			if (playerID == 0) health -= judge.health;
-			else health += judge.health;
+			health += judge.health * strumline.healthMult;
 			if (!Settings.data.hideTightestJudge) judgeSpr.display(0);
 			judge.hits++;
 			comboNumbers.display(++combo);
@@ -461,18 +468,23 @@ class PlayState extends MusicState {
 			return;
 		}
 
-		judgeHit(strumline.members[note.lane], note);
+		var judgement:Judgement = judgeHit(strumline, note);
+		if (Settings.data.noteSplashSkin != 'None' && judgement.splashes && note.splashes) {
+			noteSplashes.members[note.lane].hit(strumline.members[note.lane]);
+		}
 		
 		if (note.type == 'Hey!' && strumline.character.animation.exists('cheer')) {
 			strumline.character.playAnim('cheer');
 		} else playCharacterAnim(strumline.character, note, 'sing');
 	}
 
-	function sustainHit(note:Note) {
-		playCharacterAnim(playfield.currentPlayer.character, note, 'sing');
+	function sustainHit(strumline:Strumline, note:Note) {
+		ScriptHandler.call('sustainHit', [strumline, note]);
+
+		playCharacterAnim(strumline.character, note, 'sing');
 	}
 
-	function judgeHit(strum:Receptor, note:Note) {
+	function judgeHit(strumline:Strumline, note:Note):Judgement {
 		final adjustedHitTime:Float = note.rawHitTime / Conductor.rate;
 		var judgeID:Int = Judgement.getIDFromTiming(adjustedHitTime);
 		var judge:Judgement = Judgement.list[judgeID];
@@ -483,8 +495,7 @@ class PlayState extends MusicState {
 	
 		if (!note.breakOnHit) {
 			totalNotesPlayed += judge.accuracy;
-			if (playerID == 0) health -= judge.health;
-			else health += judge.health;
+			health += judge.health * strumline.healthMult;
 			// pbot1-ish scoring system
 			// cuz judgement based is boring :sob:
 			score += Math.floor(500 - Math.abs(adjustedHitTime));
@@ -492,8 +503,7 @@ class PlayState extends MusicState {
 			combo++;
 		} else {
 			score -= 20;
-			if (playerID == 0) health += 6;
-			else health -= 6;
+			health -= 6 * strumline.healthMult;
 			combo = 0;
 			comboBreaks++;
 		}
@@ -515,10 +525,6 @@ class PlayState extends MusicState {
 			else Conductor.vocals.members[playerID].volume = 1;
 		}
 
-		if (Settings.data.noteSplashSkin != 'None' && judge.splashes && note.splashes) {
-			noteSplashes.members[note.lane].hit(strum);
-		}
-
 		if (!note.breakOnHit) {
 			if (!Settings.data.hideTightestJudge || judgeID > 0) {
 				judgeSpr.display(adjustedHitTime);
@@ -526,10 +532,10 @@ class PlayState extends MusicState {
 			comboNumbers.display(combo);
 		}
 
-		judge = null;
+		return judge;
 	}
 
-	function noteMiss(note:Note) {
+	function noteMiss(strumline:Strumline, note:Note) {
 		if (note.ignore) return;
 
 		if (Settings.data.gameplaySettings['instakill'] || Settings.data.gameplaySettings['onlySicks']) die();
@@ -537,8 +543,7 @@ class PlayState extends MusicState {
 		comboBreaks++;
 		combo = 0;
 		score -= 20;
-		if (playerID == 0) health += 6;
-		else health -= 6;
+		health -= 6 * strumline.healthMult;
 
 		accuracy = updateAccuracy();
 		grade = updateGrade();
@@ -555,14 +560,13 @@ class PlayState extends MusicState {
 			else Conductor.vocals.members[playerID].volume = 0;
 		}
 
-		playCharacterAnim(playfield.currentPlayer.character, note, 'miss');
+		playCharacterAnim(strumline.character, note, 'miss');
 		updateScoreTxt();
 	}
 
-	function ghostTap() {
+	function ghostTap(strumline:Strumline) {
 		score -= 20;
-		if (playerID == 0) health += 6;
-		else health -= 6;
+		health -= 6 * strumline.healthMult;
 
 		accuracy = updateAccuracy();
 		grade = updateGrade();
@@ -695,6 +699,10 @@ class PlayState extends MusicState {
 		}
 
 		playfield.loadNotes(song);
+	}
+
+	function noteSpawned(note:Note):Void {
+		ScriptHandler.call('noteSpawned', [note]);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////

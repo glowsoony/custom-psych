@@ -26,9 +26,10 @@ class PlayField extends flixel.group.FlxGroup {
 	];
 
 	public dynamic function noteHit(strumline:Strumline, note:Note):Void {}
-	public dynamic function sustainHit(note:Note):Void {}
-	public dynamic function noteMiss(note:Note):Void {}
-	public dynamic function ghostTap():Void {}
+	public dynamic function sustainHit(strumline:Strumline, note:Note):Void {}
+	public dynamic function noteMiss(strumline:Strumline, note:Note):Void {}
+	public dynamic function ghostTap(strumline:Strumline):Void {}
+	public dynamic function noteSpawned(note:Note):Void {}
 
 	public var strumlines:FlxTypedSpriteGroup<Strumline>;
 	var notes:FlxTypedSpriteGroup<Note>;
@@ -134,7 +135,7 @@ class PlayField extends flixel.group.FlxGroup {
 			} else botplayInputs(strum, note);
 
 			if (!botplay && note.player == playerID && !note.missed && !note.isSustain && note.tooLate) {
-				noteMiss(note);
+				noteMiss(strum.parent, note);
 			}
 
 			if (note.time < Conductor.rawTime - 300) {
@@ -149,7 +150,7 @@ class PlayField extends flixel.group.FlxGroup {
 			final noteToSpawn:Note = unspawnedNotes[noteSpawnIndex];
 			if (noteToSpawn.rawHitTime > noteSpawnDelay) break;
 
-			ScriptHandler.call('noteSpawned', [noteToSpawn]);
+			noteSpawned(noteToSpawn);
 
 			notes.add(noteToSpawn);
 			noteToSpawn.spawned = true;
@@ -167,7 +168,7 @@ class PlayField extends flixel.group.FlxGroup {
 
 			strum.playAnim('notePressed');
 			note.wasHit = true;
-			noteHit(strum.parent, note);
+			sustainHit(strum.parent, note);
 			return;
 		}
 
@@ -193,7 +194,7 @@ class PlayField extends flixel.group.FlxGroup {
 
 		if (!playerHeld) {
 			if (tooLate && !note.wasHit) {
-				noteMiss(parent);
+				noteMiss(strum.parent, parent);
 				parent.missed = true;
 			}
 
@@ -209,7 +210,7 @@ class PlayField extends flixel.group.FlxGroup {
 		parent.coyoteTimer = 0.25;
 		
 		strum.playAnim('notePressed');
-		sustainHit(note);
+		sustainHit(strum.parent, note);
 	}
 
 	public function loadNotes(chart:Chart) {
@@ -335,7 +336,7 @@ class PlayField extends flixel.group.FlxGroup {
 		if (noteToHit == null) {
 			currentPlayer.members[dir].playAnim('pressed');
 			if (Settings.data.ghostTapping) return;
-			ghostTap();
+			ghostTap(currentPlayer);
 			return;
 		} 
 
