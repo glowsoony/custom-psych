@@ -7,16 +7,16 @@ class Countdown extends FunkinSprite {
 	public dynamic function onTick(tick:Int):Void {
 		switch (tick) {
 			case 4: 
-				FlxG.sound.play(Paths.sound('intro3'));
+				if (!silent) FlxG.sound.play(Paths.sound('intro3'));
 				animation.frameIndex = 0;
 			case 3: 
-				FlxG.sound.play(Paths.sound('intro2'));
+				if (!silent) FlxG.sound.play(Paths.sound('intro2'));
 				animation.frameIndex = 1;
 			case 2: 
-				FlxG.sound.play(Paths.sound('intro1'));
+				if (!silent) FlxG.sound.play(Paths.sound('intro1'));
 				animation.frameIndex = 2;
 			case 1: 
-				FlxG.sound.play(Paths.sound('introGo'));
+				if (!silent) FlxG.sound.play(Paths.sound('introGo'));
 				animation.frameIndex = 3;
 		}
 	}
@@ -24,6 +24,7 @@ class Countdown extends FunkinSprite {
 
 	public var ticks:Int = 4;
 	public var finished:Bool = true;
+	public var silent:Bool = false;
 
 	public function new(?x:Float, ?y:Float) {
 		super(x, y);

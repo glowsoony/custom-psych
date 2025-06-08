@@ -172,6 +172,7 @@ class PlayState extends MusicState {
 	var cameraSpeed:Float = 1;
 	var iconSpacing:Float = 20;
 	var gfSpeed:Int = 1;
+	var skipCountdown:Bool = false;
 
 	static var storyScore:Int = 0;
 
@@ -231,6 +232,8 @@ class PlayState extends MusicState {
 
 		clearType = updateClearType();
 		grade = updateGrade();
+
+		ScriptHandler.loadFromDir('scripts');
 
 		eventHandler = new EventHandler();
 		eventHandler.triggered = eventTriggered;
@@ -295,6 +298,7 @@ class PlayState extends MusicState {
 		playfield.noteSpawned = noteSpawned;
 		
 		loadSong();
+		ScriptHandler.loadFromDir('songs/$songID');
 
 		scrollSpeed = switch scrollType {
 			case 'Constant': _rawScrollSpeed;
@@ -317,6 +321,7 @@ class PlayState extends MusicState {
 
 			case _: new Stage(stageName);
 		}
+		ScriptHandler.loadFromDir('stages/$stageName.hx');
 
 		// characters
 		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.meta.spectator, false));
@@ -353,15 +358,24 @@ class PlayState extends MusicState {
 		hud.add(countdown = new Countdown());
 		countdown.screenCenter();
 		countdown.onStart = function() {
+			ScriptHandler.call('countdownStarted');
 			Conductor.playing = true;
 		}
 		countdown.onFinish = function() {
+			ScriptHandler.call('songStarted');
 			Conductor.play();
 			updateTime = true;
 		}
 
-		Conductor.rawTime = (Conductor.crotchet * -5);
-		countdown.start();
+		if (skipCountdown) {
+			countdown.finished = true;
+			countdown.onFinish();
+		} else {
+			Conductor.rawTime = (Conductor.crotchet * -5);
+			countdown.start();
+		}
+
+		ScriptHandler.call('create');
 
 		FlxG.mouse.visible = false;
 
@@ -538,6 +552,7 @@ class PlayState extends MusicState {
 	function noteMiss(strumline:Strumline, note:Note) {
 		if (note.ignore) return;
 
+		ScriptHandler.call('noteMiss', [strumline, note]);
 		if (Settings.data.gameplaySettings['instakill'] || Settings.data.gameplaySettings['onlySicks']) die();
 
 		comboBreaks++;
@@ -565,6 +580,7 @@ class PlayState extends MusicState {
 	}
 
 	function ghostTap(strumline:Strumline) {
+		ScriptHandler.call('ghostTap', [strumline]);
 		score -= 20;
 		health -= 6 * strumline.healthMult;
 
@@ -581,7 +597,7 @@ class PlayState extends MusicState {
 		return totalNotesPlayed / (totalNotesHit + comboBreaks);
 	}
 
-	function updateClearType():String {
+	dynamic function updateClearType():String {
 		var sicks:Int = judgeData[0].hits;
 		var goods:Int = judgeData[1].hits;
 		var bads:Int = judgeData[2].hits;
@@ -607,7 +623,7 @@ class PlayState extends MusicState {
 
 	// from troll engine
 	// lol luhmao
-	function updateGrade():String {
+	dynamic function updateGrade():String {
 		var type:String = '?';
 		if (totalNotesHit == 0) return type;
 		
@@ -709,6 +725,7 @@ class PlayState extends MusicState {
 	// events
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	function eventTriggered(event:Event):Void {
+		ScriptHandler.call('eventTriggered', [event]);
 		stage.eventTriggered(event);
 
 		switch event.name {
@@ -810,11 +827,13 @@ class PlayState extends MusicState {
 		eventPushedUnique(event);
 		if (eventList.contains(event.name)) return;
 
+		ScriptHandler.call('eventPushed', [event]);
 		eventList.push(event.name);
 		stage.eventPushed(event);
 	}
 
 	function eventPushedUnique(event:Event):Void {
+		ScriptHandler.call('eventPushedUnique', [event]);
 		stage.eventPushedUnique(event);
 
 		switch event.name {
@@ -827,7 +846,7 @@ class PlayState extends MusicState {
 	// regarding objects
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	var _lastSeconds:Int = -1;
-	function updateTimeBar() {
+	dynamic function updateTimeBar() {
 		if (paused || !updateTime) return;
 
 		var curTime:Float = Math.max(0, Conductor.rawTime);
@@ -849,7 +868,7 @@ class PlayState extends MusicState {
 		_lastSeconds = seconds;
 	}
 
-	function updateCameraScale(elapsed:Float):Void {
+	dynamic function updateCameraScale(elapsed:Float):Void {
 		if (!Settings.data.cameraZooms) return;
 
 		final scalingMult:Float = Math.exp(-elapsed * 6 * playfield.rate);
@@ -857,12 +876,12 @@ class PlayState extends MusicState {
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
 	}
 
-	function updateIconPositions():Void {
+	dynamic function updateIconPositions():Void {
 		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconSpacing;
 		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconSpacing * 2;
 	}
 
-	function updateIconScales(elapsed:Float):Void {
+	dynamic function updateIconScales(elapsed:Float):Void {
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-elapsed * 9 * playfield.rate));
 		iconP1.scale.set(mult, mult);
 		iconP1.centerOrigin();
@@ -907,7 +926,7 @@ class PlayState extends MusicState {
 			dad.dance();
 	}
 
-	function updateJudgeCounter() {
+	dynamic function updateJudgeCounter() {
 		if (!Settings.data.judgementCounter) return;
 		
 		var sicks:Int = judgeData[0].hits;
@@ -918,7 +937,7 @@ class PlayState extends MusicState {
 		judgeCounter.text = 'Sicks: $sicks\nGoods: $goods\nBads: $bads\nShits: $shits';
 	}
 
-	function updateScoreTxt():Void {
+	dynamic function updateScoreTxt():Void {
 		var textToShow:String = '';
 		textToShow += 'Score: $score';
 
@@ -933,7 +952,7 @@ class PlayState extends MusicState {
 		scoreTxt.text = textToShow;
 	}
 
-	function loadHUD():Void {
+	dynamic function loadHUD():Void {
 		if (hud == null) return;
 		hud.clear();
 
@@ -1050,7 +1069,7 @@ class PlayState extends MusicState {
 	}
 
 	// you die
-	function die() {
+	dynamic function die() {
 		persistentUpdate = false;
 		camGame.visible = false;
 		camHUD.visible = false;
