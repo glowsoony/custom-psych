@@ -96,11 +96,12 @@ class PlayField extends flixel.group.FlxGroup {
 		return rate;
 	}
 
-	public function new(strumlines:Array<Strumline>) {
+	public function new(strumlines:Array<Strumline>, ?playerID:Int = 0) {
 		super();
 
 		add(this.strumlines = new FlxTypedSpriteGroup<Strumline>());
 		for (line in strumlines) this.strumlines.add(line);
+		this.playerID = playerID;
 
 		add(notes = new FlxTypedSpriteGroup<Note>());
 		notes.active = false;

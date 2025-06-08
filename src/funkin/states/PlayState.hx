@@ -269,10 +269,9 @@ class PlayState extends MusicState {
 		leftStrumline.healthMult = -1;
 		rightStrumline = new Strumline(950, strumlineYPos);
 
-		add(playfield = new PlayField([leftStrumline, rightStrumline]));
+		add(playfield = new PlayField([leftStrumline, rightStrumline], Settings.data.gameplaySettings['opponentMode'] ? 0 : 1));
 		playfield.cameras = [camHUD];
 		playfield.modifiers = true;
-		playerID = Settings.data.gameplaySettings['opponentMode'] ? 0 : 1;
 		rate = Settings.data.gameplaySettings['playbackRate'];
 
 		if (Settings.data.centeredNotes) {
