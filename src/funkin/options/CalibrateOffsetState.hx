@@ -40,6 +40,7 @@ class CalibrateOffsetState extends MusicState {
 
 		add(playfield = new PlayField([strumline]));
 		playfield.downscroll = Settings.data.downscroll;
+		strumline.y = playfield.downscroll ? FlxG.height - 150 : 50;
 		playfield.noteHit = noteHit;
 		playfield.visible = skipIntro;
 
