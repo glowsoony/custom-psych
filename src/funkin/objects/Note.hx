@@ -208,9 +208,9 @@ class Note extends FlxSprite {
 		updateHitbox();
 	}
 
-	public function followStrum(strum:Receptor, scrollSpeed:Float) {
+	public function followStrum(strum:Receptor, downscroll:Bool, scrollSpeed:Float) {
 		distance = (hitTime * 0.45 * (scrollSpeed * multSpeed)) / Conductor.rate;
-		distance *= Settings.data.downscroll ? -1 : 1;
+		distance *= downscroll ? -1 : 1;
 
 		if (copyAngle) angle = strum.angle;
 		if (copyAlpha) alpha = strum.alpha * multAlpha;
@@ -218,20 +218,19 @@ class Note extends FlxSprite {
 		if (copyX) x = strum.x + correctionOffset.x;
 		if (copyY) {
 			y = strum.y + correctionOffset.y + distance;
-			if (Settings.data.downscroll && isSustain) {
+			if (downscroll && isSustain) {
 				y -= height - ((frameWidth * Strumline.size) * 0.5);
 			}
 		}
 	}
 
 	// for clipping sustains
-	public function clipToStrum(strum:Receptor) {
+	public function clipToStrum(strum:Receptor, downscroll:Bool) {
 		if (!exists || !alive) return;
 
 		// why would you wanna cliprect normal notes lmao
 		if (!isSustain || !canHit) return;
-		
-		final downscroll:Bool = Settings.data.downscroll;
+
 		var swagRect:FlxRect = clipRect ?? FlxRect.get(0, 0, frameWidth, frameHeight);
 		var center:Float = strum.y + (strum.height * 0.5);
 		if (downscroll) {

@@ -128,7 +128,7 @@ class PlayField extends flixel.group.FlxGroup {
 			note.update(delta);
 
 			var strum:Receptor = strumlines.members[note.player].members[note.lane];
-			note.followStrum(strum, scrollSpeed);
+			note.followStrum(strum, downscroll, scrollSpeed);
 
 			if (note.player == playerID) {
 				if (botplay) botplayInputs(strum, note);
@@ -164,7 +164,7 @@ class PlayField extends flixel.group.FlxGroup {
 		
 		// sustain input
 		if (note.isSustain) {
-			note.clipToStrum(strum);
+			note.clipToStrum(strum, downscroll);
 			if (note.wasHit) return;
 
 			strum.playAnim('notePressed');
@@ -203,7 +203,7 @@ class PlayField extends flixel.group.FlxGroup {
 		}
 
 		strum.queueStatic = !keysHeld[note.lane];
-		note.clipToStrum(strum);
+		note.clipToStrum(strum, downscroll);
 
 		if (note.time <= Conductor.rawTime && !note.wasHit) note.wasHit = true;
 		else return;

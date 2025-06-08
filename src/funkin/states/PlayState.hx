@@ -264,7 +264,7 @@ class PlayState extends MusicState {
 		camOther.bgColor.alpha = 0;
 
 		// start setting up the hud
-		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
+		var strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
 		leftStrumline = new Strumline(320, strumlineYPos);
 		leftStrumline.healthMult = -1;
 		rightStrumline = new Strumline(950, strumlineYPos);
