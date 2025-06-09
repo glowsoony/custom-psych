@@ -263,6 +263,11 @@ class PlayField extends flixel.group.FlxGroup {
 
 					evilNote.destroy();
 					unspawnedNotes.remove(evilNote);
+					for (piece in evilNote.pieces) {
+						piece.destroy();
+						unspawnedNotes.remove(piece);
+					}
+					evilNote.pieces.resize(0);
 				}
 			}
 
