@@ -167,7 +167,7 @@ class PlayState extends MusicState {
 		return health = value;
 	}
 
-	var defaultCamZoom:Float = 1.05;
+	public var defaultCamZoom:Float = 1.05;
 	var botplayTxtSine:Float = 0.0;
 	var cameraSpeed:Float = 1;
 	var iconSpacing:Float = 20;
@@ -199,9 +199,9 @@ class PlayState extends MusicState {
 	var noteSplashes:FlxTypedSpriteGroup<NoteSplash>;
 
 	// cameras
-	var camGame:FlxCamera;
-	var camHUD:FlxCamera;
-	var camOther:FlxCamera;
+	public var camGame:FlxCamera;
+	public var camHUD:FlxCamera;
+	public var camOther:FlxCamera;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// overrides
@@ -430,10 +430,12 @@ class PlayState extends MusicState {
 
 	override function stepHit(step:Int) {
 		ScriptHandler.call('stepHit', [step]);
+		stage.stepHit(step);
 	}
 
 	override function beatHit(beat:Int) {
 		ScriptHandler.call('beatHit', [beat]);
+		stage.beatHit(beat);
 
 		iconP1.scale.set(1.2, 1.2);
 		iconP1.updateHitbox();
@@ -446,6 +448,7 @@ class PlayState extends MusicState {
 
 	override function measureHit(measure:Int) {
 		ScriptHandler.call('measureHit', [measure]);
+		stage.measureHit(measure);
 
 		if (Settings.data.cameraZooms) {
 			camGame.zoom += 0.03;

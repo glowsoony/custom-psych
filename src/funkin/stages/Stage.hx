@@ -21,11 +21,11 @@ typedef StageFile = {
 	var ?opponentCameraOffset:Array<Float>;
 }
 
+// this is meant to be used in playstate
+// so trying to use this anywhere else might break it
 class Stage {
 	var _file:StageFile;
-
-	public var parent(default, set):FlxState = PlayState.self;
-	function set_parent(value:FlxState):FlxState return parent = value ?? FlxG.state;
+	var game:PlayState = PlayState.self;
 
 	public var player:FlxPoint = FlxPoint.get(0, 0);
 	public var spectator:FlxPoint = FlxPoint.get(0, 0);
@@ -58,43 +58,43 @@ class Stage {
 	}
 
 	public function add(obj:FlxBasic):FlxBasic {
-		if (parent == null) {
-			trace("Stage has no parent group to add objects to.");
+		if (game == null) {
+			warn('PlayState is not initiated.');
 			return null;
 		}
 
-		parent.add(obj);
+		game.add(obj);
 		return obj;
 	}
 
 	public function remove(obj:FlxBasic):FlxBasic {
-		if (parent == null) {
-			trace("Stage has no parent group to remove objects from.");
+		if (game == null) {
+			warn('PlayState is not initiated.');
 			return null;
 		}
 
-		parent.remove(obj);
+		game.remove(obj);
 		return obj;
 	}
 
 	public function insert(obj:FlxBasic, ?position:Int = -1):FlxBasic {
-		if (parent == null) {
-			trace("Stage has no parent group to insert objects to.");
+		if (game == null) {
+			warn('PlayState is not initiated.');
 			return null;
 		}
 
-		if (position == -1) position = parent.members.length;
-		parent.insert(position, obj);
+		if (position == -1) position = game.members.length;
+		game.insert(position, obj);
 		return obj;
 	}
 
 	function addBehindObject(obj:FlxBasic, target:FlxBasic) {
-		if (parent == null) {
-			trace("Stage has no parent group to insert objects to.");
+		if (game == null) {
+			warn('PlayState is not initiated.');
 			return null;
 		}
 
-		return insert(obj, parent.members.indexOf(target));
+		return insert(obj, game.members.indexOf(target));
 	}
 
 	// functions copy pasted from Paths.hx
@@ -155,6 +155,10 @@ class Stage {
 	public function create():Void {}
 	public function update(elapsed:Float):Void {}
 	public function destroy():Void {}
+
+	public function stepHit(step:Int):Void {}
+	public function beatHit(beat:Int):Void {}
+	public function measureHit(measure:Int):Void {}
 
 	public function eventPushed(event:Event):Void {}
 	public function eventPushedUnique(event:Event):Void {}

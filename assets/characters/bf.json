@@ -119,7 +119,7 @@
 			indices: [],
 			id: 'shaking',
 			looped: true,
-			name: 'shaking',
+			name: 'scared',
 		},
 	],
 	healthColor: -13520687,

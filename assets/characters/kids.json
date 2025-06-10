@@ -92,7 +92,7 @@
 	danceInterval: 1,
 	cameraOffset: [
 		-5,
-		95,
+		125,
 	],
 	icon: 'kids',
 	antialiasing: true,
