@@ -33,7 +33,7 @@ class FlashingState extends flixel.FlxState {
 		if (backJustPressed || Controls.justPressed('accept')) {
 			pressedKey = true;
 			if (backJustPressed) {
-				FlxG.sound.play(Paths.sound('cancelMenu'));
+				FlxG.sound.play(Paths.sound('cancel'));
 				FlxTween.tween(warnText, {alpha: 0}, 1, {
 					onComplete: function (_) {
 						MusicState.switchState(new TitleState());
@@ -45,7 +45,7 @@ class FlashingState extends flixel.FlxState {
 
 			Settings.data.flashingLights = false;
 			Settings.save();
-			FlxG.sound.play(Paths.sound('confirmMenu'));
+			FlxG.sound.play(Paths.sound('confirm'));
 			FlxFlicker.flicker(warnText, 1, 0.1, false, true, function(_) {
 				MusicState.switchState(new TitleState());
 			});	

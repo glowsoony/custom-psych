@@ -1,6 +1,6 @@
 {
-	directory: 'week1',
-	zoom: 0.9,
+	directory: 'week3',
+	zoom: 1.05,
 
 	playerPos: [900, 100],
 	spectatorPos: [530, -50],
