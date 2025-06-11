@@ -318,7 +318,7 @@ class PlayField extends flixel.group.FlxGroup {
 		oldNote = null;
 	}
 
-	var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
+	public var keysHeld:Array<Bool> = [for (_ in 0...Strumline.keyCount) false];
 	inline function input(key:KeyCode, _):Void {
 		if (botplay) return;
 
