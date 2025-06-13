@@ -72,8 +72,6 @@ class Note extends FlxSprite {
 
 	public var hittable(get, never):Bool;
 	function get_hittable():Bool {
-		if (animation == null || animation.curAnim == null) return false;
-		
 		final notDestroyed:Bool = exists && alive;
 		return notDestroyed && inHitRange && canHit && !missed;
 	}
