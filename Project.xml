@@ -44,6 +44,7 @@
 	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED"/>
 
 	<haxelib name="moonchart"/>
+	<haxelib name="flixel-animate"/>
 
 	<!-- Assets -->
 	<classpath name="src" />

@@ -3,7 +3,7 @@ package funkin.objects;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.graphics.frames.FlxFrame;
 
-class FunkinSprite extends flixel.FlxSprite {
+class FunkinSprite extends animate.FlxAnimate {
 	public var offsetMap:Map<String, Array<Float>> = [];
 	public var frameOffset:FlxPoint = FlxPoint.get();
 

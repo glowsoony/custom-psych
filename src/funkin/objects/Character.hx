@@ -1,5 +1,8 @@
 package funkin.objects;
 
+import animate.FlxAnimate;
+import animate.FlxAnimateFrames;
+
 typedef CharacterFile = {
 	var antialiasing:Bool;
 	var flipX:Bool;
@@ -74,16 +77,26 @@ class Character extends FunkinSprite {
 		flipX = file.flipX;
 		antialiasing = Settings.data.antialiasing && file.antialiasing;
 
-		frames = Paths.multiAtlas(this.sheets);
+		if (Paths.exists('images/${this.sheets[0]}/Animation.json')) {
+			frames = FlxAnimateFrames.fromAnimate(Paths.get('images/${this.sheets[0]}'));
+		} else frames = Paths.multiAtlas(this.sheets);
 
-		for (anim in file.animations) {
-			if (anim.indices.length == 0) {
-				animation.addByPrefix(anim.name, anim.id, anim.framerate, anim.looped);
+		for (fnfAnim in file.animations) {
+			if (isAnimate) {
+				if (fnfAnim.indices.length == 0) {
+					anim.addBySymbol(fnfAnim.name, fnfAnim.id, fnfAnim.framerate, fnfAnim.looped);
+				} else {
+					anim.addBySymbolIndices(fnfAnim.name, fnfAnim.id, fnfAnim.indices, fnfAnim.framerate, fnfAnim.looped);
+				}
 			} else {
-				animation.addByIndices(anim.name, anim.id, anim.indices, '', anim.framerate, anim.looped);
+				if (fnfAnim.indices.length == 0) {
+					animation.addByPrefix(fnfAnim.name, fnfAnim.id, fnfAnim.framerate, fnfAnim.looped);
+				} else {
+					animation.addByIndices(fnfAnim.name, fnfAnim.id, fnfAnim.indices, '', fnfAnim.framerate, fnfAnim.looped);
+				}
 			}
 
-			offsetMap.set(anim.name, anim.offsets);
+			offsetMap.set(fnfAnim.name, fnfAnim.offsets);
 		}
 
 		scale.set(file.scale, file.scale);
