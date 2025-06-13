@@ -383,23 +383,24 @@ class PlayState extends MusicState {
 		persistentUpdate = true;
 	}
 
-	override function update(elapsed:Float):Void {
-		super.update(elapsed);
+	override function update(delta:Float):Void {
+		ScriptHandler.call('update', [delta]);
+		super.update(delta);
 
 		if ((Controls.justPressed('reset') && canReset)) die();
 
-		updateCameraScale(elapsed);
-		updateIconScales(elapsed);
+		updateCameraScale(delta);
+		updateIconScales(delta);
 		updateIconPositions();
 		updateTimeBar();
 
 		if (countdown.finished) eventHandler.update();
-		stage.update(elapsed);
+		stage.update(delta);
 
 		if (FlxG.keys.justPressed.F8) botplay = !botplay;
 
 		if (botplayTxt.visible) {
-			botplayTxtSine += 180 * elapsed;
+			botplayTxtSine += 180 * delta;
 			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplayTxtSine) / 180);
 		}
 
@@ -870,10 +871,10 @@ class PlayState extends MusicState {
 		_lastSeconds = seconds;
 	}
 
-	dynamic function updateCameraScale(elapsed:Float):Void {
+	dynamic function updateCameraScale(delta:Float):Void {
 		if (!Settings.data.cameraZooms) return;
 
-		final scalingMult:Float = Math.exp(-elapsed * 6 * playfield.rate);
+		final scalingMult:Float = Math.exp(-delta * 6 * playfield.rate);
 		camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, scalingMult);
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
 	}
@@ -883,12 +884,12 @@ class PlayState extends MusicState {
 		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconSpacing * 2;
 	}
 
-	dynamic function updateIconScales(elapsed:Float):Void {
-		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-elapsed * 9 * playfield.rate));
+	dynamic function updateIconScales(delta:Float):Void {
+		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-delta * 9 * playfield.rate));
 		iconP1.scale.set(mult, mult);
 		iconP1.centerOrigin();
 
-		mult = FlxMath.lerp(1, iconP2.scale.x, Math.exp(-elapsed * 9 * playfield.rate));
+		mult = FlxMath.lerp(1, iconP2.scale.x, Math.exp(-delta * 9 * playfield.rate));
 		iconP2.scale.set(mult, mult);
 		iconP2.centerOrigin();
 	}
