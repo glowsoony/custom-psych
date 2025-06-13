@@ -2,6 +2,7 @@ package funkin.backend;
 
 import flixel.graphics.FlxGraphic;
 import openfl.system.System;
+import animate.FlxAnimateFrames;
 
 import lime.utils.Assets as LimeAssets;
 import openfl.media.Sound;
@@ -213,6 +214,13 @@ class Paths {
 
 	public static dynamic function text(path:String, ?subFolder:String = 'data'):String {
 		return get(path, subFolder);
+	}
+
+	public static dynamic function animateAtlas(path:String, ?subFolder:String = 'images'):FlxAnimateFrames {
+		final folder:String = get(path, subFolder);
+		if (!FileSystem.exists(folder)) return null;
+
+		return FlxAnimateFrames.fromAnimate(folder);
 	}
 
 	public static dynamic function multiAtlas(keys:Array<String>, ?subFolder:String = null):FlxAtlasFrames {

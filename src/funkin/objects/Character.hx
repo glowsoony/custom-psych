@@ -78,7 +78,7 @@ class Character extends FunkinSprite {
 		antialiasing = Settings.data.antialiasing && file.antialiasing;
 
 		if (Paths.exists('images/${this.sheets[0]}/Animation.json')) {
-			frames = FlxAnimateFrames.fromAnimate(Paths.get('images/${this.sheets[0]}'));
+			frames = Paths.animateAtlas(this.sheets[0]);
 		} else frames = Paths.multiAtlas(this.sheets);
 
 		for (fnfAnim in file.animations) {
