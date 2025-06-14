@@ -407,6 +407,8 @@ class PlayState extends MusicState {
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
 
 		camGame.followLerp = paused ? 0 : (0.04 * cameraSpeed * playfield.rate);
+
+		ScriptHandler.call('postUpdate', [delta]);
 	}
 
 	override function destroy():Void {
