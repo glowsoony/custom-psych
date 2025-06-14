@@ -532,7 +532,9 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 		character.color = FlxColor.WHITE;
 		character.alpha = 1;
 
-		character.frames = Paths.multiAtlas(_characterFile.sheets.split(','));
+		var sheets:Array<String> = _characterFile.sheets.split(',');
+		if (Paths.exists('images/${sheets[0]}/Animation.json')) character.frames = Paths.animateAtlas(sheets[0]);
+		else character.frames = Paths.multiAtlas(sheets);
 
 		for (anim in oldAnims) {
 			var animName:String = anim.name;
@@ -550,8 +552,15 @@ class CharacterEditorState extends MusicState implements PsychUIEventHandler.Psy
 	}
 
 	function addAnimation(name:String, id:String, fps:Float, loop:Bool, ?indices:Array<Int>) {
-		if (indices != null && indices.length > 0) character.animation.addByIndices(name, id, indices, "", fps, loop);
-		else character.animation.addByPrefix(name, id, fps, loop);
+		indices ??= [];
+
+		if (character.isAnimate) {
+			if (indices.length > 0) character.anim.addBySymbolIndices(name, id, indices, fps, loop);
+			else character.anim.addBySymbol(name, id, fps, loop);
+		} else {
+			if (indices.length > 0) character.animation.addByIndices(name, id, indices, "", fps, loop);
+			else character.animation.addByPrefix(name, id, fps, loop);
+		}
 
 		if (!character.animation.exists(name)) character.setOffset(name, [0.0, 0.0]);
 	}
