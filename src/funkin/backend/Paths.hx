@@ -216,6 +216,11 @@ class Paths {
 		return get(path, subFolder);
 	}
 
+	public static dynamic function video(path:String, ?subFolder:String = 'videos'):String {
+		if (path.lastIndexOf('.') < 0) path += '.$VIDEO_EXT';
+		return Language.getFileTranslation(path, subFolder);
+	}
+
 	public static dynamic function animateAtlas(path:String, ?subFolder:String = 'images'):FlxAnimateFrames {
 		final folder:String = get(path, subFolder);
 		if (!FileSystem.exists(folder)) return null;

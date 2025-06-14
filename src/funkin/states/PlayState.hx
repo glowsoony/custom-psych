@@ -1043,6 +1043,11 @@ class PlayState extends MusicState {
 		character.playAnim('$prefix${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
 	}
 
+	// have to make it a function instead because dce lol
+	function loadVideo(path:String):FunkinVideo {
+		return new FunkinVideo(Paths.video(path), true);
+	}
+
 	function openPauseMenu() {
 		persistentUpdate = false;
 		Conductor.pause();

@@ -83,9 +83,9 @@ class Main extends Sprite {
 			if (FlxG.game != null) resetSpriteCache(FlxG.game);
 		});
 
-/*		#if VIDEOS_ALLOWED
+		#if VIDEOS_ALLOWED
 		hxvlc.util.Handle.init(#if (hxvlc >= "1.8.0")  ['--no-lua'] #end);
-		#end*/
+		#end
 	}
 
 	inline static function resetSpriteCache(sprite:Sprite):Void {
