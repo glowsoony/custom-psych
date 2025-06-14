@@ -271,6 +271,7 @@ class PlayState extends MusicState {
 
 		add(playfield = new PlayField([leftStrumline, rightStrumline], Settings.data.gameplaySettings['opponentMode'] ? 0 : 1));
 		playfield.cameras = [camHUD];
+		playfield.downscroll = downscroll;
 		playfield.modifiers = true;
 		rate = Settings.data.gameplaySettings['playbackRate'];
 
