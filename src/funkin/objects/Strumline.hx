@@ -5,7 +5,8 @@ class Strumline extends FlxTypedSpriteGroup<Receptor> {
 	public static var size:Float = Settings.data.strumlineSize;
 	public var healthMult:Float = 1;
 	public var skin(default, set):String;
-	public var character:Character;
+	public dynamic function character():Character return null;
+	
 	public static inline var default_skin:String = 'noteSkins/funkin';
 	function set_skin(value:String):String {
 		skin = value;

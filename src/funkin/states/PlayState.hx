@@ -328,10 +328,10 @@ class PlayState extends MusicState {
 		gf.visible = stage.isSpectatorVisible;
 
 		add(dad = new Character(stage.opponent.x, stage.opponent.y, song.meta.enemy, false));
-		leftStrumline.character = dad;
+		leftStrumline.character = function() return dad;
 
 		add(bf = new Character(stage.player.x, stage.player.y, song.meta.player));
-		rightStrumline.character = bf;
+		rightStrumline.character = function() return bf;
 
 		// fix for the camera starting off in the stratosphere
 		camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
@@ -469,12 +469,12 @@ class PlayState extends MusicState {
 		ScriptHandler.call('noteHit', [strumline, note]);
 
 		if (note.player != playerID) {
-			playCharacterAnim(strumline.character, note, 'sing');
+			playCharacterAnim(strumline.character(), note, 'sing');
 			if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 
 			return;
 		} else if (botplay) {
-			playCharacterAnim(strumline.character, note, 'sing');
+			playCharacterAnim(strumline.character(), note, 'sing');
 			if (note.isSustain) return;
 
 			final judge:Judgement = Judgement.min;
@@ -493,15 +493,15 @@ class PlayState extends MusicState {
 			noteSplashes.members[note.lane].hit(strumline.members[note.lane]);
 		}
 		
-		if (note.type == 'Hey!' && strumline.character.animation.exists('cheer')) {
-			strumline.character.playAnim('cheer');
-		} else playCharacterAnim(strumline.character, note, 'sing');
+		if (note.type == 'Hey!' && strumline.character().animation.exists('cheer')) {
+			strumline.character().playAnim('cheer');
+		} else playCharacterAnim(strumline.character(), note, 'sing');
 	}
 
 	function sustainHit(strumline:Strumline, note:Note) {
 		ScriptHandler.call('sustainHit', [strumline, note]);
 
-		playCharacterAnim(strumline.character, note, 'sing');
+		playCharacterAnim(strumline.character(), note, 'sing');
 	}
 
 	function judgeHit(strumline:Strumline, note:Note):Judgement {
@@ -581,7 +581,7 @@ class PlayState extends MusicState {
 			else Conductor.vocals.members[playerID].volume = 0;
 		}
 
-		playCharacterAnim(strumline.character, note, 'miss');
+		playCharacterAnim(strumline.character(), note, 'miss');
 		updateScoreTxt();
 	}
 
@@ -750,9 +750,11 @@ class PlayState extends MusicState {
 				var newCharacter:Character = characterCache[name];
 				if (newCharacter == null) return;
 
-				newCharacter.alpha = character.alpha;
+				newCharacter.alpha = 1;
 				newCharacter.visible = character.visible;
 				newCharacter.setPosition(character.x, character.y);
+				character.alpha = 0;
+				character.visible = false;
 
 				if (type == 0) {
 					dad = newCharacter;
@@ -1061,20 +1063,10 @@ class PlayState extends MusicState {
 	}
 
 	function cacheCharacter(type:Int, name:String):Character {
-		var linkedCharacter:Character = switch type {
-			case 0: dad;
-			case 1: gf;
-			case 2: bf;
-
-			default: null;
-		}
-
-		if (linkedCharacter == null) return null;
-
 		var character:Character = new Character(0, 0, name);
 		character.alpha = 0.0001;
-		character.setPosition(linkedCharacter.x, linkedCharacter.y);
 		characterCache.set(name, character);
+		add(character);
 
 		return character;
 	}
