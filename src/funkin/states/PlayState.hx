@@ -877,8 +877,6 @@ class PlayState extends MusicState {
 	}
 
 	dynamic function updateCameraScale(delta:Float):Void {
-		if (!Settings.data.cameraZooms) return;
-
 		final scalingMult:Float = Math.exp(-delta * 6 * playfield.rate);
 		camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, scalingMult);
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
@@ -904,6 +902,7 @@ class PlayState extends MusicState {
 		if (song.notes[measure] == null) return;
 
 		if (gf != null && song.notes[measure].gfSection) {
+			ScriptHandler.call('movedCamera', ['spectator']);
 			camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
 			camFollow.x += gf.cameraOffset.x;
 			camFollow.y += gf.cameraOffset.y;
@@ -913,6 +912,7 @@ class PlayState extends MusicState {
 		var isOpponent:Bool = song.notes[measure].mustHitSection != true;
 		if (isOpponent) {
 			if (dad == null) return;
+			ScriptHandler.call('movedCamera', ['opponent']);
 			camFollow.setPosition(dad.getMidpoint().x, dad.getMidpoint().y);
 			camFollow.x += dad.cameraOffset.x;
 			camFollow.y += dad.cameraOffset.y;
@@ -920,6 +920,7 @@ class PlayState extends MusicState {
 		}
 		
 		if (bf == null) return;
+		ScriptHandler.call('movedCamera', ['player']);
 		camFollow.setPosition(bf.getMidpoint().x, bf.getMidpoint().y);
 		camFollow.x += bf.cameraOffset.x;
 		camFollow.y += bf.cameraOffset.y;
