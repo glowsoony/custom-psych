@@ -321,7 +321,7 @@ class PlayState extends MusicState {
 
 			case _: new Stage(stageName);
 		}
-		ScriptHandler.loadFromDir('stages/$stageName.hx');
+		ScriptHandler.loadFromDir('stages/$stageName');
 
 		// characters
 		add(gf = new Character(stage.spectator.x, stage.spectator.y, song.meta.spectator, false));
