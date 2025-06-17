@@ -69,7 +69,7 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 		gameVisibility.scrollSpeed = 2;
 		gameVisibility.minValue = 0;
 		gameVisibility.maxValue = 100;
-		gameVisibility.changeValue = 1;
+		gameVisibility.changeValue = 5;
 		addOption(gameVisibility);
 
 		var judgementAlpha:Option = new Option(

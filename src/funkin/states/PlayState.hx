@@ -352,7 +352,7 @@ class PlayState extends MusicState {
 		add(hud = new FlxSpriteGroup());
 		hud.cameras = [camHUD];
 		loadHUD();
-
+		
 		botplay = Settings.data.gameplaySettings['botplay'];
 
 		hud.add(countdown = new Countdown());

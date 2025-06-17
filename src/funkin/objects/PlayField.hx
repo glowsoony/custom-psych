@@ -6,7 +6,7 @@ import funkin.objects.Strumline.Receptor;
 import lime.app.Application;
 import lime.ui.KeyCode;
 
-class PlayField extends flixel.group.FlxGroup {
+class PlayField extends flixel.group.FlxSpriteGroup {
 	public var downscroll:Bool = false;
 	public var botplay(default, set):Bool = false;
 	public var scrollSpeed(default, set):Float = 1.0;
