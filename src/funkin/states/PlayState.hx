@@ -275,6 +275,15 @@ class PlayState extends MusicState {
 		playfield.modifiers = true;
 		rate = Settings.data.gameplaySettings['playbackRate'];
 
+		playfield.noteHit = noteHit;
+		playfield.sustainHit = sustainHit;
+		playfield.noteMiss = noteMiss;
+		playfield.ghostTap = ghostTap;
+		playfield.noteSpawned = noteSpawned;
+
+		playfield.add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
+		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
+
 		if (Settings.data.centeredNotes) {
 			for (i => line in playfield.strumlines.members) {
 				if (i == playerID) {
@@ -286,16 +295,6 @@ class PlayState extends MusicState {
 				line.alpha = 0;
 			}
 		}
-
-		add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
-		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
-		noteSplashes.cameras = [camHUD];
-
-		playfield.noteHit = noteHit;
-		playfield.sustainHit = sustainHit;
-		playfield.noteMiss = noteMiss;
-		playfield.ghostTap = ghostTap;
-		playfield.noteSpawned = noteSpawned;
 		
 		loadSong();
 		ScriptHandler.loadFromDir('songs/$songID');
