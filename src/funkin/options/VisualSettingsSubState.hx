@@ -72,9 +72,21 @@ class VisualSettingsSubState extends BaseOptionsMenu {
 		gameVisibility.changeValue = 5;
 		addOption(gameVisibility);
 
+		var noteSplashAlpha:Option = new Option(
+			'Note Splash Visibility:',
+			'How transparent the judgement sprite is.',
+			'noteSplashAlpha',
+			PERCENT
+		);
+		noteSplashAlpha.scrollSpeed = 2;
+		noteSplashAlpha.minValue = 0;
+		noteSplashAlpha.maxValue = 1;
+		noteSplashAlpha.changeValue = 0.05;
+		addOption(noteSplashAlpha);
+
 		var judgementAlpha:Option = new Option(
 			'Judgement Visibility:',
-			'How transparent the judgement sprite is.',
+			'How transparent the note splashes are.',
 			'judgementAlpha',
 			PERCENT
 		);

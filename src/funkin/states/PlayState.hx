@@ -283,6 +283,7 @@ class PlayState extends MusicState {
 
 		playfield.add(noteSplashes = new FlxTypedSpriteGroup<NoteSplash>());
 		for (i in 0...Strumline.keyCount) noteSplashes.add(new NoteSplash(i));
+		noteSplashes.alpha = Settings.data.noteSplashAlpha * playfield.alpha;
 
 		if (Settings.data.centeredNotes) {
 			for (i => line in playfield.strumlines.members) {

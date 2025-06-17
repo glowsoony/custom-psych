@@ -14,7 +14,6 @@ class NoteSplash extends FunkinSprite {
 		super();
 		this.lane = lane;
 		reload(skin);
-		alpha = 0.6;
 
 		animation.finishCallback = function(_) {
 			visible = false;

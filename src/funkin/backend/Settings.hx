@@ -42,6 +42,7 @@ class SaveVariables {
 	var flashingLights:Bool = true;
 	var noteSkin:String = 'Funkin';
 	var noteSplashSkin:String = 'Psych';
+	var noteSplashAlpha:Float = 0.6;
 	var gameVisibility:Int = 100;
 	var cameraZooms:Bool = true;
 	var judgementAlpha:Float = 1;
