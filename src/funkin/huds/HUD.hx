@@ -29,10 +29,12 @@ class HUD extends FlxSpriteGroup {
 	var songName:String;
 	var difficulty:String;
 	var game:PlayState = PlayState.self;
+	public var name:String;
 
 	public function new(songName:String, ?difficulty:String) {
 		this.songName = songName;
 		this.difficulty = difficulty ?? Difficulty.current;
+		this.name = 'Unknown';
 	
 		super();
 		active = false;

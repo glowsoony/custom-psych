@@ -43,6 +43,7 @@ class DefaultHUD extends HUD {
 
 	public function new(songName:String, ?difficulty:String) {
 		super(songName, difficulty);
+		this.name = 'Default';
 
 		add(timeBar = new Bar(0, 0, 'timeBar', function() return songPercent, 0, 1));
 		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
@@ -124,7 +125,7 @@ class DefaultHUD extends HUD {
 			case 'Change Character':
 				var type:Int = Std.parseInt(event.args[0]);
 				var name:String = Std.string(event.args[1]);
-				
+
 				if (type == 0) iconP2.change(name);
 				else if (type == 2) iconP1.change(name);
 		}
