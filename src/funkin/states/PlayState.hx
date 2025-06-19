@@ -6,6 +6,7 @@ import flixel.util.FlxSort;
 
 import funkin.objects.*;
 import funkin.stages.*;
+import funkin.huds.*;
 import funkin.backend.Song.Chart;
 import funkin.objects.Note.NoteData;
 import funkin.objects.Strumline.Receptor;
@@ -30,8 +31,6 @@ class PlayState extends MusicState {
 	public static var song:Chart;
 	public static var songID:String;
 	var songName:String;
-	var songPercent:Float = 0.0;
-	var songLength:Float;
 
 	// gameplay
 	@:unreflective static var disqualified:Bool = false;
@@ -53,7 +52,7 @@ class PlayState extends MusicState {
 		if (value) disqualified = true;
 
 		playfield.botplay = value;
-		botplayTxt.visible = value;
+		if (hud != null) hud.botplay = value;
 
 		return value;
 	}
@@ -65,6 +64,7 @@ class PlayState extends MusicState {
 	}
 
 	function set_playerID(value:Int):Int {
+		if (hud != null) hud.playerID = value;
 		return playfield.playerID = value;
 	}
 
@@ -90,48 +90,17 @@ class PlayState extends MusicState {
 		return playfield.scrollSpeed = value;
 	}
 
-	// stats 
-	static var gradeSet:Array<Array<Dynamic>> = [
-		["Perfect!!", 1],
-		["Sick!", 0.9],
-		["Great", 0.8],
-		["Good", 0.7],
-		["Nice", 0.69],
-		["Meh", 0.6],
-		["Bruh", 0.5],
-		["Bad", 0.4],
-		["Shit", 0.2],
-		["You Suck!", 0],
-		["WHAT THE FUCK", Math.NaN]
-	];
+	public var combo:Int = 0;
+	public var comboBreaks:Int = 0;
+	public var score:Int = 0;
+	public var accuracy:Float = 0.0;
 
-	var combo:Int = 0;
-	var comboBreaks:Int = 0;
-	var score:Int = 0;
-	var accuracy:Float = 0.0;
-	var judgeData:Array<Judgement> = Judgement.list;
-
-	var totalNotesPlayed:Float = 0.0;
-	var totalNotesHit:Int = 0;
-	var grade:String;
-	var clearType:String;
+	public var totalNotesPlayed:Float = 0.0;
+	public var totalNotesHit:Int = 0;
 
 	// objects
 	var playfield:PlayField;
-	var hud:FlxSpriteGroup;
-
-	var scoreTxt:FlxText;
-	var botplayTxt:FlxText;
-
-	var timeBar:Bar;
-	var timeTxt:FlxText;
-
-	var judgeSpr:JudgementSpr;
-	var comboNumbers:ComboNums;
-
-	var judgeCounter:FlxText;
-
-	var healthBar:Bar;
+	var hud:HUD;
 
 	var leftStrumline:Strumline;
 	var rightStrumline:Strumline;
@@ -150,27 +119,19 @@ class PlayState extends MusicState {
 	
 	var stageName:String;
 
-	var health(default, set):Float = 50;
+	public var health(default, set):Float = 50;
 	function set_health(value:Float):Float {
 		if (!noFail && ((playerID == 1 && value <= 0) || (playerID == 0 && value >= 100)))
 			die();
 
-		value = FlxMath.bound(value, 0, 100);
-
-		// update health bar
-		health = value;
-		healthBar.percent = FlxMath.remapToRange(FlxMath.bound(health, healthBar.bounds.min, healthBar.bounds.max), healthBar.bounds.min, healthBar.bounds.max, 0, 100);
-
-		iconP1.animation.curAnim.curFrame = healthBar.percent < 20 ? 1 : 0; //If health is under 20%, change player icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-		iconP2.animation.curAnim.curFrame = healthBar.percent > 80 ? 1 : 0; //If health is over 80%, change opponent icon to frame 1 (losing icon), otherwise, frame 0 (normal)
-
-		return health = value;
+		health = value = FlxMath.bound(value, 0, 100);
+		
+		hud.healthChange(value);
+		return value;
 	}
 
 	public var defaultCamZoom:Float = 1.05;
-	var botplayTxtSine:Float = 0.0;
 	var cameraSpeed:Float = 1;
-	var iconSpacing:Float = 20;
 	var gfSpeed:Int = 1;
 	var skipCountdown:Bool = false;
 
@@ -190,9 +151,6 @@ class PlayState extends MusicState {
 	static var prevCamFollow:FlxObject;
 
 	var eventHandler:EventHandler;
-
-	var iconP1:CharIcon;
-	var iconP2:CharIcon;
 
 	var countdown:Countdown;
 
@@ -229,9 +187,6 @@ class PlayState extends MusicState {
 		downscroll = Settings.data.downscroll;
 		scrollType = Settings.data.gameplaySettings['scrollType'];
 		_rawScrollSpeed = Settings.data.gameplaySettings['scrollSpeed'];
-
-		clearType = updateClearType();
-		grade = updateGrade();
 
 		ScriptHandler.loadFromDir('scripts');
 
@@ -348,10 +303,10 @@ class PlayState extends MusicState {
 		stage.create();
 		eventHandler.load(songID);
 
-		// set up hud elements
-		add(hud = new FlxSpriteGroup());
+		add(hud = new DefaultHUD(songName, Difficulty.current));
 		hud.cameras = [camHUD];
-		loadHUD();
+		hud.downscroll = downscroll;
+		hud.playerID = playerID;
 		
 		botplay = Settings.data.gameplaySettings['botplay'];
 
@@ -391,23 +346,17 @@ class PlayState extends MusicState {
 		if ((Controls.justPressed('reset') && canReset)) die();
 
 		updateCameraScale(delta);
-		updateIconScales(delta);
-		updateIconPositions();
-		updateTimeBar();
 
 		if (countdown.finished) eventHandler.update();
 		stage.update(delta);
 
 		if (FlxG.keys.justPressed.F8) botplay = !botplay;
 
-		if (botplayTxt.visible) {
-			botplayTxtSine += 180 * delta;
-			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplayTxtSine) / 180);
-		}
-
 		if (Controls.justPressed('pause') && canPause) openPauseMenu();
-
 		camGame.followLerp = paused ? 0 : (0.04 * cameraSpeed * playfield.rate);
+
+		hud.paused = paused;
+		hud.update(delta);
 
 		ScriptHandler.call('postUpdate', [delta]);
 	}
@@ -434,18 +383,14 @@ class PlayState extends MusicState {
 
 	override function stepHit(step:Int) {
 		ScriptHandler.call('stepHit', [step]);
+		hud.stepHit(step);
 		stage.stepHit(step);
 	}
 
 	override function beatHit(beat:Int) {
 		ScriptHandler.call('beatHit', [beat]);
 		stage.beatHit(beat);
-
-		iconP1.scale.set(1.2, 1.2);
-		iconP1.updateHitbox();
-
-		iconP2.scale.set(1.2, 1.2);
-		iconP2.updateHitbox();
+		hud.beatHit(beat);
 
 		characterBopper(beat);
 	}
@@ -471,6 +416,7 @@ class PlayState extends MusicState {
 		if (note.player != playerID) {
 			playCharacterAnim(strumline.character(), note, 'sing');
 			if (song.meta.hasVocals && Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
+			hud.noteHit(strumline, note, null);
 
 			return;
 		} else if (botplay) {
@@ -478,12 +424,10 @@ class PlayState extends MusicState {
 			if (note.isSustain) return;
 
 			final judge:Judgement = Judgement.min;
-
 			health += judge.health * strumline.healthMult;
-			if (!Settings.data.hideTightestJudge) judgeSpr.display(0);
+			combo++;
 			judge.hits++;
-			comboNumbers.display(++combo);
-			updateJudgeCounter();
+			hud.noteHit(strumline, note, judge);
 
 			return;
 		}
@@ -496,6 +440,8 @@ class PlayState extends MusicState {
 		if (note.type == 'Hey!' && strumline.character().animation.exists('cheer')) {
 			strumline.character().playAnim('cheer');
 		} else playCharacterAnim(strumline.character(), note, 'sing');
+
+		hud.noteHit(strumline, note, judgement);
 	}
 
 	function sustainHit(strumline:Strumline, note:Note) {
@@ -505,8 +451,7 @@ class PlayState extends MusicState {
 	}
 
 	function judgeHit(strumline:Strumline, note:Note):Judgement {
-		final adjustedHitTime:Float = note.rawHitTime / Conductor.rate;
-		var judgeID:Int = Judgement.getIDFromTiming(adjustedHitTime);
+		var judgeID:Int = Judgement.getIDFromTiming(note.rawHitTime);
 		var judge:Judgement = Judgement.list[judgeID];
 
 		note.judge = judge.name;
@@ -518,7 +463,7 @@ class PlayState extends MusicState {
 			health += judge.health * strumline.healthMult;
 			// pbot1-ish scoring system
 			// cuz judgement based is boring :sob:
-			score += Math.floor(500 - Math.abs(adjustedHitTime));
+			score += Math.floor(500 - Math.abs(note.rawHitTime));
 			judge.hits++;
 			combo++;
 		} else {
@@ -535,21 +480,10 @@ class PlayState extends MusicState {
 		
 		totalNotesHit++;
 		accuracy = updateAccuracy();
-		grade = updateGrade();
-		clearType = updateClearType();
 
-		updateScoreTxt();
-		updateJudgeCounter();
 		if (song.meta.hasVocals) {
 			if (Conductor.opponentVocals == null) Conductor.mainVocals.volume = 1;
 			else Conductor.vocals.members[playerID].volume = 1;
-		}
-
-		if (!note.breakOnHit) {
-			if (!Settings.data.hideTightestJudge || judgeID > 0) {
-				judgeSpr.display(adjustedHitTime);
-			}
-			comboNumbers.display(combo);
 		}
 
 		return judge;
@@ -559,6 +493,7 @@ class PlayState extends MusicState {
 		if (note.ignore) return;
 
 		ScriptHandler.call('noteMiss', [strumline, note]);
+		
 		if (Settings.data.gameplaySettings['instakill'] || Settings.data.gameplaySettings['onlySicks']) die();
 
 		comboBreaks++;
@@ -567,8 +502,6 @@ class PlayState extends MusicState {
 		health -= 6 * strumline.healthMult;
 
 		accuracy = updateAccuracy();
-		grade = updateGrade();
-		clearType = updateClearType();
 
 		note.missed = true;
 		for (piece in note.pieces) {
@@ -582,7 +515,8 @@ class PlayState extends MusicState {
 		}
 
 		playCharacterAnim(strumline.character(), note, 'miss');
-		updateScoreTxt();
+
+		hud.noteMiss(strumline, note);
 	}
 
 	function ghostTap(strumline:Strumline) {
@@ -591,8 +525,7 @@ class PlayState extends MusicState {
 		health -= 6 * strumline.healthMult;
 
 		accuracy = updateAccuracy();
-		grade = updateGrade();
-		updateScoreTxt();
+		hud.ghostTap(strumline);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -601,50 +534,6 @@ class PlayState extends MusicState {
 	function updateAccuracy():Float {
 		if (totalNotesHit <= 0) return 0.0;
 		return totalNotesPlayed / (totalNotesHit + comboBreaks);
-	}
-
-	dynamic function updateClearType():String {
-		var sicks:Int = judgeData[0].hits;
-		var goods:Int = judgeData[1].hits;
-		var bads:Int = judgeData[2].hits;
-		var shits:Int = judgeData[3].hits;
-
-		var type:String = 'N/A';
-
-		if (comboBreaks == 0) {
-			if (bads > 0 || shits > 0) type = 'FC';
-			else if (goods > 0) {
-				if (goods == 1) type = 'BF';
-				else if (goods <= 9) type = 'SDG';
-				else if (goods >= 10) type = 'GFC';
-			} else if (sicks > 0) type = 'PFC';
-		} else {
-			if (comboBreaks == 1) type = 'MF';
-			else if (comboBreaks <= 9) type = 'SDCB';
-			else type = 'Clear';
-		}
-
-		return type;
-	}
-
-	// from troll engine
-	// lol luhmao
-	dynamic function updateGrade():String {
-		var type:String = '?';
-		if (totalNotesHit == 0) return type;
-		
-		final roundedAccuracy:Float = accuracy * 0.01;
-
-		if (roundedAccuracy >= 1) return gradeSet[0][0]; // Uses first string
-		else {
-			for (curGrade in gradeSet) {
-				if (roundedAccuracy <= curGrade[1]) continue;
-				type = curGrade[0];
-				break;
-			}
-		}
-		
-		return type;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -703,8 +592,6 @@ class PlayState extends MusicState {
 			error('Instrumental failed to load: $e');
 		}
 
-		songLength = Conductor.inst.length;
-
 		// load vocals
 		try {
 			if (song.meta.hasVocals) {
@@ -744,29 +631,23 @@ class PlayState extends MusicState {
 
 					default: null;
 				}
+
 				var name:String = event.args[1];
-				if (character == null || character.name == name) return;
+				if (character != null && character.name != name) {
+					var newCharacter:Character = characterCache[name];
 
-				var newCharacter:Character = characterCache[name];
-				if (newCharacter == null) return;
+					if (newCharacter != null) {
+						newCharacter.alpha = 1;
+						newCharacter.visible = character.visible;
+						newCharacter.setPosition(character.x, character.y);
+						character.alpha = 0;
+						character.visible = false;
 
-				newCharacter.alpha = 1;
-				newCharacter.visible = character.visible;
-				newCharacter.setPosition(character.x, character.y);
-				character.alpha = 0;
-				character.visible = false;
-
-				if (type == 0) {
-					dad = newCharacter;
-					iconP2.change(name);
-				} else if (type == 1) {
-					gf = newCharacter;
-				} else if (type == 2) {
-					bf = newCharacter;
-					iconP1.change(name);
+						if (type == 0) dad = newCharacter;
+						else if (type == 1) gf = newCharacter;
+						else if (type == 2) bf = newCharacter;
+					}
 				}
-
-				healthBar.setColors(dad.healthColor, bf.healthColor);
 
 			case 'Hey!':
 				var character:Character = switch Std.parseInt(event.args[0]) {
@@ -777,10 +658,10 @@ class PlayState extends MusicState {
 					default: null;
 				}
 
-				if (character == null || !character.animation.exists('cheer')) return;
-
-				character.playAnim('cheer', true);
-				character.specialAnim = true;
+				if (character == null || !character.animation.exists('cheer')) {
+					character.playAnim('cheer', true);
+					character.specialAnim = true;
+				}
 
 			case 'Play Animation':
 				var animName:String = event.args[1];
@@ -792,10 +673,10 @@ class PlayState extends MusicState {
 					default: null;
 				}
 
-				if (character == null || !character.animation.exists(animName)) return;
-
-				character.playAnim(animName, true);
-				character.specialAnim = true;
+				if (character != null && character.animation.exists(animName)) {
+					character.playAnim(animName, true);
+					character.specialAnim = true;
+				}
 
 			case 'Set GF Speed':
 				gfSpeed = Math.floor(Math.max(Std.parseInt(event.args[0]), 1));
@@ -804,10 +685,10 @@ class PlayState extends MusicState {
 				FlxG.sound.play(Paths.sound(event.args[0]), Std.parseFloat(event.args[1]));
 
 			case 'Add Camera Zoom':
-				if (!Settings.data.cameraZooms || camGame.zoom >= 1.35) return;
-
-				camGame.zoom += Std.parseFloat(event.args[0]);
-				camHUD.zoom += Std.parseFloat(event.args[1]);
+				if (Settings.data.cameraZooms && camGame.zoom < 1.35) {
+					camGame.zoom += Std.parseFloat(event.args[0]);
+					camHUD.zoom += Std.parseFloat(event.args[1]);
+				}
 
 			case 'Screen Shake':
 				var camerasToTarget:Array<FlxCamera> = [camGame, camHUD];
@@ -820,14 +701,16 @@ class PlayState extends MusicState {
 				}
 
 			case 'Change Scroll Speed':
-				if (scrollType == 'constant') return;
+				if (scrollType != 'constant') {
+					var duration:Float = Std.parseFloat(event.args[1]);
+					var value:Float = song.speed * _rawScrollSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
 
-				var duration:Float = Std.parseFloat(event.args[1]);
-				var value:Float = song.speed * _rawScrollSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
-
-				if (duration <= 0) scrollSpeed = value;
-				else FlxTween.tween(this, {scrollSpeed: value}, duration / rate);
+					if (duration <= 0) scrollSpeed = value;
+					else FlxTween.tween(this, {scrollSpeed: value}, duration / rate);
+				}
 		}
+
+		hud.eventTriggered(event);
 	}
 
 	var eventList:Array<String> = [];
@@ -853,48 +736,10 @@ class PlayState extends MusicState {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// regarding objects
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	var _lastSeconds:Int = -1;
-	dynamic function updateTimeBar() {
-		if (paused || !updateTime) return;
-
-		var curTime:Float = Math.max(0, Conductor.rawTime);
-		songPercent = (curTime / songLength);
-
-		var songCalc:Float = (songLength - curTime);
-		if (Settings.data.timeBarType == 'Time Elapsed') songCalc = curTime;
-
-		var seconds:Int = Math.floor((songCalc / playfield.rate) * 0.001);
-		if (seconds < 0) seconds = 0;
-
-		if (seconds == _lastSeconds) return;
-
-		var textToShow:String = '$songName';
-		if (playfield.rate != 1) textToShow += ' (${playfield.rate}x)';
-		if (Settings.data.timeBarType != 'Song Name') textToShow += ' - ${FlxStringUtil.formatTime(seconds, false)}';
-
-		timeTxt.text = textToShow;
-		_lastSeconds = seconds;
-	}
-
 	dynamic function updateCameraScale(delta:Float):Void {
 		final scalingMult:Float = Math.exp(-delta * 6 * playfield.rate);
 		camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, scalingMult);
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
-	}
-
-	dynamic function updateIconPositions():Void {
-		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconSpacing;
-		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconSpacing * 2;
-	}
-
-	dynamic function updateIconScales(delta:Float):Void {
-		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-delta * 9 * playfield.rate));
-		iconP1.scale.set(mult, mult);
-		iconP1.centerOrigin();
-
-		mult = FlxMath.lerp(1, iconP2.scale.x, Math.exp(-delta * 9 * playfield.rate));
-		iconP2.scale.set(mult, mult);
-		iconP2.centerOrigin();
 	}
 
 	function moveCamera(?measure:Int = 0) {
@@ -933,110 +778,6 @@ class PlayState extends MusicState {
 			bf.dance();
 		if (beat % dad.danceInterval == 0)
 			dad.dance();
-	}
-
-	dynamic function updateJudgeCounter() {
-		if (!Settings.data.judgementCounter) return;
-		
-		var sicks:Int = judgeData[0].hits;
-		var goods:Int = judgeData[1].hits;
-		var bads:Int = judgeData[2].hits;
-		var shits:Int = judgeData[3].hits;
-
-		judgeCounter.text = 'Sicks: $sicks\nGoods: $goods\nBads: $bads\nShits: $shits';
-	}
-
-	dynamic function updateScoreTxt():Void {
-		var textToShow:String = '';
-		textToShow += 'Score: $score';
-
-		if (!Settings.data.gameplaySettings['onlySicks']) {
-			if (!Settings.data.gameplaySettings['instakill']) 
-				textToShow += ' | Combo Breaks: $comboBreaks';
-
-			textToShow += ' | Accuracy: ${Util.truncateFloat(accuracy, 2)}%';
-			textToShow += ' [$clearType | $grade]';
-		}
-
-		scoreTxt.text = textToShow;
-	}
-
-	dynamic function loadHUD():Void {
-		if (hud == null) return;
-		hud.clear();
-
-		hud.add(timeBar = new Bar(0, downscroll ? FlxG.height - 30 : 15, 'timeBar', function() return songPercent, 0, 1));
-		timeBar.setColors(0xFFFFFFFF, 0xFF000000);
-		timeBar.screenCenter(X);
-
-		// to make it fancy
-		// if you want it the generic psych way
-		// (black and white)
-		// then just take this long ass line out
-		FlxGradient.overlayGradientOnFlxSprite(timeBar.leftBar, Std.int(timeBar.leftBar.width), Std.int(timeBar.leftBar.height), [bf.healthColor, dad.healthColor], 0, 0, 1, 180);
-
-		hud.add(timeTxt = new FlxText(0, 0, timeBar.width, '$songName - 0:00', 16));
-		timeTxt.font = Paths.font('vcr.ttf');
-		timeTxt.alignment = CENTER;
-		timeTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
-		timeTxt.borderColor = FlxColor.BLACK;
-		timeTxt.borderSize = 1.25;
-		timeTxt.setPosition(timeBar.getMidpoint().x - (timeTxt.width * 0.5), timeBar.getMidpoint().y - (timeTxt.height * 0.5));
-
-		updateTime = Settings.data.timeBarType != 'Disabled';
-		timeBar.visible = Settings.data.timeBarType != 'Disabled';
-		timeTxt.visible = Settings.data.timeBarType != 'Disabled';
-
-		hud.add(healthBar = new Bar(0, downscroll ? 55 : 640, 'healthBar', function() return health, 0, 100));
-		healthBar.alpha = Settings.data.healthBarAlpha;
-		healthBar.setColors(dad.healthColor, bf.healthColor);
-		healthBar.screenCenter(X);
-		healthBar.leftToRight = false;
-
-		hud.add(iconP1 = new CharIcon(bf.icon, true));
-		iconP1.alpha = Settings.data.healthBarAlpha;
-		iconP1.y = healthBar.y - (iconP1.height * 0.5);
-
-		hud.add(iconP2 = new CharIcon(dad.icon));
-		iconP2.alpha = Settings.data.healthBarAlpha;
-		iconP2.y = healthBar.y - (iconP2.height * 0.5);
-
-		updateIconPositions();
-
-		hud.add(scoreTxt = new FlxText(0, downscroll ? 21 : FlxG.height - 39, FlxG.width, '', 16));
-		scoreTxt.font = Paths.font('vcr.ttf');
-		scoreTxt.alignment = CENTER;
-		scoreTxt.alpha = Settings.data.scoreAlpha;
-		scoreTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
-		scoreTxt.borderColor = FlxColor.BLACK;
-		scoreTxt.borderSize = 1.25;
-		scoreTxt.screenCenter(X);
-		updateScoreTxt();
-
-		hud.add(judgeSpr = new JudgementSpr(Settings.data.judgePosition[0], Settings.data.judgePosition[1]));
-		hud.add(comboNumbers = new ComboNums(Settings.data.comboPosition[0], Settings.data.comboPosition[1]));
-
-		hud.add(botplayTxt = new FlxText(0, downscroll ? FlxG.height - 115 : 85, FlxG.width - 800, 'BOTPLAY', 32));
-		botplayTxt.font = Paths.font('vcr.ttf');
-		botplayTxt.alignment = CENTER;
-		botplayTxt.borderStyle = FlxTextBorderStyle.OUTLINE;
-		botplayTxt.borderColor = FlxColor.BLACK;
-		botplayTxt.borderSize = 1.25;
-		botplayTxt.visible = botplay;
-		botplayTxt.screenCenter(X);
-
-		var opponentMode:Bool = Settings.data.gameplaySettings['opponentMode'];
-		hud.add(judgeCounter = new FlxText(0, 0, 500, '', 20));
-		judgeCounter.font = Paths.font('vcr.ttf');
-		judgeCounter.borderStyle = FlxTextBorderStyle.OUTLINE;
-		judgeCounter.borderColor = FlxColor.BLACK;
-		judgeCounter.borderSize = 1.25;
-		judgeCounter.alignment = opponentMode ? 'right' : 'left';
-		updateJudgeCounter();
-		judgeCounter.screenCenter(Y);
-		judgeCounter.visible = Settings.data.judgementCounter;
-
-		judgeCounter.x = opponentMode ? (FlxG.width - judgeCounter.width) - 5 : 5;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////

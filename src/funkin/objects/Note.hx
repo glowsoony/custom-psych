@@ -48,12 +48,12 @@ class Note extends FlxSprite {
 
 	public var rawHitTime(get, never):Float;
 	function get_rawHitTime():Float {
-		return time - Conductor.rawTime;
+		return (time - Conductor.rawTime) / Conductor.rate;
 	}
 
 	public var hitTime(get, never):Float;
 	function get_hitTime():Float {
-		return time - Conductor.visualTime;
+		return (time - Conductor.visualTime) / Conductor.rate;
 	}
 
 	public var canHit:Bool = true;
