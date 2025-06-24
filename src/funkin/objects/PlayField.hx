@@ -241,6 +241,10 @@ class PlayField extends flixel.group.FlxSpriteGroup {
 		for (i => note in parsedNotes) {
 			// thanks shubs /s
 			if (note.lane < 0) continue;
+			
+			if (modifiers && !Settings.data.gameplaySettings['mines'] && note.type == 'Hurt Note') {
+				continue;
+			}
 
 			// fixes a crash when loading a chart with only one strumline in the playfield
 			note.player = Std.int(Math.min(note.player, strumlines.length - 1));

@@ -1,4 +1,4 @@
-package funkin.states;
+ package funkin.states;
 
 import openfl.media.Sound;
 

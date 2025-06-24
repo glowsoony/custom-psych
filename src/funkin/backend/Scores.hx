@@ -28,7 +28,7 @@ class Scores {
 	public static var list:Array<PlayData> = [];
 	public static var weekList:Array<WeekPlayData> = [];
 
-	public static final changeableModifiers:Array<String> = ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode', 'blind'];
+	public static final changeableModifiers:Array<String> = ['playbackRate', 'noFail', 'randomizedNotes', 'mirroredNotes', 'sustains', 'opponentMode', 'blind', 'mines'];
 
 	static var _save:FlxSave;
 
