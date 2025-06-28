@@ -34,6 +34,7 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetLine> {
 
     public var distancePerItem:FlxPoint = FlxPoint.get(20, 120);
 	public var spawnPos:FlxPoint = FlxPoint.get();
+	public var fieldWidth:Float = 0;
 
 	public static function loadData(?request:String) {
 		var path:String = '$request.json';
@@ -160,11 +161,11 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetLine> {
     }
 
     public function updateAlignment(align:AlphabetAlignment) {
-        final totalWidth:Float = width;
+        final totalWidth:Float = fieldWidth > 0 ? fieldWidth : width;
         for (line in members) {
             line.x = switch (align) {
                 case LEFT: x;
-                case CENTER: getMidpoint().x - (line.width * 0.5);
+                case CENTER: (totalWidth - line.width) * 0.5;
                 case RIGHT: x + (totalWidth - line.width);
             }
         }

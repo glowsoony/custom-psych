@@ -103,6 +103,8 @@ class TitleState extends MusicState {
 		ngSpr.antialiasing = Settings.data.antialiasing;
 
 		add(alphabet = new Alphabet(0, 200, '', BOLD, CENTER));
+		alphabet.fieldWidth = FlxG.width;
+		//alphabet.screenCenter(X);
 
 		introGroup.add(gf);
 		introGroup.add(logo); //FNF Logo
@@ -271,7 +273,7 @@ class TitleState extends MusicState {
 
 	inline function addText(text:String) {
 		alphabet.text += text;
-		alphabet.screenCenter(X);
+		//alphabet.screenCenter(X);
 	}
 
 	function skipIntro():Void {
