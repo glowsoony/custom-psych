@@ -658,7 +658,7 @@ class PlayState extends MusicState {
 					default: null;
 				}
 
-				if (character == null || !character.animation.exists('cheer')) {
+				if (character != null && character.animation.exists('cheer')) {
 					character.playAnim('cheer', true);
 					character.specialAnim = true;
 				}
