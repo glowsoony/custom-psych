@@ -225,8 +225,10 @@ class TitleState extends MusicState {
 		logo.animation.play('bump', true);
 
 		danceLeft = !danceLeft;
-		gf.animation.play(useIdle ? 'idle' : (danceLeft ? 'danceRight' : 'danceLeft'));
-		
+		if (!useIdle) gf.animation.play((danceLeft ? 'danceRight' : 'danceLeft'));
+		else if (curBeat % 2 == 0) gf.animation.play('idle');
+
+
 		if (seenIntro) return;
 
 		sickBeats++;
