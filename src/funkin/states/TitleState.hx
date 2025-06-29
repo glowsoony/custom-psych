@@ -240,40 +240,35 @@ class TitleState extends MusicState {
 		switch (sickBeats) {
 			case 1:
 				alphabet.y += 40;
-				addText('Psych Engine by');
+				alphabet.text += 'Psych Engine by';
 			case 3:
-				addText('\nShadow Mario\nRiveren');
+				alphabet.text += '\nShadow Mario\nRiveren';
 			case 4:
 				alphabet.text = '';
 			case 5:
 				alphabet.y -= 40;
-				addText('Not associated\nwith');
+				alphabet.text += 'Not associated\nwith';
 			case 7:
-				addText('\nNewgrounds');
+				alphabet.text += '\nNewgrounds';
 				ngSpr.visible = true;
 			case 8:
 				alphabet.text = '';
 				ngSpr.visible = false;
 			case 9:
-				addText(curWacky[0]);
+				alphabet.text += curWacky[0];
 			case 11:
-				addText('\n${curWacky[1]}');
+				alphabet.text += '\n${curWacky[1]}';
 			case 12:
 				alphabet.text = '';
 			case 13:
-				addText('Friday');
+				alphabet.text += 'Friday';
 			case 14:
-				addText('\nNight');
+				alphabet.text += '\nNight';
 			case 15:
-				addText('\nFunkin');
+				alphabet.text += '\nFunkin';
 			case 16:
 				skipIntro();
 		}
-	}
-
-	inline function addText(text:String) {
-		alphabet.text += text;
-		//alphabet.screenCenter(X);
 	}
 
 	function skipIntro():Void {
