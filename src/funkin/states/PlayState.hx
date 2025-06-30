@@ -488,7 +488,10 @@ class PlayState extends MusicState {
 
 		note.missed = true;
 		for (piece in note.pieces)
-			if (piece != null && piece.exists && piece.alive) piece.multAlpha = 0.25;
+		{
+			if (piece == null || !piece.exists || !piece.alive) continue;
+			piece.multAlpha = 0.25;
+		}
 
 		if (song.meta.hasVocals) {
 			if (Conductor.opponentVocals == null) Conductor.mainVocals.volume = 0;
