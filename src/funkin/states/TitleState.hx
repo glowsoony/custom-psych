@@ -24,8 +24,7 @@ class TitleState extends MusicState {
 		//var fuck:FlxSprite = null;
 		//fuck.visible = true;
 
-		MusicState.skipNextTransIn = true;
-		MusicState.skipNextTransOut = true;
+		MusicState.skipNextTransIn = MusicState.skipNextTransOut = true;
 
 		Paths.clearStoredMemory();
 		super.create();
@@ -170,11 +169,8 @@ class TitleState extends MusicState {
 		} catch(e:haxe.Exception) warn('Title JSON might be broken, ignoring issue...\n${e.details()}');
 	}
 
-	function getIntroTexts():Array<Array<String>> {
-		var firstArray:Array<String> = File.getContent(Paths.text('introText.txt')).split('\n');
-
-		return [for (i in firstArray) i.split('--')];
-	}
+	function getIntroTexts():Array<Array<String>> 
+		return [for (i in File.getContent(Paths.text('introText.txt')).split('\n')) i.split('--')];
 	
 	var newTitle:Bool = false;
 	var titleTimer:Float = 0;
@@ -231,8 +227,8 @@ class TitleState extends MusicState {
 		logo.animation.play('bump', true);
 
 		danceLeft = !danceLeft;
-		if (!useIdle) gf.animation.play(danceLeft ? 'danceRight' : 'danceLeft');
-		else if (curBeat % 2 == 0) gf.animation.play('idle', true);
+		if (!useIdle) gf.animation.play((danceLeft ? 'danceRight' : 'danceLeft'));
+		else if (curBeat % 2 == 0) gf.animation.play('idle');
 
 		if (seenIntro) return;
 

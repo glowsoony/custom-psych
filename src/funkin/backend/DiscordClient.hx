@@ -26,8 +26,7 @@ class DiscordClient {
 			initialize();
 
 		Application.current.window.onClose.add(function() {
-			if (!isInitialized) return;
-			shutdown();
+			if (isInitialized) shutdown();
 		});
 	}
 

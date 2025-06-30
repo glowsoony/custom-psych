@@ -56,10 +56,8 @@ class Main extends Sprite {
 		Settings.load();
 
 		var game:FlxGame = new FlxGame(InitState, 1280, 720, 60, true);
-
     	@:privateAccess
     	game._customSoundTray = funkin.backend.FunkinSoundTray;
-
 		addChild(game);
 
 		addChild(fpsCounter = new FPSCounter(10, 10, 12));
@@ -79,7 +77,6 @@ class Main extends Sprite {
 					resetSpriteCache(cam.flashSprite);
 				}
 			}
-
 			if (FlxG.game != null) resetSpriteCache(FlxG.game);
 		});
 

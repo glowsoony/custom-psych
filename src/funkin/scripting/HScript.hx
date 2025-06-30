@@ -17,8 +17,7 @@ class HScript extends Iris {
 
 		set('closeFile', function() {
 			close();
-			if (!ScriptHandler.list.contains(this)) return;
-			ScriptHandler.list.remove(this);
+			if (ScriptHandler.list.contains(this)) ScriptHandler.list.remove(this);
 		});
 
 

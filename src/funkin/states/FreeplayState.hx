@@ -55,7 +55,7 @@ class FreeplayState extends MusicState {
 
 		for (week in WeekData.list) {
 			for (song in week.songs) {
-				var diffs:Array<String> = song.difficulties;
+				var diffs:Array<String> = song?.difficulties;
 				if (song.difficulties == null || song.difficulties.length == 0) diffs = Difficulty.loadFromWeek(week);
 
 				songList.push({
@@ -271,7 +271,6 @@ class FreeplayState extends MusicState {
 		}
 
 		curDiffs = songList[curSelected].difficulties;
-
 		curDifficulty = curDiffs.indexOf(curDiffName);
 		if (curDifficulty == -1) curDifficulty = 0;
 		changeDifficulty();
@@ -298,7 +297,6 @@ class FreeplayState extends MusicState {
 		lerpSelected = FlxMath.lerp(curSelected, lerpSelected, Math.exp(-elapsed * 9.6));
 		for (i in _lastVisibles) {
 			var text:Alphabet = grpSongs.members[i];
-
 			text.visible = text.active = false;
 			grpIcons.members[i].visible = false;
 		}
