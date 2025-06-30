@@ -143,7 +143,7 @@ class TitleState extends MusicState {
 
 	function loadJsonData() {
 		if (!Paths.exists('data/titleData.json')) {
-			trace('[WARN] No Title JSON detected, using default values.');
+			warn('No Title JSON detected, using default values.');
 			return;
 		}
 
@@ -167,7 +167,7 @@ class TitleState extends MusicState {
 				bg.antialiasing = Settings.data.antialiasing;
 				add(bg);
 			}
-		} catch(e:haxe.Exception) trace('[WARN] Title JSON might be broken, ignoring issue...\n${e.details()}');
+		} catch(e:haxe.Exception) warn('Title JSON might be broken, ignoring issue...\n${e.details()}');
 	}
 
 	function getIntroTexts():Array<Array<String>> {

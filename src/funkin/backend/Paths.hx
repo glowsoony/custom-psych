@@ -144,7 +144,7 @@ class Paths {
 
 	// images
 	public static dynamic function image(key:String, ?subFolder:String = 'images'):FlxGraphic {
-		if (key.lastIndexOf('.') < 0) key += '.$IMAGE_EXT';
+		key = Util.addFileExtension(key, IMAGE_EXT);
 		key = Language.getFileTranslation(key, subFolder);
 
 		if (cachedAssets.exists(key)) return cachedAssets.get(key);
@@ -179,7 +179,7 @@ class Paths {
 	}
 
 	public static dynamic function audio(key:String, ?subFolder:String, ?beepIfNull:Bool = true):Sound {
-		if (key.lastIndexOf('.') < 0) key += '.$SOUND_EXT';
+		key = Util.addFileExtension(key, SOUND_EXT);
 		key = Language.getFileTranslation(key, subFolder);
 
 		var file:Sound = null;

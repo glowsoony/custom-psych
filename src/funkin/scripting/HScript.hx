@@ -3,13 +3,17 @@ package funkin.scripting;
 #if HSCRIPT_ALLOWED
 import crowplexus.iris.Iris;
 import crowplexus.iris.IrisConfig;
+import crowplexus.hscript.Expr.Error as IrisError;
+import crowplexus.hscript.Printer;
+import haxe.ValueException;
 
-class HScript extends Iris implements IScript {
+class HScript extends Iris {
 	public var active:Bool = true;
 	public var disposed:Bool = false;
 
 	public function new(dir:String) {
 		super(File.getContent(dir), {name: dir, autoRun: false, autoPreset: true});
+		this.parser.resumeErrors = true;
 
 		set('closeFile', function() {
 			close();
@@ -34,11 +38,23 @@ class HScript extends Iris implements IScript {
 	}
 	
 	override function call(func:String, ?args:Array<Dynamic>):IrisCall {
-		if (disposed || !active || !interp.variables.exists(func)) {
-			return {funName: func, signature: null, returnValue: null};
+		var defaultCall:IrisCall = {funName: func, signature: null, returnValue: null};
+
+		if (disposed || !active || !exists(func)) return defaultCall;
+
+		try {
+			var signature:Dynamic = interp.variables.get(func);
+			var ret = Reflect.callMethod(null, signature, args ?? []);
+			return {funName: func, signature: signature, returnValue: ret};
+		} catch(e:IrisError) {
+			Iris.error(Printer.errorToString(e, false), interp.posInfos());
+			return defaultCall;
+		} catch (e:ValueException) {
+			Iris.error('$e', interp.posInfos());
+			return defaultCall;
 		}
 
-		return super.call(func, args ?? []);
+		return defaultCall;
 	}
 
 	public function close():Void {

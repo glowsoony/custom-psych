@@ -2,7 +2,6 @@ package;
 
 function info(v, ?infos) {
 	var className:String = infos.className;
-	var methodName:String = infos.methodName;
 	var line:Int = infos.lineNumber;
 
 	print('${INVERT.format(37)}[INFO | $className:$line]${INIT.format()} $v', infos);
@@ -10,15 +9,20 @@ function info(v, ?infos) {
 
 function error(v, ?infos) {
 	var className:String = infos.className;
-	var methodName:String = infos.methodName;
 	var line:Int = infos.lineNumber;
 
 	print('${INVERT.format(31)}[ERROR | $className:$line]${INIT.format()} $v', infos);
 }
 
+function fatal(v, ?infos) {
+	var className:String = infos.className;
+	var line:Int = infos.lineNumber;
+
+	print('${DIM.format(31)}[FATAL | $className:$line]${INIT.format()} $v', infos);
+}
+
 function warn(v, ?infos) {
 	var className:String = infos.className;
-	var methodName:String = infos.methodName;
 	var line:Int = infos.lineNumber;
 
 	print('${INVERT.format(33)}[WARNING | $className:$line]${INIT.format()} $v', infos);

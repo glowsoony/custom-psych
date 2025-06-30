@@ -1,61 +1,53 @@
 package funkin.scripting;
 
-interface IScript {
-	public var active:Bool;
-	public var disposed:Bool;
-	
-	public function call(name:String, ?args:Array<Dynamic>):Dynamic;
-	public function set(name:String, value:Dynamic, ?overrideSet:Bool):Dynamic;
-	public function get(name:String):Dynamic;
-	public function close():Void;
-}
-
 class ScriptHandler {
-	public static var list:Array<IScript> = [];
+	public static var list:Array<HScript> = [];
 
 	public static function loadFromDir(dir:String, ?subFolders:Bool = false):Void {
 		if (!Paths.exists(dir)) return;
-		
-		for (file in FileSystem.readDirectory(Paths.get(dir))) {
-			final absPath:String = '$dir/$file';
-			if (FileSystem.isDirectory(absPath) && subFolders) {
-				loadFromDir(absPath, subFolders);
-				continue;
+
+		final directories:Array<String> = ['assets'];
+		final originalLength:Int = directories.length;
+		for (mod in Mods.getActive()) directories.push('mods/${mod.id}');
+
+		for (i => directory in directories) {
+			if (!FileSystem.exists(directory) || !FileSystem.exists('$directory/$dir')) continue;
+			
+			trace('$directory/$dir');
+			for (file in FileSystem.readDirectory('$directory/$dir')) {
+				final absPath:String = '$dir/$file';
+				trace(absPath);
+				trace('$directory/$absPath');
+				if (FileSystem.isDirectory('$directory/$absPath') && subFolders) {
+					loadFromDir('$directory/$absPath', subFolders);
+					continue;
+				}
+
+				loadFile(absPath);
 			}
 
-			loadFile(absPath);
+			trace('');
 		}
 	}
 
-	public static function loadFile(dir:String):IScript {
-		dir = Paths.get(dir);
-		if (!FileSystem.exists(dir)) return null;
+	public static function loadFile(dir:String):HScript {
+		dir = Util.addFileExtension(Paths.get(dir), 'hx');
 
-		switch haxe.io.Path.extension(dir) {
-/*			case "lua":
-				var script:LuaScript = new LuaScript(dir);
+		if (!FileSystem.exists(dir) || !dir.endsWith('hx')) return null;
 
-				list.push(script);
-				script.execute();
+		var script:HScript = new HScript(dir);
 
-				return script;*/
+		list.push(script);
+		script.execute();
 
-			case "hx": 
-				var script:HScript = new HScript(dir);
-
-				list.push(script);
-				script.execute();
-
-				return script;
-
-			case _: return null;
-		}
+		return script;
 	}
 
 	public static function call(func:String, ?args:Array<Dynamic>):Void {
 		args ??= [];
 		for (i in 0...list.length) {
-			final script:IScript = list[i];
+			final script:HScript = list[i];
+			if (script == null) continue;
 
 			if (script.disposed) {
 				if (list.contains(script)) list.remove(script);
@@ -68,7 +60,8 @@ class ScriptHandler {
 
 	public static function set(variable:String, value:Dynamic):Void {
 		for (i in 0...list.length) {
-			final script:IScript = list[i];
+			final script:HScript = list[i];
+			if (script == null) continue;
 
 			if (script.disposed) {
 				if (list.contains(script)) list.remove(script);

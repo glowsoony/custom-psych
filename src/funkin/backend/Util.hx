@@ -54,6 +54,11 @@ class Util {
 		return result / amount;
 	}
 
+	public static function addFileExtension(string:String, extension:String):String {
+		if (string.lastIndexOf('.') >= 0) return string;
+		return string += '.$extension';
+	}
+
 	public static function colorFromString(color:String):FlxColor {
 		var hideChars = ~/[\t\n\r]/;
 		var color:String = hideChars.split(color).join('').trim();

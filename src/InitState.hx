@@ -16,6 +16,7 @@ class InitState extends flixel.FlxState {
 		#end
 
 		FlxG.plugins.add(new Conductor());
+		FlxG.plugins.add(new Debug());
 
 		FlxG.fullscreen = Settings.data.fullscreen;
 		FlxG.fixedTimestep = false;

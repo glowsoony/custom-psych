@@ -369,6 +369,7 @@ class PlayState extends MusicState {
 
 		stage.destroy();
 		Judgement.resetHits();
+		Debug.clean();
 
 		Conductor.rate = 1;
 		FlxG.animationTimeScale = 1;
