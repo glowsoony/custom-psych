@@ -41,7 +41,7 @@ class ScriptHandler {
 				return script;*/
 
 			case "hx": 
-				final script:HScript = new HScript(dir);
+				var script:HScript = new HScript(dir);
 				list.push(script);
 				script.execute();
 				return script;
@@ -53,7 +53,7 @@ class ScriptHandler {
 	public static function call(func:String, ?args:Array<Dynamic>):Void {
 		args ??= [];
 		for (i in 0...list.length) {
-			final script:IScript = list[i];
+			var script:IScript = list[i];
 			if (script.disposed) {
 				if (list.contains(script)) list.remove(script);
 				continue;
@@ -64,7 +64,7 @@ class ScriptHandler {
 
 	public static function set(variable:String, value:Dynamic):Void {
 		for (i in 0...list.length) {
-			final script:IScript = list[i];
+			var script:IScript = list[i];
 			if (script.disposed) {
 				if (list.contains(script)) list.remove(script);
 				continue;
@@ -73,6 +73,7 @@ class ScriptHandler {
 		}
 	}
 
-	public static function clear()
+	public static function clear() {
 		while (list.length > 0) list.pop().close();
+	}
 }

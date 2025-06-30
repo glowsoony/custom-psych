@@ -55,7 +55,7 @@ class Main extends Sprite {
 
 		Settings.load();
 
-		final game:FlxGame = new FlxGame(InitState, 1280, 720, 60, true);
+		var game:FlxGame = new FlxGame(InitState, 1280, 720, 60, true);
     	@:privateAccess
     	game._customSoundTray = funkin.backend.FunkinSoundTray;
 		addChild(game);
@@ -71,9 +71,13 @@ class Main extends Sprite {
 		// shader coords fix
 		// by ne_eo
 		FlxG.signals.gameResized.add(function (_, _) {
-		    if (FlxG.cameras != null)
-				for (cam in FlxG.cameras.list)
-					if (cam != null && cam.filters != null) resetSpriteCache(cam.flashSprite);
+		    if (FlxG.cameras != null) {
+				for (cam in FlxG.cameras.list) {
+					if (cam != null && cam.filters != null) {
+						resetSpriteCache(cam.flashSprite);
+					}
+				}
+			}
 			if (FlxG.game != null) resetSpriteCache(FlxG.game);
 		});
 
@@ -95,7 +99,7 @@ class Main extends Sprite {
 		e.stopImmediatePropagation();
 
 		var errMsg:String = '${e.error}\n\n';
-		final date:String = '${Date.now()}'.replace(":", "'");
+		var date:String = '${Date.now()}'.replace(":", "'");
 
 		for (stackItem in CallStack.exceptionStack(true)) {
 			switch (stackItem) {

@@ -27,13 +27,15 @@ class HScript extends Iris implements IScript {
 		set('FlxSprite', FlxSprite);
 		set('game', PlayState.self);
 
-		set('addBehindObject', function(obj:FlxBasic, target:FlxBasic):FlxBasic
-			return PlayState.self.insert(PlayState.self.members.indexOf(target), obj));
+		set('addBehindObject', function(obj:FlxBasic, target:FlxBasic):FlxBasic {
+			return PlayState.self.insert(PlayState.self.members.indexOf(target), obj);
+		});
 	}
 	
 	override function call(func:String, ?args:Array<Dynamic>):IrisCall {
-		if (disposed || !active || !interp.variables.exists(func))
+		if (disposed || !active || !interp.variables.exists(func)) {
 			return {funName: func, signature: null, returnValue: null};
+		}
 		return super.call(func, args ?? []);
 	}
 

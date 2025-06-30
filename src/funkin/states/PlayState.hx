@@ -57,8 +57,9 @@ class PlayState extends MusicState {
 	}
 
 	@:isVar var playerID(get, set):Int;
-	function get_playerID():Int 
+	function get_playerID():Int {
 		return playfield?.playerID ?? 0;
+	}
 
 	function set_playerID(value:Int):Int {
 		if (hud != null) hud.playerID = value;
@@ -66,20 +67,24 @@ class PlayState extends MusicState {
 	}
 
 	@:isVar var rate(get, set):Float;
-	function get_rate():Float 
+	function get_rate():Float  {
 		return playfield?.rate ?? 1.0;
+	}
 
-	function set_rate(value:Float):Float
+	function set_rate(value:Float):Float {
 		return playfield.rate = value;
+	}
 
 	var _rawScrollSpeed:Float = 1.0;
 	var scrollType:String;
 	@:isVar var scrollSpeed(get, set):Float;
-	function get_scrollSpeed():Float 
+	function get_scrollSpeed():Float {
 		return playfield?.scrollSpeed ?? 1.0;
+	}
 
-	function set_scrollSpeed(value:Float):Float
+	function set_scrollSpeed(value:Float):Float {
 		return playfield.scrollSpeed = value;
+	}
 
 	public var combo:Int = 0;
 	public var comboBreaks:Int = 0;
@@ -208,7 +213,7 @@ class PlayState extends MusicState {
 		camOther.bgColor.alpha = 0;
 
 		// start setting up the hud
-		final strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
+		var strumlineYPos:Float = downscroll ? FlxG.height - 150 : 50;
 		leftStrumline = new Strumline(320, strumlineYPos);
 		leftStrumline.healthMult = -1;
 		rightStrumline = new Strumline(950, strumlineYPos);
@@ -409,7 +414,7 @@ class PlayState extends MusicState {
 			playCharacterAnim(strumline.character(), note, 'sing');
 			if (note.isSustain) return;
 
-			final judge:Judgement = Judgement.min;
+			var judge:Judgement = Judgement.min;
 			health += judge.health * strumline.healthMult;
 			combo++;
 			judge.hits++;
@@ -417,12 +422,14 @@ class PlayState extends MusicState {
 			return;
 		}
 
-		final judgement:Judgement = judgeHit(strumline, note);
-		if (Settings.data.noteSplashSkin != 'None' && judgement.splashes && note.splashes)
+		var judgement:Judgement = judgeHit(strumline, note);
+		if (Settings.data.noteSplashSkin != 'None' && judgement.splashes && note.splashes) {
 			noteSplashes.members[note.lane].hit(strumline.members[note.lane]);
+		}
 		
-		if (note.type == 'Hey!' && strumline.character().animation.exists('cheer'))
+		if (note.type == 'Hey!' && strumline.character().animation.exists('cheer')) {
 			strumline.character().playAnim('cheer');
+		}
 		else playCharacterAnim(strumline.character(), note, 'sing');
 
 		hud.noteHit(strumline, note, judgement);
@@ -435,7 +442,7 @@ class PlayState extends MusicState {
 	}
 
 	function judgeHit(strumline:Strumline, note:Note):Judgement {
-		final judgeID:Int = Judgement.getIDFromTiming(note.rawHitTime);
+		var judgeID:Int = Judgement.getIDFromTiming(note.rawHitTime);
 		var judge:Judgement = Judgement.list[judgeID];
 
 		note.judge = judge.name;
@@ -523,8 +530,9 @@ class PlayState extends MusicState {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	function loadSong():Void {
 		// load chart
-		try 
-			song = Song.load(songID, Difficulty.format())
+		try {
+			song = Song.load(songID, Difficulty.format());
+		}
 		catch (e:haxe.Exception) {
 			error('The chart "$songID (${Difficulty.current})" failed to load: $e');
 			song = Song.createDummyFile();
@@ -570,20 +578,22 @@ class PlayState extends MusicState {
 				endSong();
 				Scores.save();
 			}
-		} catch (e:Dynamic)
+		} catch (e:Dynamic) {
 			error('Instrumental failed to load: $e');
+		}
 
 		// load vocals
 		try {
 			if (song.meta.hasVocals) {
-				final mainFile:Sound = Paths.audio('songs/$songID/Voices-Player', null, false) ?? Paths.audio('songs/$songID/Voices');
-				final opponentFile:Sound = Paths.audio('songs/$songID/Voices-Opponent', null, false);
+				var mainFile:Sound = Paths.audio('songs/$songID/Voices-Player', null, false) ?? Paths.audio('songs/$songID/Voices');
+				var opponentFile:Sound = Paths.audio('songs/$songID/Voices-Opponent', null, false);
 
 				Conductor.mainVocals = FlxG.sound.load(mainFile);
 				if (opponentFile != null) Conductor.opponentVocals = FlxG.sound.load(opponentFile);
 			}
-		} catch (e:Dynamic)
+		} catch (e:Dynamic) {
 			warn('Vocals failed to load: $e');
+		}
 
 		playfield.loadNotes(song);
 	}
@@ -600,8 +610,8 @@ class PlayState extends MusicState {
 
 		switch event.name {
 			case 'Change Character':
-				final type:Int = Std.parseInt(event.args[0]);
-				final character:Character = switch type {
+				var type:Int = Std.parseInt(event.args[0]);
+				var character:Character = switch type {
 					case 0: dad;
 					case 1: gf;
 					case 2: bf;
@@ -609,9 +619,9 @@ class PlayState extends MusicState {
 					default: null;
 				}
 
-				final name:String = event.args[1];
+				var name:String = event.args[1];
 				if (character != null && character.name != name) {
-					final newCharacter:Character = characterCache[name];
+					var newCharacter:Character = characterCache[name];
 					if (newCharacter != null) return;
 					newCharacter.alpha = 1;
 					newCharacter.visible = character.visible;
@@ -625,7 +635,7 @@ class PlayState extends MusicState {
 				}
 
 			case 'Hey!':
-				final character:Character = switch Std.parseInt(event.args[0]) {
+				var character:Character = switch Std.parseInt(event.args[0]) {
 					case 0: dad;
 					case 1: gf;
 					case 2: bf;
@@ -639,8 +649,8 @@ class PlayState extends MusicState {
 				}
 
 			case 'Play Animation':
-				final animName:String = event.args[1];
-				final character:Character = switch Std.parseInt(event.args[0]) {
+				var animName:String = event.args[1];
+				var character:Character = switch Std.parseInt(event.args[0]) {
 					case 0: dad;
 					case 1: gf;
 					case 2: bf;
@@ -667,8 +677,8 @@ class PlayState extends MusicState {
 
 			case 'Screen Shake':
 				for (i => cam in [camGame, camHUD]) {
-					final duration:Float = Std.parseFloat(event.args[0].split(',')[i]);
-					final intensity:Float = Std.parseFloat(event.args[1].split(',')[i]);
+					var duration:Float = Std.parseFloat(event.args[0].split(',')[i]);
+					var intensity:Float = Std.parseFloat(event.args[1].split(',')[i]);
 
 					if (duration <= 0 || intensity <= 0) continue;
 					cam.shake(intensity, duration);
@@ -676,8 +686,8 @@ class PlayState extends MusicState {
 
 			case 'Change Scroll Speed':
 				if (scrollType != 'constant') {
-					final duration:Float = Std.parseFloat(event.args[1]);
-					final value:Float = song.speed * _rawScrollSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
+					var duration:Float = Std.parseFloat(event.args[1]);
+					var value:Float = song.speed * _rawScrollSpeed * Math.max(Std.parseFloat(event.args[0]), 1);
 
 					if (duration <= 0) scrollSpeed = value;
 					else FlxTween.tween(this, {scrollSpeed: value}, duration / rate);
@@ -711,7 +721,7 @@ class PlayState extends MusicState {
 	// regarding objects
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	dynamic function updateCameraScale(delta:Float):Void {
-		final scalingMult:Float = Math.exp(-delta * 6 * playfield.rate);
+		var scalingMult:Float = Math.exp(-delta * 6 * playfield.rate);
 		camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, scalingMult);
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
 	}
@@ -720,8 +730,8 @@ class PlayState extends MusicState {
         measure = Std.int(Math.max(0, measure));
         if (song.notes[measure] == null) return;
 
-		final char:Character = (song.notes[measure].gfSection ? gf : (song.notes[measure].mustHitSection != true ? dad : bf));
-		final name:String = (char == gf ? 'spectator' : (char == dad ? 'opponent' : 'player'));
+		var char:Character = (song.notes[measure].gfSection ? gf : (song.notes[measure].mustHitSection != true ? dad : bf));
+		var name:String = (char == gf ? 'spectator' : (char == dad ? 'opponent' : 'player'));
 		if (char == null) return;
 		ScriptHandler.call('movedCamera', [name]);
 		camFollow.setPosition(char.getMidpoint().x, char.getMidpoint().y);
@@ -741,12 +751,14 @@ class PlayState extends MusicState {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// any other miscellaneous functions i need
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	inline function playCharacterAnim(character:Character, note:Note, prefix:String) 
+	inline function playCharacterAnim(character:Character, note:Note, prefix:String) {
 		character.playAnim('$prefix${Note.directions[note.lane].toUpperCase()}${note.animSuffix}');
+	}
 
 	// have to make it a function instead because dce lol
-	function loadVideo(path:String):FunkinVideo 
+	function loadVideo(path:String):FunkinVideo {
 		return new FunkinVideo(Paths.video(path), true);
+	}
 
 	function openPauseMenu() {
 		persistentUpdate = false;
@@ -755,13 +767,13 @@ class PlayState extends MusicState {
 		FlxTimer.globalManager.forEach(function(tmr:FlxTimer) if (!tmr.finished) tmr.active = false);
 		FlxTween.globalManager.forEach(function(twn:FlxTween) if (!twn.finished) twn.active = false);
 
-		final menu:PauseMenu = new PauseMenu(songName, Difficulty.current, 0);
+		var menu:PauseMenu = new PauseMenu(songName, Difficulty.current, 0);
 		openSubState(menu);
 		menu.camera = camOther;
 	}
 
 	function cacheCharacter(type:Int, name:String):Character {
-		final character:Character = new Character(0, 0, name);
+		var character:Character = new Character(0, 0, name);
 		character.alpha = 0.0001;
 		characterCache.set(name, character);
 		add(character);
@@ -774,7 +786,7 @@ class PlayState extends MusicState {
 
 		countdown.stop();
 
-		final gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
+		var gameOverSubstate:GameOverSubstate = new GameOverSubstate(bf);
 		gameOverSubstate.cameras = [camOther];
 		openSubState(gameOverSubstate);
 	}

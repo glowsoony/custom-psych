@@ -144,11 +144,11 @@ class TitleState extends MusicState {
 			return;
 		}
 
-		final titleRaw:String = Paths.getFileContent('data/titleData.json');
+		var titleRaw:String = Paths.getFileContent('data/titleData.json');
 		if (titleRaw == null || titleRaw.length == 0) return;
 
 		try {
-			final data:TitleData = cast Json5.parse(titleRaw);
+			var data:TitleData = cast Json5.parse(titleRaw);
 			gfPosition.set(data.gfPos[0], data.gfPos[1]);
 			logoPosition.set(data.logoPos[0], data.logoPos[1]);
 			enterPosition.set(data.textPos[0], data.textPos[1]);
@@ -160,7 +160,7 @@ class TitleState extends MusicState {
 			useIdle = data.idle;
 	
 			if (data.background != null && data.background.trim().length > 0) {
-				final bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(data.background));
+				var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image(data.background));
 				bg.antialiasing = Settings.data.antialiasing;
 				add(bg);
 			}

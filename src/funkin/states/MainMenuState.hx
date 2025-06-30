@@ -159,9 +159,9 @@ class MainMenuState extends MusicState {
 	}
 
 	function changeSelection(?dir:Int = 0, ?usingMouse:Bool = false) {
-		final lastItem:FunkinSprite = optionGrp.members[curSelected];
+		var lastItem:FunkinSprite = optionGrp.members[curSelected];
 		curSelected = usingMouse ? dir : FlxMath.wrap(curSelected + dir, 0, optionGrp.length - 1);
-		final curItem:FunkinSprite = optionGrp.members[curSelected];
+		var curItem:FunkinSprite = optionGrp.members[curSelected];
 
 		lastItem.playAnim('idle');
 		lastItem.updateHitbox();
