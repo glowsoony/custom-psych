@@ -165,8 +165,7 @@ class Awards {
 
 	public static function startPopup(achieve:String, endFunc:Void->Void = null) {
 		for (popup in _popups) {
-			if (popup == null) continue;
-			popup.intendedY += 150;
+			if (popup != null) popup.intendedY += 150;
 		}
 
 		_popups.push(new AchievementPopup(achieve, endFunc));

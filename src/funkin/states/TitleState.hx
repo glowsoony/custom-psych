@@ -228,7 +228,6 @@ class TitleState extends MusicState {
 		if (!useIdle) gf.animation.play((danceLeft ? 'danceRight' : 'danceLeft'));
 		else if (curBeat % 2 == 0) gf.animation.play('idle');
 
-
 		if (seenIntro) return;
 
 		sickBeats++;

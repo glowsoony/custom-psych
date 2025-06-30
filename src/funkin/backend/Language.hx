@@ -59,7 +59,7 @@ class Language
 		var str:String = defaultPhrase;
 		#end
 
-		if (str == null) str = key;
+		str ??= key;
 		
 		if (values != null) {
 			for (num => value in values) str = str.replace('{${num + 1}}', value);
