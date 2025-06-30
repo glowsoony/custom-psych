@@ -414,7 +414,7 @@ class PlayState extends MusicState {
 			playCharacterAnim(strumline.character(), note, 'sing');
 			if (note.isSustain) return;
 
-			var judge:Judgement = Judgement.min;
+			final judge:Judgement = Judgement.min;
 			health += judge.health * strumline.healthMult;
 			combo++;
 			judge.hits++;
@@ -494,8 +494,7 @@ class PlayState extends MusicState {
 		accuracy = updateAccuracy();
 
 		note.missed = true;
-		for (piece in note.pieces)
-		{
+		for (piece in note.pieces) {
 			if (piece == null || !piece.exists || !piece.alive) continue;
 			piece.multAlpha = 0.25;
 		}
@@ -522,8 +521,9 @@ class PlayState extends MusicState {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// gameplay functionality
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	function updateAccuracy():Float 
+	function updateAccuracy():Float {
 		return (totalNotesHit <= 0 ? 0.0 : (totalNotesPlayed / (totalNotesHit + comboBreaks)));
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// chart/song related
@@ -598,8 +598,9 @@ class PlayState extends MusicState {
 		playfield.loadNotes(song);
 	}
 
-	function noteSpawned(note:Note):Void
+	function noteSpawned(note:Note):Void {
 		ScriptHandler.call('noteSpawned', [note]);
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// events
@@ -622,7 +623,7 @@ class PlayState extends MusicState {
 				var name:String = event.args[1];
 				if (character != null && character.name != name) {
 					var newCharacter:Character = characterCache[name];
-					if (newCharacter != null) return;
+					if (newCharacter == null) return;
 					newCharacter.alpha = 1;
 					newCharacter.visible = character.visible;
 					newCharacter.setPosition(character.x, character.y);
@@ -721,7 +722,7 @@ class PlayState extends MusicState {
 	// regarding objects
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	dynamic function updateCameraScale(delta:Float):Void {
-		var scalingMult:Float = Math.exp(-delta * 6 * playfield.rate);
+		final scalingMult:Float = Math.exp(-delta * 6 * playfield.rate);
 		camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, scalingMult);
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, scalingMult);
 	}

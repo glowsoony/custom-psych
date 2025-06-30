@@ -53,7 +53,7 @@ class ScriptHandler {
 	public static function call(func:String, ?args:Array<Dynamic>):Void {
 		args ??= [];
 		for (i in 0...list.length) {
-			var script:IScript = list[i];
+			final script:IScript = list[i];
 			if (script.disposed) {
 				if (list.contains(script)) list.remove(script);
 				continue;
@@ -64,7 +64,7 @@ class ScriptHandler {
 
 	public static function set(variable:String, value:Dynamic):Void {
 		for (i in 0...list.length) {
-			var script:IScript = list[i];
+			final script:IScript = list[i];
 			if (script.disposed) {
 				if (list.contains(script)) list.remove(script);
 				continue;
