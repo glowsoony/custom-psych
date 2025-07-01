@@ -51,7 +51,7 @@ class Meta {
 		// in case the file isn't in the cache
 		// but the user wants to parse it anyways
 		if (!FileSystem.exists(path)) return file;
-		var data:Dynamic = Json.parse(File.getContent(path));
+		var data:Dynamic = Json5.parse(File.getContent(path));
 
 		for (property in Reflect.fields(data)) {
 			// ??????? ok i guess no `Reflect.hasField()` for you

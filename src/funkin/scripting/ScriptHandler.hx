@@ -16,8 +16,6 @@ class ScriptHandler {
 			trace('$directory/$dir');
 			for (file in FileSystem.readDirectory('$directory/$dir')) {
 				final absPath:String = '$dir/$file';
-				trace(absPath);
-				trace('$directory/$absPath');
 				if (FileSystem.isDirectory('$directory/$absPath') && subFolders) {
 					loadFromDir('$directory/$absPath', subFolders);
 					continue;
