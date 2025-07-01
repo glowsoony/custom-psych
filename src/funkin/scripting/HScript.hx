@@ -9,16 +9,11 @@ import haxe.ValueException;
 
 class HScript extends Iris {
 	public var active:Bool = true;
-	public var disposed:Bool = false;
 
 	public function new(dir:String) {
 		super(File.getContent(dir), {name: dir, autoRun: false, autoPreset: true});
 		this.parser.resumeErrors = true;
-
-		set('closeFile', function() {
-			close();
-			if (ScriptHandler.list.contains(this)) ScriptHandler.list.remove(this);
-		});
+		set('closeFile', close);
 
 
 		set('Settings', Settings);
@@ -58,14 +53,12 @@ class HScript extends Iris {
 
 	public function close():Void {
 		destroy();
-		disposed = true;
 		active = false;
 	}
 }
 #else
 class HScript {
 	public var active:Bool = true;
-	public var disposed:Bool = false;
 
 	public function new(_) {}
 	public function call(_, ?_):Dynamic return null;

@@ -13,26 +13,23 @@ class ScriptHandler {
 		for (i => directory in directories) {
 			if (!FileSystem.exists(directory) || !FileSystem.exists('$directory/$dir')) continue;
 			
-			trace('$directory/$dir');
-			for (file in FileSystem.readDirectory('$directory/$dir')) {
-				final absPath:String = '$dir/$file';
-				if (FileSystem.isDirectory('$directory/$absPath') && subFolders) {
-					loadFromDir('$directory/$absPath', subFolders);
+			var folder:Array<String> = FileSystem.readDirectory('$directory/$dir') ?? [];
+			for (file in folder) {
+				final absPath:String = '$directory/$dir/$file';
+				if (FileSystem.isDirectory(absPath) && subFolders) {
+					loadFromDir(absPath, subFolders);
 					continue;
 				}
 
 				loadFile(absPath);
 			}
-
-			trace('');
 		}
 	}
 
 	public static function loadFile(dir:String):HScript {
-		dir = Util.addFileExtension(Paths.get(dir), 'hx');
+		dir = Util.addFileExtension(dir, 'hx');
 
 		if (!FileSystem.exists(dir) || !dir.endsWith('hx')) return null;
-
 		var script:HScript = new HScript(dir);
 
 		list.push(script);
@@ -45,12 +42,8 @@ class ScriptHandler {
 		args ??= [];
 		for (i in 0...list.length) {
 			var script:HScript = list[i];
-			if (script == null) continue;
-
-			if (script.disposed) {
-				if (list.contains(script)) list.remove(script);
-				continue;
-			}
+			if (script == null || !script.active) continue;
+	
 			script.call(func, args);
 		}
 	}
@@ -58,12 +51,8 @@ class ScriptHandler {
 	public static function set(variable:String, value:Dynamic):Void {
 		for (i in 0...list.length) {
 			var script:HScript = list[i];
-			if (script == null) continue;
+			if (script == null || !script.active) continue;
 
-			if (script.disposed) {
-				if (list.contains(script)) list.remove(script);
-				continue;
-			}
 			script.set(variable, value);
 		}
 	}
