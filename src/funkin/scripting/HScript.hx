@@ -9,9 +9,11 @@ import haxe.ValueException;
 
 class HScript extends Iris {
 	public var active:Bool = true;
+	public var dir:String = "";
 
 	public function new(dir:String) {
 		super(File.getContent(dir), {name: dir, autoRun: false, autoPreset: true});
+		this.dir = dir;
 		this.parser.resumeErrors = true;
 		set('closeFile', close);
 
@@ -34,7 +36,7 @@ class HScript extends Iris {
 	override function call(func:String, ?args:Array<Dynamic>):IrisCall {
 		var defaultCall:IrisCall = {funName: func, signature: null, returnValue: null};
 
-		if (disposed || !active || !exists(func)) return defaultCall;
+		if (!active || !exists(func)) return defaultCall;
 
 		try {
 			var signature:Dynamic = interp.variables.get(func);
@@ -52,6 +54,7 @@ class HScript extends Iris {
 	}
 
 	public function close():Void {
+		ScriptHandler.remove(this);
 		destroy();
 		active = false;
 	}

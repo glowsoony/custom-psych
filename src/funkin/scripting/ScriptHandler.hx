@@ -31,28 +31,32 @@ class ScriptHandler {
 
 		if (!FileSystem.exists(dir) || !dir.endsWith('hx')) return null;
 		var script:HScript = new HScript(dir);
-
 		list.push(script);
 		script.execute();
-
 		return script;
+	}
+
+	public static function remove(s:HScript):Bool
+	{
+		for (script in list)
+		{
+			if (script == null || !script.active) continue;
+			if (script.dir == s.dir) return list.remove(script);
+		}
+		return false;
 	}
 
 	public static function call(func:String, ?args:Array<Dynamic>):Void {
 		args ??= [];
-		for (i in 0...list.length) {
-			var script:HScript = list[i];
+		for (script in list) {
 			if (script == null || !script.active) continue;
-	
 			script.call(func, args);
 		}
 	}
 
 	public static function set(variable:String, value:Dynamic):Void {
-		for (i in 0...list.length) {
-			var script:HScript = list[i];
+		for (script in list) {
 			if (script == null || !script.active) continue;
-
 			script.set(variable, value);
 		}
 	}
